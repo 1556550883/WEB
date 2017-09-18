@@ -1,47 +1,71 @@
-BODY {
-	FONT-FAMILY: "ËÎÌו"; BACKGROUND-IMAGE: url(bj.jpg); BACKGROUND-REPEAT: repeat-x; BACKGROUND-POSITION: 50% top; TEXT-ALIGN: center; MARGIN: 0px; BACKGROUND-COLOR: #ffffff
+body {
+    margin: 0 0;
+    padding: 0 0;
+    min-width: 768px;
 }
-TD {
-	FONT-SIZE: 12px; COLOR: #000000; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+
+.login-panel {
+    padding: 48px 56px 0;
+    display: block;
+    margin: 45px auto 0 auto;
+    width: 360px;
+    height: 340px;
+    background:url("../login/img_landing_login_bkg.png");
 }
-A:link {
-	COLOR: #414141; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+
+.landing_bkg {
+    width: 100%;
+    min-height: 300px;
+    min-width: 768px;
+    display: block;
 }
-A:visited {
-	COLOR: #414141; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+
+input::-ms-clear {
+    display:none;
 }
-A:active {
-	COLOR: #999999; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+
+input::-ms-reveal {
+    display:none;
 }
-A:hover {
-	COLOR: #0565c5; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+
+.login-text {
+    color: #666;
+    font-size: 20px;
 }
-.a1 {
-	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; LINE-HEIGHT: 40px
+
+.place-holder {
+    height: 20px;
 }
-A.a1:link {
-	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+
+.glyphicon {
+    font-size: 24px;
+    color: #808080;
 }
-A.a1:visited {
-	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+
+#footer {
+    font-size: 12px;
+    position: absolute;
+    top: calc(100% - 44px);
+    width: 100%;
+    min-width: 768px;
+    height:44px;
+    background-color: #f4f4f4;
+    border-top:solid 1px #eee;
+    line-height:44px;
 }
-A.a1:hover {
-	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #2d91e1; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+
+#footer-left {
+    display: inline-block;
+    color: #999;
+    margin: 0 0 0 20px;
 }
-A.a1:active {
-	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+
+#footer-right {
+    display: inline-block;
+    color: #333;
+    margin: 0 60px 0 0;
 }
-.input {
-	BORDER-TOP: #91cbf7 1px solid; HEIGHT: 22px; BORDER-RIGHT: #91cbf7 1px solid; BORDER-BOTTOM: #91cbf7 1px solid; BORDER-LEFT: #91cbf7 1px solid; WIDTH: 236px; BACKGROUND-COLOR: #ffffff
+
+#footer-right .text:hover {
+    color: #ab0635;
 }
-.TxtUserNameCssClass {
-	BORDER-LEFT-WIDTH: 0px; HEIGHT: 20px; BORDER-RIGHT-WIDTH: 0px; BACKGROUND: url(user_login_name.gif) no-repeat; BORDER-BOTTOM-WIDTH: 0px; PADDING-LEFT: 25px; LINE-HEIGHT: 20px; BORDER-TOP-WIDTH: 0px; WIDTH: 145px
-}
-.TxtPasswordCssClass {
-	BORDER-LEFT-WIDTH: 0px; HEIGHT: 20px; BORDER-RIGHT-WIDTH: 0px; BACKGROUND: url(user_login_password.gif) no-repeat; BORDER-BOTTOM-WIDTH: 0px; PADDING-LEFT: 25px; LINE-HEIGHT: 20px; BORDER-TOP-WIDTH: 0px; WIDTH: 145px
-}
-.TxtValidateCodeCssClass {
-	BORDER-LEFT-WIDTH: 0px; HEIGHT: 21px; BORDER-RIGHT-WIDTH: 0px; BACKGROUND: url(user_login_validatecode.gif) no-repeat; BORDER-BOTTOM-WIDTH: 0px; IME-MODE: disabled; PADDING-LEFT: 25px; LINE-HEIGHT: 20px; BORDER-TOP-WIDTH: 0px; WIDTH: 91px
-}
-a.red{color:#FF0000;cursor:pointer;}
-a.red:hover{color:#1791ee;cursor:pointer;}

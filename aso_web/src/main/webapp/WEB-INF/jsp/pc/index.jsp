@@ -1,19 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=7" />
 	<%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
-	<title>赚钱网站</title>
+	<title>钻石社区</title>
 	<%@include file="/WEB-INF/jsp/inc/base-dwz.jsp" %>
-	
 </head>
 
-<body scroll="no">
-    <!-- 整个index主页显示区域 -->
-	<div id="layout">
+<body>
+    <!-- 整个index主页显示区域  -->
 		<!-- 头部 -->
 		<%@include file="/WEB-INF/jsp/inc/header.jsp" %>
 		<!-- 左边菜单栏 -->
@@ -56,10 +53,11 @@
 	</div>
 	
 	<!-- footer底部信息 -->
-	<div id="footer">Copyright &copy; 2015 所有人 <!-- Tel：0551-52897073 --></div>
+	<div id="footer">&copy;2017 · 钻石社区平台 <!-- Tel：0551-52897073 --></div>
 	
 
 </body>
+
 <script >
 	function startCheckOut(url){
 		window.open(url,'','width=170px,location=no,status=no,top=0,left=0');
@@ -69,4 +67,5 @@
 		window.open(url,'','width=800px,location=no,status=no,top=0,left=0');
 	}
 </script>
+
 </html>
