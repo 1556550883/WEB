@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.ruanyun.common.controller.BaseController;
-import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.sys.TCity;
 import com.ruanyun.web.model.sys.TProvince;
 import com.ruanyun.web.service.sys.CityService;
