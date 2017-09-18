@@ -1,0 +1,23 @@
+<taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+    
+    <description>defined function library</description>  
+    <display-name>DefinedJstl functions</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>dj</short-name>  
+    <uri>/defined-jstl</uri>  
+       
+      <function>  
+        <name>appendString</name>  
+        <function-class>com.ruanyun.web.util.DefinedJstl</function-class>  
+        <function-signature>java.lang.String appendString(java.lang.String,java.lang.String)</function-signature>
+        <example>${dj:appendString('id=','3')}</example>
+      </function>
+       
+      <function>  
+        <name>filterHtmlTags</name>
+        <function-class>com.ruanyun.web.util.DefinedJstl</function-class>  
+        <function-signature>java.lang.String filterHtmlTags(java.lang.String)</function-signature>
+        <example>${dj:filterHtmlTags('')}</example>
+      </function>
+       
+</taglib>

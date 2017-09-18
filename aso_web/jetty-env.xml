@@ -1,0 +1,12 @@
+<Configure id='wac' class="org.mortbay.jetty.webapp.WebAppContext">
+	<!-- <New id="DSTest" class="org.mortbay.jetty.plus.naming.Resource">
+		<Arg>jdbc/casdb</Arg>
+		<Arg>
+			<New class="oracle.jdbc.pool.OracleConnectionPoolDataSource">
+				<Set name="URL">jdbc:oracle:thin:@192.168.0.88:1522/orcl</Set>
+				<Set name="User">hbga_web</Set>
+				<Set name="Password">hbga</Set>
+			</New>
+		</Arg>
+	</New> -->
+</Configure>

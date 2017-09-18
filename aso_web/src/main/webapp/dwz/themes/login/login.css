@@ -1,0 +1,47 @@
+BODY {
+	FONT-FAMILY: "ËÎÌו"; BACKGROUND-IMAGE: url(bj.jpg); BACKGROUND-REPEAT: repeat-x; BACKGROUND-POSITION: 50% top; TEXT-ALIGN: center; MARGIN: 0px; BACKGROUND-COLOR: #ffffff
+}
+TD {
+	FONT-SIZE: 12px; COLOR: #000000; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+}
+A:link {
+	COLOR: #414141; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+}
+A:visited {
+	COLOR: #414141; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+}
+A:active {
+	COLOR: #999999; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+}
+A:hover {
+	COLOR: #0565c5; TEXT-DECORATION: none; LINE-HEIGHT: 20px
+}
+.a1 {
+	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; LINE-HEIGHT: 40px
+}
+A.a1:link {
+	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+}
+A.a1:visited {
+	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+}
+A.a1:hover {
+	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #2d91e1; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+}
+A.a1:active {
+	FONT-SIZE: 14px; FONT-WEIGHT: normal; COLOR: #14578d; TEXT-DECORATION: none; LINE-HEIGHT: 40px
+}
+.input {
+	BORDER-TOP: #91cbf7 1px solid; HEIGHT: 22px; BORDER-RIGHT: #91cbf7 1px solid; BORDER-BOTTOM: #91cbf7 1px solid; BORDER-LEFT: #91cbf7 1px solid; WIDTH: 236px; BACKGROUND-COLOR: #ffffff
+}
+.TxtUserNameCssClass {
+	BORDER-LEFT-WIDTH: 0px; HEIGHT: 20px; BORDER-RIGHT-WIDTH: 0px; BACKGROUND: url(user_login_name.gif) no-repeat; BORDER-BOTTOM-WIDTH: 0px; PADDING-LEFT: 25px; LINE-HEIGHT: 20px; BORDER-TOP-WIDTH: 0px; WIDTH: 145px
+}
+.TxtPasswordCssClass {
+	BORDER-LEFT-WIDTH: 0px; HEIGHT: 20px; BORDER-RIGHT-WIDTH: 0px; BACKGROUND: url(user_login_password.gif) no-repeat; BORDER-BOTTOM-WIDTH: 0px; PADDING-LEFT: 25px; LINE-HEIGHT: 20px; BORDER-TOP-WIDTH: 0px; WIDTH: 145px
+}
+.TxtValidateCodeCssClass {
+	BORDER-LEFT-WIDTH: 0px; HEIGHT: 21px; BORDER-RIGHT-WIDTH: 0px; BACKGROUND: url(user_login_validatecode.gif) no-repeat; BORDER-BOTTOM-WIDTH: 0px; IME-MODE: disabled; PADDING-LEFT: 25px; LINE-HEIGHT: 20px; BORDER-TOP-WIDTH: 0px; WIDTH: 91px
+}
+a.red{color:#FF0000;cursor:pointer;}
+a.red:hover{color:#1791ee;cursor:pointer;}
