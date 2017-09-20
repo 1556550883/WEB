@@ -33,13 +33,10 @@ import com.ruanyun.web.util.HttpSessionUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-/**
- *@author feiyang
- *@date 2016-1-7
- */
 @Controller
 @RequestMapping("channelAdverInfo")
-public class ChannelAdverInfoController extends BaseController{
+public class ChannelAdverInfoController extends BaseController
+{
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
 	
@@ -47,11 +44,14 @@ public class ChannelAdverInfoController extends BaseController{
 	 * 查询广告列表（后台显示）
 	 */
 	@RequestMapping("list")
-	public String getShopInfoList(Page<TChannelAdverInfo> page,TChannelAdverInfo info,Model model){
+	public String getChannelAdverInfoList(Page<TChannelAdverInfo> page,TChannelAdverInfo info,Model model)
+	{
 		addModel(model, "pageList", channelAdverInfoService.queryAdverList(page, info));
 		addModel(model, "bean", info);
+		
 		return "pc/channelAdverInfo/list";
 	}
+	
 	/**
 	 * 
 	 * 功能描述：跳转到增加或者修改

@@ -61,7 +61,8 @@ public class AdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiveIn
 	}
 	
 	@Override
-	public Page<TAdverEffectiveInfo> queryPage(Page<TAdverEffectiveInfo> page, TAdverEffectiveInfo t) {
+	public Page<TAdverEffectiveInfo> queryPage(Page<TAdverEffectiveInfo> page, TAdverEffectiveInfo t)
+	{
 		return adverEffectiveInfoDao.queryPage(page, t);
 	}
 	

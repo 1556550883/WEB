@@ -71,18 +71,21 @@ public class LoginLogService extends BaseServiceImpl<TLoginLog> {
 	 * @param userId
 	 * @return
 	 */
-	public UserLoginLogShow getLoginLogByUserId(Integer userId){
+	public UserLoginLogShow getLoginLogByUserId(Integer userId)
+	{
 		//前两条
-		List<TLoginLog> loginlog=loginLogDao.getLoginLogByUserId(userId);
-		Integer loginLogCount=loginLogDao.getCountByUserId(userId);
+		List<TLoginLog> loginlog = loginLogDao.getLoginLogByUserId(userId);
+		Integer loginLogCount = loginLogDao.getCountByUserId(userId);
 		
 		//获得本次的登录信息
-		TLoginLog nowLog=null;
-		if (EmptyUtils.isEmpty(loginlog)) {
+		TLoginLog nowLog = null;
+		if (EmptyUtils.isEmpty(loginlog)) 
+		{
 			return null;
 		}
-		nowLog=loginlog.get(0);
-		UserLoginLogShow  loginLogShow=new UserLoginLogShow();
+		
+		nowLog = loginlog.get(0);
+		UserLoginLogShow loginLogShow = new UserLoginLogShow();
 		loginLogShow.setLoginCount(loginLogCount);
 		
 		loginLogShow.setLoginIp(nowLog.getLogIp());
@@ -91,17 +94,15 @@ public class LoginLogService extends BaseServiceImpl<TLoginLog> {
 		/**
 		 * 如果集合中有两条数据就显示上次的登录信息
 		 */
-		if (loginlog.size()>=2) {
+		if (loginlog.size() >= 2)
+		{
 			//获得上次的登录信息
-			TLoginLog lastLog=loginlog.get(1);
+			TLoginLog lastLog = loginlog.get(1);
 			loginLogShow.setLastLoginIp(lastLog.getLogIp());
 			loginLogShow.setLastLoginTime(lastLog.getLoginTime());
 		}
 		
-		
-		
 		return loginLogShow;
-		
 	}
 
 	/**

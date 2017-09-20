@@ -1,19 +1,12 @@
-/**
- * 手机端接口: files
- *@author feiyang
- *@date 2016-1-6
- */
 package com.ruanyun.web.controller.sys.background;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,21 +28,16 @@ import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.EncrypDES;
 import com.ruanyun.web.util.HttpSessionUtils;
 
-/**
- *@author feiyang
- *@date 2016-1-6
- */
 @Controller
 @RequestMapping("channelInfo")
-public class ChannelInfoController extends BaseController{
-
+public class ChannelInfoController extends BaseController
+{
 	@Autowired
 	private ChannelInfoService channelInfoService;
 	
-	
-	
 	@Autowired
 	private PublicCache publicCache;
+	
 	/**
 	 * 
 	 * 功能描述:渠道列表
@@ -57,13 +45,13 @@ public class ChannelInfoController extends BaseController{
 	 * @param info
 	 * @param model
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-6
 	 */
 	@RequestMapping("list")
-	public String getChannelInfoList(Page<TChannelInfo> page,TChannelInfo info,Model model){
+	public String getChannelInfoList(Page<TChannelInfo> page, TChannelInfo info, Model model)
+	{
 		addModel(model, "pageList", channelInfoService.queryPage(page, info));
 		addModel(model, "bean", info);
+		
 		return "pc/channelInfo/list";
 	}
 	
@@ -71,18 +59,23 @@ public class ChannelInfoController extends BaseController{
 	 * idfa统计
 	 */
 	@RequestMapping("idfaStatistics")
-	public String idfaStatistics(HttpServletResponse response, Page<TUserappidAdverid> page, String channelNum, String completeTime, Model model) throws ParseException{
+	public String idfaStatistics(HttpServletResponse response, Page<TUserappidAdverid> page, 
+			String channelNum, String completeTime, Model model) throws ParseException
+	{
 		channelNum = StringUtils.hasText(channelNum)?channelNum:"1";
 		completeTime = StringUtils.hasText(completeTime)?completeTime.replaceAll("-", ""):new SimpleDateFormat("yyyyMMdd").format(new Date());
-		try {
+		try 
+		{
 			addModel(model, "pageList", channelInfoService.queryIdfaStatistics(page, channelNum, completeTime));
 			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
 			adverInfo.setChannelNum(channelNum);
 			addModel(model, "adverInfo", adverInfo);
 			addModel(model, "completeTime", new SimpleDateFormat("yyyyMMdd").parse(completeTime));
-		} catch (ParseException e) {
+		} catch (ParseException e) 
+		{
 			e.printStackTrace();
 		}
+		
 		return "pc/idfa/list";
 	}
 	

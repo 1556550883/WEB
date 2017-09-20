@@ -1,19 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
 <ry:binding parentCode="USER_SCORE_TYPE" bingdingName="channellevel"></ry:binding>
-<form id="pagerForm" method="post" action="adverEffectiveInfo/completeList">
+
+<form id="pagerForm" method="post" action="adverEffectiveInfo/list">
 	<input type="hidden" name="pageNum" value="${pageList.pageNum }" />
 	<input type="hidden" name="numPerPage" value="${pageList.numPerPage}" />
 	<input type="hidden" name="orderField" value="${param.orderField}">
 	<input type="hidden" name="orderDirection" value="${param.orderDirection}">
 </form>
+
 <div class="pageHeader">
-	<form rel="pagerForm"  onsubmit="return navTabSearch(this);" action="adverEffectiveInfo/completeList" method="post">
+	<form rel="pagerForm"  onsubmit="return navTabSearch(this);" action="adverEffectiveInfo/list" method="post">
 	<div class="searchBar">
-		
 		<table class="searchContent">
 			<tr>
-				<td>广告名称：<input type="hidden" name="adverId" value="${bean.adverId}"/></td>	
+				<td>广告名称：<input type="hidden" name="adverId" value="${bean.adverId}"/></td>
 			</tr>
 		</table>
 		<div class="subBar">

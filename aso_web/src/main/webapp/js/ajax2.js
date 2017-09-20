@@ -38,47 +38,68 @@ MyJqueryAjax2 = function (v_url, data, func, dataType,errorFunc) {
 		
 	};
 };
+
 //获取ID
-function sunID(tabId){
-	var type="";
-	var id="";
-	if(tabId=="main_index2"){
-		type=2;
+function sunID(tabId)
+{
+	var type = "";
+	var id = "";
+	
+	if(tabId == "main_index2")
+	{
+		type = 2;
 	}
-	if(tabId=="main_index3"){
-		type=3;
+	
+	if(tabId == "main_index3")
+	{
+		type = 3;
 	}
-	if(tabId=="main_index4"){
-		type=4;
+	
+	if(tabId == "main_index4")
+	{
+		type = 4;
 	}
-		$("[name='ids"+type+"']").each(function (){
-			if($(this).attr("checked")){
-				id+=$(this).val()+",";
-				}
-		});
-	id=id.substring(0,id.length-1)	==	""	?	"," : id.substring(0,id.length-1);
+	
+	$("[name='ids" + type+"']")
+	.each(function (){
+		if($(this).attr("checked"))
+		{
+			id += $(this).val() + ",";
+		}
+	});
+	
+	id = id.substring(0, id.length-1) ==	"" ? "," : id.substring(0, id.length-1);
+	
 	return id;
 }
 //增加
-function add(url,msg,w,h,tabId){
-	 
+function add(url,msg,w,h,tabId)
+{
 	$.pdialog.open(url,tabId,msg,{width:w,height:h,max:false, mask:true, maxable:false, minable:true, resizable:false,drawable:false});	
-	 
 }
+
 //新打开navtab用于增加
-function openNav(url,msg,tabId){
-	var id=sunID(tabId);
-		navTab.openTab(tabId,url,{title:msg});
+function openNav(url, msg, tabId)
+{
+	var id = sunID(tabId);
+	
+	navTab.openTab(tabId, url, {title:msg});
 }
+
 //新打开navtab用于修改
-function openNavU(url,msg,tabId){
-	var id=sunID(tabId);
-	if(id.indexOf(',')<0){
-		navTab.openTab(tabId,url+id,{title:msg});
-	}else{
+function openNavU(url, msg, tabId)
+{
+	var id = sunID(tabId);
+	if(id.indexOf(',') < 0)
+	{
+		navTab.openTab(tabId, url + id, {title:msg});
+	}
+	else
+	{
 		alertMsg.info('请选择一项！')
-		}
+	}
 }
+
 //修改
 function update(url,msg,w,h,tabId){
 	var id=sunID(tabId);

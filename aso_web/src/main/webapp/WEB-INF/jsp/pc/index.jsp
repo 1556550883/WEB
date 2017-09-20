@@ -37,33 +37,25 @@
 					<div class="page unitBox">
 					    <!-- 面板显示区域的头部 -->
 						<div class="accountInfo">
-						 
-						<div class="pageFormContent" layoutH="80" style="margin-right:230px">
-							
-						 
+							<div class="pageFormContent" layoutH="80" style="margin-right:230px"></div>
 						</div>
-						
-					 
 					</div>
-					
 				</div>
 			</div>
 		</div>
 	
-	</div>
-	
 	<!-- footer底部信息 -->
 	<div id="footer">&copy;2017 · 钻石社区平台 <!-- Tel：0551-52897073 --></div>
-	
-
 </body>
 
-<script >
-	function startCheckOut(url){
+<script>
+	function startCheckOut(url)
+	{
 		window.open(url,'','width=170px,location=no,status=no,top=0,left=0');
 	}
 
-	function startCheckOut2(url){
+	function startCheckOut2(url)
+	{
 		window.open(url,'','width=800px,location=no,status=no,top=0,left=0');
 	}
 </script>

@@ -1,7 +1,3 @@
-/**
- * @author ZhangHuihua@msn.com
- * 
- */
 var navTab = {
 	componentBox: null, // tab component. contain tabBox, prevBut, nextBut, panelBox
 	_tabBox: null,
@@ -340,12 +336,14 @@ var navTab = {
 	 * @param {Object} url
 	 * @param {Object} params: title, data, fresh
 	 */
-	openTab: function(tabid, url, options){ //if found tabid replace tab, else create a new tab.
+	openTab: function(tabid, url, options)
+	{ //if found tabid replace tab, else create a new tab.
 		var op = $.extend({title:"New Tab", data:{}, fresh:true, external:false}, options);
 
 		var iOpenIndex = this._indexTabId(tabid);
 
-		if (iOpenIndex >= 0){
+		if (iOpenIndex >= 0)
+		{
 			var $tab = this._getTabs().eq(iOpenIndex);
 			var span$ = $tab.attr("tabid") == this._op.mainTabId ? "> span > span" : "> span";
 			$tab.find(">a").attr("title", op.title).find(span$).text(op.title);

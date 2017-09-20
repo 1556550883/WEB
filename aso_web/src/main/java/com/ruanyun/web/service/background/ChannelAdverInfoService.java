@@ -33,20 +33,23 @@ import com.ruanyun.web.model.sys.UploadVo;
  *@date 2016-1-7
  */
 @Service
-public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo> {
+public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo> 
+{
 	@Autowired
 	@Qualifier("channelAdverInfoDao")
 	private ChannelAdverInfoDao channelAdverInfoDao;
 	
 	@Override
-	public Page<TChannelAdverInfo> queryPage(Page<TChannelAdverInfo> page, TChannelAdverInfo t) {
+	public Page<TChannelAdverInfo> queryPage(Page<TChannelAdverInfo> page, TChannelAdverInfo t) 
+	{
 		return channelAdverInfoDao.queryPage(page, t);
 	}
 	
 	/**
 	 * 查询广告列表（后台显示）
 	 */
-	public Page<TChannelAdverInfo> queryAdverList(Page<TChannelAdverInfo> page, TChannelAdverInfo t) {
+	public Page<TChannelAdverInfo> queryAdverList(Page<TChannelAdverInfo> page, TChannelAdverInfo t) 
+	{
 		return channelAdverInfoDao.PageSql3(page, t.getChannelNum());
 	}
 	
@@ -65,34 +68,50 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo> 
 	 * @param stepDesc 
 	 * @param stepName 
 	 */
-	public void saveOrUpd(TChannelAdverInfo info,TUser user,MultipartFile file,HttpServletRequest request, String[] stepName, String[] stepDesc, Integer[] stepRates, String[] stepTime, Float[] stepScore, Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount,MultipartFile fileAdverImg){
-		try {
-			if("1".equals(info.getFileType()) && file.getSize()!=0){
-				UploadVo vo=UploadCommon.uploadPic(file, request, Constants.FILE_ADVER_APK, "apk,ipa");
+	public void saveOrUpd(TChannelAdverInfo info,TUser user,MultipartFile file,HttpServletRequest request, 
+			String[] stepName, String[] stepDesc, Integer[] stepRates, String[] stepTime, Float[] stepScore, 
+			Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount,MultipartFile fileAdverImg)
+	{
+		try
+		{
+			if("1".equals(info.getFileType()) && file.getSize() != 0)
+			{
+				UploadVo vo = UploadCommon.uploadPic(file, request, Constants.FILE_ADVER_APK, "apk,ipa");
 				info.setFileUrl(vo.getFilename());
-				info.setFileSize(Float.valueOf(file.getSize()/1000));
+				info.setFileSize(Float.valueOf(file.getSize() / 1000));
 			}
-			if(fileAdverImg.getSize()!=0){
+			
+			if(fileAdverImg.getSize() != 0)
+			{
 				UploadVo vo=UploadCommon.uploadPic(fileAdverImg, request, Constants.FILE_ADVER_IMG, "jpg,gif,png");
-				if(StringUtils.hasText(vo.getFilename())){
+				if(StringUtils.hasText(vo.getFilename()))
+				{
 					info.setAdverImg(vo.getFilename());
 				}
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) 
+		{
 			System.out.println(e.getMessage());
 		}
-		if(EmptyUtils.isNotEmpty(info.getAdverId())){
+		
+		if(EmptyUtils.isNotEmpty(info.getAdverId()))
+		{
 			TChannelAdverInfo shopsInfo=getInfoById(info.getAdverId());
 			BeanUtils.copyProperties(info, shopsInfo, new String[]{"adverCreatetime","adverStatus","channelNum","adverNum","downloadCount","adverActivationCount","adverCountRemain"});
 			update(shopsInfo);
 			//向轴 注释
 			//adverStepService.saveAdverStep(shopsInfo, stepName, stepDesc, stepRates, stepTime, stepScore, stepUseTime, stepType, stepMinCount);
-		}else{
+		}
+		else
+		{
 			info.setAdverCreatetime(new Date());
 			info.setAdverStatus(0);
-			if(info.getAdverCountRemain() == null){
+			if(info.getAdverCountRemain() == null)
+			{
 				info.setAdverCountRemain(info.getAdverCount());
 			}
+			
 			save(info);
 			info.setAdverNum(NumUtils.getCommondNum(NumUtils.ADVER_INFO, info.getAdverId()));
 			//向轴 注释
@@ -103,23 +122,23 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo> 
 	/**
 	 * 
 	 * 功能描述：删除
-	 * @author: xqzhang
-	 * @date:2016-1-6
 	 * @param ids
 	 */
-	public void delAll(String ids){
+	public void delAll(String ids)
+	{
 		channelAdverInfoDao.delAll(ids);
 	}
+	
 	/**
 	 * 
 	 * 功能描述：根据Id获得详细信息
-	 * @author: xqzhang
-	 * @date:2016-1-6
 	 * @param id
 	 * @return
 	 */
-	public TChannelAdverInfo getInfoById(Integer id){
-		TChannelAdverInfo adverInfo=super.get(TChannelAdverInfo.class, id);
+	public TChannelAdverInfo getInfoById(Integer id)
+	{
+		TChannelAdverInfo adverInfo = super.get(TChannelAdverInfo.class, id);
+		
 		return adverInfo;
 	}
 	
@@ -131,7 +150,8 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo> 
 	 * @param adverNum 广告编号
 	 * @return
 	 */
-	public TChannelAdverInfo getInfoByAdverNum(String adverNum){
+	public TChannelAdverInfo getInfoByAdverNum(String adverNum)
+	{
 		TChannelAdverInfo adverInfo=super.get(TChannelAdverInfo.class, "adverNum",adverNum);
 		return adverInfo;
 	}
@@ -139,25 +159,31 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo> 
 	/**
 	 * 批量审核
 	 */
-	public void updateAdverStatus(Integer status,String ids){
+	public void updateAdverStatus(Integer status,String ids)
+	{
 		channelAdverInfoDao.updateAdverStatus(status, ids);
 	}
 	
 	/**
 	 * 批量支付
 	 */
-	public String updateAdverStatus2Pay(Integer status,String ids){
+	public String updateAdverStatus2Pay(Integer status,String ids)
+	{
 		String[] adverIds = ids.split(",");
-		for(String adverId:adverIds){
+		for(String adverId : adverIds)
+		{
 			TChannelAdverInfo adverInfo = get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-			if(adverInfo == null){
+			if(adverInfo == null)
+			{
 				return "选中的广告不存在！";
-			}else if(adverInfo.getAdverStatus() != 2){
+			}
+			else if(adverInfo.getAdverStatus() != 2)
+			{
 				return "广告支付前必须先停用！";
 			}
 		}
 		channelAdverInfoDao.updateAdverStatus2Pay(status, ids);
+		
 		return null;
 	}
-	
 }

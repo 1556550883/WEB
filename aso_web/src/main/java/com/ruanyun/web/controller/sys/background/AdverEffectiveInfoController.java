@@ -22,10 +22,9 @@ public class AdverEffectiveInfoController extends BaseController
 	/**
 	 * 广告完成列表
 	 */
-	@RequestMapping("completeList")
+	@RequestMapping("list")
 	public String completeList(Page<TUserappidAdverid> page,TUserappidAdverid info,Model model)
 	{
-		page.setNumPerPage(10);
 		info.setStatusStart("2");
 		addModel(model, "pageList", adverEffectiveInfoService.completeList(page, info));
 		addModel(model, "bean", info);
@@ -35,13 +34,14 @@ public class AdverEffectiveInfoController extends BaseController
 	/**
 	 * 功能描述:广告有效记录列表
 	 */
-	@RequestMapping("list")
-	public String getShopInfoList(Page<TAdverEffectiveInfo> page,TAdverEffectiveInfo info,Model model)
-	{
-		addModel(model, "pageList", adverEffectiveInfoService.queryPage(page, info));
-		addModel(model, "bean", info);
-		return "";
-	}
+//	@RequestMapping("list")
+//	public String getAdverEffectiveInfoList(Page<TAdverEffectiveInfo> page, TAdverEffectiveInfo info, Model model)
+//	{
+//		addModel(model, "pageList", adverEffectiveInfoService.queryPage(page, info));
+//		addModel(model, "bean", info);
+//		
+//		return "pc/adverEffectiveInfo/list";
+//	}
 	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) 

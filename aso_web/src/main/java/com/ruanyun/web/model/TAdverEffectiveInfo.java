@@ -19,10 +19,10 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="t_adver_effective_info"
 )
-public class TAdverEffectiveInfo  implements java.io.Serializable {
-
-
-     private Integer effectiveId;
+public class TAdverEffectiveInfo  implements java.io.Serializable 
+{
+	private static final long serialVersionUID = 1L;
+	private Integer effectiveId;
      private String effectiveNum;
      private String channelNum;
      private String channelName;
@@ -54,7 +54,8 @@ public class TAdverEffectiveInfo  implements java.io.Serializable {
      private Date endtime;//查询结束时间
      private String uniquePrimaryKey;  //回调的唯一主键
      
-    public TAdverEffectiveInfo() {
+    public TAdverEffectiveInfo() 
+    {
     }
 
     public TAdverEffectiveInfo(String effectiveNum, String channelNum, String channelName, String adverNum, String adverName, String adverStepNum, String adverStepName, Float score, String ip, String ipName, String userNum, String remark, String phoneSerialNumber, String systemVersion, String imei, String idfa, String openudid, String mac, String phoneModel, String phoneOther, String flag1, String flag2, String flag3, String flag4, String flag5, Date updatetime, Date createtime) {
@@ -87,8 +88,7 @@ public class TAdverEffectiveInfo  implements java.io.Serializable {
        this.createtime = createtime;
     }
    
-     @Id @GeneratedValue(strategy=IDENTITY)
-    
+    @Id @GeneratedValue(strategy=IDENTITY)
     @Column(name="effective_id", unique=true, nullable=false)
     public Integer getEffectiveId() {
         return this.effectiveId;

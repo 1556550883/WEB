@@ -20,13 +20,9 @@ import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TUserappidAdverid;
 
-/**
- *@author feiyang
- *@date 2016-1-6
- */
 @Repository("channelInfoDao")
-public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> {
-	
+public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> 
+{
 	/**
 	 * 
 	 * 功能描述:
@@ -38,13 +34,18 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> {
 	 *@date 2016-1-13
 	 */
 	@Override
-	protected String queryPageSql(TChannelInfo t, Map<String, Object> params) {
+	protected String queryPageSql(TChannelInfo t, Map<String, Object> params) 
+	{
 		StringBuffer sql=new StringBuffer(" from TChannelInfo where 1=1 ");
-		if(EmptyUtils.isNotEmpty(t.getChannelType())){
-			sql.append(" and channelType='"+t.getChannelType()+"'");
-		}if(EmptyUtils.isNotEmpty(t.getChannelName())){
-			sql.append(" and channelName='"+t.getChannelName()+"'");
+		if(EmptyUtils.isNotEmpty(t.getChannelType()))
+		{
+			sql.append(" and channelType='" + t.getChannelType()+"'");
 		}
+		if(EmptyUtils.isNotEmpty(t.getChannelName()))
+		{
+			sql.append(" and channelName='" + t.getChannelName()+"'");
+		}
+		
 		sql.append(" order by createDate desc");
 		return sql.toString();
 	}
@@ -59,12 +60,15 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> {
 	 *@author feiyang
 	 *@date 2016-1-13
 	 */
-	public Page<TChannelInfo> PageSql(Page<TChannelInfo> page,TChannelInfo info){
-		StringBuffer sql=new StringBuffer(" SELECT * from t_channel_info WHERE channel_type ="+info.getChannelType());
-		if (EmptyUtils.isNotEmpty(info.getSystemType())) {
-			sql.append(" and system_type='"+info.getSystemType()+"'");
+	public Page<TChannelInfo> PageSql(Page<TChannelInfo> page,TChannelInfo info)
+	{
+		StringBuffer sql = new StringBuffer(" SELECT * from t_channel_info WHERE channel_type =" + info.getChannelType());
+		if (EmptyUtils.isNotEmpty(info.getSystemType()))
+		{
+			sql.append(" and system_type='" + info.getSystemType() + "'");
 		}
 		sql.append(" ORDER BY create_date desc");
+		
 		return sqlDao.queryPage(page, TChannelInfo.class, sql.toString());
 	}
 	
@@ -77,19 +81,24 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> {
 	 *@author feiyang
 	 *@date 2016-1-28
 	 */
-	public TChannelInfo getChannelInfoBySystemType(String channelType,String systemType,String userNum){
-		StringBuffer sql=new StringBuffer(" SELECT * from t_channel_info WHERE channel_type ="+channelType);
-		if (EmptyUtils.isNotEmpty(systemType)) {
-			sql.append(" and system_type='"+systemType+"'");
+	public TChannelInfo getChannelInfoBySystemType(String channelType,String systemType,String userNum)
+	{
+		StringBuffer sql = new StringBuffer(" SELECT * from t_channel_info WHERE channel_type =" + channelType);
+		if (EmptyUtils.isNotEmpty(systemType)) 
+		{
+			sql.append(" and system_type='" + systemType + "'");
 		}
 		sql.append(" ORDER BY create_date desc");
+		
 		return sqlDao.get(TChannelInfo.class, sql.toString());	
 	}
 	
 	/**
 	 * idfa统计
 	 */
-	public Page<TUserappidAdverid> queryIdfaStatistics(Page<TUserappidAdverid> page, String channelNum, String completeTime) throws ParseException {
+	public Page<TUserappidAdverid> queryIdfaStatistics(Page<TUserappidAdverid> page, String channelNum, String completeTime) 
+			throws ParseException 
+	{
 		List<TUserappidAdverid> result = new ArrayList<TUserappidAdverid>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
@@ -100,10 +109,16 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> {
 		
 		StringBuilder sql = new StringBuilder("SELECT adver_id,adver_name,adid")
 		.append(" FROM t_channel_adver_info")
-		.append(" WHERE channel_num='").append(channelNum).append("'")
+		.append(" WHERE channel_num='")
+		.append(channelNum)
+		.append("'")
 		.append(" AND adver_price>0.02")
 		.append(" AND exists(select 1 from t_userappid_adverid where adver_id=t_channel_adver_info.adver_id AND status='2'")
-		.append(" AND complete_time between '").append(sdf3.format(sdf2.parse(completeTime))).append("' and '").append(sdf3.format(sdf2.parse(completeTime))).append(" 23:59:59')")
+		.append(" AND complete_time between '")
+		.append(sdf3.format(sdf2.parse(completeTime)))
+		.append("' and '")
+		.append(sdf3.format(sdf2.parse(completeTime)))
+		.append(" 23:59:59')")
 		.append(" ORDER BY adid ASC,adver_id ASC");
 		List<TChannelAdverInfo> adverList = sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 		if(adverList != null)
@@ -116,6 +131,7 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> {
 					.append(" AND status='2'")
 					.append(" AND complete_time between '").append(sdf3.format(sdf2.parse(completeTime))).append("' and '").append(sdf3.format(sdf2.parse(completeTime))).append(" 23:59:59'")
 					.append(" ORDER BY complete_time ASC");
+				
 				List<TUserappidAdverid> taskList = sqlDao.getAll(TUserappidAdverid.class, sql.toString());
 				
 				if(taskList != null)
@@ -155,7 +171,9 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo> {
 	/**
 	 * 员工idfa统计
 	 */
-	public Page<TUserappidAdverid> queryEmployeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime) throws ParseException {
+	public Page<TUserappidAdverid> queryEmployeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime) 
+			throws ParseException 
+	{
 		List<TUserappidAdverid> result = new ArrayList<TUserappidAdverid>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");

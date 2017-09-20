@@ -2,44 +2,45 @@ package com.ruanyun.common.model;
 
 import java.util.List;
 
-public class Page<E> {
-	
+public class Page<E>
+{
 	/**
 	 * 默认条数
 	 */
-	public  final static  Integer PAGE_SIZE_DEFAULT=50;
+	public final static Integer PAGE_SIZE_DEFAULT = 50;
 	
 	/**
 	 * 当前页
 	 */
-	private Integer currentPage=1;
+	private Integer currentPage = 1;
 	
 	/**
 	 * 上一页
 	 */
-	private Integer pre=0;
+	private Integer pre = 0;
 	
 	/**
 	 * 下一页
 	 */
-	private Integer next=0;
+	private Integer next = 0;
+	
 	//可以将dwz传过来的pageNum进行初始化
-	private int pageNum=1;//dwz分页使用
+	private int pageNum = 1;//dwz分页使用
 	
 	/**
 	 * 每页显示条数
 	 */
-	private Integer numPerPage=PAGE_SIZE_DEFAULT;
+	private Integer numPerPage = PAGE_SIZE_DEFAULT;
 	
 	/**
 	 * 页数
 	 */
-	private Integer totalPage=0;
+	private Integer totalPage = 0;
 	
 	/**
 	 * 条数
 	 */
-	private Integer totalCount=0;
+	private Integer totalCount = 0;
 	
 	/**
 	 * 根据那列排序显示
@@ -58,42 +59,51 @@ public class Page<E> {
 
 	private String flag;
 
-	public Integer getCurrentPage() {
-		currentPage=pageNum;
+	public Integer getCurrentPage() 
+	{
+		currentPage = pageNum;
 		//当页面传来的 当前页大于 总页数，显示最后一页
-		 if (currentPage>totalPage) {
-			 currentPage=totalPage;
+		 if (currentPage>totalPage)
+		 {
+			 currentPage = totalPage;
 		 }
 		
 		return currentPage;
 	}
 
-	public void setCurrentPage(Integer currentPage) {
+	public void setCurrentPage(Integer currentPage) 
+	{
 		this.currentPage = currentPage;
 	}
 
-	public Integer getPre() {
+	public Integer getPre() 
+	{
 		return pre;
 	}
 
-	public void setPre(Integer pre) {
+	public void setPre(Integer pre)
+	{
 		this.pre = pre;
 	}
 
-	public Integer getNext() {
+	public Integer getNext() 
+	{
 		return next;
 	}
 
-	public void setNext(Integer next) {
+	public void setNext(Integer next) 
+	{
 		this.next = next;
 	}
 
 	
-	public Integer getNumPerPage() {
+	public Integer getNumPerPage() 
+	{
 		return numPerPage;
 	}
 
-	public void setNumPerPage(Integer numPerPage) {
+	public void setNumPerPage(Integer numPerPage)
+	{
 		this.numPerPage = numPerPage;
 	}
 

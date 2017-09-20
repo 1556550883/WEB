@@ -1,10 +1,5 @@
-/**
- * @author ZhangHuihua@msn.com
- * 
- */
 (function($){
 	$.fn.extend({
-
 		/**
 		 * options: reverse[true, false], eventType[click, hover], currentIndex[default index 0]
 		 * 			stTab[tabs selector], stTabPanel[tab panel selector]

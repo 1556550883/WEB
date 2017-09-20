@@ -35,7 +35,8 @@ import com.ruanyun.web.util.UploadCommon;
  *@date 2016-1-6
  */
 @Service
-public class ChannelInfoService extends BaseServiceImpl<TChannelInfo> {
+public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
+{
 
 	@Autowired
 	@Qualifier("channelInfoDao")
@@ -45,22 +46,26 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo> {
 	private UserService userService;
 
 	@Override
-	public Page<TChannelInfo> queryPage(Page<TChannelInfo> page, TChannelInfo t) {
-		// TODO Auto-generated method stub
+	public Page<TChannelInfo> queryPage(Page<TChannelInfo> page, TChannelInfo t) 
+	{
 		return channelInfoDao.queryPage(page, t);
 	}
 	
 	/**
 	 * idfa统计
 	 */
-	public Page<TUserappidAdverid> queryIdfaStatistics(Page<TUserappidAdverid> page, String channelNum, String completeTime) throws ParseException {
+	public Page<TUserappidAdverid> queryIdfaStatistics(Page<TUserappidAdverid> page, String channelNum, String completeTime) 
+			throws ParseException 
+	{
 		return channelInfoDao.queryIdfaStatistics(page, channelNum, completeTime);
 	}
 	
 	/**
 	 * 员工idfa统计
 	 */
-	public Page<TUserappidAdverid> queryEmployeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime) throws ParseException {
+	public Page<TUserappidAdverid> queryEmployeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime) 
+			throws ParseException 
+	{
 		return channelInfoDao.queryEmployeeIdfaStatistics(page, userAppId, completeTime);
 	}
 
@@ -70,37 +75,42 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo> {
 	 * @param t
 	 */
 	public Integer saveOrupdate(TChannelInfo info, HttpServletRequest request,
-			TUser user,MultipartFile picFile) {
-	
-		try {
-			if (picFile.getSize()!=0) {
+			TUser user,MultipartFile picFile) 
+	{
+		try 
+		{
+			if (picFile.getSize() != 0) 
+			{
 				UploadVo vo = UploadCommon.uploadPic(picFile, request,
 						Constants.FILE_IMG, "gif,jpg,jpeg,bmp,png");
-				if (vo.getResult()==1) {
+				if (vo.getResult() == 1) 
+				{
 					info.setChannelImg(vo.getFilename());
 				}
 			}
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 		
-		if (info != null) {
-			if (EmptyUtils.isNotEmpty(info.getChannelId())
-					&& info.getChannelId() != 0) {
-				TChannelInfo n = super.get(TChannelInfo.class, info
-						.getChannelId());
-				BeanUtils
-						.copyProperties(info, n, new String[] { "channelNum","createDate","channelType"});
+		if (info != null) 
+		{
+			if (EmptyUtils.isNotEmpty(info.getChannelId()) && info.getChannelId() != 0) 
+			{
+				TChannelInfo n = super.get(TChannelInfo.class, info.getChannelId());
+				BeanUtils.copyProperties(info, n, new String[] { "channelNum","createDate","channelType"});
 				channelInfoDao.update(n);
-			} else {
+			}
+			else 
+			{
 				info.setCreateDate(new Date());
 				info.setIsEnable(0);//默认不启用
 				channelInfoDao.save(info);
-				info.setChannelNum(NumUtils.getCommondNum(
-						NumUtils.CHANNEL_INFO, info.getChannelId()));
-
+				info.setChannelNum(NumUtils.getCommondNum(NumUtils.CHANNEL_INFO, info.getChannelId()));
 			}
 		}
+		
 		return 1;
 	}
 	/**
@@ -112,13 +122,16 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo> {
 	 *@author feiyang
 	 *@date 2016-1-22
 	 */
-	public int updateIsEnable(Integer id,Integer isEnable){
-		TChannelInfo oldChannelInfo=get(TChannelInfo.class, id);
-		if (EmptyUtils.isNotEmpty(oldChannelInfo)) {
+	public int updateIsEnable(Integer id,Integer isEnable)
+	{
+		TChannelInfo oldChannelInfo = get(TChannelInfo.class, id);
+		if (EmptyUtils.isNotEmpty(oldChannelInfo)) 
+		{
 			oldChannelInfo.setIsEnable(isEnable);
 			update(oldChannelInfo);
 			return 1;
 		}
+		
 		return 0;
 	}
 	
@@ -130,24 +143,29 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo> {
 	 *@author feiyang
 	 *@date 2016-1-8
 	 */
-	public TChannelInfo getInfoById(Integer id) {
+	public TChannelInfo getInfoById(Integer id) 
+	{
 		TChannelInfo info = super.get(TChannelInfo.class, id);
 		TUser user = userService.getInfoByUserNum(info.getChannelNum());
-		if (EmptyUtils.isNotEmpty(user))
+		if (EmptyUtils.isNotEmpty(user)) 
+		{
 			info.setLoginName(user.getLoginName());
+		}
+		
 		return info;
 	}
 	
-	public TChannelInfo getInfoByNum(String channelNum) {
+	public TChannelInfo getInfoByNum(String channelNum) 
+	{
 		TChannelInfo info = super.get(TChannelInfo.class,"channelNum", channelNum);
 		return info;
 	}
 	
-	public TChannelInfo getChannelInfoByChannelType(String channelType,String systemType,String userNum){
+	public TChannelInfo getChannelInfoByChannelType(String channelType,String systemType,String userNum)
+	{
 		//TChannelInfo channelInfo =super.get(TChannelInfo.class, "channelType",channelType);
-		TChannelInfo channelInfo =channelInfoDao.getChannelInfoBySystemType(channelType, systemType,userNum);
+		TChannelInfo channelInfo = channelInfoDao.getChannelInfoBySystemType(channelType, systemType,userNum);
+		
 		return channelInfo;
 	}
-	
-
 }

@@ -69,9 +69,10 @@ public class BaseDaoImpl<T> extends SessionBase  {
 	 * @param t 对象
 	 * @return
 	 */
-	public Page<T> queryPage(Page<T> page, T t) {
+	public Page<T> queryPage(Page<T> page, T t) 
+	{
 		Map<String, Object> map = new HashMap<String, Object>();
-		String queryString=queryPageSql(t,map);
+		String queryString = queryPageSql(t,map);
 		return hqlDao.queryPage(queryString,page, map);
 	}
 	

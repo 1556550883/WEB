@@ -98,9 +98,9 @@ public class CommonHqlDao extends SessionBase implements ICommonDao {
 	}
 	
 	@Override
-	public <X> Page<X> queryPage(String queryString, Page<X> _page,
-			Map<String, Object> params) {
-		Page<X> page= new Page<X>();
+	public <X> Page<X> queryPage(String queryString, Page<X> _page, Map<String, Object> params)
+	{
+		Page<X> page = new Page<X>();
 		BeanUtils.copyProperties(_page, page);
 		Assert.notNull(page, "page不能为空");
 		Assert.notNull(queryString,"queryString不能为空");
@@ -180,10 +180,10 @@ public class CommonHqlDao extends SessionBase implements ICommonDao {
 	 * @param page
 	 */
 	protected void setPageParameter(Query q, Page page)
-	  {
-	    q.setFirstResult(page.getFirstOfPage()-1);
-	    q.setMaxResults(page.getNumPerPage());
-	  }
+	{
+		q.setFirstResult(page.getFirstOfPage()-1);
+		q.setMaxResults(page.getNumPerPage());
+	}
 	
 	/**
 	 * 功能描述:设置 sql排序

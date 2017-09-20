@@ -71,7 +71,8 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	/**
 	 * 查询广告列表（后台显示）
 	 */
-	public Page<TChannelAdverInfo> PageSql3(Page<TChannelAdverInfo> page, String channelNum) {
+	public Page<TChannelAdverInfo> PageSql3(Page<TChannelAdverInfo> page, String channelNum)
+	{
 		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE 1=1 ");
 		sql.append(" and channel_num='").append(channelNum);
 		sql.append("' and adver_status in('0','1','2')");
@@ -84,6 +85,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 				item.setAdverCountComplete(sqlDao.getCount(sql.toString()));
 			}
 		}
+		
 		return page2;
 	}
 	
