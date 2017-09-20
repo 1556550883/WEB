@@ -199,7 +199,7 @@ public abstract class BaseController
 	 * @param encoding 编码
 	 * @param data 数据
 	 */
-	public void writeJsonDataApp(HttpServletResponse response,String encoding, Object data) 
+	public void writeJsonDataApp(HttpServletResponse response, String encoding, Object data) 
 	{
 		PrintWriter out=null;
 		try
@@ -218,7 +218,7 @@ public abstract class BaseController
 			}
 			else
 			{
-				 String result = JSONObject.fromObject(data, config).toString();
+				String result = JSONObject.fromObject(data, config).toString();
 				System.out.println(result);
 				out.print(result);
 			}

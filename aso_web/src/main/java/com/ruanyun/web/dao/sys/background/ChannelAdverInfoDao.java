@@ -24,40 +24,56 @@ import com.ruanyun.web.model.TChannelAdverInfo;
 @Repository("channelAdverInfoDao")
 public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	@Override
-	protected String queryPageSql(TChannelAdverInfo t,
-			Map<String, Object> params) {
-		StringBuffer sql = new StringBuffer(
-				" from TChannelAdverInfo where 1=1 ");
-		if (EmptyUtils.isNotEmpty(t)) {
+	protected String queryPageSql(TChannelAdverInfo t, Map<String, Object> params) 
+	{
+		StringBuffer sql = new StringBuffer(" from TChannelAdverInfo where 1=1 ");
+		
+		if (EmptyUtils.isNotEmpty(t)) 
+		{
 			sql.append(SQLUtils.popuHqlEq("channelNum", t.getChannelNum()));
 		}
+		
 		return sql.toString();
 	}
 
 	/**
 	 * 查询广告列表（手机端显示）
 	 */
-	public Page<TChannelAdverInfo> PageSql(Page<TChannelAdverInfo> page,TChannelAdverInfo info) {
+	public Page<TChannelAdverInfo> PageSql(Page<TChannelAdverInfo> page, TChannelAdverInfo info)
+	{
 		StringBuffer sql = new StringBuffer("SELECT * from t_channel_adver_info WHERE 1=1 ");
-		if(EmptyUtils.isNotEmpty(info)){
-			if (EmptyUtils.isNotEmpty(info.getChannelNum())) 
+		if(EmptyUtils.isNotEmpty(info))
+		{
+			if (EmptyUtils.isNotEmpty(info.getChannelNum()))
+			{
 				sql.append(" and channel_num='"+info.getChannelNum()+"'");
-			if (EmptyUtils.isNotEmpty(info.getAdverType())) 		
+			}
+			
+			if (EmptyUtils.isNotEmpty(info.getAdverType())) 	
+			{
 				sql.append(" AND adver_type ='"+info.getAdverType()+"'");
-			if (EmptyUtils.isNotEmpty(info.getPhoneType())) 		
+			}	
+			
+			if (EmptyUtils.isNotEmpty(info.getPhoneType())) 
+			{
 				sql.append(" AND phone_type in('"+info.getPhoneType()+"','无要求')");
+			}
+			
 			sql.append(SQLUtils.popuHqlMax2("adver_day_start", new Date()));
 			sql.append(SQLUtils.popuHqlMin2("adver_day_end", new Date()));
 		}
+		
 		sql.append(" and adver_status=1");
 		sql.append(" ORDER BY adver_createtime desc");
+		
 		return sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 	}
 
 	/**
 	 * 查询广告列表（手机端显示）
 	 */
-	public Page<TChannelAdverInfo> PageSql2(Page<TChannelAdverInfo> page, String channelType, String systemType, String phoneType) {
+	public Page<TChannelAdverInfo> PageSql2(Page<TChannelAdverInfo> page, String channelType, String systemType, String phoneType)
+	{
 		StringBuffer sql = new StringBuffer("SELECT * from t_channel_adver_info WHERE 1=1 ");
 		sql.append(" and channel_num in (select b.channel_num from t_channel_info b where b.channel_type='").append(channelType).append("' and b.system_type='").append(systemType).append("')");
 		sql.append(" and phone_type in('"+phoneType+"','无要求')");

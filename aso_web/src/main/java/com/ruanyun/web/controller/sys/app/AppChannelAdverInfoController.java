@@ -19,13 +19,10 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 
-/**
- *@author feiyang
- *@date 2016-1-13
- */
 @Controller
 @RequestMapping("app/channelAdverInfo")
-public class AppChannelAdverInfoController extends BaseController{
+public class AppChannelAdverInfoController extends BaseController
+{
 
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
@@ -35,13 +32,15 @@ public class AppChannelAdverInfoController extends BaseController{
 	 */
 	@RequestMapping("getAdverList")
 	public void getAdverInfoByChannelNum(HttpServletResponse response, HttpServletRequest request,
-			Page<TChannelAdverInfo>page,String channelType,String systemType,String phoneType,Integer userAppId){
+			Page<TChannelAdverInfo>page, String channelType, String systemType, String phoneType, Integer userAppId)
+	{
 		AppCommonModel model = new AppCommonModel();
 		
 		page.setNumPerPage(Integer.MAX_VALUE);
 		
 		if(!StringUtils.hasText(channelType) || !StringUtils.hasText(systemType)
-				||!StringUtils.hasText(phoneType) || userAppId == null || userAppId <= 0){
+				||!StringUtils.hasText(phoneType) || userAppId == null || userAppId <= 0)
+		{
 			model.setResult(-1);
 			model.setMsg("channelType、systemType、phoneType、userAppId不能为空！");
 			super.writeJsonDataApp(response, model);
@@ -57,8 +56,6 @@ public class AppChannelAdverInfoController extends BaseController{
 	 * 手机端接口:广告详细页
 	 * @param response
 	 * @param info
-	 *@author feiyang
-	 *@date 2016-1-13
 	 */
 	@RequestMapping("getAdverDetail")
 	public void getDetailByAdverNum(HttpServletResponse response,String adverNum,String userNum,String sign){

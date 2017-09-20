@@ -8,27 +8,21 @@ package com.ruanyun.web.controller.sys.app;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserLogin;
 import com.ruanyun.web.service.app.AppUserLoginService;
 
-/**
- *@author feiyang
- *@date 2016-1-11
- */
 @Controller
 @RequestMapping("app/user")
-public class AppUserLoginController extends BaseController {
-
+public class AppUserLoginController extends BaseController
+{
 	@Autowired
 	private AppUserLoginService appUserLoginService;
 
@@ -42,18 +36,22 @@ public class AppUserLoginController extends BaseController {
 	 *            LoginType 登录类型 1--账号登陆 2-QQ登陆 3-微信登陆 4--微博登陆 5-- 游客登录 手机唯一序列号
 	 *            phoneSerialNumber 手机序列号
 	 * @param session 
-	 *@author feiyang
-	 *@date 2016-1-11
 	 */
 	@RequestMapping("login")
-	public void doLogin(HttpServletResponse response,HttpServletRequest request,TUserLogin tUserLogin,HttpSession session,String phoneSerialNumber, String userNum, String sign) {
+	public void doLogin(HttpServletResponse response, HttpServletRequest request, TUserLogin tUserLogin,
+			HttpSession session, String phoneSerialNumber, String userNum, String sign)
+	{
 		AppCommonModel acm = null;
 		String ip = request.getRemoteAddr();
-		try {
-			acm = appUserLoginService.addLogin(request,tUserLogin,phoneSerialNumber,ip);
-		} catch (Exception e) {
+		try 
+		{
+			acm = appUserLoginService.addLogin(request, tUserLogin, phoneSerialNumber, ip);
+		} 
+		catch (Exception e) 
+		{
 			acm = new AppCommonModel(e.getMessage(), "{}");
 		}
+		
 		super.writeJsonDataApp(response, acm);
 	}
 	
@@ -61,16 +59,23 @@ public class AppUserLoginController extends BaseController {
 	 * 手机端接口:游客登录
 	 */
 	@RequestMapping("visitorLogin")
-	public void visitorLogin(HttpServletResponse response,HttpServletRequest request,TUserApp tUserApp) {
+	public void visitorLogin(HttpServletResponse response,HttpServletRequest request,TUserApp tUserApp) 
+	{
 		AppCommonModel model = new AppCommonModel(-1, "登录失败！");
 		
-		if(tUserApp == null || !StringUtils.hasText(tUserApp.getIdfa())){
+		if(tUserApp == null || !StringUtils.hasText(tUserApp.getIdfa()))
+		{
 			model.setResult(-1);
 			model.setMsg("请求参数idfa不能为空！");
-		}else{
-			try {
+		}
+		else
+		{
+			try
+			{
 				model = appUserLoginService.visitorLogin(tUserApp);
-			} catch (Exception e) {
+			}
+			catch (Exception e) 
+			{
 				model.setResult(-1);
 				model.setMsg(e.getMessage());
 			}
@@ -81,8 +86,6 @@ public class AppUserLoginController extends BaseController {
 	
 	/**
 	 * 功能描述:发送短信
-	 *
-	 * @author yangliu  2016年9月19日 上午8:18:49
 	 * 
 	 * @param response
 	 * @param userNum
@@ -90,14 +93,19 @@ public class AppUserLoginController extends BaseController {
 	 * @param request
 	 */
 	@RequestMapping("send_msg")
-	public void sendMsg(HttpServletResponse response,String loginName,String type) {
-		AppCommonModel model=null;
-		try {
-			model=appUserLoginService.sendMsg(loginName, type);
-		} catch (Exception e) {
+	public void sendMsg(HttpServletResponse response, String loginName, String type) 
+	{
+		AppCommonModel model = null;
+		try 
+		{
+			model = appUserLoginService.sendMsg(loginName, type);
+		}
+		catch (Exception e) 
+		{
 			logger.error("send_msg:"+e.getMessage());
 			model = new AppCommonModel(-1,e.getMessage());
 		}
+		
 		super.writeJsonDataApp(response, model);
 	}	
 
