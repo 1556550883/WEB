@@ -56,17 +56,20 @@ public class AdverEffectiveInfoDao extends BaseDaoImpl<TAdverEffectiveInfo> {
 	 *@author feiyang
 	 *@date 2016-1-14
 	 */
-	public Page<TAdverEffectiveInfo> pageSql(Page<TAdverEffectiveInfo> page,
-			String userNum) {
-		StringBuffer sql = new StringBuffer(
-				" SELECT * from t_adver_effective_info WHERE 1=1");
-		if (EmptyUtils.isNotEmpty(userNum)) {
+	public Page<TAdverEffectiveInfo> pageSql(Page<TAdverEffectiveInfo> page, String userNum) 
+	{
+		StringBuffer sql = new StringBuffer(" SELECT * from t_adver_effective_info WHERE 1=1");
+		
+		if (EmptyUtils.isNotEmpty(userNum)) 
+		{
 			sql.append(" and user_num ='" + userNum + "'");
 		}
+		
 		sql.append(" order by createtime desc");
-		return sqlDao
-				.queryPage(page, TAdverEffectiveInfo.class, sql.toString());
+		
+		return sqlDao.queryPage(page, TAdverEffectiveInfo.class, sql.toString());
 	}
+	
 	/**
 	 * 
 	 * 手机端接口:获取最热列表
@@ -105,5 +108,4 @@ public class AdverEffectiveInfoDao extends BaseDaoImpl<TAdverEffectiveInfo> {
 		}
 		return sqlDao.getCount(sql.toString());
 	}
-
 }

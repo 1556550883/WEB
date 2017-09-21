@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.AppCommonModel;
-import com.ruanyun.web.model.TUserLogin;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.service.app.AppUserScoreService;
-import com.ruanyun.web.util.HttpSessionUtils;
 
 /**
  *@author feiyang
@@ -75,8 +73,4 @@ public class AppUserScoreController extends BaseController{
 		}		
 		super.writeJsonDataApp(response, model);
 	}
-	
-	
-	
-	
 }

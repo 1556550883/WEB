@@ -22,10 +22,10 @@ import com.ruanyun.web.service.app.AppAdverEffectiveInfoService;
  */
 @Controller
 @RequestMapping("app/adverEffective")
-public class AppAdverEffectiveInfoController extends BaseController{
+public class AppAdverEffectiveInfoController extends BaseController
+{
 	@Autowired
 	private AppAdverEffectiveInfoService appAdverEffectiveInfoService;
-	
 	
 	/**
 	 * 
@@ -38,14 +38,18 @@ public class AppAdverEffectiveInfoController extends BaseController{
 	 *@date 2016-1-14
 	 */
 	@RequestMapping("getAll")
-	public void getAllAdverEffective(HttpServletResponse response,Page<TAdverEffectiveInfo>page,String userNum,String sign){
+	public void getAllAdverEffective(HttpServletResponse response,Page<TAdverEffectiveInfo>page,String userNum,String sign)
+	{
 		AppCommonModel model=new AppCommonModel();	
-		try {
+		try 
+		{
 			page.setNumPerPage(20);
 			model=appAdverEffectiveInfoService.getAllAdverEffective(page, userNum);
-		} catch (Exception e) {
+		} catch (Exception e) 
+		{
 			model=new AppCommonModel(-1,"数据异常");
 		}		
+		
 		super.writeJsonDataApp(response, model);
 	}
 	/**

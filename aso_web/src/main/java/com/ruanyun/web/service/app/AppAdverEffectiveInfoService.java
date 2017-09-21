@@ -35,10 +35,9 @@ public class AppAdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiv
 	 * @param tUserLogin
 	 * 根据UserNum获取分页信息
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-14
 	 */
-	public AppCommonModel getAllAdverEffective(Page<TAdverEffectiveInfo>page,String userNum){		
+	public AppCommonModel getAllAdverEffective(Page<TAdverEffectiveInfo>page,String userNum)
+	{		
 		AppCommonModel model=new AppCommonModel(1,"");
 		model.setObj(adverEffectiveInfoDao.pageSql(page, userNum));
 		return model;

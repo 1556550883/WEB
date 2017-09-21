@@ -21,8 +21,8 @@ import com.ruanyun.web.service.app.AppUserSignService;
  */
 @Controller
 @RequestMapping("app/appUserSign")
-public class AppUserSignController extends BaseController{
-
+public class AppUserSignController extends BaseController
+{
 	@Autowired
 	private AppUserSignService appUserSignService;
 	
@@ -37,13 +37,18 @@ public class AppUserSignController extends BaseController{
 	 *@date 2016-1-23
 	 */
 	@RequestMapping("addTUserSign")
-	public void addTUserSign(HttpServletResponse response,String userNum,String sign,TUserSign tUserSign){
+	public void addTUserSign(HttpServletResponse response,String userNum,String sign,TUserSign tUserSign)
+	{
 		AppCommonModel model = new AppCommonModel();
-		try {
+		try 
+		{
 			model=appUserSignService.addTUserSign(userNum, tUserSign.getSignTime());
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			model = new AppCommonModel(-1, "数据异常");
 		}
+		
 		super.writeJsonDataApp(response, model);
 	}
 }

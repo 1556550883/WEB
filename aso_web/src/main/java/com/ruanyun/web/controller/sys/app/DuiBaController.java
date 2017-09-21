@@ -106,8 +106,4 @@ public class DuiBaController extends BaseController{
 		    e.printStackTrace();
 		}
 	}
-	
-	
-	
-
 }

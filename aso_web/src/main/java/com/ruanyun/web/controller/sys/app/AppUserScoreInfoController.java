@@ -22,10 +22,10 @@ import com.ruanyun.web.service.app.AppUserScoreInfoService;
  */
 @Controller
 @RequestMapping("app/userScoreInfo")
-public class AppUserScoreInfoController extends BaseController {
+public class AppUserScoreInfoController extends BaseController
+{
 	@Autowired
 	private AppUserScoreInfoService appUserScoreInfoService;
-
 	
 	/**
 	 * 
@@ -40,14 +40,20 @@ public class AppUserScoreInfoController extends BaseController {
 	 *@date 2016-1-20
 	 */
 	@RequestMapping("getMyScoreList")
-	public void getMyScoreList(HttpServletResponse response, HttpSession session,Page<TUserScoreInfo>page,Integer type, String userNum, String sign) {
+	public void getMyScoreList(HttpServletResponse response, HttpSession session,
+			Page<TUserScoreInfo>page,Integer type, String userNum, String sign) 
+	{
 		AppCommonModel acm = null;
-		try {
+		try 
+		{
 			page.setNumPerPage(20);
 			acm = appUserScoreInfoService.getMyScoreList(page,userNum,type);
-		} catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			acm = new AppCommonModel(e.getMessage(), "{}");
 		}
+		
 		super.writeJsonDataApp(response, acm);
 	}
 }

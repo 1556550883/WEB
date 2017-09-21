@@ -12,21 +12,21 @@ import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.web.service.background.ActivateionService;
 @Controller
 @RequestMapping("app/activation")
-public class AdverActivationController extends BaseController{
+public class AdverActivationController extends BaseController
+{
 	@Autowired
 	private ActivateionService activateionService;
 	
 	/**
 	 * 功能描述:广告激活
 	 *
-	 * @author yangliu  2016年1月27日 上午10:59:36
-	 * 
 	 * @param request
 	 * @param response
 	 * @param adverNum
 	 */
 	@RequestMapping(value="adver/{adverNum}")//,method = RequestMethod.POST
-	public void adverActivateion(HttpServletRequest request,HttpServletResponse response,@PathVariable String adverNum){
+	public void adverActivateion(HttpServletRequest request,HttpServletResponse response,@PathVariable String adverNum)
+	{
 		String msg=activateionService.activateionAdver(adverNum, request);
 		super.writeText(response, msg);
 	}
@@ -34,21 +34,20 @@ public class AdverActivationController extends BaseController{
 	/**
 	 * 功能描述:渠道激活
 	 *
-	 * @author yangliu  2016年1月27日 上午10:59:56
-	 * 
 	 * @param request
 	 * @param response
 	 * @param channelNum
 	 */
 	@RequestMapping(value="channel/{channelNum}")//,method = RequestMethod.POST
-	public void channelActivateion(HttpServletRequest request,HttpServletResponse response,@PathVariable String channelNum){
+	public void channelActivateion(HttpServletRequest request,HttpServletResponse response,@PathVariable String channelNum)
+	{
 		String msg=activateionService.activateionChannel(channelNum, request);
 		super.writeText(response, msg);
 	}
+	
 	@RequestMapping("test")
-	public void  test(HttpServletRequest request,HttpServletResponse response) {
+	public void  test(HttpServletRequest request,HttpServletResponse response) 
+	{
 		super.writeText(response, "dafadfa");
 	}
-	
-
 }

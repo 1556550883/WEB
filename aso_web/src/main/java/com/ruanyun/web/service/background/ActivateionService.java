@@ -20,7 +20,8 @@ import com.ruanyun.web.util.EncrypDES;
 import net.sf.json.JSONObject;
 
 @Service
-public class ActivateionService  {
+public class ActivateionService 
+{
 	protected org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(this.getClass());
 	
 	@Autowired
@@ -34,65 +35,75 @@ public class ActivateionService  {
 	@Autowired
 	private ChannelAdverStepUserService channelAdverStepUserService;
 	
-	
 	/**
 	 * 功能描述: 广告回调有效
 	 *
-	 * @author yangliu  2016年1月26日 下午11:44:58
-	 * 
 	 * @param adverNum
 	 * @param request
 	 * @return
 	 */
 	@Transactional
-	public String activateionAdver(String adverNum,HttpServletRequest request){
-		adverNum=EncrypDES.decryptEde(adverNum);
-		String msg="";
-		if(EmptyUtils.isEmpty(adverNum))
+	public String activateionAdver(String adverNum,HttpServletRequest request)
+	{
+		adverNum = EncrypDES.decryptEde(adverNum);
+		String msg = "";
+
+		if(EmptyUtils.isEmpty(adverNum)) 
+		{
 			return msg;
-		Map<String, TAdverInferface> map=adverInferfaceService.getMapAdverInferfaceByAdverNum(adverNum, Constants.PARAMETER_INFERFACE_REQUEST_TYPE_SERVER, Constants.PARAMETER_INFERFACE_TYPE_ADVER);
-		TAdverEffectiveInfo errectiveInfo=getErrectiveInfo(request,map);
-		msg=getInferfaceValue(map, Constants.PARAMETER_ERROR);
-		if(EmptyUtils.isEmpty(errectiveInfo.getPhoneSerialNumber())){  //用户为空
+		}
+		
+		Map<String, TAdverInferface> map = adverInferfaceService.getMapAdverInferfaceByAdverNum(adverNum, 
+				Constants.PARAMETER_INFERFACE_REQUEST_TYPE_SERVER, Constants.PARAMETER_INFERFACE_TYPE_ADVER);
+		TAdverEffectiveInfo errectiveInfo = getErrectiveInfo(request,map);
+		msg = getInferfaceValue(map, Constants.PARAMETER_ERROR);
+
+		if(EmptyUtils.isEmpty(errectiveInfo.getPhoneSerialNumber()))
+		{  
+			//用户为空
 			logger.error("唯一标识不存在");
 			return msg;
 		}
 		
-		TChannelAdverInfo  adverInfo=channelAdverInfoService.getInfoByAdverNum(adverNum);
-		if(EmptyUtils.isEmpty(adverInfo)){
+		TChannelAdverInfo  adverInfo = channelAdverInfoService.getInfoByAdverNum(adverNum);
+		
+		if(EmptyUtils.isEmpty(adverInfo))
+		{
 			logger.error("广告不存在:"+adverNum);
 			return msg;
 		}
-		Integer count=adverEffectiveInfoService.getEffectiveInfoByAdverNum(adverNum, errectiveInfo.getUniquePrimaryKey());
-		if(count>0){
+		
+		Integer count = adverEffectiveInfoService.getEffectiveInfoByAdverNum(adverNum, errectiveInfo.getUniquePrimaryKey());
+		if(count>0)
+		{
 			logger.error("数据已重复 重复编号为:"+errectiveInfo.getUniquePrimaryKey());
 			return msg;
 		}
 		//TChannelInfo channelInfo=channelInfoService.getInfoByNum(channelNum);
 	//	errectiveInfo.setChannelName(channelInfo.getChannelName());
-		TChannelAdverStepUser adverStepUser=channelAdverStepUserService.getNewAdverStepUser(adverNum, "", errectiveInfo.getPhoneSerialNumber(),"");
-		if(EmptyUtils.isNotEmpty(adverStepUser)){
+		TChannelAdverStepUser adverStepUser = channelAdverStepUserService.getNewAdverStepUser(adverNum, "", errectiveInfo.getPhoneSerialNumber(),"");
+		
+		if(EmptyUtils.isNotEmpty(adverStepUser))
+		{
 			errectiveInfo.setChannelNum(adverInfo.getChannelNum());
 			adverEffectiveInfoService.saveAdverEffectiveInfo(adverStepUser.getUserAppNum(), errectiveInfo);
 		}
+		
 		return getInferfaceValue(map, Constants.PARAMETER_SUCCESS);
 	}
 	
 	/**
 	 * 功能描述: 渠道回调有效
 	 *
-	 * @author yangliu  2016年1月26日 下午11:45:11
-	 * 
 	 * @param channelNum
 	 * @param request
 	 * @return
 	 */
 	@Transactional
-	public String activateionChannel(String channelNum,HttpServletRequest request){
-		
+	public String activateionChannel(String channelNum,HttpServletRequest request)
+	{
 		String msg="";
 		channelNum=EncrypDES.decryptEde(channelNum);
-		
 		
 		logger.error("channelNum:"+channelNum+"====="+JSONObject.fromObject(request.getParameterMap()).toString());
 		System.out.println("==========="+JSONObject.fromObject(request.getParameterMap()).toString());
@@ -105,39 +116,48 @@ public class ActivateionService  {
 			logger.error("用户编号为空");
 			return msg;
 		}
-		if(EmptyUtils.isEmpty(errectiveInfo.getUniquePrimaryKey())){
+		if(EmptyUtils.isEmpty(errectiveInfo.getUniquePrimaryKey()))
+		{
 			logger.error("唯一标识符 为空");
 			return msg;
 		}
-		TChannelInfo channelInfo=channelInfoService.getInfoByNum(channelNum);
-		if(EmptyUtils.isEmpty(channelInfo)){
+		
+		TChannelInfo channelInfo = channelInfoService.getInfoByNum(channelNum);
+		
+		if(EmptyUtils.isEmpty(channelInfo))
+		{
 			logger.error("渠道不存在:"+channelNum);
 			return msg;
 		}
-		Integer count=adverEffectiveInfoService.getEffectiveInfo(channelNum,errectiveInfo.getUniquePrimaryKey());
-		if(count>0){
-			logger.error("数据已重复 重复编号为:"+errectiveInfo.getUniquePrimaryKey());
+		
+		Integer count = adverEffectiveInfoService.getEffectiveInfo(channelNum,errectiveInfo.getUniquePrimaryKey());
+		
+		if(count > 0)
+		{
+			logger.error("数据已重复 重复编号为:" + errectiveInfo.getUniquePrimaryKey());
 			return msg;
 		}
+		
 		errectiveInfo.setChannelName(channelInfo.getChannelName());
 		errectiveInfo.setChannelNum(channelNum);
 		adverEffectiveInfoService.saveAdverEffectiveInfo(errectiveInfo.getUserNum(), errectiveInfo);
 		return getInferfaceValue(map, Constants.PARAMETER_SUCCESS);
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) 
+	{
 		System.out.println(EncrypDES.encryptEde("chdomob0000003"));
 	}
+	
 	/**
 	 * 功能描述: 重request 取值放到 有效记录中去
 	 *
-	 * @author yangliu  2016年1月26日 下午10:07:31
-	 * 
 	 * @param request 
 	 * @param map
 	 * @return
 	 */
-	private TAdverEffectiveInfo getErrectiveInfo(HttpServletRequest request, Map<String, TAdverInferface> map) {
+	private TAdverEffectiveInfo getErrectiveInfo(HttpServletRequest request, Map<String, TAdverInferface> map) 
+	{
 		TAdverEffectiveInfo info = new TAdverEffectiveInfo();
 		info.setIdfa(request.getParameter(getInferfaceValue(map, Constants.PARAMETER_IDFA)));
 		info.setImei(request.getParameter(getInferfaceValue(map, Constants.PARAMETER_IMEI)));
@@ -148,20 +168,29 @@ public class ActivateionService  {
 		info.setIp(request.getParameter(getInferfaceValue(map, Constants.PARAMETER_IP)));
 		String uniquePrimaryKey=getInferfaceValue(map, Constants.PARAMETER_UNIQUEPRIMARYKEY);
 		
-		if(uniquePrimaryKey.indexOf(",")>0){  //判断唯一标识
+		if(uniquePrimaryKey.indexOf(",")>0)
+		{  //判断唯一标识
 			String[] params=uniquePrimaryKey.split(",");
 			String values="";
-			for(String param : params){
+			for(String param : params)
+			{
 				values=values+"_"+request.getParameter(param);
 			}
+			
 			info.setUniquePrimaryKey(values);	
-		}else{
+		}
+		else
+		{
 			info.setUniquePrimaryKey(request.getParameter(uniquePrimaryKey));
 		}
 		
 		String score=request.getParameter(getInferfaceValue(map, Constants.PARAMETER_ADVER_SCORE));
+		
 		if(EmptyUtils.isNotEmpty(score))  //记录分数
+		{
 			info.setScore(Float.parseFloat(score));
+		}
+		
 		info.setPhoneSerialNumber(request.getParameter(getInferfaceValue(map, Constants.PARAMETER_PHONESERIALNUMBER)));
 		info.setUserNum(request.getParameter(getInferfaceValue(map, Constants.PARAMETER_USERNUM)));
 		info.setAdverName(request.getParameter(getInferfaceValue(map, Constants.PARAMETER_ADVER_NAME)));
@@ -170,19 +199,16 @@ public class ActivateionService  {
 	
 	/**
 	 * 功能描述: 获取 客户的参数与我们参数对应的名称
-	 *
-	 * @author yangliu  2016年1月26日 下午10:01:37
 	 * 
 	 * @param map
 	 * @param key
 	 * @return
 	 */
-	public String getInferfaceValue(Map<String, TAdverInferface> map,String key){
+	public String getInferfaceValue(Map<String, TAdverInferface> map,String key)
+	{
 		TAdverInferface adverInferface=map.get(key);
 		if(EmptyUtils.isNotEmpty(adverInferface))
 			return adverInferface.getParameterName().trim();
 		return "";
 	}
-	
-
 }
