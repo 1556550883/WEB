@@ -300,8 +300,8 @@ public class BaseDaoImpl<T> extends SessionBase  {
 	 * @return
 	 */
 	@SuppressWarnings("hiding")
-	public <T> T get(Class<T> entityClass, String[] propertyNames,
-			Object[] values) {
+	public <T> T get(Class<T> entityClass, String[] propertyNames, Object[] values) 
+	{
 		return hqlDao.get(entityClass, propertyNames, values);
 	}	
 	

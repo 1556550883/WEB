@@ -12,42 +12,52 @@ package com.ruanyun.web.model;
  *  修改历史:<br/>
  *
  */
-public class AppCommonModel {
+public class AppCommonModel
+{
 	public static final int ERROR=-1;
 	public static final int ERROR_NOUSER=-10;
 	public static final int SUCCESS=1;
-	
-	
 	
 	/**
 	 * 系统异常创建对象
 	 * @param msg
 	 * @param obj
 	 */
-	public AppCommonModel(String msg, Object obj) {
+	public AppCommonModel(String msg, Object obj) 
+	{
 		this.result=ERROR;
 		this.msg = msg;
 		this.obj = obj;
 	}
-	public AppCommonModel() {
+	
+	public AppCommonModel()
+	{
 		super();
 	}
-	public AppCommonModel(Integer result) {
+	
+	public AppCommonModel(Integer result) 
+	{
 		super();
 		this.result = result;
 	}
-	public AppCommonModel(Integer result, String msg) {
+	
+	public AppCommonModel(Integer result, String msg)
+	{
 		super();
 		this.result = result;
 		this.msg = msg;
 	}
-	public AppCommonModel(Integer result, String msg, Object obj) {
+	
+	public AppCommonModel(Integer result, String msg, Object obj)
+	{
 		super();
 		this.result = result;
 		this.msg = msg;
 		this.obj = obj;
 	}
-	public AppCommonModel(Integer result, String msg, Object obj,String access_token) {
+	
+	public AppCommonModel(Integer result, String msg, Object obj,String access_token)
+	{
 		super();
 		this.result = result;
 		this.msg = msg;

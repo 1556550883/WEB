@@ -60,15 +60,21 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>{
 	/**
 	 * 查询appleId排重开关
 	 */
-	public String getAppleIdCheck(){
-		if (!StringUtils.hasText(appleIdCheck)) {
+	public String getAppleIdCheck()
+	{
+		if (!StringUtils.hasText(appleIdCheck)) 
+		{
 			TDictionary dictionary = super.get(TDictionary.class, "parentCode", "APPLE_ID_CHECK");
-			if (dictionary == null) {
+			if (dictionary == null) 
+			{
 				appleIdCheck = "1";//默认开启
-			} else {
+			}
+			else 
+			{
 				appleIdCheck = dictionary.getItemCode();
 			}
 		}
+		
 		return appleIdCheck;
 	}
 	

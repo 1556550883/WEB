@@ -24,7 +24,8 @@ public class YunJu extends BaseChannel {
 	/**
 	 * 排重
 	 */
-	public static AppCommonModel paiChong(String domain, String adid, String idfa){
+	public static AppCommonModel paiChong(String domain, String adid, String idfa)
+	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		//调用第三方排重接口
@@ -34,23 +35,33 @@ public class YunJu extends BaseChannel {
 				.append("&idfa=").append(idfa);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
-		if(jsonObject == null){
+		if(jsonObject == null)
+		{
 			log.error("request url：" + url + "。response：null");
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：系统出错！");
-		}else{
+		}
+		else
+		{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
 			Integer status = (Integer)jsonObject.get(idfa);
-			if(status == null){
+			if(status == null)
+			{
 				model.setResult(-1);
 				model.setMsg("领取任务失败。原因：系统出错！");
-			}else if(status == 0){
+			}
+			else if(status == 0)
+			{
 				model.setResult(1);
 				model.setMsg("未重复，可以领取任务！");
-			}else if(status == 1){
+			}
+			else if(status == 1)
+			{
 				model.setResult(-1);
 				model.setMsg("领取任务失败。原因：已领取过任务，不能重复领取！");
-			}else{
+			}
+			else
+			{
 				model.setResult(-1);
 				model.setMsg("领取任务失败。原因：系统出错！");
 			}

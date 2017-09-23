@@ -86,7 +86,8 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 	 * @param userId 用户编号
 	 * @return
 	 */
-	public TUserApp getUserAppById(Integer userId){
+	public TUserApp getUserAppById(Integer userId)
+	{
 		return super.get(TUserApp.class, userId);
 	}
 	

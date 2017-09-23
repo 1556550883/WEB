@@ -66,35 +66,42 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin> {
 	 * @param request
 	 *            LoginType 登录类型 1--账号登陆 2-QQ登陆 3-微信登陆 4--微博登陆 5-- 游客登录 手机唯一序列号
 	 * @return
-	 * @author feiyang
-	 * @date 2016-1-11
 	 */
-	public AppCommonModel addLogin(HttpServletRequest request, TUserLogin tUserLogin, String phoneSerialNumber,String ip) {
+	public AppCommonModel addLogin(HttpServletRequest request, TUserLogin tUserLogin, String phoneSerialNumber,String ip) 
+	{
 
 		AppCommonModel model = new AppCommonModel(-1, "登录失败！");
 
-		if (EmptyUtils.isNotEmpty(tUserLogin.getLoginType())) {
+		if (EmptyUtils.isNotEmpty(tUserLogin.getLoginType())) 
+		{
 			TUserLogin user = userLoginDao.getUserByLoginName(tUserLogin.getLoginName(), tUserLogin.getLoginType());
-			if (EmptyUtils.isEmpty(user)) {
+			if (EmptyUtils.isEmpty(user)) 
+			{
 				model.setMsg("用户名不存在.");
 				return model;
 			}
-			if (!user.getPassword().equals(tUserLogin.getPassword())) {
+			if (!user.getPassword().equals(tUserLogin.getPassword()))
+			{
 				model.setMsg("密码错误.");
 				return model;
 			}
 			
 			TUserApp userApp = appUserService.getUserByUserNum(user.getUserNum());
-			if ("0".equals(userApp.getLoginControl())) {
+			if ("0".equals(userApp.getLoginControl())) 
+			{
 				model.setMsg("该用户被禁止登录.");
 				return model;
 			}
-			if (EmptyUtils.isNotEmpty(userApp)) {
-				if (!phoneSerialNumber.equals(userApp.getPhoneSerialNumber())) {
+			
+			if (EmptyUtils.isNotEmpty(userApp))
+			{
+				if (!phoneSerialNumber.equals(userApp.getPhoneSerialNumber()))
+				{
 					userApp.setPhoneSerialNumber(phoneSerialNumber); // 如果序列号不一致就更改序列号
 					appUserService.update(userApp);
 				}
 			}
+			
 			UserAppModel appModel = userLoginDao.getUserModelByNum(user.getUserNum());
 			appModel.setLoginName(user.getLoginName());
 			appModel.setLoginType(user.getLoginType());
@@ -104,7 +111,9 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin> {
 			model.setObj(appModel);
 			userAppService.updateIp(request,userApp,ip);//保存最近登录ip地址
 			loginIpService.saveOrUpdate(request,ip);//记录登录IP地址
-		} else {
+		}
+		else 
+		{
 			return model;
 		}
 		

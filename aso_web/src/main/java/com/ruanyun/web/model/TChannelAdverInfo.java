@@ -401,12 +401,16 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 
 
     @Column(name="channel_num")
-    public String getChannelNum() {
+    public String getChannelNum() 
+    {
 		return channelNum;
 	}
-    public void setChannelNum(String channelNum) {
+    
+    public void setChannelNum(String channelNum) 
+    {
 		this.channelNum = channelNum;
 	}
+    
     @Column(name="effective_source")
 	public String getEffectiveSource() {
 		return effectiveSource;

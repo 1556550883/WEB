@@ -265,8 +265,8 @@ public  class BaseServiceImpl<T>  {
 	 * @return
 	 */
 	@SuppressWarnings("hiding")
-	public <T> T get(Class<T> entityClass, String[] propertyNames,
-			Object[] values) {
+	public <T> T get(Class<T> entityClass, String[] propertyNames, Object[] values) 
+	{
 		return baseDao.get(entityClass, propertyNames, values);
 	}
 	

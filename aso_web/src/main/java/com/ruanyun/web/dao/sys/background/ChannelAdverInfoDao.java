@@ -17,10 +17,6 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SQLUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
 
-/**
- *@author feiyang
- *@date 2016-1-7
- */
 @Repository("channelAdverInfoDao")
 public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	@Override
@@ -157,27 +153,34 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	/**
 	 * 通用查询
 	 */
-	public List<TChannelAdverInfo> getByCondition(TChannelAdverInfo adverInfo){
+	public List<TChannelAdverInfo> getByCondition(TChannelAdverInfo adverInfo)
+	{
 		StringBuilder sql = new StringBuilder("select * from t_channel_adver_info WHERE 1=1 ");
-		if(EmptyUtils.isNotEmpty(adverInfo)){
+		if(EmptyUtils.isNotEmpty(adverInfo))
+		{
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverStatusEnd()))
 				sql.append(" and adver_status<=").append(adverInfo.getAdverStatusEnd());
 		}
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 	
-	public int updateAdverCountRemainMinus1(TChannelAdverInfo adverInfo){
+	public int updateAdverCountRemainMinus1(TChannelAdverInfo adverInfo)
+	{
 		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_count_remain=adver_count_remain-1 WHERE 1=1 ");
-		if(EmptyUtils.isNotEmpty(adverInfo)){
+		if(EmptyUtils.isNotEmpty(adverInfo))
+		{
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverId()))
 				sql.append(" and adver_id="+adverInfo.getAdverId());
 		}
+		
 		return sqlDao.update(sql.toString());
 	}
 	
-	public int updateAdverCountRemain(TChannelAdverInfo adverInfo){
+	public int updateAdverCountRemain(TChannelAdverInfo adverInfo)
+	{
 		StringBuilder sql = new StringBuilder("update t_channel_adver_info a set adver_count_remain=adver_count-(select count(1) from t_userappid_adverid b where a.adver_id=b.adver_id and b.status<>'1.6') WHERE 1=1 ");
-		if(EmptyUtils.isNotEmpty(adverInfo)){
+		if(EmptyUtils.isNotEmpty(adverInfo))
+		{
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverId()))
 				sql.append(" and adver_id="+adverInfo.getAdverId());
 		}

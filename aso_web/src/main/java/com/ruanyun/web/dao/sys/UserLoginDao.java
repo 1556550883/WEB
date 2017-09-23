@@ -54,7 +54,8 @@ public class UserLoginDao extends BaseDaoImpl<TUserLogin>{
 	 *@author feiyang
 	 *@date 2016-1-13
 	 */
-	public UserAppModel getUserModelByNum(String userNum){
+	public UserAppModel getUserModelByNum(String userNum)
+	{
 		StringBuffer sql=new StringBuffer("SELECT tua.*,tus.score_day,tus.score,tus.score_sum,tus.apprentice_count_day,tus.apprentice_count,tus.user_level_num,tul.level_name FROM t_user_app tua ,t_user_score tus, t_user_level tul");
 		sql.append(" WHERE tua.user_num='"+userNum+"'");
 		sql.append(" AND tus.user_num='"+userNum+"'");

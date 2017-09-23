@@ -78,33 +78,42 @@ public class CommonHqlExpandDao extends CommonHqlDao implements ICommonHqlDao {
 		return get(entityClass, new String[]{propertyName}, new Object[]{value});
 	}
 
-	public <T> T get(Class<T> entityClass, String[] propertyNames,
-			Object[] values) {
+	public <T> T get(Class<T> entityClass, String[] propertyNames, Object[] values) 
+	{
 		Assert.notNull(propertyNames,"属性不能为空");
-		if(EmptyUtils.isNotEmpty(propertyNames)&& EmptyUtils.isNotEmpty(values)){
-			int j=propertyNames.length;
-			List<Criterion> criterionList=new ArrayList<Criterion>();
-			List<String> aliasList=new ArrayList<String>();
-			if(j==values.length){
-				for(int i=0;i<j;i++){
-					String propertyName=propertyNames[i];
-					Object value=values[i];
-					if(EmptyUtils.isNotEmpty(propertyName)&& value!=null){
+		if(EmptyUtils.isNotEmpty(propertyNames) && EmptyUtils.isNotEmpty(values))
+		{
+			int j = propertyNames.length;
+			List<Criterion> criterionList = new ArrayList<Criterion>();
+			List<String> aliasList = new ArrayList<String>();
+			
+			if(j == values.length)
+			{
+				for(int i = 0; i < j; i++)
+				{
+					String propertyName = propertyNames[i];
+					Object value = values[i];
+					if(EmptyUtils.isNotEmpty(propertyName) && value != null)
+					{
 						criterionList.add(Restrictions.eq(propertyName, value));
-						if(propertyName.indexOf(".")>0){
-							String [] aliases=propertyName.split("\\.");
-							String alias="";
-							for(int a=0;a<aliases.length-1;a++){
-								alias=aliases[a];
-								if(!aliasList.contains(alias)){
+						if(propertyName.indexOf(".") > 0)
+						{
+							String [] aliases = propertyName.split("\\.");
+							String alias = "";
+							for(int a = 0; a < aliases.length - 1; a++)
+							{
+								alias = aliases[a];
+								if(!aliasList.contains(alias))
+								{
 									aliasList.add(alias);
 								}
 							}
 						}
 					}
 				}
-				Criterion [] creterions=new Criterion[criterionList.size()];
-				 criterionList.toArray(creterions);
+				
+				Criterion [] creterions = new Criterion[criterionList.size()];
+				criterionList.toArray(creterions);
 				return (T) createCriteria(entityClass,creterions,aliasList).uniqueResult();
 			}
 		}

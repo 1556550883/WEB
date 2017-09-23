@@ -3,13 +3,7 @@ package com.ruanyun.web.dao.sys.background;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
-
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
@@ -88,14 +82,17 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.update(params, sql.toString());
 	}
 	
-	public int updateStatus2Complete(TUserappidAdverid info) {
+	public int updateStatus2Complete(TUserappidAdverid info) 
+	{
 		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=?,complete_time=? WHERE status<='1.5' ");
-		if(EmptyUtils.isNotEmpty(info)){
+		if(EmptyUtils.isNotEmpty(info))
+		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
 				sql.append(" and adver_id="+info.getAdverId());
 			if (EmptyUtils.isNotEmpty(info.getIdfa()))
 				sql.append(" and idfa='"+info.getIdfa()+"'");
 		}
+		
 		Object[] params = new Object[2];
 		params[0] = info.getStatus();
 		params[1] = info.getCompleteTime();
@@ -105,16 +102,19 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	/**
 	 * 更新超时未完成任务的状态，并返回更新行数
 	 */
-	public int updateStatus2Invalid(TChannelAdverInfo adverInfo){
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status<='1.5' ");
-		if(EmptyUtils.isNotEmpty(adverInfo)){
+	public int updateStatus2Invalid(TChannelAdverInfo adverInfo)
+	{
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status<'1.5' ");
+		if(EmptyUtils.isNotEmpty(adverInfo))
+		{
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverId()))
 				sql.append(" and adver_id="+adverInfo.getAdverId());
 		}
 		return sqlDao.update(sql.toString());
 	}
 	
-	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip) {
+	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip)
+	{
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		calendar.set(Calendar.DATE, calendar.get(Calendar.DATE)-2);
@@ -126,40 +126,21 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		page.setNumPerPage(Integer.MAX_VALUE);
+		
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
 	/**
 	 * 查询已经使用的appleId
 	 */
-	public Map<String,Map<String,String>> getAppleIdMap() {
-		Map<String,Map<String,String>> appleIdMap = new ConcurrentHashMap<String, Map<String,String>>();
+	public Page<TUserappidAdverid> getAppleIdMap(String adid, String appleId) 
+	{
+		StringBuilder sql = new StringBuilder("select adid,apple_id from t_userappid_adverid where status='2'")
+				.append(" where adid='").append(adid).append("'")
+				.append(" where appleId='").append(appleId).append("' ");
 		
-		String sql = "select adid,apple_id from t_userappid_adverid where status<>'1.6'";
-		List<TUserappidAdverid> taskList = sqlDao.getAll(TUserappidAdverid.class, sql);
-		if(taskList != null)
-		{
-			for(TUserappidAdverid task:taskList)
-			{
-				if(StringUtils.hasText(task.getAppleId()))
-				{
-					Map<String,String> subMap;
-					if(appleIdMap.containsKey(task.getAdid()))
-					{
-						subMap = appleIdMap.get(task.getAdid());
-						subMap.put(task.getAppleId(), "");
-					}
-					else
-					{
-						subMap = new ConcurrentHashMap<String,String>(4096);
-						subMap.put(task.getAppleId(), "");
-						appleIdMap.put(task.getAdid(), subMap);
-					}
-				}
-			}
-		}
+		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		
-		return appleIdMap;
+		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
-	
 }
