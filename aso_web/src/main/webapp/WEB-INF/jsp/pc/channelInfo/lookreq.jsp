@@ -12,10 +12,10 @@
 		<input type="text" style="width: 300px"  name="basePath" value="<%=basePath %>/app/activation/${channalNum}" />	
 		</dd>
 			</dl>
-	
 	</div>
-		<div class="formBar">
-			<ul>
-				<li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
-			</ul>
-		</div>
+	
+	<div class="formBar">
+		<ul>
+			<li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+		</ul>
+	</div>

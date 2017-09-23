@@ -15,7 +15,7 @@
 .new_tab thead tr td{background:#f0eff0 url(dwz/themes/default/images/grid/tableth.png) repeat-x}
 </style>
 <div class="pageContent">
-	<form method="post" id="myform"  action="channelAdverInfo/add?channelNum=${channelNum}" onsubmit="return iframeCallback(this,navTabAjaxDone);" enctype="multipart/form-data" >
+	<form method="post" id="myform"  action="channelAdverInfo/add?channelNum=${channelNum}" onsubmit="return iframeCallback(this, navTabAjaxDone);" enctype="multipart/form-data" >
 		<div class="pageFormContent nowrap" layoutH="57">
   		    <dl class="nowrap" style="width: 100%">
 				<dt>任务类型：</dt>
@@ -23,7 +23,7 @@
 				   <select name="taskType" class="mustFill" title="任务类型">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${taskType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.taskType}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}"> <c:if test="${item.itemCode==bean.taskType}">selected</c:if>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -34,7 +34,7 @@
 				   <select name="phoneType" class="mustFill" title="手机型号">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${phoneType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.phoneType}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}"> <c:if test="${item.itemCode==bean.phoneType}">selected</c:if>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -51,18 +51,6 @@
 					<input name="bundleId" value="${bean.bundleId}" size="30" maxlength="100" class='mustFill' title="bundleId" />
 				</dd>
 			</dl>
-			<!--<dl style="width: 100%">
-				<dt>广告名称：</dt>
-				<dd>
-					<input name="adverName" value="${bean.adverName}" size="30" maxlength="100" class='mustFill' title="广告名称" />
-				</dd>
-			</dl>-->
-			<!-- <dl style="width: 100%">
-				<dt>广告包名：</dt>
-				<dd>
-					<input type="text" name="packageName" value="${bean.packageName}" style="width: 367px" maxlength="100" size="100" title="广告包名" class=''  />
-				</dd>
-			</dl> -->
 			<dl class="nowrap"  style="width: 100%;">
 				<dt>广告图片：</dt>
 				<dd >
@@ -70,24 +58,6 @@
 					<input name='adverImg' type='hidden' value='${bean.adverImg}' maxlength='100'/>
 				</dd>
 		    </dl>
-			<!--<dl style="width: 100%;height: 100px;">
-				<dt>得分描述：</dt>
-				<dd>
-				<textarea style="height:100px;"  name="adverDesc" rows="5" cols="60">${bean.adverDesc} </textarea>
-				</dd>
-			</dl>
-			<dl style="width: 100%">
-				<dt>在appstore位置：</dt>
-				<dd>
-				<input type="text" value="${bean.flag1}" name="flag1"/>
-				</dd>
-			</dl>
-			<dl class="nowrap" style="width: 100%">
-				<dt>广告数量：</dt>
-				<dd>
-				    <input name="adverCount" id="adverCount" class="mustFill" title="广告数量" type="text" value="<c:out value="${bean.adverCount}"></c:out>" maxlength="100"/>
-				</dd>
-		    </dl>-->
 		    <dl class="nowrap" style="width: 100%">
 				<dt>广告价格：</dt>
 				<dd>
@@ -100,17 +70,6 @@
 				    <input name="timeLimit" id="timeLimit" class="mustFill" title="领取任务后的任务时效（单位：分钟）" type="text" value="<c:out value="${bean.timeLimit}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
-		    <!-- <dl class="nowrap" style="width: 100%">
-				<dt>广告类型：</dt>
-				<dd>
-				   <select name="adverType"  class="" title="广告类型">
-				   		<option value="">请选择</option>
-				   		<c:forEach items="${adverType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.adverType}">selected</c:if>>${item.itemName}</option>
-				   		</c:forEach>
-				   </select>
-				</dd>
-		    </dl> -->
 		    <dl class="nowrap" style="width: 100%">
 				<dt>广告开始日期：</dt>
 				<dd>
@@ -125,24 +84,6 @@
 					<input name="adverTimeEnd" id="adverTimeEnd" type="hidden" value="<c:out value="${bean.adverTimeEnd}"></c:out>" maxlength="100"/>
 				</dd>
 		    </dl>
-		    <!-- <dl class="nowrap" style="width: 100%">
-				<dt>广告来源：</dt>
-				<dd>
-				   <select name="effectiveSource" id="effectiveSource" onchange="updSourse()" class="" title="广告来源" >
-				   		<option value="">请选择</option>
-				   		<c:forEach items="${effectiveSource}" var="item">
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.effectiveSource}">selected</c:if>>${item.itemName}</option>
-				   		</c:forEach>
-				   </select>
-				</dd>
-		    </dl>
-		    <dl class="nowrap" style="width: 100%;height: auto;">
-				<dt>广告介绍：</dt>
-				<dd style="height: auto;">
-					<div id="myeditor" style="width: 600px;height: 350px;"></div>
-				    <input name="adverRemand" id="adverRemand" type="hidden" value='${bean.adverRemand}'/>
-				</dd>
-		    </dl>-->
 		    <dl class="nowrap" style="width: 100%;">
 				<dt>排重地址：</dt>
 				<dd>
@@ -161,99 +102,31 @@
 				    <input name="flag4" id="flag4" style="width: 467px" class="" title="上传数据地址" type="text" value="<c:out value="${bean.flag4}"></c:out>" maxlength="1000"/>
 				</dd>
 		    </dl>
-		    <!-- <dl class="nowrap" style="width: 100%"  >
-				<dt>完成步骤：</dt>
-				<dd>
-				   <select name="adverStepCount" onchange="addStep(this.value)"  class="" title="完成步骤" >
-				   		<option value="">请选择</option>
-				   		<c:forEach items="${adverStepCount}" var="item">
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.adverStepCount}">selected</c:if>>${item.itemName}</option>
-				   		</c:forEach>
-				   </select>
-				</dd>
-		    </dl>
-		    <dl class="nowrap" style="width: 100%;height: auto" >
-				<dt>完成步骤：</dt>
-				<dd style="width: 90%;height: auto">
-					<table class="new_tab">
-				   		<thead>
-				   			<tr>
-				   				<td width="100px">步骤序号</td>
-				   				<td width="100px">步骤名称</td>
-				   				<td width="100px">描述</td>
-				   				<td width="100px">分数</td>
-				   				<td width="100px">使用时间(天)</td>
-				   				<td width="100px">判断有效来源</td>
-				   				<td width="100px">有效时间(分钟)</td>
-				   			</tr>
-				   		</thead>
-				   		<tbody class="stepTable" id="stepBody">
-				   			<c:forEach items="${adverStepList}" var="items" varStatus="s">
-				   				<tr><td>${s.count}</td><td><input name='stepName' value='${items.adverStepName}' class='mustFill' title='步骤名称' maxlength='100'/></td><td>
-				   					<input name='stepDesc' value='${items.stepDesc}' class='mustFill' title='步骤描述' maxlength='100'/></td>
-					   				<td><input name='stepScore' value='${items.price}' class='mustFill' title='步骤分数' maxlength='20'/></td>
-					   				<td><input name='stepUseTime' value='${items.useTimeDay}' class='mustFill' title='使用时间（天）' maxlength='10'/></td>
-					   				<td class='sourse'><ry:show itemCode="${items.effectiveSource}" parentCode="EFFECTIVE_SOURCE"></ry:show></td>
-					   				<td><input name='stepMinCount' value='${items.effectiveMinCount}' class='mustFill' title='有效时间（分钟）' maxlength='10'/></td></tr>
-				   			</c:forEach>
-				   		</tbody>
-					</table>
-				</dd>
-		    </dl>
-		    <dl class="nowrap" style="width: 100%">
-				<dt>文件类型：</dt>
-				<dd>
-				     <select name="fileType" onchange="addfile(this.value)"  class="" title="文件类型" >
-				   		<option value="">请选择</option>
-				   		<c:forEach items="${fileType}" var="item">
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.fileType}">selected</c:if>>${item.itemName}</option>
-				   		</c:forEach>
-				   </select>
-				</dd>
-		    </dl> -->
-		   <!--<dl style="width: 100%;">
-			<dt>是否添加权限：</dt>
-			<dd>
-				<select name="isAuth" class="required">
-				   <option value="">---请选择---</option>
-					  <c:forEach items="${isAuth}" var="item">
-						 <option value="${item.itemCode }" <c:if test="${item.itemCode==bean.isAuth}">selected="selected"</c:if> >${item.itemName }</option>
-				       </c:forEach>
-				</select>	
-			</dd>
-			</dl>
-		    <dl class="nowrap" id="showType" style="width: 100%;display: none;">
-				<dt>上传文件或填写url：</dt>
-				<dd id="fileType">
-				</dd>
-		    </dl>-->
 		    
 		    <dl style="width: 100%;">
-		    <div id="advers">
-		    	<button type="button" onclick="addOneAdver()">>>添加广告</button>
-		    	<br>
-	   			
-		   			<hr class="dotline" color="#111111" size="1"/>
-		   			<dl style="width: 100%">
-						<dt>广告名称：</dt>
-						<dd>
-							<input name="adverName" value="" size="30" maxlength="100" class='mustFill' title="广告名称" />
-						</dd>
-					</dl>
-					<dl style="width: 100%">
-						<dt>广告数量：</dt>
-						<dd>
-							<input name="adverCount" value="" size="30" maxlength="100" class='mustFill' title="广告数量" />
-						</dd>
-					</dl>
-					<dl style="width: 100%">
-						<dt>得分描述：</dt>
-						<dd>
-							<input name="adverDesc" value="" size="30" maxlength="100" class='mustFill' title="得分描述" />
-						</dd>
-					</dl>
-	   			
-			</div>
+			    <div id="advers">
+			    	<button type="button" onclick="addOneAdver()">>>添加广告</button>
+			    	<br>
+			   			<hr class="dotline" color="#111111" size="1"/>
+			   			<dl style="width: 100%">
+							<dt>广告名称：</dt>
+							<dd>
+								<input name="adverName" value="" size="30" maxlength="100" class='mustFill' title="广告名称" />
+							</dd>
+						</dl>
+						<dl style="width: 100%">
+							<dt>广告数量：</dt>
+							<dd>
+								<input name="adverCount" value="" size="30" maxlength="100" class='mustFill' title="广告数量" />
+							</dd>
+						</dl>
+						<dl style="width: 100%">
+							<dt>得分描述：</dt>
+							<dd>
+								<input name="adverDesc" value="" size="30" maxlength="100" class='mustFill' title="得分描述" />
+							</dd>
+						</dl>
+				</div>
 			</dl>
 		</div>
 		<div class="formBar">
@@ -269,94 +142,61 @@
 	</form>
 	
 	<script type="text/javascript">
-	/*var ue=UE.getEditor("myeditor",{
-		autoHeightEnabled: false
-	});
-		ue.ready(function() {
-		ue.setContent($("#adverRemand").val());
-	});*/
-		
-	
-	function checkForm(){
-		//$("#adverRemand").val(ue.getContent());
-		if(check()){
-			$("#adverTimeStart").val($("#adverDayStart").val());
-			$("#adverTimeEnd").val($("#adverDayEnd").val());
-			
-			var adversJson = '[';
-			$("#advers").find("input").each(function(index,domEle){
-	    		  
-	    		  if(index%3 == 0){
-	    			  if(adversJson.length > 1){
-	    				  adversJson += ',';
-	    			  }
-	    			  adversJson += '{';
-	    			  adversJson += '"adverName":"'+ $(this).val() +'"';
-	    		  }else if(index%3 == 1){
-	    			  adversJson += ',"adverCount":'+ $(this).val();
-	    		  }else{
-	    			  adversJson += ',"adverDesc":"'+ $(this).val() +'"';
-	    			  adversJson += '}';
-	    		  }
-	        	
-			  });
-			adversJson += ']';
-			$("#adversJson").val(adversJson);
-			
-			$("#myform").submit();
-		}
-	}
-	function updSourse(){
-		$(".sourse").text($("#effectiveSource").find("option:selected").text());
-	}
-	
-	//添加广告
-	function addOneAdver(){
-		var oneAdver = "<hr class='dotline' color='#111111' size='1'/>"
-			+"<dl style='width: 100%'>"
-			+"<dt>广告名称：</dt>"
-			+"<dd>"
-			+"<input name='adverName' size='30' maxlength='100' class='mustFill' title='广告名称' />"
-			+"</dd>"
-			+"</dl>"
-			+"<dl style='width: 100%'>"
-			+"<dt>广告数量：</dt>"
-			+"<dd>"
-			+"<input name='adverCount' size='30' maxlength='100' class='mustFill' title='广告数量' />"
-			+"</dd>"
-			+"</dl>"
-			+"<dl style='width: 100%'>"
-			+"<dt>得分描述：</dt>"
-			+"<dd>"
-			+"<input name='adverDesc' size='30' maxlength='100' class='mustFill' title='得分描述' />"
-			+"</dd>"
-			+"</dl>";
-		$("#advers").append(oneAdver); 
-	}
-	
-		/*function addStep(stepNum){
-			var stepbody="";
-			for(var i=0;i<stepNum;i++){
-				var tr="<tr><td>"+(i+1)+"</td><td><input name='stepName' class='mustFill' title='步骤名称' value='' maxlength='100'/></td><td><input name='stepDesc' title='步骤描述' class='mustFill' value='' maxlength='100'/></td>";
-   				tr+="<td><input name='stepScore' value='' class='mustFill' title='步骤分数' maxlength='10'/></td>";
-   				tr+="<td><input name='stepUseTime' value='' class='mustFill' title='使用时间' maxlength='10'/></td>";
-   				tr+="<td class='sourse'>"+$("#effectiveSource").find("option:selected").text();+"</td>";
-   				tr+="<td><input name='stepMinCount' value='5' class='mustFill' title='有效时间（分钟）' maxlength='10'/></td></tr>";
-   				stepbody+=tr;
-				}
-   				$("#stepBody").html(stepbody);
+		function checkForm(){
+			//$("#adverRemand").val(ue.getContent());
+			if(check()){
+				$("#adverTimeStart").val($("#adverDayStart").val());
+				$("#adverTimeEnd").val($("#adverDayEnd").val());
+				
+				var adversJson = '[';
+				$("#advers").find("input").each(function(index,domEle){
+		    		  if(index%3 == 0){
+		    			  if(adversJson.length > 1){
+		    				  adversJson += ',';
+		    			  }
+		    			  adversJson += '{';
+		    			  adversJson += '"adverName":"'+ $(this).val() +'"';
+		    		  }else if(index%3 == 1){
+		    			  adversJson += ',"adverCount":'+ $(this).val();
+		    		  }else{
+		    			  adversJson += ',"adverDesc":"'+ $(this).val() +'"';
+		    			  adversJson += '}';
+		    		  }
+				  });
+				adversJson += ']';
+				$("#adversJson").val(adversJson);
+				
+				$("#myform").submit();
 			}
-		addfile(${bean.fileType});
-		function addfile(type){
-			var file="";
-			if(type==1){
-				$("#showType").css('display','block');
-				file="<input name='file' type='file' value='上传'/><input name='fileUrl' type='hidden' value='${bean.fileUrl}' maxlength='100'/>";
-				}else if(type==2){
-					$("#showType").css('display','block');
-					file="<input name='fileUrl' type='text' value='${bean.fileUrl}' maxlength='100'/>";
-					}
-			$("#fileType").html(file);
-		}*/
+		}
+		
+		function updSourse(){
+			$(".sourse").text($("#effectiveSource").find("option:selected").text());
+		}
+		
+		//添加广告
+		function addOneAdver()
+		{
+			var oneAdver = "<hr class='dotline' color='#111111' size='1'/>"
+				+"<dl style='width: 100%'>"
+				+"<dt>广告名称：</dt>"
+				+"<dd>"
+				+"<input name='adverName' size='30' maxlength='100' class='mustFill' title='广告名称' />"
+				+"</dd>"
+				+"</dl>"
+				+"<dl style='width: 100%'>"
+				+"<dt>广告数量：</dt>"
+				+"<dd>"
+				+"<input name='adverCount' size='30' maxlength='100' class='mustFill' title='广告数量' />"
+				+"</dd>"
+				+"</dl>"
+				+"<dl style='width: 100%'>"
+				+"<dt>得分描述：</dt>"
+				+"<dd>"
+				+"<input name='adverDesc' size='30' maxlength='100' class='mustFill' title='得分描述' />"
+				+"</dd>"
+				+"</dl>";
+			$("#advers").append(oneAdver); 
+		}
 	</script>
 </div>

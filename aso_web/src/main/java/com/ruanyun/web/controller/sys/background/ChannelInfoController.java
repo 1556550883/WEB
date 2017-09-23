@@ -194,11 +194,11 @@ public class ChannelInfoController extends BaseController
 	}
 
 	@RequestMapping("toLookReq")
-	public String toLookReq(TChannelInfo info, Model model,HttpServletRequest request) {
+	public String toLookReq(TChannelInfo info, Model model,HttpServletRequest request)
+	{
 		String path=request.getContextPath();
-		String path1=request.getRealPath("url"); // 虚拟目录映射为实际目录
-
-		String path2=request.getRealPath("./");    // 网页所在的目录
+		//String path1=request.getRealPath("url"); // 虚拟目录映射为实际目录
+		//String path2=request.getRealPath("./");    // 网页所在的目录
 		request.getContextPath();    // 应用的web目录的名称
 		addModel(model, "path", path);
 		addModel(model,"channalNum",EncrypDES.encryptEde(info.getChannelNum()));

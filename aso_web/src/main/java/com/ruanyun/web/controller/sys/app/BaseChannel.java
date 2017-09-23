@@ -11,7 +11,8 @@ import org.apache.http.util.EntityUtils;
 
 import net.sf.json.JSONObject;
 
-public abstract class BaseChannel {
+public abstract class BaseChannel 
+{
 	
 	/**
 	 * 获取回调地址
@@ -28,27 +29,36 @@ public abstract class BaseChannel {
 	/**
 	 * httpGet
 	 */
-    public static JSONObject httpGet(String url, boolean noNeedResponse){
+    public static JSONObject httpGet(String url, boolean noNeedResponse)
+    {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         JSONObject jsonResult = null;
         HttpGet httpGet = new HttpGet(url);
-        try {
+        try 
+        {
             HttpResponse httpResponse = httpClient.execute(httpGet);
-            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            if (httpResponse.getStatusLine().getStatusCode() == 200) 
+            {
                 String str = "";
-                try {
+                try
+                {
                     str = EntityUtils.toString(httpResponse.getEntity());
-                    if (noNeedResponse) {
+                    if (noNeedResponse)
+                    {
                         return null;
                     }
+                    
                     jsonResult = JSONObject.fromObject(str);
-                } catch (Exception e) {
+                } catch (Exception e) 
+                {
                     //logger.error("get请求提交失败:" + url, e);
                 	System.out.println("get请求提交失败:" + url);
                 	System.out.println(e);
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
         	//logger.error("get请求提交失败:" + url, e);
         	System.out.println("get请求提交失败:" + url);
         	System.out.println(e);
@@ -56,5 +66,4 @@ public abstract class BaseChannel {
         
         return jsonResult;
     }
-
 }

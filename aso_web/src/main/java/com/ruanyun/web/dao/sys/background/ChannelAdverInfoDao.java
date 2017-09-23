@@ -161,6 +161,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverStatusEnd()))
 				sql.append(" and adver_status<=").append(adverInfo.getAdverStatusEnd());
 		}
+		
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 	

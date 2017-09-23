@@ -59,13 +59,17 @@ public class ChannelAdverInfoController extends BaseController
 	 * @throws IllegalAccessException 
 	 */
 	@RequestMapping("toedit")
-	public String toedit(Integer id,Model model,Integer type,String channelNum) throws Exception{
-		if(EmptyUtils.isNotEmpty(id)){
+	public String toedit(Integer id,Model model,Integer type,String channelNum) throws Exception
+	{
+		if(EmptyUtils.isNotEmpty(id))
+		{
 			TChannelAdverInfo bean=channelAdverInfoService.getInfoById(id);
 			addModel(model, "bean", bean);
 			addModel(model, "channelNum", channelNum);
 			return "pc/channelAdverInfo/edit";
-		}else{
+		}
+		else
+		{
 			addModel(model, "type", type);
 			addModel(model, "channelNum", channelNum);
 			return "pc/channelAdverInfo/add";
@@ -77,15 +81,20 @@ public class ChannelAdverInfoController extends BaseController
 	 * 功能描述：增加
 	 */
 	@RequestMapping("add")
-	public void save(TChannelAdverInfo info,HttpServletResponse response,HttpSession session,MultipartFile file,MultipartFile fileAdverImg,HttpServletRequest request,String[] stepName, String[] stepDesc, Integer[] stepRates, String[] stepTime, Float[] stepScore, Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount){
-		try {
+	public void save(TChannelAdverInfo info, HttpServletResponse response, HttpSession session, MultipartFile file,
+			MultipartFile fileAdverImg, HttpServletRequest request, String[] stepName, String[] stepDesc, Integer[] stepRates, 
+			String[] stepTime, Float[] stepScore, Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount)
+	{
+		try 
+		{
 			//向轴 add
 			//广告有效期
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			info.setAdverDayStart(simpleDateFormat.parse(info.getAdverTimeStart()));
 			info.setAdverDayEnd(simpleDateFormat.parse(info.getAdverTimeEnd()));
 			//任务类型
-			if(info.getChannelNum().equals("3") && !info.getTaskType().equals("2")){
+			if(info.getChannelNum().equals("3") && !info.getTaskType().equals("2"))
+			{
 				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, "自由渠道的广告的任务类型只能是自由任务！", "", "", ""));
 				return;
 			}
@@ -94,18 +103,22 @@ public class ChannelAdverInfoController extends BaseController
 			
 			//批量生成
 			JSONArray array = JSONArray.fromObject(info.getAdversJson());
-			for(int i=0;i<array.size();i++){
+			for(int i=0;i<array.size();i++)
+			{
 				info.setAdverId(null);
 				info.setAdverCountRemain(null);
 				JSONObject jsonObject = array.getJSONObject(i);
 				info.setAdverName(jsonObject.getString("adverName"));
 				info.setAdverCount(jsonObject.getInt("adverCount"));
 				info.setAdverDesc(jsonObject.getString("adverDesc"));
-				channelAdverInfoService.saveOrUpd(info,user,file,request,stepName,stepDesc,stepRates,stepTime,stepScore,stepUseTime,stepType,stepMinCount,fileAdverImg);
+				channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc, stepRates, stepTime,
+						stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
 			}
 			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
-		} catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
 		}
 	}

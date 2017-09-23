@@ -57,10 +57,9 @@
 			<th align="center">渠道推荐等级</th>
 			<th align="center">渠道类型</th>
 			<th align="center">系统类型</th>
-			<th align="center">是否启用</th>
 			<th align="center">创建时间</th>				
+			<th align="center">是否启用</th>
 			<th align="center">管理</th>
-			<th align="center">查看回调地址</th>
 		</tr>
 	</thead>
 	
@@ -74,19 +73,17 @@
                 <td><ry:show parentCode="CHANNEL_LEVEL" itemCode="${item.channelLevel}"></ry:show></td>
              	<td><ry:show parentCode="CHANNEL_TYPE" itemCode="${item.channelType}"></ry:show></td>
              	<td><ry:show parentCode="SYSTEM_TYPE" itemCode="${item.systemType}"></ry:show></td>	  	               
-                <td>
-	                <c:if test="${item.isEnable==1}"><span style="color: green">启用</span></c:if>
-	                <c:if test="${item.isEnable==0}"><span style="color: red">停用</span></c:if>
-                 </td>
 				<td><ry:formatDate date="${item.createDate}" toFmt="yyyy-MM-dd"></ry:formatDate> </td>
-				<td><c:if test="${item.channelType!=3}"><a style="cursor:pointer;" onclick="openNav('channelAdverInfo/list?channelNum=${item.channelNum}','广告管理','main_index2')">广告管理</a></c:if>
+                <td>
+	                <c:if test="${item.isEnable==1}"><div style="color:green">启用</div></c:if>
+	                <c:if test="${item.isEnable==0}"><div style="color:red">停用</div></c:if>
+                 </td>
+				<td><c:if test="${item.channelType!=3}"><a style="cursor:pointer;" onclick="openNav('channelAdverInfo/list?channelNum=${item.channelNum}','广告管理','main_index2')"><div style="color: blue">广告管理</div></a></c:if>
 					<c:if test="${item.channelType==3}">
 						<!-- <a style="cursor: pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=2&inferfaceRequestType=2&adverNum=${item.channelNum}','参数配置','main_index2')"><span style="color: blue">调用服务端</span> </a> -->
-						<a style="cursor:pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=2&inferfaceRequestType=1&adverNum=${item.channelNum}','参数配置','main_index2')"><span style="color: green">客户回调我们</span></a>
+						<a style="cursor:pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=2&inferfaceRequestType=1&adverNum=${item.channelNum}','参数配置','main_index2')"><div style="color: blue">客户回调我们</div></a>
 					</c:if>
 				</td>
-				
-				<td><a class="add" style="cursor:pointer;" onclick="add('channelInfo/toLookReq?channelNum=${item.channelNum}','查看回调地址',600,200,'main_')"><span style="color: green;">查看回调地址</span></a></td>
 			</tr>
 		</c:forEach>
 	</tbody>
