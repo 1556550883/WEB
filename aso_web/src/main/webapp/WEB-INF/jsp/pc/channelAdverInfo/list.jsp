@@ -72,7 +72,7 @@
 	                <td><ry:formatDate date="${item.adverCreatetime}" toFmt="yyyy-MM-dd"></ry:formatDate> </td> 
 					<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="openNav('channelAdverInfo/toedit?id=${item.adverId}','修改广告信息','main_index3')"><span>修改</span></a></td>
 					<td>
-						<a style="cursor: pointer;" onclick="openNav('adverEffectiveInfo/completeList?adverId=${item.adverId}','广告下载记录','main_index2')">广告下载记录</a>
+						<a style="cursor: pointer;" onclick="openNav('adverEffectiveInfo/completeList?adverId=${item.adverId}','广告下载记录','main_index2')"><div style="color: blue">广告下载记录</div></a>
 						<c:if test="${item.effectiveSource==1}">
 							<a style="cursor: pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=1&inferfaceRequestType=2&adverNum=${item.adverNum}','参数配置','main_index2')"><span style="color: blue">上传数据配置</span> </a>
 							<a style="cursor: pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=1&inferfaceRequestType=1&adverNum=${item.adverNum}','参数配置','main_index2')"><span style="color: green">客户回调我们</span> </a>

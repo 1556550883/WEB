@@ -671,7 +671,6 @@ public class DuiJieController extends BaseController
 			//自由渠道
     		if(adverInfo.getAdverCountRemain() > 0) 
     		{
-    			System.out.println("lingqurenwu");
     			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
     			model.setResult(1);
     		}

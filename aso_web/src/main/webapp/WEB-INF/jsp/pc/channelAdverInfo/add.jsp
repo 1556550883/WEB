@@ -23,7 +23,7 @@
 				   <select name="taskType" class="mustFill" title="任务类型">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${taskType}" var="item"> 
-				   			<option value="${item.itemCode}"> <c:if test="${item.itemCode==bean.taskType}">selected</c:if>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.taskType}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -34,7 +34,7 @@
 				   <select name="phoneType" class="mustFill" title="手机型号">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${phoneType}" var="item"> 
-				   			<option value="${item.itemCode}"> <c:if test="${item.itemCode==bean.phoneType}">selected</c:if>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.phoneType}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>

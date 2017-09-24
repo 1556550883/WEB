@@ -23,8 +23,18 @@ public class AdverEffectiveInfoController extends BaseController
 	 * 广告完成列表
 	 */
 	@RequestMapping("list")
+	public String getAdverEffectiveInfoList(Page<TUserappidAdverid> page,TUserappidAdverid info,Model model)
+	{
+		info.setStatusStart("2");
+		addModel(model, "pageList", adverEffectiveInfoService.completeList(page, info));
+		addModel(model, "bean", info);
+		return "pc/adverEffectiveInfo/list";
+	}
+	
+	@RequestMapping("completeList")
 	public String completeList(Page<TUserappidAdverid> page,TUserappidAdverid info,Model model)
 	{
+		page.setNumPerPage(10);
 		info.setStatusStart("2");
 		addModel(model, "pageList", adverEffectiveInfoService.completeList(page, info));
 		addModel(model, "bean", info);
