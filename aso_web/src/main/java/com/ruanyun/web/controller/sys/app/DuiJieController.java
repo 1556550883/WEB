@@ -81,8 +81,7 @@ public class DuiJieController extends BaseController
 		String adid = request.getParameter("adid");//广告id（第三方提供）
 		String idfa = request.getParameter("idfa");//手机广告标识符
 		String ip = request.getRemoteAddr();//手机ip
-		//String idfa = 1000 + Math.random() * 9000 + "";
-		//String ip = 1000 + Math.random() * 9000 + "";
+		//String ip = request.getParameter("ip");
 		String userAppId = request.getParameter("userAppId");//用户Id
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
@@ -225,7 +224,7 @@ public class DuiJieController extends BaseController
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 		for (TUserappidAdverid item : taskList.getResult())
 		{
-			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date())) && item.getStatus().compareTo("2") >= 0) 
+			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date()))) 
 			{
 				isDuplicated = true;
 			}
