@@ -81,7 +81,6 @@ public class DuiJieController extends BaseController
 		String adid = request.getParameter("adid");//广告id（第三方提供）
 		String idfa = request.getParameter("idfa");//手机广告标识符
 		String ip = request.getRemoteAddr();//手机ip
-		//String ip = request.getParameter("ip");
 		String userAppId = request.getParameter("userAppId");//用户Id
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
@@ -116,41 +115,44 @@ public class DuiJieController extends BaseController
 		
 		if (taskList != null && !taskList.getResult().isEmpty())
 		{
-			//判断当天IP是否重复
-			if(isIPDuplicated(taskList)) 
+			//判断idfa是否重复
+			AppCommonModel checkIdfaModel = checkIDFADuplicated(taskList, idfa, adverId);
+			if(checkIdfaModel.getResult() != 2) 
 			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：IP重复！");
-				super.writeJsonDataApp(response, model);
+				super.writeJsonDataApp(response, checkIdfaModel);
+				return;
+			}
+			
+			//判断当天IP是否重复
+			AppCommonModel checkIpModel = checkIPDuplicated(taskList, idfa);
+			if(checkIpModel.getResult() != 2) 
+			{
+				super.writeJsonDataApp(response, checkIpModel);
 				return;
 			}
 		}
 		
 		//检测apple是否可以使用
-		String msg = checkAppleIDMsg(userAppId, appleId, adid);
-		if(!msg.isEmpty())
+		AppCommonModel checkAppleIDModel = checkAppleIDDuplicated(userAppId, appleId, adid);
+		if(checkAppleIDModel.getResult() != 2)
 		{
-			model.setResult(-1);
-			model.setMsg(msg);
-			super.writeJsonDataApp(response, model);
+			super.writeJsonDataApp(response, checkAppleIDModel);
 			return;
 		}
 		
 		//判断是否有任务在进行中
-		if(isAdverInProcess(taskList))
+		AppCommonModel checkAdverInProcessModel = checkAdverInProcess(taskList);
+		if(checkAdverInProcessModel.getResult() != 2)
 		{
-			model.setResult(1);
-			model.setMsg("此类广告已经领取过，请勿重复领取！");
-			super.writeJsonDataApp(response, model);
+			super.writeJsonDataApp(response, checkAdverInProcessModel);
 			return;
 		}
 		
 		//分渠道调用排重接口、点击接口
-	    model = channelSelected(adverInfo, adid, idfa, ip, userAppId, adverId);
-		
-		if(model.getResult() == -1)
+		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId);
+		if(checkChannelInfoModel.getResult() == -1)
 		{
-			super.writeJsonDataApp(response, model);
+			super.writeJsonDataApp(response, checkChannelInfoModel);
 			return;
 		}
 		
@@ -179,58 +181,94 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
-	private boolean isAdverInProcess(Page<TUserappidAdverid> taskList) 
+	private AppCommonModel checkAdverInProcess(Page<TUserappidAdverid> taskList) 
 	{
-		boolean isAdverInProcess = false;
+		AppCommonModel model = new AppCommonModel(2, "通过！");
 		
 		for (TUserappidAdverid item : taskList.getResult()) 
 		{
 			if(item.getStatus().compareTo("1.6") < 0) 
 			{
-				isAdverInProcess = true;
+				model.setResult(1);
+				model.setMsg("此类广告已经领取过，请勿重复领取！");
 			}
 		}
 		
-		return isAdverInProcess;
+		return model;
 	}
 	
-	private String checkAppleIDMsg(String userAppId, String appleId, String adid) 
+	private AppCommonModel checkAppleIDDuplicated(String userAppId, String appleId, String adid) 
 	{
-		String msg = "";
+		AppCommonModel model = new AppCommonModel(2, "通过！");
 		TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
 		//appleId排重开关开启且为普通用户时，判断appleId是否重复(此排重要放在idfa排重和ip排重之后)
 		if(1 == tUserApp.getUserApppType() && "1".equals(dictionaryService.getAppleIdCheck()))
 		{
 			if(!StringUtils.hasText(appleId))
 			{
-				msg = "领取任务失败。原因：苹果账号不能为空！";
+				model.setResult(-1);
+				model.setMsg("领取任务失败。原因：苹果账号不能为空！");
 			}
-			else
+			else if(userappidAdveridService.checkAppleIdIsUsed(adid, appleId))
 			{
-		    	if(userappidAdveridService.checkAppleIdIsUsed(adid, appleId))
-		    	{
-		    		msg = "领取任务失败。原因：该苹果账号完成这一类广告！";
-		    	}
+				model.setResult(-1);
+				model.setMsg("领取任务失败。原因：该苹果账号完成这一类广告！");
 			}
 		}
 		
-		return msg;
+		return model;
+	}
+	
+	private AppCommonModel checkIDFADuplicated(Page<TUserappidAdverid> taskList, String idfa, String adverId) 
+	{
+		AppCommonModel model = new AppCommonModel(2, "没有符合条件！");
+		
+		for (TUserappidAdverid item : taskList.getResult())
+		{
+			if(item.getIdfa().equals(idfa))
+			{
+				if (item.getStatus().compareTo("2") >= 0) 
+				{
+					model.setResult(-1);
+					model.setMsg("领取任务失败。原因：任务已完成，不能重复领取！");
+				} 
+				else if (item.getStatus().compareTo("1.6") == 0) 
+				{
+					model.setResult(-1);
+					model.setMsg("领取任务失败。原因：任务没有在30分钟内完成导致任务已失效！");
+				}
+				else if (!item.getAdverId().equals(Integer.valueOf(adverId))) 
+				{
+					model.setResult(-1);
+					model.setMsg("领取任务失败。原因：已领取过此类任务，不能重复领取！");
+				}
+				else if (item.getStatus().compareTo("1.6") < 0) 
+				{
+					model.setResult(1);
+					model.setMsg("你已成功领取任务，不需重复领取！");
+				}
+			}
+		}
+		
+		return model;
 	}
 	
 	//判断ip是否重复
-	private boolean isIPDuplicated(Page<TUserappidAdverid> taskList)
+	private AppCommonModel checkIPDuplicated(Page<TUserappidAdverid> taskList, String idfa)
 	{
-		boolean isDuplicated = false;
+		AppCommonModel model = new AppCommonModel(2, "通过！");
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 		for (TUserappidAdverid item : taskList.getResult())
 		{
-			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date()))) 
+			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date())) && !idfa.equals(item.getIdfa())) 
 			{
-				isDuplicated = true;
+				model.setResult(-1);
+				model.setMsg("领取任务失败。原因：IP重复！");
+				break;
 			}
 		}
 		
-		return isDuplicated;
+		return model;
 	}
 	
 	/**
@@ -255,13 +293,19 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		TUserappidAdverid task = getTask(adverId, idfa);
+		if(task != null && task.getStatus().compareTo("1.6") == 0)
+		{
+			model.setResult(-1);
+			model.setMsg("没有在规定时间内完成任务，任务已失效！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
 		//状态改为打开app
-		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-		tUserappidAdverid.setIdfa(idfa);
-		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-		tUserappidAdverid.setStatus("1.5");
-		tUserappidAdverid.setOpenAppTime(new Date());
-		userappidAdveridService.updateStatus2OpenApp(tUserappidAdverid);
+		task.setStatus("1.5");
+		task.setOpenAppTime(new Date());
+		userappidAdveridService.updateStatus2OpenApp(task);
 		
 		model.setResult(1);
 		model.setMsg("成功！");
@@ -304,6 +348,22 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
+	//根据adverid和idfa获取领取到的任务
+	private TUserappidAdverid getTask(String adverId, String idfa) 
+	{
+		TUserappidAdverid task = null;
+		
+		String[] propertyNames = new String[2];
+		propertyNames[0] = "adverId";
+		propertyNames[1] = "idfa";
+		Object[] values = new Object[2];
+		values[0] = Integer.valueOf(adverId);
+		values[1] = idfa;
+		task = userappidAdveridService.get(TUserappidAdverid.class, propertyNames, values);
+		
+		return task;
+	}
+	
 	/**
 	 * 查看结果
 	 */
@@ -328,13 +388,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//判断是否领取任务
-		String[] propertyNames = new String[2];
-		propertyNames[0] = "adverId";
-		propertyNames[1] = "idfa";
-		Object[] values = new Object[2];
-		values[0] = Integer.valueOf(adverId);
-		values[1] = idfa;
-		TUserappidAdverid task = userappidAdveridService.get(TUserappidAdverid.class, propertyNames, values);
+		TUserappidAdverid task = getTask(adverId, idfa);
 		if(task == null)
 		{
 			model.setResult(-1);
@@ -632,14 +686,13 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
     
-	private AppCommonModel channelSelected(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
+	private AppCommonModel checkChannelInfo(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
 			String userAppId, String adverId) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = new AppCommonModel(1, "任务领取成功！");
 		
 		//分渠道调用排重接口、点击接口
 		TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
-		
 		if(channelInfo == null)
 		{
 			model.setResult(-1);
