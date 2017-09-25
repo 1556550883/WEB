@@ -235,7 +235,7 @@ public class DuiJieController extends BaseController
 				else if (item.getStatus().compareTo("1.6") == 0) 
 				{
 					model.setResult(-1);
-					model.setMsg("领取任务失败。原因：任务没有在30分钟内完成导致任务已失效！");
+					model.setMsg("领取任务失败。原因：任务没有在规定时间内完成，导致任务已失效！");
 				}
 				else if (!item.getAdverId().equals(Integer.valueOf(adverId))) 
 				{
@@ -408,7 +408,7 @@ public class DuiJieController extends BaseController
 		else if(task.getStatus().compareTo("1.6") == 0)
 		{
 			model.setResult(-1);
-			model.setMsg("未完成。原因：任务没有在50分钟内完成导致任务已失效！");
+			model.setMsg("未完成。原因：任务没有在规定时间内完成，导致任务已失效！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
