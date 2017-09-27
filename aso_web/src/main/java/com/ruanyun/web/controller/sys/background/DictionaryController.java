@@ -51,14 +51,10 @@ public class DictionaryController extends BaseController{
 	 * 修改系统参数
 	 */
 	@RequestMapping("saveOrUpdate")
-	public void saveOrUpdate(Model model, String appleIdCheck, Integer leastTaskTime, HttpServletResponse response){
-		int result = dictionaryService.updateSystemParameter(appleIdCheck, leastTaskTime);
+	public void saveOrUpdate(Model model, String appleIdCheck, Integer leastTaskTime, HttpServletResponse response)
+	{
+		dictionaryService.updateSystemParameter(appleIdCheck, leastTaskTime);
 		
-		if(result == 1){//main_A_1416
-			super.writeJsonData(response,CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_", "dictionary/toEdit", "redirect"));
-		}else{
-			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
-		}
+		super.writeJsonData(response,CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_", "dictionary/toEdit", "redirect"));
 	}
-	
 }

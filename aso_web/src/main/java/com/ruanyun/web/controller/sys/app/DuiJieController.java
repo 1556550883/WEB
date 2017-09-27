@@ -508,6 +508,7 @@ public class DuiJieController extends BaseController
 				super.writeJsonDataApp(response, model);
 				return;
 			}
+			
 			//判断打开app的时间是否足够
 			Integer leastTaskTime = dictionaryService.getLeastTaskTime();
 			if(new Date().getTime()-task.getOpenAppTime().getTime() <= leastTaskTime*1000)
