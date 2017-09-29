@@ -335,6 +335,13 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		//快速任务不需要回调
+		if(adverInfo != null && "0".equals(adverInfo.getTaskType())) 
+		{
+			return;
+		}
+		
 		//状态改为已完成
 		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 		tUserappidAdverid.setIdfa(idfa);
@@ -397,8 +404,10 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		
 		//判断任务状态
-		if(task.getStatus().compareTo("2") >= 0)
+		if(task.getStatus().compareTo("2") >= 0 && "1".equals(adverInfo.getTaskType()))
 		{
 			model.setResult(1);
 			model.setMsg("已完成！");
@@ -414,7 +423,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//查询广告信息
-		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		//TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		if(adverInfo == null)
 		{
 			model.setResult(-1);
