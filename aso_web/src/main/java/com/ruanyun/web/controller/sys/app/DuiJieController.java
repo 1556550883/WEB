@@ -782,4 +782,40 @@ public class DuiJieController extends BaseController
 		
 		return model;
 	}
+	
+	//设置任务时间超时
+	@RequestMapping("setTaskTimeout")
+	public void setTaskTimeout(HttpServletResponse response,HttpServletRequest request) 
+			throws Exception
+	{
+		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		
+		String idfa = request.getParameter("idfa");
+		String adverId = request.getParameter("adverId");
+		
+		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(adverId))
+		{
+			model.setResult(-1);
+			model.setMsg("idfa、adverId不能为空！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		TUserappidAdverid task = getTask(adverId, idfa);
+		if(task != null && task.getStatus().compareTo("2") == 0)
+		{
+			model.setResult(-1);
+			model.setMsg("任务已经完成，不需要放弃！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		//状态改为超时
+		task.setStatus("1.6");
+		userappidAdveridService.updateTaskStatus(task);
+		
+		model.setResult(1);
+		model.setMsg("成功！");
+		super.writeJsonDataApp(response, model);
+	}
 }

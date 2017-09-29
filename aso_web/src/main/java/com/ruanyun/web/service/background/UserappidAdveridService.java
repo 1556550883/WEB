@@ -52,6 +52,11 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.updateStatus2Complete(info);
 	}
 	
+	public int updateTaskStatus(TUserappidAdverid info) 
+	{
+		return userappidAdveridDao.updateTaskStatus(info);
+	}
+	
 	/**
 	 * 更新超时未完成任务的状态，并返回更新行数
 	 */

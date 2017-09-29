@@ -99,6 +99,22 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.update(params, sql.toString());
 	}
 	
+	public int updateTaskStatus(TUserappidAdverid info) 
+	{
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE status<='1.5' ");
+		if(EmptyUtils.isNotEmpty(info))
+		{
+			if (EmptyUtils.isNotEmpty(info.getAdverId()))
+				sql.append(" and adver_id="+info.getAdverId());
+			if (EmptyUtils.isNotEmpty(info.getIdfa()))
+				sql.append(" and idfa='"+info.getIdfa()+"'");
+		}
+		
+		Object[] params = new Object[1];
+		params[0] = info.getStatus();
+		return sqlDao.update(params, sql.toString());
+	}
+	
 	/**
 	 * 更新超时未完成任务的状态，并返回更新行数
 	 */
