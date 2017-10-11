@@ -1,7 +1,6 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,6 +73,47 @@ public class LiDeJiJin extends BaseChannel
 			}
 		}
 		
+		return model;
+	}
+
+	public static AppCommonModel activate(String domain, String adid, String idfa, String ip) 
+	{
+		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		StringBuilder url =  new StringBuilder(domain)
+		.append("?app=").append(CH)
+		.append("&adid=").append(adid)
+		.append("&idfa=").append(idfa)
+		.append("&ip=").append(ip);
+		
+		JSONObject jsonObject = httpGet(url.toString(), false);
+		
+		if(jsonObject == null)
+		{
+			log.error("request url：" + url + "。response：null");
+			model.setResult(-1);
+			model.setMsg("未完成。原因：调用第三方平台出错！");
+		}
+		else
+		{
+			log.error("request url：" + url + "。response：" + jsonObject.toString());
+			Integer code = (Integer)jsonObject.get("code");
+			String msg = (String) jsonObject.get("msg");
+			if(code == null)
+			{
+				model.setResult(-1);
+				model.setMsg("未完成！");
+			}
+			else if(code == 0)
+			{
+				model.setResult(1);
+				model.setMsg(msg);
+			}
+			else
+			{
+				model.setResult(-1);
+				model.setMsg(msg);
+			}
+		}
 		return model;
 	}
 }

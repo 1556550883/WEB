@@ -434,7 +434,7 @@ public class DuiJieController extends BaseController
 		
 		//查询任务完成情况
 		if("0".equals(adverInfo.getTaskType()))
-		{//快速任务
+		{	//快速任务
 			//判断是否已打开app
 			if(!task.getStatus().equals("1.5"))
 			{
@@ -456,7 +456,7 @@ public class DuiJieController extends BaseController
 			{
 				//云聚
 				//调用第三方激活上报接口
-				model = YunJu.activate(adverInfo.getFlag4(),adid, adverInfo.getAdverName(), idfa, ip);
+				model = YunJu.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
 				if(model.getResult() == -1)
 				{
 					super.writeJsonDataApp(response, model);
@@ -468,6 +468,17 @@ public class DuiJieController extends BaseController
 				//掌上互动
 				//调用第三方激活上报接口
 				model = ZhangShangHuDong.activate(adid, idfa, ip);
+				if(model.getResult() == -1)
+				{
+					super.writeJsonDataApp(response, model);
+					return;
+				}
+			}
+			else if("4".equals(channelInfo.getChannelNum()))
+			{
+				//云聚
+				//调用第三方激活上报接口
+				model = LiDeJiJin.activate(adverInfo.getFlag4(), adid, idfa, ip);
 				if(model.getResult() == -1)
 				{
 					super.writeJsonDataApp(response, model);
