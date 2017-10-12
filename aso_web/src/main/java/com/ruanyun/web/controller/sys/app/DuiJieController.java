@@ -105,11 +105,6 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		//更新超时未完成的任务
-		userappidAdveridService.updateStatus2Invalid(adverInfo);
-		//更新任务数量
-		appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
-		
 		//判断当天领取到的任务
 		Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
 		
@@ -812,7 +807,16 @@ public class DuiJieController extends BaseController
 		
 		String idfa = request.getParameter("idfa");
 		String adverId = request.getParameter("adverId");
+		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		
+		if(adverInfo != null)
+		{
+			//更新超时未完成的任务
+			userappidAdveridService.updateStatus2Invalid(adverInfo);
+			//更新任务数量
+			appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
+		}
+	
 		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(adverId))
 		{
 			model.setResult(-1);
@@ -830,7 +834,7 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		//状态改为超时
+		//把当前任务状态改为超时
 		task.setStatus("1.6");
 		userappidAdveridService.updateTaskStatus(task);
 		

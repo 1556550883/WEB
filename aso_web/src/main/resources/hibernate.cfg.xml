@@ -6,9 +6,9 @@
     <session-factory>    
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">ruanyun</property>
-    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/beijingzhuanqian?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">root1003</property>
+    <property name="hibernate.connection.password">Wen6482385</property>
+    <property name="hibernate.connection.url">jdbc:mysql://rm-bp1mx76m49p14257bo.mysql.rds.aliyuncs.com:3306/beijingzhuanqian?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</property>
     <property name="hibernate.connection.shutdown">true</property>
     </session-factory>
 </hibernate-configuration>

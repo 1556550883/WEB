@@ -25,7 +25,9 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.sys.TUser;
+import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
+import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpSessionUtils;
@@ -39,6 +41,10 @@ public class ChannelAdverInfoController extends BaseController
 {
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
+	@Autowired
+	private UserappidAdveridService userappidAdveridService;
+	@Autowired
+	private AppChannelAdverInfoService appChannelAdverInfoService;
 	
 	/**
 	 * 查询广告列表（后台显示）
@@ -59,11 +65,11 @@ public class ChannelAdverInfoController extends BaseController
 	 * @throws IllegalAccessException 
 	 */
 	@RequestMapping("toedit")
-	public String toedit(Integer id,Model model,Integer type,String channelNum) throws Exception
+	public String toedit(Integer id, Model model,Integer type,String channelNum) throws Exception
 	{
 		if(EmptyUtils.isNotEmpty(id))
-		{
-			TChannelAdverInfo bean=channelAdverInfoService.getInfoById(id);
+		{	
+			TChannelAdverInfo bean = channelAdverInfoService.getInfoById(id);
 			addModel(model, "bean", bean);
 			addModel(model, "channelNum", channelNum);
 			return "pc/channelAdverInfo/edit";
@@ -128,23 +134,37 @@ public class ChannelAdverInfoController extends BaseController
 	 * 功能描述：修改
 	 */
 	@RequestMapping("edit")
-	public void upd(TChannelAdverInfo info,HttpServletResponse response,HttpSession session,MultipartFile file,MultipartFile fileAdverImg,HttpServletRequest request,String[] stepName, String[] stepDesc, Integer[] stepRates, String[] stepTime, Float[] stepScore, Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount){
-		try {
+	public void upd(TChannelAdverInfo info, HttpServletResponse response, HttpSession session, MultipartFile file,
+			MultipartFile fileAdverImg, HttpServletRequest request, String[] stepName, String[] stepDesc, Integer[] stepRates,
+			String[] stepTime, Float[] stepScore, Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount)
+	{
+		try 
+		{
 			//向轴 add
 			//广告有效期
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			info.setAdverDayStart(simpleDateFormat.parse(info.getAdverTimeStart()));
 			info.setAdverDayEnd(simpleDateFormat.parse(info.getAdverTimeEnd()));
 			//任务类型
-			if(info.getChannelNum().equals("3") && !info.getTaskType().equals("2")){
+			if(info.getChannelNum().equals("3") && !info.getTaskType().equals("2"))
+			{
 				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, "自由渠道的广告的任务类型只能是自由任务！", "", "", ""));
 				return;
 			}
 			
 			TUser user=HttpSessionUtils.getCurrentUser(session);
-			channelAdverInfoService.saveOrUpd(info,user,file,request,stepName,stepDesc,stepRates,stepTime,stepScore,stepUseTime,stepType,stepMinCount,fileAdverImg);
+			channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc,
+					stepRates, stepTime, stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
+			
+			//更新超时未完成的任务
+			userappidAdveridService.updateStatus2Invalid(info);
+			//更新任务数量
+			appChannelAdverInfoService.updateAdverCountRemain(info);
+			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
-		} catch (Exception e) {
+		} 
+		catch (Exception e)
+		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
 		}
 	}
