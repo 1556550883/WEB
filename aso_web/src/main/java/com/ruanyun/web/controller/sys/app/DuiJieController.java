@@ -105,6 +105,14 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		if(adverInfo.getAdverCountRemain() <= 0) 
+		{
+			model.setResult(-1);
+			model.setMsg("任务被抢光啦!");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
 		//判断当天领取到的任务
 		Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
 		
