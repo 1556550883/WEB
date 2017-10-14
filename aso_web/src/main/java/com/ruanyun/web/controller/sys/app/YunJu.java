@@ -74,7 +74,7 @@ public class YunJu extends BaseChannel {
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId) throws UnsupportedEncodingException {
+			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url = new StringBuilder(domain)
@@ -82,7 +82,7 @@ public class YunJu extends BaseChannel {
 				.append("&ch=").append(CH)
 				.append("&idfa=").append(idfa)
 				.append("&ip=").append(ip)
-				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId));
+				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){

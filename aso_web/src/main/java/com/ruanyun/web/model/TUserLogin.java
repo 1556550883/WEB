@@ -15,10 +15,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name="t_user_login"
 )
-public class TUserLogin  implements java.io.Serializable {
-
-
-     private Integer userLoginId;
+public class TUserLogin  implements java.io.Serializable 
+{
+	private static final long serialVersionUID = -4885008184525442115L;
+	private Integer userLoginId;
      private String userNum;
      private String loginName;
      private String password;

@@ -58,13 +58,17 @@ public class UserAppController extends BaseController{
 	 *@date 2016-1-6
 	 */
 	@RequestMapping("list")
-	public String getUserAppList(Page<TUserApp> page,TUserApp info,Model model){
-		if(info.getUserApppType() == null){
+	public String getUserAppList(Page<TUserApp> page,TUserApp info,Model model)
+	{
+		if(info.getUserApppType() == null)
+		{
 			info.setUserApppType(1);
 		}
-		page.setNumPerPage(10);
+		
+		page.setNumPerPage(20);
 		addModel(model, "pageList", userAppService.queryPage(page, info));
 		addModel(model, "bean", info);
+		
 		return "pc/userApp/list";
 	}
 	
@@ -124,14 +128,20 @@ public class UserAppController extends BaseController{
 	 * 功能描述:修改用户信息
 	 */
 	@RequestMapping("/saveOrUpdate")
-	public void saveOrUpdate(TUserApp userApp,HttpServletResponse response,HttpServletRequest request,Model model,MultipartFile picFile){
+	public void saveOrUpdate(TUserApp userApp,HttpServletResponse response,HttpServletRequest request,Model model,MultipartFile picFile)
+	{
 //		TUser currentUser=HttpSessionUtils.getCurrentUser(session);
 		int result=userAppService.saveOrUpdate(userApp, request, picFile);
-		if (result==1) {
+		if (result==1)
+		{
 			super.writeJsonData(response,CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_", "userApp/list", "redirect"));
-		}else if (result==2) {
+		}
+		else if (result==2)
+		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, "登录名重复", "", "", ""));
-		}else{
+		}
+		else
+		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
 		}
 	}

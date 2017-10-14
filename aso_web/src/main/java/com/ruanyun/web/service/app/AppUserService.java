@@ -33,7 +33,8 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 	 *@author feiyang
 	 *@date 2016-1-14
 	 */
-	public TUserApp getUserByUserNum(String userNum){		
+	public TUserApp getUserByUserNum(String userNum)
+	{		
 		return userAppDao.getUserByUserNum(userNum);
 		
 	}

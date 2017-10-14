@@ -53,7 +53,7 @@ public class ZhangShangHuDong extends BaseChannel {
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId) throws UnsupportedEncodingException{
+			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException{
 		AppCommonModel model = new AppCommonModel(-1, "领取任务出错！");
 		
 		StringBuilder url = new StringBuilder("http://api.adzshd.com/SourceClick.ashx")
@@ -62,7 +62,7 @@ public class ZhangShangHuDong extends BaseChannel {
 			.append("&idfa=").append(idfa)
 			.append("&ip=").append(ip)
 			.append("&mac=02:00:00:00:00:00")
-			.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId));
+			.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){

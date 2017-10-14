@@ -16,8 +16,8 @@ import com.ruanyun.web.model.UserAppModel;
  *@date 2016-1-11
  */
 @Repository
-public class UserLoginDao extends BaseDaoImpl<TUserLogin>{
-
+public class UserLoginDao extends BaseDaoImpl<TUserLogin>
+{
 	/**
 	 * 
 	 * 功能描述:根据用户名获取用户
@@ -45,7 +45,6 @@ public class UserLoginDao extends BaseDaoImpl<TUserLogin>{
 		return sqlDao.get(TUserLogin.class, sql.toString());
 	}
 	
-	
 	/**
 	 * 
 	 * 手机端接口:根据用户编码获取用户积分和个人信息
@@ -56,7 +55,7 @@ public class UserLoginDao extends BaseDaoImpl<TUserLogin>{
 	 */
 	public UserAppModel getUserModelByNum(String userNum)
 	{
-		StringBuffer sql=new StringBuffer("SELECT tua.*,tus.score_day,tus.score,tus.score_sum,tus.apprentice_count_day,tus.apprentice_count,tus.user_level_num,tul.level_name FROM t_user_app tua ,t_user_score tus, t_user_level tul");
+		StringBuffer sql = new StringBuffer("SELECT tua.*,tus.score_day,tus.score,tus.score_sum,tus.apprentice_count_day,tus.apprentice_count,tus.user_level_num,tul.level_name FROM t_user_app tua ,t_user_score tus, t_user_level tul");
 		sql.append(" WHERE tua.user_num='"+userNum+"'");
 		sql.append(" AND tus.user_num='"+userNum+"'");
 		sql.append(" AND tul.level_num=tus.user_level_num ");

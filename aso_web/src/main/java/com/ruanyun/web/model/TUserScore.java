@@ -17,9 +17,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name="t_user_score"
 )
-public class TUserScore  implements java.io.Serializable {
-
-
+public class TUserScore  implements java.io.Serializable 
+{
      private Integer userScoreId;
      private String userNum;
      private Float scoreDay;//今日分数

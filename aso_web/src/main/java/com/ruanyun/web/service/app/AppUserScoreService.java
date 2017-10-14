@@ -31,7 +31,8 @@ import com.ruanyun.web.util.NumUtils;
  *@date 2016-1-11
  */
 @Service
-public class AppUserScoreService extends BaseServiceImpl<TUserScore> {
+public class AppUserScoreService extends BaseServiceImpl<TUserScore> 
+{
 
 	@Autowired
 	@Qualifier("userScoreDao")

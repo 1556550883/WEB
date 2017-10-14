@@ -18,9 +18,8 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="t_user_score_info"
 )
-public class TUserScoreInfo  implements java.io.Serializable {
-
-
+public class TUserScoreInfo  implements java.io.Serializable
+{
      private Integer userScoreInfoId;
      private String userScoreInfoNum;
      private Float score;

@@ -191,8 +191,8 @@ public  class BaseServiceImpl<T>  {
 	 * @param X 保存对象
 	 * @return  返回序列保存对象
 	 */
-	public T save(T x) {
-		
+	public T save(T x)
+	{
 		return baseDao.save(x);
 	}
 	

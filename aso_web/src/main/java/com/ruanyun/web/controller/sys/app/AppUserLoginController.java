@@ -17,6 +17,7 @@ import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserLogin;
+import com.ruanyun.web.model.UserAppModel;
 import com.ruanyun.web.service.app.AppUserLoginService;
 
 @Controller
@@ -62,7 +63,7 @@ public class AppUserLoginController extends BaseController
 	public void visitorLogin(HttpServletResponse response,HttpServletRequest request,TUserApp tUserApp) 
 	{
 		AppCommonModel model = new AppCommonModel(-1, "登录失败！");
-		
+		String ip = request.getRemoteAddr();
 		if(tUserApp == null || !StringUtils.hasText(tUserApp.getIdfa()))
 		{
 			model.setResult(-1);
@@ -72,7 +73,7 @@ public class AppUserLoginController extends BaseController
 		{
 			try
 			{
-				model = appUserLoginService.visitorLogin(tUserApp);
+				model = appUserLoginService.visitorLogin(request, tUserApp, ip);
 			}
 			catch (Exception e) 
 			{

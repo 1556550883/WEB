@@ -105,23 +105,24 @@ public class UserScoreDao extends BaseDaoImpl<TUserScore>{
 	}
 	
 	
-	public Map<Integer,TUserScore> getUserScoreByUserAppId(String userAppIds) {
-		final Map<Integer,TUserScore> map = new HashMap<Integer, TUserScore>();
+	public TUserScore getUserScoreByUserAppId(String userAppIds) 
+	{
+		final TUserScore user = new TUserScore();
 		String sql ="select * from t_user_app where user_app_id in ("+SQLUtils.sqlForIn(userAppIds)+")";
-		jdbcTemplate.query(sql, new RowCallbackHandler(){
+		jdbcTemplate.query(sql, new RowCallbackHandler()
+		{
 			@Override
-			public void processRow(ResultSet rs) throws SQLException {
-				Integer userAppId=Integer.valueOf(rs.getString("user_app_id"));
-//				String userNum=rs.getString("user_num");
-				TUserScore user=new TUserScore();
-//				user.setUserNum(rs.getString("user_num"));
-//				user.setScoreDay(rs.getFloat("score_day"));
-//				user.setScore(rs.getFloat("score"));
-//				user.setScoreSum(rs.getFloat("score_sum"));
-				map.put(userAppId, user);
+			public void processRow(ResultSet rs) throws SQLException 
+			{
+				user.setUserScoreId(rs.getInt("user_score_id"));
+				user.setUserNum(rs.getString("user_num"));
+				user.setScoreDay(rs.getFloat("score_day"));
+				user.setScore(rs.getFloat("score"));
+				user.setScoreSum(rs.getFloat("score_sum"));
 			}
 		});
-		return map;
+		
+		return user;
 	}
 	
 }

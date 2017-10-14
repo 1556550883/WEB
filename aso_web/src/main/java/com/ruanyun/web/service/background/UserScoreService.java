@@ -60,8 +60,6 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		return userScoreDao.queryPage(page, t);
 	}
 	
-	
-	
 	/**
 	 * 
 	 * 功能描述:根据用户名获取用户积分信息
@@ -70,7 +68,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 *@author feiyang
 	 *@date 2016-1-11
 	 */
-	public TUserScore getScore(String userNum){
+	public TUserScore getScore(String userNum)
+	{
 		return	userScoreDao.getScore(userNum);
 	}
 	
@@ -82,7 +81,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 *@author feiyang
 	 *@date 2016-1-11
 	 */
-	public List<TUserScore> getScoreListByUserNums(String userNums){
+	public List<TUserScore> getScoreListByUserNums(String userNums)
+	{
 		return	userScoreDao.getScoreListByUserNums(userNums);
 	}
 	
@@ -94,7 +94,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 *@author feiyang
 	 *@date 2016-1-23
 	 */
-	public void addNewUserScore(String userNum,Integer type){
+	public void addNewUserScore(String userNum,Integer type)
+	{
 		TUserScore score=new TUserScore();
 		score.setUserNum(userNum);
 		score.setScore(0f);
@@ -123,7 +124,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param userNums 用户边凹 格式为 'US_0001','US_0002'
 	 * @return
 	 */
-	public Map<String,TUserScore> getMapScore(String userNums){
+	public Map<String,TUserScore> getMapScore(String userNums)
+	{
 		Map<String,TUserScore> userScoreMap= new HashMap<String, TUserScore>();
 		if(EmptyUtils.isEmpty(userNums))
 			return userScoreMap;
@@ -148,7 +150,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param score 分数 1 添加1分  -1 减去一分
 	 * @param userType
 	 */
-	public void addScoreSum(String userNum,String scoreName,Integer scoreType,Float score,Integer userType){
+	public void addScoreSum(String userNum,String scoreName,Integer scoreType,Float score,Integer userType)
+	{
 		TUserScore userScore=getScore(userNum);
 		if(userScore!=null){
 			if(Constants.USER_SCORE_INFO_TYPE_1==scoreType){
@@ -170,9 +173,12 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param score 分数 1 添加1分  -1 减去一分
 	 * @param userType
 	 */
-	public void addScore(String userNum,String scoreName,Integer scoreType,Float score,Integer userType){
-		TUserScore userScore=getScore(userNum);
-		if(userScore!=null){
+	public void addScore(String userNum, String scoreName, Integer scoreType, Float score, Integer userType)
+	{
+		TUserScore userScore = getScore(userNum);
+		
+		if(userScore!=null)
+		{
 			updateScore(userScore, score, 0, scoreName, scoreType, userType);
 		}
 	}
@@ -185,16 +191,23 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param userScore 用户分数对象
 	 * @param score 分数
 	 */
-	public void updateScore(TUserScore userScore,Float score){
-		userScore.setScoreDay(userScore.getScoreDay()+score);
-		if(userScore.getScoreDay()<0)
-			userScore.setScoreDay(0f);
-		userScore.setScoreSum(userScore.getScoreSum()+score);
-		if(userScore.getScoreSum()<0)
+	public void updateScore(TUserScore userScore, Float score)
+	{
+		userScore.setScore(userScore.getScore() + score);
+//		if(userScore.getScoreDay()<0)
+//			userScore.setScoreDay(0f);
+		userScore.setScoreSum(userScore.getScoreSum() + score);
+		
+		if(userScore.getScoreSum()<0) 
+		{
 			userScore.setScoreSum(0f);
-		userScore.setScore(userScore.getScore()+score);
-		if(userScore.getScore()<0)
+		}
+
+		if(userScore.getScore()<0) 
+		{
 			userScore.setScore(0f);
+		}
+		
 		update(userScore);
 	}
 	
@@ -210,9 +223,11 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param scoreType
 	 * @param userType
 	 */
-	private void updateScore(TUserScore userScore,Float score, int type,String scoreName,Integer scoreType,Integer userType) {
+	private void updateScore(TUserScore userScore,Float score, int type,String scoreName,Integer scoreType,Integer userType)
+	{
 		userScore.setScore(userScore.getScore()+score);
-		switch (type) {
+		switch (type) 
+		{
 		case 1:
 			userScore.setScoreDay(userScore.getScoreDay()+score);
 			userScore.setScoreSum(userScore.getScoreSum()+score);

@@ -40,13 +40,9 @@ import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.NumUtils;
 import com.ruanyun.web.util.UploadCommon;
 
-/**
- *@author feiyang
- *@date 2016-1-7
- */
 @Service
-public class UserAppService extends BaseServiceImpl<TUserApp>{
-
+public class UserAppService extends BaseServiceImpl<TUserApp>
+{
 	@Autowired
 	@Qualifier("userAppDao")
 	private UserAppDao userAppDao;
@@ -67,14 +63,17 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 	private UserLoginService userLoginService;
 	
 	@Override
-	public Page<TUserApp> queryPage(Page<TUserApp> page, TUserApp t) {
+	public Page<TUserApp> queryPage(Page<TUserApp> page, TUserApp t) 
+	{
 		Page<TUserApp> _page = userAppDao.queryPage(page, t);
 		
-		String userAppIds=CommonUtils.getAttributeValue(TUserApp.class, _page.getResult(), "userAppId");
-		if(EmptyUtils.isNotEmpty(userAppIds)){
-			Map<Integer,TUserScore> userMap=userScoreService.getUserScoreByUserAppId(userAppIds);
+		String userAppIds = CommonUtils.getAttributeValue(TUserApp.class, _page.getResult(), "userAppId");
+		if(EmptyUtils.isNotEmpty(userAppIds))
+		{
+			Map<Integer,TUserScore> userMap = userScoreService.getUserScoreByUserAppId(userAppIds);
 			CommonUtils.setAttributeValue(TUserApp.class,  _page.getResult(), userMap, "userAppId", "userScore");
 		}
+		
 		return _page;
 	}
 	
@@ -91,21 +90,19 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 		return super.get(TUserApp.class, userId);
 	}
 	
-	public TUserApp getUserAppByNum(String userNum){
+	public TUserApp getUserAppByNum(String userNum)
+	{
 		return super.get(TUserApp.class,"userNum", userNum);
 	}
-	
-	
 	
 	/**
 	 * 
 	 * 功能描述:获取手机的所有用户数量
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-4
 	 */
-	public int getUserNum(Integer type,Date createTime){		
-	return	userAppDao.getUserNum(type,createTime);
+	public int getUserNum(Integer type,Date createTime)
+	{		
+		return	userAppDao.getUserNum(type,createTime);
 	}
 	
 
@@ -118,44 +115,64 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 	 * @return
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public int saveOrUpdate(TUserApp userApp,HttpServletRequest request,MultipartFile picFile) {
+	public int saveOrUpdate(TUserApp userApp,HttpServletRequest request,MultipartFile picFile)
+	{
 		UploadVo vo = null;
-		if (EmptyUtils.isNotEmpty(picFile) && picFile.getSize()!=0) {
-			try {
+		if (EmptyUtils.isNotEmpty(picFile) && picFile.getSize() != 0)
+		{
+			try
+			{
 				vo = UploadCommon.uploadPic(picFile, request,Constants.FILE_HEAD_IMG, "gif,jpg,jpeg,bmp,png");
-			} catch (IOException e) {
+			}
+			catch (IOException e) 
+			{
 				e.printStackTrace();
 			}
 		}
 			
-		if (userApp != null && EmptyUtils.isNotEmpty(userApp.getUserNum())) {
+		if (userApp != null && EmptyUtils.isNotEmpty(userApp.getUserNum())) 
+		{
 			TUserApp olUuser = super.get(TUserApp.class,"userNum", userApp.getUserNum());
-			if(EmptyUtils.isNotEmpty(olUuser.getLoginName()) && olUuser.getLoginName().equals(userApp.getLoginName())){
+			if(EmptyUtils.isNotEmpty(olUuser.getLoginName()) && olUuser.getLoginName().equals(userApp.getLoginName()))
+			{
 				//未修改登录名
-			}else{
+			}else
+			{
 				TUserApp app = super.get(TUserApp.class,"loginName", userApp.getLoginName());
-				if(EmptyUtils.isNotEmpty(app)){
+				if(EmptyUtils.isNotEmpty(app))
+				{
 					return 2;//登录名重复
 				}
 			}
+			
 			BeanUtils.copyProperties(userApp, olUuser, new String[] {"userAppId", "userNum", "headImg","phoneSerialNumber","createDate"
 					,"invitationCode","taskNewStatus","zhifubao","weixin","zhifubaoName","userApppType","appStore"});
+			
 			if (EmptyUtils.isNotEmpty(vo) && vo.getResult()==1) 
+			{
 				olUuser.setHeadImg(vo.getFilename());
+			} 
 			
 			update(olUuser);
-			
 			TUserLogin tUserLogin = userLoginService.getUserByUserNum(userApp.getUserNum(), 1);
 			tUserLogin.setLoginName(olUuser.getLoginName());
 			tUserLogin.setPassword(olUuser.getLoginPwd());
 			userLoginService.update(tUserLogin);
-		}else{
+		}
+		else
+		{
 			TUserApp app = super.get(TUserApp.class,"loginName", userApp.getLoginName());
-			if(EmptyUtils.isNotEmpty(app)){
+			
+			if(EmptyUtils.isNotEmpty(app))
+			{
 				return 2;//登录名重复
 			}
+			
 			if (EmptyUtils.isNotEmpty(vo) && vo.getResult()==1) 
+			{
 				userApp.setHeadImg(vo.getFilename());
+			}
+			
 			userApp.setCreateDate(new Date());
 			//userApp.setLoginPwd(MD5Util.encoderByMd5(Constants.USER_DEFULT_PASSWORD));
 			super.save(userApp);
@@ -172,6 +189,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 			//保存用户积分
 			userScoreService.addNewUserScore(userApp.getUserNum(), 2);//手机app
 		}
+		
 		return 1;
 	}
 	
@@ -181,15 +199,26 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 	 * @param ids
 	 * @return
 	 */
-	public int delete(String ids) {
-		if(EmptyUtils.isEmpty(ids))return 0;
+	public int delete(String ids) 
+	{
+		if(EmptyUtils.isEmpty(ids)) 
+		{
+			return 0;
+		}
+		
 		String[] userNums = ids.split(",");
-		for (String userNum : userNums) {
-			if(EmptyUtils.isEmpty(userNum))
+		
+		for (String userNum : userNums) 
+		{
+			if(EmptyUtils.isEmpty(userNum)) 
+			{
 				continue;
+			}
+			
 			 super.delete(TUserApp.class,"userNum",userNum);
 			 userLoginService.delete(TUserLogin.class, "userNum", userNum);//删除登录
 		}
+		
 		return 1;
 	}
 
@@ -200,11 +229,13 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 	 * @param currentUser
 	 * @return
 	 */
-	public int updateUserApp(String ids,TUser currentUser) {
+	public int updateUserApp(String ids,TUser currentUser) 
+	{
 		TUserApp userApp = null;
 		if(EmptyUtils.isEmpty(ids))return 0;
 		String[] userNums = ids.split(",");
-		for (String userNum : userNums) {
+		for (String userNum : userNums)
+		{
 			if(EmptyUtils.isEmpty(userNum))
 				continue;
 			userApp = super.get(TUserApp.class, "userNum", userNum);
@@ -217,14 +248,15 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 			userStudentCartService.delete(TUserStudentCart.class,"userAppNum",userApp.getUserNum());
 			update(userApp);
 		}
+		
 		return 1;
 	}
 
 	/**
 	 * 功能描述:保存最近登录的ip地址
 	 */
-	public void updateIp(HttpServletRequest request, TUserApp userApp,String ip) {
-//		userApp.setFlag2(request.getLocalAddr());
+	public void updateIp(HttpServletRequest request, TUserApp userApp,String ip) 
+	{
 		userApp.setFlag2(ip);
 		super.update(userApp);
 	}
@@ -232,7 +264,8 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 	/**
 	 * 获取当前的广告列表
 	 */
-	public List<Map<String,Object>> queryCurrentAdverList(String excludeAdverId) {
+	public List<Map<String,Object>> queryCurrentAdverList(String excludeAdverId)
+	{
 		List<Map<String,Object>> adverAuthoritys = new ArrayList<Map<String,Object>>();
 		
 		List<TChannelAdverInfo> adverList = channelAdverInfoDao.queryCurrentAdverList();
@@ -266,5 +299,4 @@ public class UserAppService extends BaseServiceImpl<TUserApp>{
 		
 		return adverAuthoritys;
 	}
-
 }

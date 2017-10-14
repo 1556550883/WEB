@@ -26,6 +26,7 @@ import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
+import com.ruanyun.web.service.background.UserScoreService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 
 @Controller
@@ -42,6 +43,8 @@ public class DuiJieController extends BaseController
 	private ChannelInfoService channelInfoService;
 	@Autowired
 	private DictionaryService dictionaryService;
+	@Autowired
+	private UserScoreService userScoreService;
 	
 	/**
 	 * 查询系统参数
@@ -84,6 +87,7 @@ public class DuiJieController extends BaseController
 		String userAppId = request.getParameter("userAppId");//用户Id
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
+		String userNum = request.getParameter("userNum");
 		
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
 				|| !StringUtils.hasText(userAppId) || !StringUtils.hasText(adverId))
@@ -152,7 +156,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//分渠道调用排重接口、点击接口
-		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId);
+		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 		if(checkChannelInfoModel.getResult() == -1)
 		{
 			super.writeJsonDataApp(response, checkChannelInfoModel);
@@ -328,6 +332,7 @@ public class DuiJieController extends BaseController
 		String idfa = request.getParameter("idfa");
 		String userAppId = request.getParameter("userAppId");
 		String adverId = request.getParameter("adverId");
+		String userNum = request.getParameter("userNum");
 		
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(userAppId)
 				|| !StringUtils.hasText(adverId))
@@ -351,11 +356,17 @@ public class DuiJieController extends BaseController
 		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
 		tUserappidAdverid.setStatus("2");
 		tUserappidAdverid.setCompleteTime(new Date());
-		userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
+		int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
+		if(rowCount == 0)
+		{
+			model.setResult(-1);
+			model.setMsg("未完成。原因：更改任务状态失败！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
 		
-		model.setResult(1);
-		model.setMsg("成功！");
-		super.writeJsonDataApp(response, model);
+		//更新金额
+		userScoreService.updateScore(userScoreService.getScore(userNum) ,tUserappidAdverid.getAdverPrice());
 	}
 	
 	//根据adverid和idfa获取领取到的任务
@@ -387,6 +398,7 @@ public class DuiJieController extends BaseController
 		String idfa = request.getParameter("idfa");//手机广告标识符
 		String ip = request.getRemoteAddr();//手机ip
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
+		String userNum = request.getParameter("userNum");
 		
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
 				|| !StringUtils.hasText(adverId))
@@ -509,6 +521,8 @@ public class DuiJieController extends BaseController
 				super.writeJsonDataApp(response, model);
 				return;
 			}
+			//更新金额
+			userScoreService.updateScore(userScoreService.getScore(userNum) ,tUserappidAdverid.getAdverPrice());
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -555,6 +569,8 @@ public class DuiJieController extends BaseController
 				super.writeJsonDataApp(response, model);
 				return;
 			}
+			//更改金额
+			userScoreService.updateScore(userScoreService.getScore(userNum) ,tUserappidAdverid.getAdverPrice());
 		}
 		else
 		{//异常情况
@@ -577,7 +593,6 @@ public class DuiJieController extends BaseController
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		page.setNumPerPage(Integer.MAX_VALUE);
-		
 		String userAppId = request.getParameter("userAppId");
 		
 		if(!StringUtils.hasText(userAppId))
@@ -711,7 +726,7 @@ public class DuiJieController extends BaseController
 	}
     
 	private AppCommonModel checkChannelInfo(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
-			String userAppId, String adverId) throws NumberFormatException, UnsupportedEncodingException 
+			String userAppId, String adverId, String userNum) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = new AppCommonModel(1, "任务领取成功！");
 		
@@ -729,7 +744,7 @@ public class DuiJieController extends BaseController
     		{
     			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
     			
-    			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId);
+    			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
     		}
     		else 
     		{
@@ -763,7 +778,7 @@ public class DuiJieController extends BaseController
 			{
 				appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
 				
-				model = isLDJJChannel(adverInfo, adid, idfa, ip, userAppId, adverId);
+				model = isLDJJChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 			}
 			else 
 			{
@@ -781,7 +796,8 @@ public class DuiJieController extends BaseController
 	}
 	
 	//排重+点击+云聚
-	private AppCommonModel isYunJvChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId, String adverId) 
+	private AppCommonModel isYunJvChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
+			String userAppId, String adverId, String userNum) 
 					throws NumberFormatException, UnsupportedEncodingException
 	{
 		//云聚
@@ -791,17 +807,18 @@ public class DuiJieController extends BaseController
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = YunJu.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId));
+			model = YunJu.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
 		}
 		
 		return model;
 	}
 	
 	//利德基金渠道+排重+点击
-	private AppCommonModel isLDJJChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId, String adverId) 
+	private AppCommonModel isLDJJChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum) 
 			throws NumberFormatException, UnsupportedEncodingException 
 	{
-		AppCommonModel model = LiDeJiJin.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId));
+		AppCommonModel model = LiDeJiJin.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
 		
 		return model;
 	}
@@ -815,15 +832,6 @@ public class DuiJieController extends BaseController
 		
 		String idfa = request.getParameter("idfa");
 		String adverId = request.getParameter("adverId");
-		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-		
-		if(adverInfo != null)
-		{
-			//更新超时未完成的任务
-			userappidAdveridService.updateStatus2Invalid(adverInfo);
-			//更新任务数量
-			appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
-		}
 	
 		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(adverId))
 		{
@@ -845,6 +853,16 @@ public class DuiJieController extends BaseController
 		//把当前任务状态改为超时
 		task.setStatus("1.6");
 		userappidAdveridService.updateTaskStatus(task);
+		
+		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		
+		if(adverInfo != null)
+		{
+			//更新超时未完成的任务
+			userappidAdveridService.updateStatus2Invalid(adverInfo);
+			//更新任务数量
+			appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
+		}
 		
 		model.setResult(1);
 		model.setMsg("成功！");

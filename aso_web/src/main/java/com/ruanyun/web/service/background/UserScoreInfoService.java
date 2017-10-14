@@ -42,7 +42,8 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 	 * @param scoreType 分数类型
 	 * @param userType 用户类型
 	 */
-	public void saveUserScoreInfo(String userAppNum,String scoreName,Float score,Integer scoreType,Integer userType){
+	public void saveUserScoreInfo(String userAppNum,String scoreName,Float score,Integer scoreType,Integer userType)
+	{
 		TUserScoreInfo userScoreInfo = new TUserScoreInfo();
 		userScoreInfo.setScore(score);
 		userScoreInfo.setScoreName(scoreName);
@@ -53,6 +54,7 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 		save(userScoreInfo);
 		userScoreInfo.setUserScoreInfoNum(getNewScoreInfoNum(userScoreInfo.getUserScoreInfoId()));
 	}
+	
 	@Transactional
 	public void deleteScoreInfo(String userScoreInfoNum,String userAppNum){
 		TUserScoreInfo userScoreInfo=get(TUserScoreInfo.class,"userScoreInfoNum", userScoreInfoNum);

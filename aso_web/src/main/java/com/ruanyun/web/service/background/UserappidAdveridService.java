@@ -1,10 +1,5 @@
 package com.ruanyun.web.service.background;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,8 +16,6 @@ import com.ruanyun.web.model.TUserappidAdverid;
 @Service
 public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid> 
 {
-	
-	private static final Log log = LogFactory.getLog(UserappidAdveridService.class);
 	
 	@Autowired
 	private UserappidAdveridDao userappidAdveridDao;

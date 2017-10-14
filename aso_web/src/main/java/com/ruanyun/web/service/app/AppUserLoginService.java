@@ -41,8 +41,8 @@ import com.ruanyun.web.util.UploadCommon;
  * @date 2016-1-11
  */
 @Service
-public class AppUserLoginService extends BaseServiceImpl<TUserLogin> {
-
+public class AppUserLoginService extends BaseServiceImpl<TUserLogin> 
+{
 	@Autowired
 	private UserLoginDao userLoginDao;
 	@Autowired
@@ -106,7 +106,6 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin> {
 			appModel.setLoginName(user.getLoginName());
 			appModel.setLoginType(user.getLoginType());
 			appModel.setUserApppType(userApp.getUserApppType());
-			appModel.setAppStore(userApp.getAppStore());
 			
 			model.setObj(appModel);
 			userAppService.updateIp(request,userApp,ip);//保存最近登录ip地址
@@ -125,34 +124,61 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin> {
 	/**
 	 * 功能描述:游客登录
 	 */
-	public AppCommonModel visitorLogin(TUserApp tUserApp) {
+	@Transactional(rollbackFor = Exception.class)
+	public AppCommonModel visitorLogin(HttpServletRequest request, TUserApp tUserApp, String ip) 
+	{
 		AppCommonModel model = new AppCommonModel(-1, "登录失败！");
 		
 		String idfa = tUserApp.getIdfa();
 		tUserApp = appUserService.get(TUserApp.class, "idfa", idfa);
-		if (tUserApp == null){
+		if (tUserApp == null)
+		{
 			//创建游客用户
 			tUserApp = new TUserApp();
 			tUserApp.setUserApppType(2);
-			tUserApp.setLoginName("游客");
-			tUserApp.setIdfa(idfa);
-			tUserApp = userAppService.save(tUserApp);
-			if (tUserApp == null) {
-				model.setResult(-1);
-				model.setMsg("登录失败！原因：创建游客用户失败！");
-				return model;
+			tUserApp.setLoginName((int)(1000 + Math.random() * 9000) + "");
+			
+			while(true) 
+			{
+				TUserApp app = super.get(TUserApp.class, "loginName", tUserApp.getLoginName());
+				if(EmptyUtils.isNotEmpty(app))
+				{
+					tUserApp.setLoginName((int)(1000 + Math.random() * 9000) + "");
+				}
+				else 
+				{
+					break;
+				}
 			}
+			
+			tUserApp.setIdfa(idfa);
+			tUserApp.setCreateDate(new Date());
+			tUserApp = userAppService.save(tUserApp);
+			tUserApp.setUserNum(NumUtils.getCommondNum(NumUtils.USER_APP_NUM, tUserApp.getUserAppId()));
+			//保存用户登录
+			TUserLogin userLogin = new TUserLogin();
+			userLogin.setUserNum(tUserApp.getUserNum());
+			userLogin.setPassword(tUserApp.getLoginPwd());
+			userLogin.setLoginName(tUserApp.getLoginName());
+			userLogin.setLoginType(1);
+			userLoginService.save(userLogin);
+			
+			//保存用户积分
+			userScoreService.addNewUserScore(tUserApp.getUserNum(), 2);//手机app
 		}
 		
-		UserAppModel appModel = new UserAppModel();
+		UserAppModel appModel = userLoginDao.getUserModelByNum(tUserApp.getUserNum());
 		appModel.setUserAppId(tUserApp.getUserAppId());
 		appModel.setLoginName(tUserApp.getLoginName());
 		appModel.setLoginType(2);
 		appModel.setUserApppType(2);
-		
+
+		userAppService.updateIp(request, tUserApp, ip);//保存最近登录ip地址
+		loginIpService.saveOrUpdate(request, ip);//记录登录IP地址		
 		model.setObj(appModel);
 		model.setResult(1);
 		model.setMsg("登录成功！");
+		
 		return model;
 	}
 	

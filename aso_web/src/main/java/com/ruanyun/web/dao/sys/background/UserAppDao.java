@@ -45,11 +45,12 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	 *@author feiyang
 	 *@date 2016-1-14
 	 */
-	public TUserApp getUserByUserNum(String userNum){
+	public TUserApp getUserByUserNum(String userNum)
+	{
 		StringBuffer sql=new StringBuffer(" SELECT * from t_user_app WHERE user_num ='"+userNum+"'");
 		return sqlDao.get(TUserApp.class, sql.toString());
-		
 	}
+	
 	/**
 	 * 
 	 * 功能描述:根据序列号获取用户

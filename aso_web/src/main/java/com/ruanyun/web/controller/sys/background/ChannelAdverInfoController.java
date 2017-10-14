@@ -27,7 +27,6 @@ import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
-import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpSessionUtils;
@@ -41,8 +40,6 @@ public class ChannelAdverInfoController extends BaseController
 {
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
-	@Autowired
-	private UserappidAdveridService userappidAdveridService;
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
 	
@@ -156,8 +153,6 @@ public class ChannelAdverInfoController extends BaseController
 			channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc,
 					stepRates, stepTime, stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
 			
-			//更新超时未完成的任务
-			userappidAdveridService.updateStatus2Invalid(info);
 			//更新任务数量
 			appChannelAdverInfoService.updateAdverCountRemain(info);
 			

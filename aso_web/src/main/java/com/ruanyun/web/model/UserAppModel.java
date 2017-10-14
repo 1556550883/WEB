@@ -184,6 +184,4 @@ public class UserAppModel {
 	public void setAppStore(String appStore) {
 		this.appStore = appStore;
 	}
-	
-	
 }
