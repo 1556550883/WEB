@@ -5,7 +5,6 @@
  */
 package com.ruanyun.web.service.background;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,20 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.UserScoreDao;
-import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserApprentice;
 import com.ruanyun.web.model.TUserLevel;
 import com.ruanyun.web.model.TUserLevelRate;
 import com.ruanyun.web.model.TUserScore;
-import com.ruanyun.web.model.TUserappidAdverid;
-import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.util.CommonMethod;
 import com.ruanyun.web.util.Constants;
 
@@ -50,10 +45,6 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	private UserLevelService userLevelService;
 	@Autowired
 	private UserAppService userAppService;
-	@Autowired
-	private UserappidAdveridService userappidAdveridService;
-	@Autowired
-	private AppChannelAdverInfoService appChannelAdverInfoService;
 	
 	@Override
 	public Page<TUserScore> queryPage(Page<TUserScore> page, TUserScore t) {
@@ -191,24 +182,31 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param userScore 用户分数对象
 	 * @param score 分数
 	 */
-	public void updateScore(TUserScore userScore, Float score)
+	public int updateScore(TUserScore userScore, Float score)
 	{
-		userScore.setScore(userScore.getScore() + score);
-//		if(userScore.getScoreDay()<0)
-//			userScore.setScoreDay(0f);
-		userScore.setScoreSum(userScore.getScoreSum() + score);
-		
-		if(userScore.getScoreSum()<0) 
+		if(userScore != null) 
 		{
-			userScore.setScoreSum(0f);
+			userScore.setScore(userScore.getScore() + score);
+//			if(userScore.getScoreDay()<0)
+//				userScore.setScoreDay(0f);
+			userScore.setScoreSum(userScore.getScoreSum() + score);
+			
+			if(userScore.getScoreSum()<0) 
+			{
+				userScore.setScoreSum(0f);
+			}
+
+			if(userScore.getScore()<0) 
+			{
+				userScore.setScore(0f);
+			}
+			
+			update(userScore);
+			
+			return 1;
 		}
 
-		if(userScore.getScore()<0) 
-		{
-			userScore.setScore(0f);
-		}
-		
-		update(userScore);
+		return -1;
 	}
 	
 	/**
@@ -340,40 +338,15 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param userNums
 	 * @return
 	 */
-	public Map<Integer,TUserScore> getUserScoreByUserAppId(String userAppIds){
-		if(!StringUtils.hasText(userAppIds)){
-			return null;
-		}
-		
+	public Map<Integer,TUserScore> getUserScoreByUserNums(String userNums)
+	{
 		Map<Integer, TUserScore> map = new HashMap<Integer, TUserScore>();
 		
-		TChannelAdverInfo tChannelAdverInfo = new TChannelAdverInfo();
-		tChannelAdverInfo.setAdverStatusEnd(2);
-		List<TChannelAdverInfo> adverInfoList = appChannelAdverInfoService.getByCondition(tChannelAdverInfo);
-		
-		for(String userAppId:userAppIds.split(","))
+		for(String userNum:userNums.split(","))
 		{
-			TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
-			
-			if(tUserApp != null)
-			{
-				BigDecimal scoreSum = new BigDecimal("0.0");
-				if(adverInfoList != null)
-				{
-					for(TChannelAdverInfo adverInfo:adverInfoList)
-					{
-						TUserappidAdverid info = new TUserappidAdverid();
-						info.setUserAppId(tUserApp.getUserAppId());
-						info.setAdverId(adverInfo.getAdverId());
-						info.setStatus("2");
-						Integer completeCount = userappidAdveridService.queryMissionCount(info);
-						scoreSum = scoreSum.add(new BigDecimal(adverInfo.getAdverPrice()*completeCount));
-					}
-				}
-				TUserScore value = new TUserScore();
-				value.setScore(scoreSum.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
-				map.put(Integer.valueOf(userAppId),value);
-			}
+			TUserScore userScore = getScore(userNum);
+			TUserApp userApp = userAppService.getUserAppByNum(userNum);
+			map.put(Integer.valueOf(userApp.getUserAppId()), userScore);
 		}
 		
 		return map;

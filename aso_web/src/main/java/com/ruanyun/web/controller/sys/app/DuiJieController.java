@@ -366,7 +366,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//更新金额
-		userScoreService.updateScore(userScoreService.getScore(userNum) ,tUserappidAdverid.getAdverPrice());
+		userScoreService.updateScore(userScoreService.getScore(userNum) ,adverInfo.getAdverPrice());
 	}
 	
 	//根据adverid和idfa获取领取到的任务
@@ -436,6 +436,13 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+		else if(task.getStatus().compareTo("1.5") < 0)
+		{
+			model.setResult(-1);
+			model.setMsg("未完成。原因：自由任务需要先下载并打开app！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
 		
 		//查询广告信息
 		//TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
@@ -450,14 +457,6 @@ public class DuiJieController extends BaseController
 		//查询任务完成情况
 		if("0".equals(adverInfo.getTaskType()))
 		{	//快速任务
-			//判断是否已打开app
-			if(!task.getStatus().equals("1.5"))
-			{
-				model.setResult(-1);
-				model.setMsg("未完成。原因：快速任务需要先下载并打开app！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
 			//分渠道调用激活上报接口
 			TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
 			if(channelInfo == null)
@@ -516,39 +515,38 @@ public class DuiJieController extends BaseController
 			int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
 			if(rowCount == 0)
 			{
-				model.setResult(-1);
-				model.setMsg("未完成。原因：更改任务状态失败！");
+				model.setResult(1);
+				model.setMsg("任务已经完成！");
 				super.writeJsonDataApp(response, model);
 				return;
 			}
 			//更新金额
-			userScoreService.updateScore(userScoreService.getScore(userNum) ,tUserappidAdverid.getAdverPrice());
+			userScoreService.updateScore(userScoreService.getScore(userNum) ,adverInfo.getAdverPrice());
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
 			//回调任务
-			if(task.getStatus().compareTo("1.5") <= 0)
+			Integer leastTaskTime = dictionaryService.getLeastTaskTime();
+			if(new Date().getTime() - task.getOpenAppTime().getTime() <= leastTaskTime * 1000)
 			{
 				model.setResult(-1);
-				model.setMsg("未完成！");
+				model.setMsg("未完成。原因：自由任务打开app必须达到" + leastTaskTime + "秒！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			else
+			{
+				model.setResult(1);
+				model.setMsg("任务已达到条件，等待回调，是否退回继续做任务！");
 				super.writeJsonDataApp(response, model);
 				return;
 			}
 		}
 		else if("2".equals(adverInfo.getTaskType())) //自由任务
 		{
-			//判断是否已打开app
-			if(!task.getStatus().equals("1.5"))
-			{
-				model.setResult(-1);
-				model.setMsg("未完成。原因：自由任务需要先下载并打开app！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
-			
 			//判断打开app的时间是否足够
 			Integer leastTaskTime = dictionaryService.getLeastTaskTime();
-			if(new Date().getTime()-task.getOpenAppTime().getTime() <= leastTaskTime*1000)
+			if(new Date().getTime() - task.getOpenAppTime().getTime() <= leastTaskTime*1000)
 			{
 				model.setResult(-1);
 				model.setMsg("未完成。原因：自由任务打开app必须达到" + leastTaskTime + "秒！");
@@ -564,13 +562,13 @@ public class DuiJieController extends BaseController
 			int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
 			if(rowCount == 0)
 			{
-				model.setResult(-1);
-				model.setMsg("未完成。原因：更改任务状态失败！");
+				model.setResult(1);
+				model.setMsg("任务已经完成！");
 				super.writeJsonDataApp(response, model);
 				return;
 			}
 			//更改金额
-			userScoreService.updateScore(userScoreService.getScore(userNum) ,tUserappidAdverid.getAdverPrice());
+			userScoreService.updateScore(userScoreService.getScore(userNum) ,adverInfo.getAdverPrice());
 		}
 		else
 		{//异常情况
@@ -740,17 +738,9 @@ public class DuiJieController extends BaseController
 		else if("1".equals(channelInfo.getChannelNum()))
 		{
 			//云聚
-    		if(adverInfo.getAdverCountRemain() > 0) 
-    		{
-    			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
-    			
-    			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
-    		}
-    		else 
-    		{
-    			model.setResult(-1);
-    			model.setMsg("任务被抢光啦！");
-    		}
+			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
+			
+			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 		}
 		else if("2".equals(channelInfo.getChannelNum()))
 		{
@@ -760,31 +750,15 @@ public class DuiJieController extends BaseController
 		else if("3".equals(channelInfo.getChannelNum()))
 		{
 			//自由渠道
-    		if(adverInfo.getAdverCountRemain() > 0) 
-    		{
-    			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
-    			model.setResult(1);
-    		}
-    		else 
-    		{
-    			model.setResult(-1);
-    			model.setMsg("任务被抢光啦！");
-    		}
+			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
+			model.setResult(1);
 		}
 		else if("4".equals(channelInfo.getChannelNum()))
 		{
 			//利得基金
-			if(adverInfo.getAdverCountRemain() > 0) 
-			{
-				appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
-				
-				model = isLDJJChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
-			}
-			else 
-			{
-				model.setResult(-1);
-    			model.setMsg("任务被抢光啦！");
-			}
+			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
+			
+			model = isLDJJChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 		}
 		else
 		{

@@ -67,10 +67,10 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 	{
 		Page<TUserApp> _page = userAppDao.queryPage(page, t);
 		
-		String userAppIds = CommonUtils.getAttributeValue(TUserApp.class, _page.getResult(), "userAppId");
-		if(EmptyUtils.isNotEmpty(userAppIds))
+		String userNums = CommonUtils.getAttributeValue(TUserApp.class, _page.getResult(), "userNum");
+		if(EmptyUtils.isNotEmpty(userNums))
 		{
-			Map<Integer,TUserScore> userMap = userScoreService.getUserScoreByUserAppId(userAppIds);
+			Map<Integer,TUserScore> userMap = userScoreService.getUserScoreByUserNums(userNums);
 			CommonUtils.setAttributeValue(TUserApp.class,  _page.getResult(), userMap, "userAppId", "userScore");
 		}
 		
