@@ -37,8 +37,8 @@ import com.ruanyun.web.util.HttpSessionUtils;
  */
 @Controller
 @RequestMapping("/userApp")
-public class UserAppController extends BaseController{
-	
+public class UserAppController extends BaseController
+{
 	@Autowired	
 	private UserAppService userAppService;
 	
@@ -182,13 +182,16 @@ public class UserAppController extends BaseController{
 	 * 功能描述:进入修改页面
 	 */
 	@RequestMapping("/toEdit")
-	public String userAppEdit(TUserApp userApp,Model model){
-		if (EmptyUtils.isNotEmpty(userApp.getUserNum())) {
+	public String userAppEdit(TUserApp userApp,Model model)
+	{
+		if (EmptyUtils.isNotEmpty(userApp.getUserNum()))
+		{
 			TUserApp tUserApp = userAppService.get(TUserApp.class, "userNum", userApp.getUserNum());
 			addModel(model, "bean", tUserApp);
 			//addModel(model, "userScoreInfo", userScoreInfoService.get(TUserStudentCart.class, "userAppNum", userApp.getUserNum()));
 			addModel(model, "adverAuthoritys", userAppService.queryCurrentAdverList(tUserApp.getExcludeAdverId()));
 		}
+		
 		return "pc/userApp/edit";
 	}
 	

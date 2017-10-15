@@ -16,6 +16,14 @@
 					<input type="text" name="loginPwd"  value="${bean.loginPwd}"  title="密码" />
 				</dd>
 			</dl>
+			
+			<dl>
+				<dt>真实姓名：</dt>
+				<dd>
+					<input type="text" name="userNick"  value="${bean.userNick}" maxlength="20" size="30" alt="请输入真实姓名"  />
+				</dd>
+			</dl>
+			
 			<dl>
 				<dt>登录控制：</dt>
 				<dd>

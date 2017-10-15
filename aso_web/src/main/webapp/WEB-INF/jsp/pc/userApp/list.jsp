@@ -6,7 +6,6 @@
 	<input type="hidden" name="numPerPage" value="${pageList.numPerPage}" />
 	<input type="hidden" name="orderField" value="${param.orderField}">
 	<input type="hidden" name="orderDirection" value="${param.orderDirection}">
-	
 	<input type="hidden" name="phoneNum" value="${param.phoneNum }">
 	<input type="hidden" name="userNum" value="${param.userNum }">
 	<input type="hidden" name="userApppType" value="${param.userApppType }">
@@ -73,6 +72,7 @@
 				<th align="center">性别</th>-->
 				<th align="center">用户ID</th>
 				<th align="center">登陆名</th>
+				<th align="center">真实姓名</th>
 				<th align="center">余额</th>
 				<th align="center">支付宝账号</th>
 				<th align="center">微信账号</th>
@@ -96,6 +96,7 @@
 	              	<td><ry:show parentCode="USERSEX" itemCode="${item.sex}"></ry:show></td>-->
 	                <td>${item.userAppId}</td>
 	                <td>${item.loginName}</td>
+	                <td>${item.userNick}</td>
 	                <td>${item.userScore.score}</td>
 	                <td>${item.zhifubao}</td>
 	                <td>${item.weixin}</td>

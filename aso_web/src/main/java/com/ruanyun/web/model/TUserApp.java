@@ -26,7 +26,7 @@ public class TUserApp implements java.io.Serializable {
 	
 	private Integer userAppId;
 	private String userNum;
-	private String userNick;
+	private String userNick;//真实姓名
 	private String birthday;
 	private String sex;
 	private String headImg;
