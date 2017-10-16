@@ -28,7 +28,7 @@
 			<li><a class="delete" title="确定要删除选择的信息吗？" href="channelAdverInfo/delAll"  target="selectedTodo" postType="string" rel="ids"><span>删除</span></a></li>
 			<li><a class="edit" title="确定要启用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
 			<li><a class="edit" title="确定要停用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=2"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
-			<li><a class="edit" title="确定要支付选择的信息吗？" href="channelAdverInfo/pay?status=3"  target="selectedTodo" postType="string" rel="ids"><span>支付</span></a></li>
+			<li><a class="edit" title="确定要刷新选择的信息吗？" href="channelAdverInfo/freshAdverNum"  target="selectedTodo" postType="string" rel="ids"><span>刷新</span></a></li>
 			<li class="line">line</li>
 		</ul>
 	</div>
@@ -48,8 +48,8 @@
 				<th align="center">广告开始时间——广告结束时间</th>
 				<th align="center">状态</th>
 				<!--<th align="center">权限</th>-->
-				<th align="center"> 创建时间</th>
-				<th>操作</th>
+				<th align="center">创建时间</th>
+				<th align="center">操作</th>
 				<th align="center">广告下载记录 </th>		
 			</tr>
 		</thead>

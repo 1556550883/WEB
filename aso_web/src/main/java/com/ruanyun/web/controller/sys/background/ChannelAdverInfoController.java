@@ -27,6 +27,7 @@ import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
+import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpSessionUtils;
@@ -42,6 +43,8 @@ public class ChannelAdverInfoController extends BaseController
 	private ChannelAdverInfoService channelAdverInfoService;
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
+	@Autowired
+	private UserappidAdveridService userappidAdveridService;
 	
 	/**
 	 * 查询广告列表（后台显示）
@@ -186,12 +189,16 @@ public class ChannelAdverInfoController extends BaseController
 	 * 批量审核
 	 */
 	@RequestMapping("updateAdverStatus")
-	public void updateAdverStatus(String ids,HttpServletResponse response,Integer status){
-		try {
+	public void updateAdverStatus(String ids,HttpServletResponse response,Integer status)
+	{
+		try
+		{
 			channelAdverInfoService.updateAdverStatus(status, ids);
 			//super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "redirect"));
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
 		}
 	}
@@ -199,28 +206,37 @@ public class ChannelAdverInfoController extends BaseController
 	/**
 	 * 批量支付
 	 */
-	@RequestMapping("pay")
-	public void pay(String ids,HttpServletResponse response,Integer status){
-		try {
-			String message = channelAdverInfoService.updateAdverStatus2Pay(status, ids);
-			if(message != null){
-				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, message, "", "", ""));
-			}else{
-				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
+	@RequestMapping("freshAdverNum")
+	public void freshAdverNum(String ids, HttpServletResponse response)
+	{
+		try 
+		{
+			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(ids));
+			
+			if(adverInfo != null)
+			{
+				//更新超时未完成的任务
+				userappidAdveridService.updateStatus2Invalid(adverInfo);
+				//更新任务数量
+				appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
 			}
-		} catch (Exception e) {
+			
+			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
+		} 
+		catch (Exception e) 
+		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
 		}
 	}
 	
 	@InitBinder
-	public void initBinders(WebDataBinder binder) {
+	public void initBinders(WebDataBinder binder) 
+	{
 		super.initBinder(binder, "yyyy-MM-dd", true);
 	}
 	
-	
-	public void getChannelAdverList(HttpServletResponse response,Integer systemType,Integer channelType){
+	public void getChannelAdverList(HttpServletResponse response,Integer systemType,Integer channelType)
+	{
 
 	}
-	
 }
