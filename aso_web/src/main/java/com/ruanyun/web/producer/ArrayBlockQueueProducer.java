@@ -52,9 +52,10 @@ public class ArrayBlockQueueProducer implements  Runnable
 				{
 					TChannelAdverInfo info = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
 					
-					if(info.getAdverCountComplete() == info.getAdverCount()) 
+					if(info.getDownloadCount() == info.getAdverCount()) 
 					{
 						mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
+						System.out.println("task complete");
 						break;
 					}
 					
@@ -73,16 +74,12 @@ public class ArrayBlockQueueProducer implements  Runnable
 							 mUserappidAdveridService.updateStatus2Invalid(info);
 							 mAppChannelAdverInfoService.updateAdverCountRemain(info);
 							 int addAdverActivation = info.getAdverCountRemain() - mArrayBlockQueue.size();
+							 int countComplete = mChannelAdverInfoService.getCountComplete(mAdverId);
+							 info.setDownloadCount(countComplete);//用这个来记录完成数量
 							 info.setAdverActivationCount(addAdverActivation);
+							 mChannelAdverInfoService.updateAdverActivationCount(info);
 							 //更新任务数量
-							 if(addAdverActivation > 0) 
-							 {
-								 mChannelAdverInfoService.updateAdverActivationCount(info);
-							 }
-							 else
-							 {
-								 Thread.sleep(60000);
-							 }
+							 Thread.sleep(60000);
 						 }
 					}
 					else

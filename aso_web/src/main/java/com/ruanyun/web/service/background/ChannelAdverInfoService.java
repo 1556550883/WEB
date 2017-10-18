@@ -193,4 +193,9 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	{
 		return channelAdverInfoDao.updateAdverActivationCount(adverInfo);
 	}
+	
+	public int getCountComplete(String adverId) 
+	{
+		return channelAdverInfoDao.getCountComplete(adverId);
+	}
 }

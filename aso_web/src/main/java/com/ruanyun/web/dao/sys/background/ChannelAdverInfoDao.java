@@ -101,6 +101,11 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return page2;
 	}
 	
+	public int getCountComplete(String adverId) 
+	{
+		StringBuilder sql = new StringBuilder("select count(1) from t_userappid_adverid where adver_id=").append(adverId).append(" and status='2'");;
+		return sqlDao.getCount(sql.toString());
+	}
 	/**
 	 * 查询当前的广告列表
 	 */
@@ -202,15 +207,16 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	
 	public int updateAdverActivationCount(TChannelAdverInfo info) 
 	{
-		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_activation_count=? WHERE 1=1 ");
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_activation_count=?, download_count=? WHERE 1=1 ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
 				sql.append(" and adver_id="+info.getAdverId());
 		}
 		
-		Object[] params = new Object[1];
+		Object[] params = new Object[2];
 		params[0] = info.getAdverActivationCount();
+		params[1] = info.getDownloadCount();
 		
 		return sqlDao.update(params, sql.toString());
 	}

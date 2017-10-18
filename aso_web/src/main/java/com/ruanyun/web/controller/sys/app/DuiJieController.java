@@ -402,8 +402,9 @@ public class DuiJieController extends BaseController
 		}
 		
 		//更新金额
-		ArrayBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
-		countPrice(userNum, adverQueue);
+		userScoreService.updateScore(userScoreService.getScore(userNum) ,adverInfo.getAdverPrice());
+//		ArrayBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
+//		countPrice(userNum, adverQueue);
 	}
 	
 	//根据adverid和idfa获取领取到的任务
@@ -558,8 +559,9 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			//更新金额
-			ArrayBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
-			countPrice(userNum, adverQueue);
+			userScoreService.updateScore(userScoreService.getScore(userNum) ,adverInfo.getAdverPrice());
+//			ArrayBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
+//			countPrice(userNum, adverQueue);
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -606,8 +608,9 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			//更改金额
-			ArrayBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
-			countPrice(userNum, adverQueue);
+			userScoreService.updateScore(userScoreService.getScore(userNum) ,adverInfo.getAdverPrice());
+//			ArrayBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
+//			countPrice(userNum, adverQueue);
 		}
 		else
 		{//异常情况
@@ -622,45 +625,45 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
-	private void countPrice(String userNum, ArrayBlockingQueue<TChannelAdverInfo> adverQueue) 
-	{
-		while(true)
-		{
-			if(adverQueue.poll() != null) 
-			{
-				userScoreService.updateScore(userScoreService.getScore(userNum), adverQueue.poll().getAdverPrice());
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-	
-	private ArrayBlockingQueue<TChannelAdverInfo> addCompleteToQueue(String userNum, TChannelAdverInfo adverInfo) 
-	{
-		ArrayBlockingQueue<TChannelAdverInfo> adverQueue;
-		if(mScoreQueueMap.containsKey(userNum)) 
-		{
-			adverQueue = mScoreQueueMap.get(userNum);
-		}
-		else
-		{
-			adverQueue = new ArrayBlockingQueue<TChannelAdverInfo>(30);
-			mScoreQueueMap.put(userNum, adverQueue);
-		}
-		
-		try 
-		{
-			adverQueue.put(adverInfo);
-		} 
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		return adverQueue;
-	}
+//	private void countPrice(String userNum, ArrayBlockingQueue<TChannelAdverInfo> adverQueue) 
+//	{
+//		while(true)
+//		{
+//			if(adverQueue.poll() != null) 
+//			{
+//				userScoreService.updateScore(userScoreService.getScore(userNum), adverQueue.poll().getAdverPrice());
+//			}
+//			else
+//			{
+//				break;
+//			}
+//		}
+//	}
+//	
+//	private ArrayBlockingQueue<TChannelAdverInfo> addCompleteToQueue(String userNum, TChannelAdverInfo adverInfo) 
+//	{
+//		ArrayBlockingQueue<TChannelAdverInfo> adverQueue;
+//		if(mScoreQueueMap.containsKey(userNum)) 
+//		{
+//			adverQueue = mScoreQueueMap.get(userNum);
+//		}
+//		else
+//		{
+//			adverQueue = new ArrayBlockingQueue<TChannelAdverInfo>(30);
+//			mScoreQueueMap.put(userNum, adverQueue);
+//		}
+//		
+//		try 
+//		{
+//			adverQueue.put(adverInfo);
+//		} 
+//		catch (InterruptedException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		
+//		return adverQueue;
+//	}
 	
 	/**
 	 * 我的已完成任务
