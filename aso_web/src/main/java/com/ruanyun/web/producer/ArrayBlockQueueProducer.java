@@ -31,15 +31,18 @@ public class ArrayBlockQueueProducer implements  Runnable
 		this.mChannelAdverInfoService = channelAdverInfoService;
 		this.mAppChannelAdverInfoService = appChannelAdverInfoService;
 		this.mUserappidAdveridService = userappidAdveridService;
+		
+		if(mQueueMap.containsKey(mAdverId)) 
+		{
+			mQueueMap.remove(mAdverId);
+		}
+		
 		mQueueMap.put(mAdverId, mArrayBlockQueue);
 	}
 
 	@Override
 	public void run() 
 	{
-		//启动的时候，移除以前有效的广告，重新生成
-		mQueueMap.remove(mAdverId);
-		
 		while (true)
 		{
 			try 
@@ -67,18 +70,17 @@ public class ArrayBlockQueueProducer implements  Runnable
 						 }
 						 else 
 						 {
-							 int count = mUserappidAdveridService.updateStatus2Invalid(info);
+							 mUserappidAdveridService.updateStatus2Invalid(info);
+							 mAppChannelAdverInfoService.updateAdverCountRemain(info);
+							 int addAdverActivation = info.getAdverCountRemain() - mArrayBlockQueue.size();
+							 info.setAdverActivationCount(addAdverActivation);
 							 //更新任务数量
-							 if(count > 0) 
+							 if(addAdverActivation > 0) 
 							 {
-								 info.setAdverActivationCount(count);
 								 mChannelAdverInfoService.updateAdverActivationCount(info);
-								 mAppChannelAdverInfoService.updateAdverCountRemain(info);
-								 System.out.println("this is count" + count);
 							 }
 							 else
 							 {
-								 System.out.println("this is 2");
 								 Thread.sleep(60000);
 							 }
 						 }
