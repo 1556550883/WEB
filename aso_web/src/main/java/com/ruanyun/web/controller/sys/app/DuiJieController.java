@@ -8,12 +8,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.AppCommonModel;
@@ -22,6 +26,7 @@ import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserappidAdverid;
+import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
@@ -74,16 +79,19 @@ public class DuiJieController extends BaseController
 	
 	/**
 	 * 领取任务
+	 * @throws InterruptedException 
 	 */
 	@RequestMapping("lingQuRenWu")
-	public synchronized void lingQuRenWu(HttpServletResponse response, HttpServletRequest request) 
-			throws NumberFormatException, UnsupportedEncodingException
+	public void lingQuRenWu(HttpServletResponse response, HttpServletRequest request) 
+			throws NumberFormatException, UnsupportedEncodingException, InterruptedException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		String adid = request.getParameter("adid");//广告id（第三方提供）
 		String idfa = request.getParameter("idfa");//手机广告标识符
 		String ip = request.getRemoteAddr();//手机ip
+//		String idfa = 9999 + Math.random() * 9000 + "";//手机广告标识符
+//		String ip = 1000 + Math.random() * 9000 + "";//手机ip
 		String userAppId = request.getParameter("userAppId");//用户Id
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
@@ -105,14 +113,6 @@ public class DuiJieController extends BaseController
 		{
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：广告不存在！");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
-		if(adverInfo.getAdverCountRemain() <= 0) 
-		{
-			model.setResult(-1);
-			model.setMsg("任务被抢光啦!");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -155,11 +155,38 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		//分渠道调用排重接口、点击接口
-		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
-		if(checkChannelInfoModel.getResult() == -1)
+		if(adverInfo.getAdverCountRemain() <= 0) 
 		{
-			super.writeJsonDataApp(response, checkChannelInfoModel);
+			model.setResult(-1);
+			model.setMsg("任务被抢光啦!");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		ArrayBlockingQueue<String> arrayBlockQueue = ArrayBlockQueueProducer.mQueueMap.get(adverId);
+		
+		String data = arrayBlockQueue.poll();
+		
+		if(data != null)
+		{
+			//分渠道调用排重接口、点击接口
+			AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+			
+			if(checkChannelInfoModel.getResult() == -1)
+			{
+				super.writeJsonDataApp(response, checkChannelInfoModel);
+				return;
+			}
+			else
+			{
+				appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
+			}
+		}
+		else
+		{
+			model.setResult(-1);
+			model.setMsg("真遗憾，你未抢到任务!");
+			super.writeJsonDataApp(response, model);
 			return;
 		}
 		
@@ -723,6 +750,7 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
     
+	//检测任务信息
 	private AppCommonModel checkChannelInfo(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
 			String userAppId, String adverId, String userNum) throws NumberFormatException, UnsupportedEncodingException 
 	{
@@ -738,8 +766,6 @@ public class DuiJieController extends BaseController
 		else if("1".equals(channelInfo.getChannelNum()))
 		{
 			//云聚
-			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
-			
 			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 		}
 		else if("2".equals(channelInfo.getChannelNum()))
@@ -750,14 +776,11 @@ public class DuiJieController extends BaseController
 		else if("3".equals(channelInfo.getChannelNum()))
 		{
 			//自由渠道
-			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
 			model.setResult(1);
 		}
 		else if("4".equals(channelInfo.getChannelNum()))
 		{
 			//利得基金
-			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
-			
 			model = isLDJJChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 		}
 		else
@@ -827,16 +850,6 @@ public class DuiJieController extends BaseController
 		//把当前任务状态改为超时
 		task.setStatus("1.6");
 		userappidAdveridService.updateTaskStatus(task);
-		
-		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-		
-		if(adverInfo != null)
-		{
-			//更新超时未完成的任务
-			userappidAdveridService.updateStatus2Invalid(adverInfo);
-			//更新任务数量
-			appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
-		}
 		
 		model.setResult(1);
 		model.setMsg("成功！");

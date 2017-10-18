@@ -7,6 +7,7 @@ package com.ruanyun.web.controller.sys.background;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.sys.TUser;
+import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
@@ -105,17 +107,18 @@ public class ChannelAdverInfoController extends BaseController
 				return;
 			}
 			
-			TUser user=HttpSessionUtils.getCurrentUser(session);
+			TUser user = HttpSessionUtils.getCurrentUser(session);
 			
 			//批量生成
 			JSONArray array = JSONArray.fromObject(info.getAdversJson());
-			for(int i=0;i<array.size();i++)
+			for(int i = 0; i < array.size(); i++)
 			{
 				info.setAdverId(null);
 				info.setAdverCountRemain(null);
 				JSONObject jsonObject = array.getJSONObject(i);
 				info.setAdverName(jsonObject.getString("adverName"));
 				info.setAdverCount(jsonObject.getInt("adverCount"));
+				info.setAdverActivationCount(jsonObject.getInt("adverCount"));
 				info.setAdverDesc(jsonObject.getString("adverDesc"));
 				channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc, stepRates, stepTime,
 						stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
@@ -142,9 +145,11 @@ public class ChannelAdverInfoController extends BaseController
 		{
 			//向轴 add
 			//广告有效期
+			//TChannelAdverInfo oldAdverInfo = channelAdverInfoService.getInfoById(info.getAdverId());
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			info.setAdverDayStart(simpleDateFormat.parse(info.getAdverTimeStart()));
 			info.setAdverDayEnd(simpleDateFormat.parse(info.getAdverTimeEnd()));
+			//info.setAdverActivationCount((info.getAdverCount() - oldAdverInfo.getAdverCount()) + oldAdverInfo.getAdverActivationCount());
 			//任务类型
 			if(info.getChannelNum().equals("3") && !info.getTaskType().equals("2"))
 			{
@@ -152,12 +157,9 @@ public class ChannelAdverInfoController extends BaseController
 				return;
 			}
 			
-			TUser user=HttpSessionUtils.getCurrentUser(session);
+			TUser user = HttpSessionUtils.getCurrentUser(session);
 			channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc,
 					stepRates, stepTime, stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
-			
-			//更新任务数量
-			appChannelAdverInfoService.updateAdverCountRemain(info);
 			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		} 
@@ -189,11 +191,44 @@ public class ChannelAdverInfoController extends BaseController
 	 * 批量审核
 	 */
 	@RequestMapping("updateAdverStatus")
-	public void updateAdverStatus(String ids,HttpServletResponse response,Integer status)
+	public void updateAdverStatus(String ids, HttpServletResponse response, Integer status)
 	{
 		try
 		{
 			channelAdverInfoService.updateAdverStatus(status, ids);
+			//启动的时候产生生产者
+			if(status == 1)
+			{
+				String[] adverIds = ids.split(",");  
+				for(String adverId : adverIds) 
+				{
+					TChannelAdverInfo info = channelAdverInfoService.getInfoById(Integer.parseInt(adverId));
+					appChannelAdverInfoService.updateAdverCountRemain(info);
+					info.setAdverActivationCount(info.getAdverCountRemain());
+					channelAdverInfoService.updateAdverActivationCount(info);
+					final ArrayBlockingQueue<String> arrayBlockQueue = new ArrayBlockingQueue<String>(info.getAdverCount());
+					ArrayBlockQueueProducer producer = new ArrayBlockQueueProducer(arrayBlockQueue, adverId,
+							channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
+					
+					ArrayBlockQueueProducer.pool.execute(producer);
+//					int count = info.getAdverCount() / 100;
+//					
+//					if(count <= 10) 
+//					{
+//						count = count > 5 ? 25 : 15;
+//					}
+//					else
+//					{
+//						count = 50;
+//					}
+//					
+//					for(int i = 0; i <= count; i++) 
+//					{
+//						ArrayBlockQueueProducer.pool.execute(producer);
+//					}
+				}
+			}
+			
 			//super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "redirect"));
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
 		}
@@ -203,9 +238,6 @@ public class ChannelAdverInfoController extends BaseController
 		}
 	}
 	
-	/**
-	 * 批量支付
-	 */
 	@RequestMapping("freshAdverNum")
 	public void freshAdverNum(String ids, HttpServletResponse response)
 	{

@@ -1,7 +1,5 @@
 package com.ruanyun.web.timer;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -9,7 +7,6 @@ import org.springframework.stereotype.Component;
 import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.service.background.LoginIpService;
 import com.ruanyun.web.service.background.RedPackageLotteryService;
-import com.ruanyun.web.service.background.RedPackageService;
 import com.ruanyun.web.service.background.UserScoreService;
 
 /**
@@ -19,14 +16,11 @@ import com.ruanyun.web.service.background.UserScoreService;
  *  版本说明: $id:$ <br/>
  *
  *  功能说明:  清除用户今日的分数
- * 
- *  <br/>创建说明: 2016年1月29日 下午9:26:00 yangliu  创建文件<br/>
- * 
- *  修改历史:<br/>
  *
  */
 @Component
-public  class ScoreTask {
+public  class ScoreTask 
+{
 	@Autowired
 	private UserScoreService userScoreService;
 	@Autowired
@@ -49,9 +43,4 @@ public  class ScoreTask {
 		String lotteryNum=TimeUtil.getCurrentDay("yyyyMMdd");
 		redPackageLotteryService.openLottery(lotteryNum);
     }  
-
-	
-	
-	
-
 }

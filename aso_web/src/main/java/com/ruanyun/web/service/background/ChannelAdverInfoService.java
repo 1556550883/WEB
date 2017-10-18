@@ -97,9 +97,10 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		
 		if(EmptyUtils.isNotEmpty(info.getAdverId()))
 		{
-			TChannelAdverInfo shopsInfo=getInfoById(info.getAdverId());
-			BeanUtils.copyProperties(info, shopsInfo, new String[]{"adverCreatetime","adverStatus","channelNum","adverNum","downloadCount","adverActivationCount","adverCountRemain"});
-			update(shopsInfo);
+			TChannelAdverInfo oldAdverInfo = getInfoById(info.getAdverId());
+			info.setAdverActivationCount((info.getAdverCount() - oldAdverInfo.getAdverCount()) + oldAdverInfo.getAdverActivationCount());
+			BeanUtils.copyProperties(info, oldAdverInfo, new String[]{"adverCreatetime","adverStatus","channelNum","adverNum","downloadCount","adverCountRemain"});
+			update(oldAdverInfo);
 			//向轴 注释
 			//adverStepService.saveAdverStep(shopsInfo, stepName, stepDesc, stepRates, stepTime, stepScore, stepUseTime, stepType, stepMinCount);
 		}
@@ -185,5 +186,11 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		channelAdverInfoDao.updateAdverStatus2Pay(status, ids);
 		
 		return null;
+	}
+	
+	
+	public int updateAdverActivationCount(TChannelAdverInfo adverInfo) 
+	{
+		return channelAdverInfoDao.updateAdverActivationCount(adverInfo);
 	}
 }

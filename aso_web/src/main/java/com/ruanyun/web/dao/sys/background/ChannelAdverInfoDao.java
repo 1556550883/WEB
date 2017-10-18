@@ -177,6 +177,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.update(sql.toString());
 	}
 	
+	public int updateAdverActivationRemainMinus1(TChannelAdverInfo adverInfo)
+	{
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_activation_count=adver_activation_count-1 WHERE 1=1 ");
+		if(EmptyUtils.isNotEmpty(adverInfo))
+		{
+			if (EmptyUtils.isNotEmpty(adverInfo.getAdverId()))
+				sql.append(" and adver_id="+adverInfo.getAdverId());
+		}
+		
+		return sqlDao.update(sql.toString());
+	}
+	
 	public int updateAdverCountRemain(TChannelAdverInfo adverInfo)
 	{
 		StringBuilder sql = new StringBuilder("update t_channel_adver_info a set adver_count_remain=adver_count-(select count(1) from t_userappid_adverid b where a.adver_id=b.adver_id and b.status<>'1.6') WHERE 1=1 ");
@@ -188,4 +200,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.update(sql.toString());
 	}
 	
+	public int updateAdverActivationCount(TChannelAdverInfo info) 
+	{
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_activation_count=? WHERE 1=1 ");
+		if(EmptyUtils.isNotEmpty(info))
+		{
+			if (EmptyUtils.isNotEmpty(info.getAdverId()))
+				sql.append(" and adver_id="+info.getAdverId());
+		}
+		
+		Object[] params = new Object[1];
+		params[0] = info.getAdverActivationCount();
+		
+		return sqlDao.update(params, sql.toString());
+	}
 }

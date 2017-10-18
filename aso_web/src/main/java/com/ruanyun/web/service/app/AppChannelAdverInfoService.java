@@ -125,6 +125,10 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		return channelAdverInfoDao.updateAdverCountRemainMinus1(adverInfo);
 	}
 	
+	public int updateAdverActivationRemainMinus1(TChannelAdverInfo adverInfo)
+	{
+		return channelAdverInfoDao.updateAdverActivationRemainMinus1(adverInfo);
+	}
 	/**
 	 * 广告剩余数量更新
 	 */
