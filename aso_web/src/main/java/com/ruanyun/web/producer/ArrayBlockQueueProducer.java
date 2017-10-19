@@ -70,15 +70,14 @@ public class ArrayBlockQueueProducer implements  Runnable
 							mArrayBlockQueue.put(data);
 						 }
 						 else 
-						 {
+						 {	
 							 Thread.sleep(300000);
 							 //更新任务数量
-							 mUserappidAdveridService.updateStatus2Invalid(info);
+							 int count = mUserappidAdveridService.updateStatus2Invalid(info);
 							 mAppChannelAdverInfoService.updateAdverCountRemain(info);
-							 int addAdverActivation = info.getAdverCountRemain() - mArrayBlockQueue.size();
 							 int countComplete = mChannelAdverInfoService.getCountComplete(mAdverId);
 							 info.setDownloadCount(countComplete);//用这个来记录完成数量
-							 info.setAdverActivationCount(addAdverActivation);
+							 info.setAdverActivationCount(count);
 							 mChannelAdverInfoService.updateAdverActivationCount(info);
 						 }
 					}

@@ -897,10 +897,6 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		//把当前任务状态改为超时
-		task.setStatus("1.6");
-		userappidAdveridService.updateTaskStatus(task);
-		
 		model.setResult(1);
 		model.setMsg("成功！");
 		super.writeJsonDataApp(response, model);
