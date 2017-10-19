@@ -206,7 +206,13 @@ public class ChannelAdverInfoController extends BaseController
 					appChannelAdverInfoService.updateAdverCountRemain(info);
 					info.setAdverActivationCount(info.getAdverCountRemain());
 					channelAdverInfoService.updateAdverActivationCount(info);
-					final ArrayBlockingQueue<String> arrayBlockQueue = new ArrayBlockingQueue<String>(info.getAdverCount());
+					int count = 150;
+					if(info.getAdverActivationCount() < 150) 
+					{
+						count = info.getAdverCount();
+					}
+					
+					final ArrayBlockingQueue<String> arrayBlockQueue = new ArrayBlockingQueue<String>(count < 5 ? 5 : count);
 					ArrayBlockQueueProducer producer = new ArrayBlockQueueProducer(arrayBlockQueue, adverId,
 							channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
 					

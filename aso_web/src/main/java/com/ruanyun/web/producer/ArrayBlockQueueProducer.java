@@ -52,7 +52,7 @@ public class ArrayBlockQueueProducer implements  Runnable
 				{
 					TChannelAdverInfo info = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
 					
-					if(info.getDownloadCount() == info.getAdverCount()) 
+					if(info.getDownloadCount() >= info.getAdverCount()) 
 					{
 						mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
 						System.out.println("task complete");
@@ -71,6 +71,8 @@ public class ArrayBlockQueueProducer implements  Runnable
 						 }
 						 else 
 						 {
+							 Thread.sleep(300000);
+							 //更新任务数量
 							 mUserappidAdveridService.updateStatus2Invalid(info);
 							 mAppChannelAdverInfoService.updateAdverCountRemain(info);
 							 int addAdverActivation = info.getAdverCountRemain() - mArrayBlockQueue.size();
@@ -78,8 +80,6 @@ public class ArrayBlockQueueProducer implements  Runnable
 							 info.setDownloadCount(countComplete);//用这个来记录完成数量
 							 info.setAdverActivationCount(addAdverActivation);
 							 mChannelAdverInfoService.updateAdverActivationCount(info);
-							 //更新任务数量
-							 Thread.sleep(60000);
 						 }
 					}
 					else
