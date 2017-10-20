@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -404,8 +403,8 @@ public class DuiJieController extends BaseController
 		}
 		
 		//更新金额
-		LinkedBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
-		countPrice(userNum, adverQueue);
+		LinkedBlockingQueue<TChannelAdverInfo> adverQueue = ArrayBlockScoreProducer.getInstance().addCompleteToQueue(userNum, adverInfo);
+		ArrayBlockScoreProducer.getInstance().countPrice(userNum, adverQueue, userScoreService);
 	}
 	
 	//根据adverid和idfa获取领取到的任务
@@ -560,8 +559,8 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			//更新金额
-			LinkedBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
-			countPrice(userNum, adverQueue);
+			LinkedBlockingQueue<TChannelAdverInfo> adverQueue = ArrayBlockScoreProducer.getInstance().addCompleteToQueue(userNum, adverInfo);
+			ArrayBlockScoreProducer.getInstance().countPrice(userNum, adverQueue, userScoreService);
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -608,8 +607,8 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			//更改金额
-			LinkedBlockingQueue<TChannelAdverInfo> adverQueue = addCompleteToQueue(userNum, adverInfo);
-			countPrice(userNum, adverQueue);
+			LinkedBlockingQueue<TChannelAdverInfo> adverQueue = ArrayBlockScoreProducer.getInstance().addCompleteToQueue(userNum, adverInfo);
+			ArrayBlockScoreProducer.getInstance().countPrice(userNum, adverQueue, userScoreService);
 		}
 		else
 		{//异常情况
@@ -623,43 +622,7 @@ public class DuiJieController extends BaseController
 		model.setMsg("已完成！");
 		super.writeJsonDataApp(response, model);
 	}
-	
-	private void countPrice(String userNum, LinkedBlockingQueue<TChannelAdverInfo> adverQueue) 
-	{
-		Collection<TChannelAdverInfo> c = new ArrayList<TChannelAdverInfo>();
-		int count = adverQueue.drainTo(c);
-		for(int i = 0; i < count; i++) 
-		{
-			TChannelAdverInfo s = c.iterator().next();
-			userScoreService.updateScore(userScoreService.getScore(userNum), s.getAdverPrice());
-		}
-	}
-	
-	private LinkedBlockingQueue<TChannelAdverInfo> addCompleteToQueue(String userNum, TChannelAdverInfo adverInfo) 
-	{
-		LinkedBlockingQueue<TChannelAdverInfo> adverQueue;
-		if(ArrayBlockScoreProducer.mScoreQueueMap.containsKey(userNum)) 
-		{
-			adverQueue = ArrayBlockScoreProducer.mScoreQueueMap.get(userNum);
-		}
-		else
-		{
-			adverQueue = new LinkedBlockingQueue<TChannelAdverInfo>();
-			ArrayBlockScoreProducer.mScoreQueueMap.put(userNum, adverQueue);
-		}
-		
-		try 
-		{
-			adverQueue.put(adverInfo);
-		} 
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		return adverQueue;
-	}
-	
+
 	/**
 	 * 我的已完成任务
 	 */
