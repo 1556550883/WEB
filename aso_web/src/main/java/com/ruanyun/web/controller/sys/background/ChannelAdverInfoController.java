@@ -197,43 +197,35 @@ public class ChannelAdverInfoController extends BaseController
 		{
 			channelAdverInfoService.updateAdverStatus(status, ids);
 			//启动的时候产生生产者
-			if(status == 1)
-			{
 				String[] adverIds = ids.split(",");  
 				for(String adverId : adverIds) 
 				{
-					TChannelAdverInfo info = channelAdverInfoService.getInfoById(Integer.parseInt(adverId));
-					appChannelAdverInfoService.updateAdverCountRemain(info);
-					info.setAdverActivationCount(info.getAdverCountRemain());
-					channelAdverInfoService.updateAdverActivationCount(info);
-					int count = 150;
-					if(info.getAdverActivationCount() < 150) 
+					if(status == 1)
 					{
-						count = info.getAdverCount();
+						TChannelAdverInfo info = channelAdverInfoService.getInfoById(Integer.parseInt(adverId));
+						appChannelAdverInfoService.updateAdverCountRemain(info);
+						info.setAdverActivationCount(info.getAdverCountRemain());
+						channelAdverInfoService.updateAdverActivationCount(info);
+						int count = 150;
+						if(info.getAdverActivationCount() < 150) 
+						{
+							count = info.getAdverCount();
+						}
+						
+						final ArrayBlockingQueue<String> arrayBlockQueue = new ArrayBlockingQueue<String>(count < 5 ? 5 : count);
+						ArrayBlockQueueProducer producer = new ArrayBlockQueueProducer(arrayBlockQueue, adverId,
+								channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
+						
+						ArrayBlockQueueProducer.pool.execute(producer);
 					}
-					
-					final ArrayBlockingQueue<String> arrayBlockQueue = new ArrayBlockingQueue<String>(count < 5 ? 5 : count);
-					ArrayBlockQueueProducer producer = new ArrayBlockQueueProducer(arrayBlockQueue, adverId,
-							channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
-					
-					ArrayBlockQueueProducer.pool.execute(producer);
-//					int count = info.getAdverCount() / 100;
-//					
-//					if(count <= 10) 
-//					{
-//						count = count > 5 ? 25 : 15;
-//					}
-//					else
-//					{
-//						count = 50;
-//					}
-//					
-//					for(int i = 0; i <= count; i++) 
-//					{
-//						ArrayBlockQueueProducer.pool.execute(producer);
-//					}
+					else
+					{
+						if(ArrayBlockQueueProducer.mQueueMap.containsKey(adverId)) 
+						{
+							ArrayBlockQueueProducer.mQueueMap.remove(adverId);
+						}
+					}
 				}
-			}
 			
 			//super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "redirect"));
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
