@@ -27,7 +27,7 @@ import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
-import com.ruanyun.web.producer.QueueProducer;
+import com.ruanyun.web.producer.ScoreQueueConsumer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
@@ -399,11 +399,10 @@ public class DuiJieController extends BaseController
 		}
 		
 		//更新金额
-		QueueProducer scoreQueue = new QueueProducer("socre");
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
 		score.setScore(adverInfo.getAdverPrice());
-		scoreQueue.sendMessage(score);
+		ScoreQueueConsumer.getQueueProducer().sendMessage(score);
 	}
 	
 	//根据adverid和idfa获取领取到的任务
@@ -558,11 +557,10 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			//把单子发送到队列
-			QueueProducer scoreQueue = new QueueProducer("socre");
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			scoreQueue.sendMessage(score);
+			ScoreQueueConsumer.getQueueProducer().sendMessage(score);
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -609,11 +607,10 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			//更改金额
-			QueueProducer scoreQueue = new QueueProducer("socre");
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			scoreQueue.sendMessage(score);
+			ScoreQueueConsumer.getQueueProducer().sendMessage(score);
 		}
 		else
 		{//异常情况

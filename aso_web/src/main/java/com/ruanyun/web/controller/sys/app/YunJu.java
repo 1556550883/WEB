@@ -138,13 +138,13 @@ public class YunJu extends BaseChannel {
 			Integer code = (Integer)jsonObject.get("code");
 			if(code == null){
 				model.setResult(-1);
-				model.setMsg("未完成！");
+				model.setMsg("渠道未返回状态，未完成！");
 			}else if(code == 0){
 				model.setResult(1);
 				model.setMsg("已完成！");
 			}else{
 				model.setResult(-1);
-				model.setMsg("未完成！");
+				model.setMsg("渠道提示，未完成！");
 			}
 		}
 		

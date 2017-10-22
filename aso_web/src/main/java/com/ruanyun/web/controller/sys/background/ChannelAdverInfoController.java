@@ -52,7 +52,7 @@ public class ChannelAdverInfoController extends BaseController
 	@Autowired
 	private UserScoreService userScoreService;
 	
-	private static boolean flag = true;
+	private static ScoreQueueConsumer scoreConsumer;
 	/**
 	 * 查询广告列表（后台显示）
 	 */
@@ -223,11 +223,10 @@ public class ChannelAdverInfoController extends BaseController
 						
 						ArrayBlockQueueProducer.pool.execute(producer);
 						
-						if(flag) 
+						if(scoreConsumer == null) 
 						{
 							ScoreQueueConsumer scoreConsumer = new ScoreQueueConsumer("socre", userScoreService);
 							ScoreQueueConsumer.pool.execute(scoreConsumer);
-							flag = false;
 						}
 					}
 					else

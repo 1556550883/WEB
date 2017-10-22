@@ -15,12 +15,22 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 {
 	public static ExecutorService pool = Executors.newCachedThreadPool(); 
 	private UserScoreService userScoreService;
+	private static QueueProducer scoreQueue;
 	public ScoreQueueConsumer(String endpointName, UserScoreService userScoreService) throws IOException, TimeoutException 
 	{
 		super(endpointName);
 		this.userScoreService = userScoreService;
 	}
 
+	public static QueueProducer getQueueProducer() throws IOException, TimeoutException 
+	{
+		if(scoreQueue == null) 
+		{
+			scoreQueue = new QueueProducer("socre");
+		}
+		return scoreQueue;
+	}
+	
 	@Override
 	public void run()
 	{
