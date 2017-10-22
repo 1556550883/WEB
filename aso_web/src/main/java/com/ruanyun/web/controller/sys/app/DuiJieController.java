@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,12 +27,11 @@ import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
-import com.ruanyun.web.producer.ArrayBlockScoreProducer;
+import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
-import com.ruanyun.web.service.background.UserScoreService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 
 @Controller
@@ -50,8 +48,6 @@ public class DuiJieController extends BaseController
 	private ChannelInfoService channelInfoService;
 	@Autowired
 	private DictionaryService dictionaryService;
-	@Autowired
-	private UserScoreService userScoreService;
 	
 	/**
 	 * 查询系统参数
@@ -403,8 +399,11 @@ public class DuiJieController extends BaseController
 		}
 		
 		//更新金额
-		LinkedBlockingQueue<TChannelAdverInfo> adverQueue = ArrayBlockScoreProducer.getInstance().addCompleteToQueue(userNum, adverInfo);
-		ArrayBlockScoreProducer.getInstance().countPrice(userNum, adverQueue, userScoreService);
+		QueueProducer scoreQueue = new QueueProducer("socre");
+		TUserScore score = new TUserScore();
+		score.setUserNum(userNum);
+		score.setScore(adverInfo.getAdverPrice());
+		scoreQueue.sendMessage(score);
 	}
 	
 	//根据adverid和idfa获取领取到的任务
@@ -558,9 +557,12 @@ public class DuiJieController extends BaseController
 				super.writeJsonDataApp(response, model);
 				return;
 			}
-			//更新金额
-			LinkedBlockingQueue<TChannelAdverInfo> adverQueue = ArrayBlockScoreProducer.getInstance().addCompleteToQueue(userNum, adverInfo);
-			ArrayBlockScoreProducer.getInstance().countPrice(userNum, adverQueue, userScoreService);
+			//把单子发送到队列
+			QueueProducer scoreQueue = new QueueProducer("socre");
+			TUserScore score = new TUserScore();
+			score.setUserNum(userNum);
+			score.setScore(adverInfo.getAdverPrice());
+			scoreQueue.sendMessage(score);
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -607,8 +609,11 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			//更改金额
-			LinkedBlockingQueue<TChannelAdverInfo> adverQueue = ArrayBlockScoreProducer.getInstance().addCompleteToQueue(userNum, adverInfo);
-			ArrayBlockScoreProducer.getInstance().countPrice(userNum, adverQueue, userScoreService);
+			QueueProducer scoreQueue = new QueueProducer("socre");
+			TUserScore score = new TUserScore();
+			score.setUserNum(userNum);
+			score.setScore(adverInfo.getAdverPrice());
+			scoreQueue.sendMessage(score);
 		}
 		else
 		{//异常情况

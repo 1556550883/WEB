@@ -27,8 +27,10 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
+import com.ruanyun.web.producer.ScoreQueueConsumer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
+import com.ruanyun.web.service.background.UserScoreService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
@@ -47,7 +49,10 @@ public class ChannelAdverInfoController extends BaseController
 	private AppChannelAdverInfoService appChannelAdverInfoService;
 	@Autowired
 	private UserappidAdveridService userappidAdveridService;
+	@Autowired
+	private UserScoreService userScoreService;
 	
+	private static boolean flag = true;
 	/**
 	 * 查询广告列表（后台显示）
 	 */
@@ -217,6 +222,13 @@ public class ChannelAdverInfoController extends BaseController
 								channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
 						
 						ArrayBlockQueueProducer.pool.execute(producer);
+						
+						if(flag) 
+						{
+							ScoreQueueConsumer scoreConsumer = new ScoreQueueConsumer("socre", userScoreService);
+							ScoreQueueConsumer.pool.execute(scoreConsumer);
+							flag = false;
+						}
 					}
 					else
 					{
