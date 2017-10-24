@@ -139,9 +139,9 @@ public class YunJu extends BaseChannel {
 			if(code == null){
 				model.setResult(-1);
 				model.setMsg("渠道未返回状态，未完成！");
-			}else if(code == 0){
+			}else if(code == 0 || code == 1){
 				model.setResult(1);
-				model.setMsg("已完成！");
+				model.setMsg(code + "：已完成！");
 			}else{
 				model.setResult(-1);
 				model.setMsg("渠道提示，未完成！");

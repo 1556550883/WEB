@@ -13,7 +13,7 @@ public class QueueProducer extends EndPoint
 		super(endpointName);
 	}
 
-    public synchronized void sendMessage(Serializable object) throws IOException 
+    public void sendMessage(Serializable object) throws IOException 
     {  
         channel.basicPublish("", endPointName, null, SerializationUtils.serialize(object));  
     }
