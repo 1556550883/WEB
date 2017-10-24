@@ -21,7 +21,6 @@ public class ArrayBlockQueueProducer implements  Runnable
 	public static Map<String, ArrayBlockingQueue<String>> mQueueMap = new HashMap<String, ArrayBlockingQueue<String>>();
 	public static ExecutorService pool = Executors.newCachedThreadPool();  
 	private String mAdverId;
-	private Object o = new Object();
 	
 	public ArrayBlockQueueProducer(ArrayBlockingQueue<String> arrayBlockQueue, String adverId, 
 			ChannelAdverInfoService channelAdverInfoService, AppChannelAdverInfoService appChannelAdverInfoService, UserappidAdveridService userappidAdveridService)
@@ -47,47 +46,34 @@ public class ArrayBlockQueueProducer implements  Runnable
 		{
 			try 
 			{	
-				//同步生产数量
-				synchronized(o)
+				TChannelAdverInfo info = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
+				
+				if(info.getDownloadCount() >= info.getAdverCount()) 
 				{
-					TChannelAdverInfo info = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
-					
-					if(info.getDownloadCount() >= info.getAdverCount()) 
-					{
-						mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
-						mQueueMap.remove(info.getAdverId() + "");
-						System.out.println("task complete");
-						break;
-					}
-					
-					if(info.getAdverStatus() == 1) 
-					{
-						 if(info.getAdverActivationCount() > 0)
-						 {
-							//更新剩余产品数量
-							mAppChannelAdverInfoService.updateAdverActivationRemainMinus1(info);
-							String data = UUID.randomUUID().toString();
-							System.out.println("Put:" + data);
-							mArrayBlockQueue.put(data);
-						 }
-						 else 
-						 {	
-							 Thread.sleep(300000);
-							 //更新任务数量
-							 int count = mUserappidAdveridService.updateStatus2Invalid(info);
-							 mAppChannelAdverInfoService.updateAdverCountRemain(info);
-							 int countComplete = mChannelAdverInfoService.getCountComplete(mAdverId);
-							 info.setDownloadCount(countComplete);//用这个来记录完成数量
-							 info.setAdverActivationCount(count);
-							 mChannelAdverInfoService.updateAdverActivationCount(info);
-						 }
-					}
-					else
-					{
-						mQueueMap.remove(info.getAdverId() + "");
-						break;
-					}
+					mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
+					mQueueMap.remove(info.getAdverId() + "");
+					break;
 				}
+				
+				if(info.getAdverActivationCount() > 0)
+				 {
+					//更新剩余产品数量
+					mAppChannelAdverInfoService.updateAdverActivationRemainMinus1(info);
+					String data = UUID.randomUUID().toString();
+					System.out.println("Put:" + data);
+					mArrayBlockQueue.put(data);
+				 }
+				 else 
+				 {	
+					 Thread.sleep(300000);
+					 //更新任务数量
+					 int count = mUserappidAdveridService.updateStatus2Invalid(info);
+					 mAppChannelAdverInfoService.updateAdverCountRemain(info);
+					 int countComplete = mChannelAdverInfoService.getCountComplete(mAdverId);
+					 info.setDownloadCount(countComplete);//用这个来记录完成数量
+					 info.setAdverActivationCount(count);
+					 mChannelAdverInfoService.updateAdverActivationCount(info);
+				 }
             } 
 			catch (InterruptedException e)
 			{
