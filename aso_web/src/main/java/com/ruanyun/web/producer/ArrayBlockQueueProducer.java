@@ -55,6 +55,7 @@ public class ArrayBlockQueueProducer implements  Runnable
 					if(info.getDownloadCount() >= info.getAdverCount()) 
 					{
 						mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
+						mQueueMap.remove(info.getAdverId() + "");
 						System.out.println("task complete");
 						break;
 					}

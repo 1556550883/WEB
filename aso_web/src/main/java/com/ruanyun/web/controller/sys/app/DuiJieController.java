@@ -334,6 +334,15 @@ public class DuiJieController extends BaseController
 		}
 		
 		TUserappidAdverid task = getTask(adverId, idfa);
+		
+		if(task == null)
+		{
+			model.setResult(-1);
+			model.setMsg("请先领取任务！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
 		if(task != null && task.getStatus().compareTo("1.6") == 0)
 		{
 			model.setResult(-1);
