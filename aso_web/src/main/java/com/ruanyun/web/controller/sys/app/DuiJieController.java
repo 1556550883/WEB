@@ -810,6 +810,11 @@ public class DuiJieController extends BaseController
 			//利得基金
 			model = isLDJJChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 		}
+		else if("5".equals(channelInfo.getChannelNum()))
+		{
+			//利得基金
+			model = isDYDChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+		}
 		else
 		{
 			model.setResult(-1);
@@ -843,6 +848,15 @@ public class DuiJieController extends BaseController
 			throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = LiDeJiJin.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+		
+		return model;
+	}
+	
+	private AppCommonModel isDYDChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum) 
+			throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = DYDChannel.clickDYD(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
 		
 		return model;
 	}

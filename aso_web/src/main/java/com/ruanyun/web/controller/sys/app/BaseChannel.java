@@ -67,4 +67,24 @@ public abstract class BaseChannel
         
         return jsonResult;
     }
+    
+    public static int httpGet(String url)
+    {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        int result = 0;
+        HttpGet httpGet = new HttpGet(url);
+        try 
+        {
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            result = httpResponse.getStatusLine().getStatusCode();
+        }
+        catch (IOException e)
+        {
+        	//logger.error("get请求提交失败:" + url, e);
+        	System.out.println("get请求提交失败:" + url);
+        	System.out.println(e);
+        }
+        
+        return result;
+    }
 }
