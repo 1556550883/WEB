@@ -86,10 +86,10 @@ public class DuiJieController extends BaseController
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		String adid = request.getParameter("adid");//广告id（第三方提供）
-//		String idfa = request.getParameter("idfa");//手机广告标识符
-//		String ip = request.getRemoteAddr();//手机ip
-		String idfa = 9999 + Math.random() * 9000 + "";//手机广告标识符
-		String ip = 1000 + Math.random() * 9000 + "";//手机ip
+		String idfa = request.getParameter("idfa");//手机广告标识符
+		String ip = request.getRemoteAddr();//手机ip
+//		String idfa = 9999 + Math.random() * 9000 + "";//手机广告标识符
+//		String ip = 1000 + Math.random() * 9000 + "";//手机ip
 		String userAppId = request.getParameter("userAppId");//用户Id
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
@@ -412,6 +412,10 @@ public class DuiJieController extends BaseController
 		score.setUserNum(userNum);
 		score.setScore(adverInfo.getAdverPrice());
 		ScoreQueueConsumer.getQueueProducer().sendMessage(score);
+		
+		model.setResult(1);
+		model.setMsg("success！");
+		super.writeJsonDataApp(response, model);
 	}
 	
 	//根据adverid和idfa获取领取到的任务
@@ -490,7 +494,6 @@ public class DuiJieController extends BaseController
 		}
 		
 		//查询广告信息
-		//TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		if(adverInfo == null)
 		{
 			model.setResult(-1);

@@ -52,6 +52,7 @@ public class ArrayBlockQueueProducer implements  Runnable
 				{
 					mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
 					mQueueMap.remove(info.getAdverId() + "");
+					System.out.print("task complete");
 					break;
 				}
 				
@@ -67,12 +68,16 @@ public class ArrayBlockQueueProducer implements  Runnable
 				 {	
 					 Thread.sleep(300000);
 					 //更新任务数量
-					 int count = mUserappidAdveridService.updateStatus2Invalid(info);
-					 mAppChannelAdverInfoService.updateAdverCountRemain(info);
-					 int countComplete = mChannelAdverInfoService.getCountComplete(mAdverId);
-					 info.setDownloadCount(countComplete);//用这个来记录完成数量
-					 info.setAdverActivationCount(count);
-					 mChannelAdverInfoService.updateAdverActivationCount(info);
+					 if(mArrayBlockQueue.size() <= 0) 
+					 {
+						 mUserappidAdveridService.updateStatus2Invalid(info);
+						 mAppChannelAdverInfoService.updateAdverCountRemain(info);
+						 TChannelAdverInfo temp = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
+						 int countComplete = mChannelAdverInfoService.getCountComplete(mAdverId);
+						 info.setDownloadCount(countComplete);//用这个来记录完成数量
+						 info.setAdverActivationCount(temp.getAdverCountRemain());
+						 mChannelAdverInfoService.updateAdverActivationCount(info);
+					 }
 				 }
             } 
 			catch (InterruptedException e)

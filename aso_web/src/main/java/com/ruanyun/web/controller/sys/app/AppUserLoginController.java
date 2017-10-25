@@ -73,7 +73,9 @@ public class AppUserLoginController extends BaseController
 		{
 			try
 			{
-				model = appUserLoginService.visitorLogin(request, tUserApp, ip);
+				//model = appUserLoginService.visitorLogin(request, tUserApp, ip);
+				model.setResult(-1);
+				model.setMsg("此版本未开放！");
 			}
 			catch (Exception e) 
 			{
