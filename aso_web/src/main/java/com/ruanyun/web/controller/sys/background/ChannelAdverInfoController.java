@@ -225,7 +225,7 @@ public class ChannelAdverInfoController extends BaseController
 						
 						if(scoreConsumer == null) 
 						{
-							ScoreQueueConsumer scoreConsumer = new ScoreQueueConsumer("socre", userScoreService);
+							scoreConsumer = new ScoreQueueConsumer("socre", userScoreService);
 							ScoreQueueConsumer.pool.execute(scoreConsumer);
 						}
 					}
