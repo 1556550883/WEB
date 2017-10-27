@@ -187,19 +187,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		if(userScore != null) 
 		{
 			userScore.setScore(userScore.getScore() + score);
-//			if(userScore.getScoreDay()<0)
-//				userScore.setScoreDay(0f);
 			userScore.setScoreSum(userScore.getScoreSum() + score);
-			
-			if(userScore.getScoreSum()<0) 
-			{
-				userScore.setScoreSum(0f);
-			}
-
-			if(userScore.getScore()<0) 
-			{
-				userScore.setScore(0f);
-			}
 			
 			update(userScore);
 			

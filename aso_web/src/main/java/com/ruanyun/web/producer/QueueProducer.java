@@ -6,6 +6,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.SerializationUtils;
 
+import com.rabbitmq.client.MessageProperties;
+
 public class QueueProducer extends EndPoint
 {  
 	public QueueProducer(String endpointName) throws IOException, TimeoutException 
@@ -15,6 +17,6 @@ public class QueueProducer extends EndPoint
 
     public void sendMessage(Serializable object) throws IOException 
     {  
-        channel.basicPublish("", endPointName, null, SerializationUtils.serialize(object));  
+        channel.basicPublish("", endPointName, MessageProperties.PERSISTENT_TEXT_PLAIN, SerializationUtils.serialize(object));  
     }
 }

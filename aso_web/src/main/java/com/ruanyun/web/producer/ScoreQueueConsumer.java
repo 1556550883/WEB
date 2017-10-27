@@ -37,7 +37,8 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 		QueueingConsumer consumer = new QueueingConsumer(channel);  
 		try
 		{
-			channel.basicConsume("socre", true, consumer);
+			boolean ack = false;
+			channel.basicConsume("socre", ack, consumer);
 		}
 		catch (IOException e1) 
 		{
@@ -50,6 +51,7 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 			{
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 				TUserScore score = (TUserScore)SerializationUtils.deserialize(delivery.getBody());
+				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);  
 				userScoreService.updateScore(userScoreService.getScore(score.getUserNum()), score.getScore());
 			}
 			catch (ShutdownSignalException e) 
@@ -61,6 +63,10 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 				e.printStackTrace();
 			} 
 			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
 			{
 				e.printStackTrace();
 			}  
