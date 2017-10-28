@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.LoginIpService;
+import com.ruanyun.web.service.background.UserScoreService;
 
 /**
  * 
@@ -18,8 +19,8 @@ import com.ruanyun.web.service.background.LoginIpService;
 @Component
 public class ScoreTask 
 {
-//	@Autowired	
-//	private UserScoreService userScoreService;
+	@Autowired	
+	private UserScoreService userScoreService;
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
 //	@Autowired
@@ -31,13 +32,13 @@ public class ScoreTask
 	@Autowired
 	private LoginIpService loginIpService;
 	
-//	@Scheduled(cron="0 39 10 ? * * ")   //每天23点59分执行清除用户当天数据  
-//    public void clearUserScore()
-//	{  
-//		userScoreService.clearUserScoreDay();
-//    }  
+	@Scheduled(cron="0 39 10 ? * * ")   //每天23点59分执行清除用户当天数据  
+    public void clearUserScore()
+	{  
+		userScoreService.clearUserScoreDay();
+    }  
 	
-	@Scheduled(cron="0 00 02 ? * * ")   //每天2点备份数据
+	@Scheduled(cron="0 00 03 ? * * ")   //每天2点备份数据
     public void bakAdverInfoTable()
 	{  
 		channelAdverInfoService.adverInfoTableBak();
@@ -76,7 +77,7 @@ public class ScoreTask
 //		}
 //	}  
 	
-	@Scheduled(cron="0 00 02 ? * * ")   //每天23点59分执行清除IP登录记录
+	@Scheduled(cron="0 00 03 ? * * ")   //每天23点59分执行清除IP登录记录
 	public void clearLoginIp()
 	{  
 		loginIpService.delete();

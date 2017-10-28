@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -203,6 +204,7 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	 * CREATE TABLE 新表
 	 *SELECT * FROM 旧表 
 	 */
+	@Transactional
 	public void adverInfoTableBak() 
 	{
 		channelAdverInfoDao.adverInfoTableBak();
