@@ -36,7 +36,6 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 	public TUserApp getUserByUserNum(String userNum)
 	{		
 		return userAppDao.getUserByUserNum(userNum);
-		
 	}
 	
 	/**

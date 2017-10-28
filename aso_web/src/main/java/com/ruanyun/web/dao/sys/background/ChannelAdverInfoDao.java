@@ -5,6 +5,7 @@
  */
 package com.ruanyun.web.dao.sys.background;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -219,5 +220,35 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		params[1] = info.getDownloadCount();
 		
 		return sqlDao.update(params, sql.toString());
+	}
+	
+	/*
+	 * CREATE TABLE 新表
+	 *SELECT * FROM 旧表 
+	 */
+	public void adverInfoTableBak() 
+	{
+		int result1 = -1;
+		int result2 = -1;
+		Calendar date = Calendar.getInstance();
+		String iYear = date.get(Calendar.YEAR) + "_";
+		String iMonth = date.get(Calendar.MONTH) + 1 + "_";
+		String iDay   = date.get(Calendar.DAY_OF_MONTH) + "";
+//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-d");
+//		String dateString = df.format(new Date());
+		String adverInfoName = "t_channel_adver_info_" + iYear + iMonth + iDay;
+		String adverInfoDetailName = "t_userappid_adverid_" + iYear + iMonth + iDay;
+		StringBuilder sql1 = new StringBuilder("CREATE TABLE " + adverInfoName + " SELECT * FROM t_channel_adver_info");
+		StringBuilder sql2 = new StringBuilder("CREATE TABLE " + adverInfoDetailName + " SELECT * FROM t_userappid_adverid");
+		result1 = sqlDao.execute(sql1.toString());
+		result2 = sqlDao.execute(sql2.toString());
+		
+		if(result1 != -1 && result2 != -1) 
+		{
+			StringBuilder sql3 = new StringBuilder("Delete from t_channel_adver_info");
+			StringBuilder sql4 = new StringBuilder("Delete from t_userappid_adverid");
+			sqlDao.execute(sql3.toString());
+			sqlDao.execute(sql4.toString());
+		}
 	}
 }
