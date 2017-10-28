@@ -38,7 +38,7 @@ public class ScoreTask
 		userScoreService.clearUserScoreDay();
     }  
 	
-	@Scheduled(cron="0 00 03 ? * * ")   //每天2点备份数据
+	@Scheduled(cron="0 00 03 ? * * ")   //每天3点备份数据
     public void bakAdverInfoTable()
 	{  
 		channelAdverInfoService.adverInfoTableBak();
