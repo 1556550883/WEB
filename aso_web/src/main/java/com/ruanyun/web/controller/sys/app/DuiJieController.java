@@ -411,6 +411,7 @@ public class DuiJieController extends BaseController
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
 		score.setScore(adverInfo.getAdverPrice());
+		System.out.print("this is callback:" + userNum + "：" + adverInfo.getAdverPrice());
 		ScoreQueueConsumer.getQueueProducer().sendMessage(score);
 		
 		model.setResult(1);

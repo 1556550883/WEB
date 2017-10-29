@@ -48,6 +48,11 @@ public class ArrayBlockQueueProducer implements  Runnable
 			{	
 				TChannelAdverInfo info = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
 				
+				if(info == null) 
+				{
+					break;
+				}
+				
 				if(info.getDownloadCount() >= info.getAdverCount()) 
 				{
 					mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
