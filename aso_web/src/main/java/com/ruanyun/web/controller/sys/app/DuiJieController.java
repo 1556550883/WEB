@@ -375,7 +375,7 @@ public class DuiJieController extends BaseController
 		String userAppId = request.getParameter("userAppId");
 		String adverId = request.getParameter("adverId");
 		String userNum = request.getParameter("userNum");
-		
+
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(userAppId)
 				|| !StringUtils.hasText(adverId))
 		{
@@ -407,7 +407,7 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		if(userNum == null) 
+		if(userNum.equals("null")) 
 		{
 			TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
 			userNum = tUserApp.getUserNum();
@@ -417,7 +417,6 @@ public class DuiJieController extends BaseController
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
 		score.setScore(adverInfo.getAdverPrice());
-		System.out.print("this is callback:" + userNum + "：" + adverInfo.getAdverPrice());
 		QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		
 		model.setResult(1);
@@ -585,7 +584,6 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			System.out.print("this is queryOneMission1:" + userNum + "：" + adverInfo.getAdverPrice());
 			QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		}
 		else if("1".equals(adverInfo.getTaskType()))
@@ -636,7 +634,6 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			System.out.print("this is queryOneMission2:" + userNum + "：" + adverInfo.getAdverPrice());
 			QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		}
 		else

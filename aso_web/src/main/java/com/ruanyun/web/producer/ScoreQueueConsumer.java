@@ -24,6 +24,17 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 	@Override
 	public void run()
 	{
+		int prefetchCount = 1;  
+	    
+		try 
+	    {
+			channel.basicQos(prefetchCount);
+		}
+	    catch (IOException e2) 
+	    {
+			e2.printStackTrace();
+		} 
+	    
 		QueueingConsumer consumer = new QueueingConsumer(channel);  
 		try
 		{
@@ -41,7 +52,6 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 			{
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 				TUserScore score = (TUserScore)SerializationUtils.deserialize(delivery.getBody());
-				System.out.print("this is consumer:" + score.getUserNum() + ":" + score.getScore());
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);  
 				userScoreService.updateScore(userScoreService.getScore(score.getUserNum()), score.getScore());
 			}
