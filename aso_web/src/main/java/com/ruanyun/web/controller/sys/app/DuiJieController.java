@@ -27,7 +27,7 @@ import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
-import com.ruanyun.web.producer.ScoreQueueConsumer;
+import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
@@ -407,12 +407,18 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		if(userNum == null) 
+		{
+			TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
+			userNum = tUserApp.getUserNum();
+		}
+		
 		//更新金额
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
 		score.setScore(adverInfo.getAdverPrice());
 		System.out.print("this is callback:" + userNum + "：" + adverInfo.getAdverPrice());
-		ScoreQueueConsumer.getQueueProducer().sendMessage(score);
+		QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		
 		model.setResult(1);
 		model.setMsg("success！");
@@ -467,6 +473,12 @@ public class DuiJieController extends BaseController
 			model.setMsg("请先领取任务！");
 			super.writeJsonDataApp(response, model);
 			return;
+		}
+		
+		if(userNum == null) 
+		{
+			TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(task.getUserAppId()));
+			userNum = tUserApp.getUserNum();
 		}
 		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
@@ -573,7 +585,8 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			ScoreQueueConsumer.getQueueProducer().sendMessage(score);
+			System.out.print("this is queryOneMission1:" + userNum + "：" + adverInfo.getAdverPrice());
+			QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -623,7 +636,8 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			ScoreQueueConsumer.getQueueProducer().sendMessage(score);
+			System.out.print("this is queryOneMission2:" + userNum + "：" + adverInfo.getAdverPrice());
+			QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		}
 		else
 		{//异常情况

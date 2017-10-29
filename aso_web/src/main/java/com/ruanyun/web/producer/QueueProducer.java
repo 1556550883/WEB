@@ -1,22 +1,24 @@
 package com.ruanyun.web.producer;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.concurrent.TimeoutException;
-
-import org.apache.commons.lang.SerializationUtils;
-
-import com.rabbitmq.client.MessageProperties;
 
 public class QueueProducer extends EndPoint
 {  
-	public QueueProducer(String endpointName) throws IOException, TimeoutException 
+	private static QueueProducer scoreQueue;
+	
+	private QueueProducer(String endpointName) throws IOException, TimeoutException 
 	{
 		super(endpointName);
 	}
-
-    public void sendMessage(Serializable object) throws IOException 
-    {  
-        channel.basicPublish("", endPointName, MessageProperties.PERSISTENT_TEXT_PLAIN, SerializationUtils.serialize(object));  
-    }
+    
+	public static QueueProducer getQueueProducer() throws IOException, TimeoutException 
+	{
+		if(scoreQueue == null) 
+		{
+			scoreQueue = new QueueProducer("socre");
+		}
+		
+		return scoreQueue;
+	}
 }

@@ -38,6 +38,13 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 		return userAppDao.getUserByUserNum(userNum);
 	}
 	
+	//getUserByUserAppid
+	
+	
+	public TUserApp getUserByUserAppid(String appid)
+	{		
+		return userAppDao.getUserByUserAppid(appid);
+	}
 	/**
 	 * 
 	 * 功能描述:根据序列号获取用户

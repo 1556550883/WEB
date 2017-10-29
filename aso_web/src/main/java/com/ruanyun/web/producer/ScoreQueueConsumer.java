@@ -15,23 +15,12 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 {
 	public static ExecutorService pool = Executors.newFixedThreadPool(1); 
 	private UserScoreService userScoreService;
-	private static QueueProducer scoreQueue;
 	public ScoreQueueConsumer(String endpointName, UserScoreService userScoreService) throws IOException, TimeoutException 
 	{
 		super(endpointName);
 		this.userScoreService = userScoreService;
 	}
 
-	public static QueueProducer getQueueProducer() throws IOException, TimeoutException 
-	{
-		if(scoreQueue == null) 
-		{
-			scoreQueue = new QueueProducer("socre");
-		}
-		
-		return scoreQueue;
-	}
-	
 	@Override
 	public void run()
 	{
@@ -52,6 +41,7 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 			{
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 				TUserScore score = (TUserScore)SerializationUtils.deserialize(delivery.getBody());
+				System.out.print("this is consumer:" + score.getUserNum() + ":" + score.getScore());
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);  
 				userScoreService.updateScore(userScoreService.getScore(score.getUserNum()), score.getScore());
 			}

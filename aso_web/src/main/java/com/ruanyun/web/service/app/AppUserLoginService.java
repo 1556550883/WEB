@@ -105,6 +105,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			UserAppModel appModel = userLoginDao.getUserModelByNum(user.getUserNum());
 			appModel.setLoginName(user.getLoginName());
 			appModel.setLoginType(user.getLoginType());
+			appModel.setUserNum(user.getUserNum());
 			appModel.setUserApppType(userApp.getUserApppType());
 			
 			model.setObj(appModel);

@@ -51,6 +51,12 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 		return sqlDao.get(TUserApp.class, sql.toString());
 	}
 	
+	
+	public TUserApp getUserByUserAppid(String userAppid)
+	{
+		StringBuffer sql=new StringBuffer(" SELECT * from t_user_app WHERE user_app_id ='" + userAppid + "'");
+		return sqlDao.get(TUserApp.class, sql.toString());
+	}
 	/**
 	 * 
 	 * 功能描述:根据序列号获取用户
