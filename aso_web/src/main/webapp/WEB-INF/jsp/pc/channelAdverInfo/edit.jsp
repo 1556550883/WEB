@@ -88,6 +88,12 @@
 				    <input name="timeLimit" id="timeLimit" class="mustFill" title="领取任务后的任务时效（单位：分钟）" type="text" value="<c:out value="${bean.timeLimit}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
+		     <dl class="nowrap" style="width: 100%">
+				<dt>打开任务时间限制（单位：s）：</dt>
+				<dd>
+				    <input name="openTimeLimit" id="openTimeLimit" title="打开任务时间限制（单位：s）" type="text" value="<c:out value="${bean.openTimeLimit}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
 		    <dl class="nowrap" style="width: 100%">
 				<dt>广告开始日期：</dt>
 				<dd>

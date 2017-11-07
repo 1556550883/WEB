@@ -40,6 +40,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer adverCountRemain;//广告剩余数量
      private Integer adverCountComplete;//广告完成数量
      private Float timeLimit;//任务时效
+     private int openTimeLimit;//打开任务时间限制
      
      private Float adverPrice;
      private String adverType;
@@ -83,7 +84,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
     public TChannelAdverInfo() {
     }
 
-    public TChannelAdverInfo(String adverName, String adverNum, String adverDesc, Float adverPrice, String adverType, String adverImg, Date adverDayStart, Date adverDayEnd, String adverTimeStart, String adverTimeEnd, Integer adverStepCount, Date adverCreatetime, int adverActivationCount, String fileType, String fileUrl, int downloadCount, Integer adverStatus, String flag1, String flag2, String flag3, String flag4, String flag5, String flag6) {
+    public TChannelAdverInfo(String adverName, String adverNum, String adverDesc, 
+    		Float adverPrice, String adverType, String adverImg, Date adverDayStart,
+    		Date adverDayEnd, String adverTimeStart, String adverTimeEnd, Integer adverStepCount,
+    		Date adverCreatetime, int adverActivationCount, String fileType, String fileUrl, 
+    		int downloadCount, Integer adverStatus, String flag1, String flag2, String flag3, 
+    		String flag4, String flag5, String flag6) 
+    {
        this.adverName = adverName;
        this.adverNum = adverNum;
        this.adverDesc = adverDesc;
@@ -469,11 +476,23 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	
 	@Column(name="time_limit")
-	public Float getTimeLimit() {
+	public Float getTimeLimit() 
+	{
 		return timeLimit;
 	}
-	public void setTimeLimit(Float timeLimit) {
+	public void setTimeLimit(Float timeLimit) 
+	{
 		this.timeLimit = timeLimit;
 	}
 	
+	@Column(name="open_time_limit")
+	public int getOpenTimeLimit() 
+	{
+		return openTimeLimit;
+	}
+	
+	public void setOpenTimeLimit(int openTimeLimit)
+	{
+		this.openTimeLimit = openTimeLimit;
+	}
 }

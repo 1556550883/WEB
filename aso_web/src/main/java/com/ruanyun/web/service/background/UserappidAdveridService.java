@@ -66,6 +66,7 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 	/**
 	 * 检查appleId是否已经使用
 	 */
+	@SuppressWarnings("null")
 	public boolean checkAppleIdIsUsed(String adid, String appleId)
 	{
 		boolean isUsed = false;

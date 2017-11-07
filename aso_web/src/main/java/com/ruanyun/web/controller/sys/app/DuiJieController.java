@@ -541,7 +541,7 @@ public class DuiJieController extends BaseController
 			{
 				//掌上互动
 				//调用第三方激活上报接口
-				model = ZhangShangHuDong.activate(adid, idfa, ip);
+				model = ZhangShangHuDong.activate(adverInfo.getFlag4(), adid, idfa, ip);
 				if(model.getResult() == -1)
 				{
 					super.writeJsonDataApp(response, model);
@@ -809,8 +809,7 @@ public class DuiJieController extends BaseController
 		}
 		else if("2".equals(channelInfo.getChannelNum()))
 		{
-			model.setResult(-1);
-			model.setMsg("此渠道尚未对接！");
+			model = zhangshanghudong(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
 		}
 		else if("3".equals(channelInfo.getChannelNum()))
 		{
@@ -831,6 +830,23 @@ public class DuiJieController extends BaseController
 		{
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：渠道未在后台配置！");
+		}
+		
+		return model;
+	}
+	
+	private AppCommonModel zhangshanghudong(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
+			String userAppId, String adverId, String userNum) 
+					throws NumberFormatException, UnsupportedEncodingException
+	{
+		//云聚
+		//调用第三方排重接口
+		AppCommonModel model = ZhangShangHuDong.paiChong(adverInfo.getFlag2(), adid, idfa, ip);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = ZhangShangHuDong.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
 		}
 		
 		return model;

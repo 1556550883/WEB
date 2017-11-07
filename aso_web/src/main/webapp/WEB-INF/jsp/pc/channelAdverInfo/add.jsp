@@ -71,6 +71,12 @@
 				</dd>
 		    </dl>
 		    <dl class="nowrap" style="width: 100%">
+				<dt>打开任务时间限制（单位：s）：</dt>
+				<dd>
+				    <input name="openTimeLimit" id="openTimeLimit" class="mustFill" title="打开任务时间限制（单位：s）" type="text" value="<c:out value="${bean.openTimeLimit}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    <dl class="nowrap" style="width: 100%">
 				<dt>广告开始日期：</dt>
 				<dd>
 				 	<input type="text" name="adverDayStart" title="广告开始日期" class="mustFill date" id="adverDayStart" value="<ry:formatDate date='${bean.adverDayStart}' toFmt='yyyy-MM-dd HH:mm'/>"  readonly="readonly" dateFmt="yyyy-MM-dd HH:mm" >

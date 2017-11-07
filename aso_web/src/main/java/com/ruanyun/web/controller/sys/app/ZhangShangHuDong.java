@@ -9,21 +9,25 @@ import net.sf.json.JSONObject;
  * 掌上互动
  * @author 向轴
  */
-public class ZhangShangHuDong extends BaseChannel {
-	
+public class ZhangShangHuDong extends BaseChannel 
+{
 	//我们的渠道号
-	private static final String CH = "5067";
+	private static final String CH = "3163";
 	
 	/**
 	 * 排重
 	 */
-	public static AppCommonModel paiChong(String adid, String idfa){
+	public static AppCommonModel paiChong(String domain, String adid, String idfa, String ip)
+	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
-		StringBuilder url = new StringBuilder("http://api.adzshd.com/RemoveEcho.ashx")
+		//StringBuilder url = new StringBuilder("http://api.adzshd.com/RemoveEcho.ashx")
+		//http://api.adzshd.com/SourceSearchISActivate.ashx?cmd=getuserisacctivate&adid=adid&idfa=idfa、
+		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&idfa=").append(idfa)
-				.append("&btype=1");
+				.append("&btype=1")
+				.append("&ip=").append(ip);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){
@@ -52,11 +56,12 @@ public class ZhangShangHuDong extends BaseChannel {
 	/**
 	 * 点击
 	 */
-	public static AppCommonModel dianJi(String adid, String idfa, String ip,
+	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
 			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException{
 		AppCommonModel model = new AppCommonModel(-1, "领取任务出错！");
 		
-		StringBuilder url = new StringBuilder("http://api.adzshd.com/SourceClick.ashx")
+		//StringBuilder url = new StringBuilder("http://api.adzshd.com/SourceClick.ashx")
+		StringBuilder url = new StringBuilder(domain)
 			.append("?adid=").append(adid)
 			.append("&appid=").append(CH)
 			.append("&idfa=").append(idfa)
@@ -88,10 +93,11 @@ public class ZhangShangHuDong extends BaseChannel {
 	/**
 	 * 激活上报
 	 */
-	public static AppCommonModel activate(String adid, String idfa, String ip) {
+	public static AppCommonModel activate(String domain, String adid, String idfa, String ip) {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
-		StringBuilder url = new StringBuilder("http://api.adzshd.com/submit.ashx")
+		//StringBuilder url = new StringBuilder("http://api.adzshd.com/submit.ashx")
+		StringBuilder url = new StringBuilder(domain)
 			.append("?adid=").append(adid)
 			.append("&appid=").append(CH)
 			.append("&mac=02:00:00:00:00:00")
@@ -116,5 +122,4 @@ public class ZhangShangHuDong extends BaseChannel {
 		
 		return model;
 	}
-
 }

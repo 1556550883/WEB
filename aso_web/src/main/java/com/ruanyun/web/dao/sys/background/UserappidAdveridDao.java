@@ -155,7 +155,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	{
 		StringBuilder sql = new StringBuilder("select adid,apple_id from t_userappid_adverid where status='2'")
 				.append(" where adid='").append(adid).append("'")
-				.append(" where appleId='").append(appleId).append("' ");
+				.append(" where appleId='").append(appleId).append("'");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		
