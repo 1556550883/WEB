@@ -76,7 +76,7 @@
 				<th align="center">余额</th>
 				<th align="center">支付宝账号</th>
 				<th align="center">微信账号</th>
-				<th align="center">idfa</th>
+				<th align="center">用户等级</th>
 				
 				<!--<th align="center">用户类型</th>-->	
 				<!--<th align="center">手机号</th>	
@@ -100,7 +100,7 @@
 	                <td>${item.userScore.score}</td>
 	                <td>${item.zhifubao}</td>
 	                <td>${item.weixin}</td>
-	                <td>${item.idfa }</td>
+	                <td>${item.level }</td>
 	                
 	                <!--<td><ry:show parentCode="USER_APP_TYPE" itemCode="${item.userApppType}"></ry:show></td>-->
 	                <!--<td>${item.phoneNum}</td>

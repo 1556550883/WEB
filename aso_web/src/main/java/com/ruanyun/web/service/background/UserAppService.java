@@ -147,7 +147,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 			
 			BeanUtils.copyProperties(userApp, olUuser, new String[] {"userAppId", "userNum", "headImg","phoneSerialNumber","createDate"
 					,"invitationCode","taskNewStatus","zhifubao","weixin","zhifubaoName","userApppType","appStore"});
-			
+			olUuser.setLevel(userApp.getLevel());
 			if (EmptyUtils.isNotEmpty(vo) && vo.getResult()==1) 
 			{
 				olUuser.setHeadImg(vo.getFilename());

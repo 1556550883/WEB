@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
+<ry:binding bingdingName="userLevel" parentCode="USER_LEVEL"></ry:binding>
 <ry:binding parentCode="USERSEX,ORG_TYPE,USER_APP_TYPE,LOGIN_CONTROL,AUTHORITY" bingdingName="usersexs,orgTypeList,userApppType,loginControls,authoritys"></ry:binding>
 <div class="pageContent">
 	<form method="post" action="userApp/saveOrUpdate" id="forms" class="pageForm required-validate" onsubmit="return iframeCallback(this, navTabAjaxDone);"enctype="multipart/form-data">
@@ -32,6 +33,19 @@
 		            </c:forEach>
 				</dd>
 			</dl>
+			
+			<dl class="nowrap" style="width: 100%">
+				<dt>用户等级：</dt>
+				<dd>
+				   <select name="level" class="mustFill" title="用户等级">
+				   		<option value="">请选择</option>
+				   		<c:forEach items="${userLevel}" var="item">
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.level}">selected</c:if>>${item.itemName}</option>
+				   		</c:forEach>
+				   </select>
+				</dd>
+		    </dl>
+		    
 			<!--<dl>
 				<dt>出生日期：</dt>
 				<dd>

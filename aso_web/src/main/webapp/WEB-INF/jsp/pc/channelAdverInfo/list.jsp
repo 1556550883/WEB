@@ -45,6 +45,7 @@
 				<th align="center">广告数量</th>
 				<th align="center">广告剩余数量</th>
 				<th align="center">广告完成数量</th>
+				<th align="center">广告等级</th>
 				<th align="center">广告开始时间——广告结束时间</th>
 				<th align="center">状态</th>
 				<!--<th align="center">权限</th>-->
@@ -65,6 +66,7 @@
 	                <td>${item.adverCount}</td>
 	                <td>${item.adverCountRemain}</td>
 	                <td>${item.adverCountComplete}</td>
+	                <td>${item.level}</td>
 	                <td>${item.adverDayStart}--${item.adverDayEnd}</td>
 	               <!-- <td>${item.adverTimeStart}--${item.adverTimeEnd}</td> -->
 	                <td><c:if test="${item.adverStatus==0}">未审核</c:if><c:if test="${item.adverStatus==1}">启用</c:if><c:if test="${item.adverStatus==2}">停用</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>

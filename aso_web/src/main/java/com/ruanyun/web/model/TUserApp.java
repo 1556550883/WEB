@@ -37,7 +37,7 @@ public class TUserApp implements java.io.Serializable {
 	private String flag3;
 	private String flag4;
 	private String flag5;
-	private String flag6;
+	private Integer level;
 	private String phoneSerialNumber;//手机序列号
 	private String phoneNum;//手机号码
     private String zhifubao;
@@ -60,7 +60,7 @@ public class TUserApp implements java.io.Serializable {
 	public TUserApp(String userNum, String userNick, String birthday,
 			String sex, String headImg, String loginName, String loginPwd,
 			String flag1, String flag2, String flag3, String flag4,
-			String flag5, String flag6) {
+			String flag5, Integer level) {
 		this.userNum = userNum;
 		this.userNick = userNick;
 		this.birthday = birthday;
@@ -73,7 +73,7 @@ public class TUserApp implements java.io.Serializable {
 		this.flag3 = flag3;
 		this.flag4 = flag4;
 		this.flag5 = flag5;
-		this.flag6 = flag6;
+		this.level = level;
 	}
 
 	@Id
@@ -195,13 +195,13 @@ public class TUserApp implements java.io.Serializable {
 		this.flag5 = flag5;
 	}
 
-	@Column(name = "flag6", length = 100)
-	public String getFlag6() {
-		return this.flag6;
+	@Column(name = "level")
+	public Integer getLevel() {
+		return this.level;
 	}
 
-	public void setFlag6(String flag6) {
-		this.flag6 = flag6;
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 	
 	@Column(name = "phone_serial_number", length = 100)

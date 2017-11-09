@@ -2,7 +2,7 @@
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
 <%@include file="/WEB-INF/jsp/inc/ume.jsp"%>
     
-<ry:binding bingdingName="taskType,phoneType,adverStepCount,adverType,fileType,effectiveType,effectiveSource" parentCode="TASK_TYPE,PHONE_TYPE,ADVER_STEP_COUNT,ADVER_TYPE,FILE_TYPE,EFFECTIVE_TYPE,EFFECTIVE_SOURCE"></ry:binding>
+<ry:binding bingdingName="taskType,phoneType,adverStepCount,adverType,fileType,effectiveType,effectiveSource,userLevel" parentCode="TASK_TYPE,PHONE_TYPE,ADVER_STEP_COUNT,ADVER_TYPE,FILE_TYPE,EFFECTIVE_TYPE,EFFECTIVE_SOURCE,USER_LEVEL"></ry:binding>
 <ry:binding parentCode="IS_AUTH" bingdingName="isAuth"></ry:binding>
 <style>
 <style>
@@ -39,6 +39,17 @@
 				   </select>
 				</dd>
 		    </dl>
+		    <dl class="nowrap" style="width: 100%">
+				<dt>任务等级：</dt>
+				<dd>
+				   <select name="level" class="mustFill" title="任务等级">
+				   		<option value="">请选择</option>
+				   		<c:forEach items="${userLevel}" var="item"> 
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.level}">selected</c:if>>${item.itemName}</option>
+				   		</c:forEach>
+				   </select>
+				</dd>
+		    </dl>
 			<dl>
 				<dt>广告ID：</dt>
 				<dd>
@@ -68,12 +79,6 @@
 				<dt>领取任务后的任务时效（单位：分钟）：</dt>
 				<dd>
 				    <input name="timeLimit" id="timeLimit" class="mustFill" title="领取任务后的任务时效（单位：分钟）" type="text" value="<c:out value="${bean.timeLimit}"></c:out>" maxlength="10"/>
-				</dd>
-		    </dl>
-		    <dl class="nowrap" style="width: 100%">
-				<dt>打开任务时间限制（单位：s）：</dt>
-				<dd>
-				    <input name="openTimeLimit" id="openTimeLimit" class="mustFill" title="打开任务时间限制（单位：s）" type="text" value="<c:out value="${bean.openTimeLimit}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
 		    <dl class="nowrap" style="width: 100%">

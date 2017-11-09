@@ -40,7 +40,6 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer adverCountRemain;//广告剩余数量
      private Integer adverCountComplete;//广告完成数量
      private Float timeLimit;//任务时效
-     private int openTimeLimit;//打开任务时间限制
      
      private Float adverPrice;
      private String adverType;
@@ -63,7 +62,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String flag3;
      private String flag4;
      private String flag5;
-     private String flag6; 
+     private Integer level; 
      private Integer isAuth;
      private String adverRemand;
 
@@ -89,7 +88,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
     		Date adverDayEnd, String adverTimeStart, String adverTimeEnd, Integer adverStepCount,
     		Date adverCreatetime, int adverActivationCount, String fileType, String fileUrl, 
     		int downloadCount, Integer adverStatus, String flag1, String flag2, String flag3, 
-    		String flag4, String flag5, String flag6) 
+    		String flag4, String flag5, Integer level) 
     {
        this.adverName = adverName;
        this.adverNum = adverNum;
@@ -113,7 +112,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
        this.flag3 = flag3;
        this.flag4 = flag4;
        this.flag5 = flag5;
-       this.flag6 = flag6;
+       this.level = level;
     }
    
      @Id @GeneratedValue(strategy=IDENTITY)
@@ -397,13 +396,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
         this.flag5 = flag5;
     }
     
-    @Column(name="flag6", length=100)
-    public String getFlag6() {
-        return this.flag6;
+    @Column(name="level")
+    public Integer getLevel() {
+        return this.level;
     }
     
-    public void setFlag6(String flag6) {
-        this.flag6 = flag6;
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
 
@@ -483,16 +482,5 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	public void setTimeLimit(Float timeLimit) 
 	{
 		this.timeLimit = timeLimit;
-	}
-	
-	@Column(name="open_time_limit")
-	public int getOpenTimeLimit() 
-	{
-		return openTimeLimit;
-	}
-	
-	public void setOpenTimeLimit(int openTimeLimit)
-	{
-		this.openTimeLimit = openTimeLimit;
 	}
 }
