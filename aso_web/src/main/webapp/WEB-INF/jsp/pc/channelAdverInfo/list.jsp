@@ -29,6 +29,7 @@
 			<li><a class="edit" title="确定要启用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
 			<li><a class="edit" title="确定要停用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=2"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
 			<li><a class="edit" title="确定要刷新选择的信息吗？" href="channelAdverInfo/freshAdverNum"  target="selectedTodo" postType="string" rel="ids"><span>刷新</span></a></li>
+			<li><a class="edit" title="确定导出选择的文件吗？" href="channelAdverInfo/export"  target="selectedTodo" postType="string" rel="ids"><span>导出</span></a></li>
 			<li class="line">line</li>
 		</ul>
 	</div>

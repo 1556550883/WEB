@@ -5,8 +5,12 @@
  */
 package com.ruanyun.web.service.app;
 
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,12 +20,15 @@ import org.springframework.util.StringUtils;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.dao.sys.ChannelAdverStepDao;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
+import com.ruanyun.web.util.CSVUtils;
+import com.ruanyun.web.util.ExcelUtils;
 
 /**
  *@author feiyang
@@ -143,5 +150,24 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	public List<TChannelAdverInfo> getByCondition(TChannelAdverInfo adverInfo) 
 	{
 		return channelAdverInfoDao.getByCondition(adverInfo);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void exprotIDFA(Integer id, HttpServletResponse response) throws IllegalArgumentException, IllegalAccessException, IOException
+	{
+		List list = channelAdverInfoDao.exportExcel(id);
+		Calendar date = Calendar.getInstance();
+		int year = date.get(Calendar.YEAR);
+		int month = date.get(Calendar.MONTH) + 1;
+		int day = date.get(Calendar.DAY_OF_MONTH);
+		String iYear = year + "-";
+		String iMonth = month + "-";
+		String iDay   = day + "";
+		String fileName = iYear + iMonth + iDay + "-IDFA-" + id;
+		String[] columns = {"adver_name","ip","idfa","receive_time","complete_time"};
+		String[] headers = {"关键词","IP","IDFA","开始时间","结束时间"};
+//		ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+//		SysCode.DATE_FORMAT_STR_L);
+		CSVUtils.exportCsv(fileName, headers, columns, list);
 	}
 }

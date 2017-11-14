@@ -260,4 +260,14 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 			sqlDao.execute(sql4.toString());
 		}
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public List exportExcel(Integer id)
+	{
+		StringBuffer sql = new StringBuffer("select B.adver_name, ip, idfa, receive_time, complete_time "
+				+ "FROM t_userappid_adverid as A, `t_channel_adver_info` as B WHERE A.status = '2'");
+		sql.append(SQLUtils.popuHqlEq("A.adver_id", id));
+		sql.append(SQLUtils.popuHqlEq("B.adver_id", id));
+		return sqlDao.getAll(sql.toString());
+	}
 }

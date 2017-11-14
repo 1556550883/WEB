@@ -183,7 +183,7 @@ public class ChannelAdverInfoController extends BaseController
 	 * @param response
 	 */
 	@RequestMapping("delAll")
-	public void delAll(String ids,HttpServletResponse response){
+	public void delAll(String ids, HttpServletResponse response){
 		try {
 			channelAdverInfoService.delAll(ids);
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
@@ -260,6 +260,26 @@ public class ChannelAdverInfoController extends BaseController
 				userappidAdveridService.updateStatus2Invalid(adverInfo);
 				//更新任务数量
 				appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
+			}
+			
+			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
+		} 
+		catch (Exception e) 
+		{
+			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
+		}
+	}
+	
+	@RequestMapping("export")
+	public void exportIDFA(String ids, HttpServletResponse response)
+	{
+		try 
+		{
+			String[] adverIds = ids.split(",");
+		
+			for(String adverId : adverIds) 
+			{
+				appChannelAdverInfoService.exprotIDFA(Integer.valueOf(adverId), response);
 			}
 			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
