@@ -9,7 +9,7 @@ public class QueueProducer extends EndPoint
 	
 	private QueueProducer(String endpointName) throws IOException, TimeoutException 
 	{
-		super(endpointName);
+		super(endpointName, false);
 	}
     
 	public static QueueProducer getQueueProducer() throws IOException, TimeoutException 

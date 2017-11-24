@@ -17,7 +17,7 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 	private UserScoreService userScoreService;
 	public ScoreQueueConsumer(String endpointName, UserScoreService userScoreService) throws IOException, TimeoutException 
 	{
-		super(endpointName);
+		super(endpointName, false);
 		this.userScoreService = userScoreService;
 	}
 

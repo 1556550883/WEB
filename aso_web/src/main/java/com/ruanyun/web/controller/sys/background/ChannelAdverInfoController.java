@@ -7,7 +7,6 @@ package com.ruanyun.web.controller.sys.background;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +52,8 @@ public class ChannelAdverInfoController extends BaseController
 	private UserScoreService userScoreService;
 	
 	private static ScoreQueueConsumer scoreConsumer;
+	
+	private static ArrayBlockQueueProducer mAdverProducer;
 	/**
 	 * 查询广告列表（后台显示）
 	 */
@@ -207,21 +208,17 @@ public class ChannelAdverInfoController extends BaseController
 				{
 					if(status == 1)
 					{
-						TChannelAdverInfo info = channelAdverInfoService.getInfoById(Integer.parseInt(adverId));
-						appChannelAdverInfoService.updateAdverCountRemain(info);
-						info.setAdverActivationCount(info.getAdverCountRemain());
-						channelAdverInfoService.updateAdverActivationCount(info);
-						int count = 150;
-						if(info.getAdverActivationCount() < 150) 
+						if(!ArrayBlockQueueProducer.adverList1.contains(adverId)) 
 						{
-							count = info.getAdverCount();
+							ArrayBlockQueueProducer.adverList.add(adverId);
 						}
 						
-						final ArrayBlockingQueue<String> arrayBlockQueue = new ArrayBlockingQueue<String>(count < 5 ? 5 : count);
-						ArrayBlockQueueProducer producer = new ArrayBlockQueueProducer(arrayBlockQueue, adverId,
-								channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
-						
-						ArrayBlockQueueProducer.pool.execute(producer);
+						if(mAdverProducer == null) 
+						{
+							mAdverProducer = new ArrayBlockQueueProducer(channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
+							
+							ArrayBlockQueueProducer.pool.execute(mAdverProducer);
+						}
 						
 						if(scoreConsumer == null) 
 						{
@@ -231,9 +228,9 @@ public class ChannelAdverInfoController extends BaseController
 					}
 					else
 					{
-						if(ArrayBlockQueueProducer.mQueueMap.containsKey(adverId)) 
+						if(ArrayBlockQueueProducer.adverList1.contains(adverId)) 
 						{
-							ArrayBlockQueueProducer.mQueueMap.remove(adverId);
+							ArrayBlockQueueProducer.removeAdverList.add(adverId);
 						}
 					}
 				}

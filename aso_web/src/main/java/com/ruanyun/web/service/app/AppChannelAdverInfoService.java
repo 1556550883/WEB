@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
-import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.dao.sys.ChannelAdverStepDao;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
@@ -28,7 +27,6 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.util.CSVUtils;
-import com.ruanyun.web.util.ExcelUtils;
 
 /**
  *@author feiyang

@@ -1,5 +1,6 @@
 package com.ruanyun.web.controller.sys.app;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -8,7 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.rabbitmq.client.ConsumerCancelledException;
+import com.rabbitmq.client.ShutdownSignalException;
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.AppCommonModel;
@@ -26,9 +29,10 @@ import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserappidAdverid;
-import com.ruanyun.web.producer.ArrayBlockQueueProducer;
+import com.ruanyun.web.producer.AdverQueueConsumer;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
+import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
@@ -48,6 +52,8 @@ public class DuiJieController extends BaseController
 	private ChannelInfoService channelInfoService;
 	@Autowired
 	private DictionaryService dictionaryService;
+	@Autowired
+	private ChannelAdverInfoService channelAdverInfoService;
 	
 	/**
 	 * 查询系统参数
@@ -78,10 +84,14 @@ public class DuiJieController extends BaseController
 	/**
 	 * 领取任务
 	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 * @throws IOException 
+	 * @throws ConsumerCancelledException 
+	 * @throws ShutdownSignalException 
 	 */
 	@RequestMapping("lingQuRenWu")
 	public void lingQuRenWu(HttpServletResponse response, HttpServletRequest request) 
-			throws NumberFormatException, UnsupportedEncodingException, InterruptedException
+			throws NumberFormatException, InterruptedException, ShutdownSignalException, ConsumerCancelledException, IOException, TimeoutException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -111,6 +121,14 @@ public class DuiJieController extends BaseController
 		{
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：广告不存在！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		if(adverInfo.getAdverStatus() != 1) 
+		{
+			model.setResult(-1);
+			model.setMsg("领取任务失败。原因：任务已被管理员停止！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -161,39 +179,36 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		ArrayBlockingQueue<String> arrayBlockQueue = ArrayBlockQueueProducer.mQueueMap.get(adverId);
-		
-		if(arrayBlockQueue == null)
+		String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
+		//AdverQueueConsumer adverConsumer = new AdverQueueConsumer(endPointName);
+		boolean success = AdverQueueConsumer.adverQueueConsumerMap.get(endPointName).getMessage(endPointName);
+		if(!success) 
 		{
-			model.setResult(-1);
-			model.setMsg("此任务需要管理员重新启动!");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
-		String data = arrayBlockQueue.poll();
-		
-		if(data != null)
-		{
-			//分渠道调用排重接口、点击接口
-			AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+			TChannelAdverInfo lastAdverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+			if(lastAdverInfo.getAdverCountRemain() != 0) 
+			{
+				int countComplete = channelAdverInfoService.getCountComplete(adverId);
+				lastAdverInfo.setDownloadCount(countComplete);//用这个来记录完成数量
+				lastAdverInfo.setAdverActivationCount(lastAdverInfo.getAdverCountRemain());
+				channelAdverInfoService.updateAdverActivationCount(lastAdverInfo);
+			}
 			
-			if(checkChannelInfoModel.getResult() == -1)
-			{
-				super.writeJsonDataApp(response, checkChannelInfoModel);
-				return;
-			}
-			else
-			{
-				appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
-			}
-		}
-		else
-		{
 			model.setResult(-1);
 			model.setMsg("真遗憾，你未抢到任务!");
 			super.writeJsonDataApp(response, model);
 			return;
+		}
+		
+		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+		
+		if(checkChannelInfoModel.getResult() == -1)
+		{
+			super.writeJsonDataApp(response, checkChannelInfoModel);
+			return;
+		}
+		else
+		{
+			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
 		}
 		
 		//保存任务
@@ -219,6 +234,7 @@ public class DuiJieController extends BaseController
 		model.setResult(1);
 		model.setMsg("领取任务成功，请在规定时间内完成任务，否则不计分！");
 		super.writeJsonDataApp(response, model);
+		return;
 	}
 	
 	private AppCommonModel checkAdverInProcess(Page<TUserappidAdverid> taskList) 
