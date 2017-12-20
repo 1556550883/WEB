@@ -32,7 +32,7 @@ public class AppChannelAdverInfoController extends BaseController
 	 */
 	@RequestMapping("getAdverList")
 	public void getAdverInfoByChannelNum(HttpServletResponse response, HttpServletRequest request,
-			Page<TChannelAdverInfo>page, String channelType, String systemType, String phoneType, Integer userAppId)
+			Page<TChannelAdverInfo>page, String channelType, String systemType, String phoneType, Integer userAppId, String osversion)
 	{
 		AppCommonModel model = new AppCommonModel();
 		
@@ -42,12 +42,14 @@ public class AppChannelAdverInfoController extends BaseController
 				||!StringUtils.hasText(phoneType) || userAppId == null || userAppId <= 0)
 		{
 			model.setResult(-1);
+
 			model.setMsg("channelType、systemType、phoneType、userAppId不能为空！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
 		
-		model = appChannelAdverInfoService.getAdverInfoByChannelNum2(page, channelType, systemType, phoneType, userAppId);
+		String[] isv = osversion.split("\\.");
+		model = appChannelAdverInfoService.getAdverInfoByChannelNum2(page, channelType, systemType, phoneType, userAppId, isv[0]);
 		
 		super.writeJsonDataApp(response, model);
 	}

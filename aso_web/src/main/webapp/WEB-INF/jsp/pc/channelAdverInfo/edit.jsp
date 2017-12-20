@@ -2,7 +2,7 @@
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
 <%@include file="/WEB-INF/jsp/inc/ume.jsp"%>
     
-<ry:binding bingdingName="taskType,phoneType,adverStepCount,adverType,fileType,effectiveType,effectiveSource,userLevel" parentCode="TASK_TYPE,PHONE_TYPE,ADVER_STEP_COUNT,ADVER_TYPE,FILE_TYPE,EFFECTIVE_TYPE,EFFECTIVE_SOURCE,USER_LEVEL"></ry:binding>
+<ry:binding bingdingName="taskType,phoneType,adverStepCount,adverType,fileType,effectiveType,effectiveSource,userLevel,iosVersion" parentCode="TASK_TYPE,PHONE_TYPE,ADVER_STEP_COUNT,ADVER_TYPE,FILE_TYPE,EFFECTIVE_TYPE,EFFECTIVE_SOURCE,USER_LEVEL,OS_VERSION"></ry:binding>
 <ry:binding parentCode="IS_AUTH" bingdingName="isAuth"></ry:binding>
 <style>
 <style>
@@ -39,6 +39,20 @@
 				   </select>
 				</dd>
 		    </dl>
+		       <dl class="nowrap" style="width: 100%">
+				<dt>手机系统：</dt>
+				<dd>
+				   <select name="iosVersion" class="mustFill" title="手机系统">
+				   		<option value="">请选择</option>
+				   		<c:forEach items="${iosVersion}" var="item"> 
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.iosVersion}">selected</c:if>>${item.itemName}</option>
+				   		</c:forEach>
+				   </select>
+				</dd>
+		    </dl>
+		    
+		    
+		    
 		        <dl class="nowrap" style="width: 100%">
 				<dt>任务等级：</dt>
 				<dd>

@@ -9,14 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;
+
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
-import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TRedPackage;
 
-/**
- *@author feiyang
- *@date 2016-3-2
- */
 @Repository
 public class RedPackageDao extends BaseDaoImpl<TRedPackage>{
 
@@ -38,9 +34,8 @@ public class RedPackageDao extends BaseDaoImpl<TRedPackage>{
 	 * 手机端接口:获取红包列表 （包括是否已猜）
 	 * @param userNum 当前用户
 	 * @return
-	 *@author feiyang
-	 *@date 2016-3-2
 	 */
+	@SuppressWarnings("rawtypes")
 	public List<Map> getListByUserNum(String userNum,String lotteryNum){
 		StringBuffer sql=new StringBuffer(" SELECT trp.red_package_num redPackageNum,trp.red_package_count_day redPackageCountDay,");
 		sql.append(" (SELECT COUNT(*)  from t_user_red_package  turp   ");	

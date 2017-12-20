@@ -75,7 +75,7 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		{
 			Page<TUserappidAdverid> taskList = userappidAdveridDao.getAppleIdMap(adid, appleId);
 			
-			if (taskList != null || taskList.getResult() != null || !taskList.getResult().isEmpty()) 
+			if (taskList.getResult().size() > 0) 
 			{
 				isUsed = true;
 			}

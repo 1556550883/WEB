@@ -3,7 +3,9 @@ package com.ruanyun.web.dao.sys.background;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
 import org.springframework.stereotype.Repository;
+
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
@@ -154,8 +156,8 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	public Page<TUserappidAdverid> getAppleIdMap(String adid, String appleId) 
 	{
 		StringBuilder sql = new StringBuilder("select adid,apple_id from t_userappid_adverid where status='2'")
-				.append(" where adid='").append(adid).append("'")
-				.append(" where appleId='").append(appleId).append("'");
+				.append(" and adid='").append(adid).append("'")
+				.append(" and apple_id='").append(appleId).append("'");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		

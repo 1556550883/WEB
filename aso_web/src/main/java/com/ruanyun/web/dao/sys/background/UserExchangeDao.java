@@ -6,10 +6,7 @@
 package com.ruanyun.web.dao.sys.background;
 
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.stereotype.Repository;
-
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
@@ -18,14 +15,9 @@ import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.util.ConstantAuth;
 import com.ruanyun.web.util.SecurityUtils;
 
-/**
- *@author feiyang
- *@date 2016-1-12
- */
 @Repository
-public class UserExchangeDao extends BaseDaoImpl<TUserExchange> {
-
-	
+public class UserExchangeDao extends BaseDaoImpl<TUserExchange> 
+{
 	/**
 	 * 
 	 * 功能描述:后台分页

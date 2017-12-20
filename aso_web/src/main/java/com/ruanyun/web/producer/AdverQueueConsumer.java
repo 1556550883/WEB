@@ -40,7 +40,7 @@ public class AdverQueueConsumer extends EndPoint
 			if(channelT.isOpen()) 
 			{
 				channelT.basicConsume(endpointName, false, consumerT);
-				QueueingConsumer.Delivery delivery = consumerT.nextDelivery(1000);
+				QueueingConsumer.Delivery delivery = consumerT.nextDelivery(500);
 				if(delivery != null) 
 				{
 					//String messageBody = (String)SerializationUtils.deserialize(delivery.getBody());

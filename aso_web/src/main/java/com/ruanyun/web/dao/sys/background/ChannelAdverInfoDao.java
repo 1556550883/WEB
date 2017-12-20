@@ -46,9 +46,9 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 				sql.append(" and channel_num='"+info.getChannelNum()+"'");
 			}
 			
-			if (EmptyUtils.isNotEmpty(info.getAdverType())) 	
+			if (EmptyUtils.isNotEmpty(info.getTaskType())) 	
 			{
-				sql.append(" AND adver_type ='"+info.getAdverType()+"'");
+				sql.append(" AND task_type ='"+info.getTaskType()+"'");
 			}	
 			
 			if (EmptyUtils.isNotEmpty(info.getPhoneType())) 
@@ -69,11 +69,12 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	/**
 	 * 查询广告列表（手机端显示）
 	 */
-	public Page<TChannelAdverInfo> PageSql2(Page<TChannelAdverInfo> page, String channelType, String systemType, String phoneType, int level)
+	public Page<TChannelAdverInfo> PageSql2(Page<TChannelAdverInfo> page, String channelType, String systemType, String phoneType, int level, String osversion)
 	{
 		StringBuffer sql = new StringBuffer("SELECT * from t_channel_adver_info WHERE 1=1 ");
 		sql.append(" and channel_num in (select b.channel_num from t_channel_info b where b.channel_type='").append(channelType).append("' and b.system_type='").append(systemType).append("')");
-		sql.append(" and phone_type in('"+phoneType+"','无要求')");
+		sql.append(SQLUtils.popuHqlMax("phone_type", phoneType));
+		sql.append(SQLUtils.popuHqlMax("ios_version", Integer.parseInt(osversion)));
 		sql.append(SQLUtils.popuHqlMax2("adver_day_start", new Date()));
 		sql.append(SQLUtils.popuHqlMin2("adver_day_end", new Date()));
 		sql.append(SQLUtils.popuHqlMax("level", level));

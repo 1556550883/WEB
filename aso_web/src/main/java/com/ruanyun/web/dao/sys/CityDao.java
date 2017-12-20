@@ -16,11 +16,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
+
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SQLUtils;
 import com.ruanyun.web.model.sys.TCity;
-import com.ruanyun.web.model.sys.TProvince;
 
 
 /**

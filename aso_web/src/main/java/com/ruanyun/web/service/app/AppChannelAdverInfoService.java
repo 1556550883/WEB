@@ -74,12 +74,12 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	 * 获取广告列表
 	 */
 	public AppCommonModel getAdverInfoByChannelNum2(Page<TChannelAdverInfo> page, 
-			String channelType,String systemType,String phoneType,Integer userAppId)
+			String channelType,String systemType,String phoneType,Integer userAppId, String osversion)
 	{
 		AppCommonModel model = new AppCommonModel(1, "查询成功");
 		
 		TUserApp tUserApp = userAppDao.get(TUserApp.class, "userAppId", userAppId);
-		Page<TChannelAdverInfo> page2 = channelAdverInfoDao.PageSql2(page, channelType, systemType, phoneType, tUserApp.getLevel());
+		Page<TChannelAdverInfo> page2 = channelAdverInfoDao.PageSql2(page, channelType, systemType, phoneType, tUserApp.getLevel(), osversion);
 		
 		if(page2 != null && page2.getResult() != null)
 		{

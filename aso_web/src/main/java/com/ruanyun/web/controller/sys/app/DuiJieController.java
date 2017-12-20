@@ -2,7 +2,6 @@ package com.ruanyun.web.controller.sys.app;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -181,6 +180,14 @@ public class DuiJieController extends BaseController
 		
 		String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
 		//AdverQueueConsumer adverConsumer = new AdverQueueConsumer(endPointName);
+		if(AdverQueueConsumer.adverQueueConsumerMap.get(endPointName) == null) 
+		{
+			model.setResult(-1);
+			model.setMsg("任务需要管理员重新启动!");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
 		boolean success = AdverQueueConsumer.adverQueueConsumerMap.get(endPointName).getMessage(endPointName);
 		if(!success) 
 		{
@@ -666,85 +673,46 @@ public class DuiJieController extends BaseController
 	}
 
 	/**
-	 * 我的已完成任务
+	 * 我的已完成任务--明细
 	 */
 	@RequestMapping("queryTaskSum")
 	public void queryTaskSum(HttpServletResponse response, HttpServletRequest request, Page<TUserappidAdverid> page)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		page.setNumPerPage(Integer.MAX_VALUE);
-		String userAppId = request.getParameter("userAppId");
+		String idfa = request.getParameter("idfa");
 		
-		if(!StringUtils.hasText(userAppId))
+		if(!StringUtils.hasText(idfa))
 		{
 			model.setResult(-1);
-			model.setMsg("userAppId不能为空！");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
-		//查询个人信息
-		TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
-		if(tUserApp == null)
-		{
-			model.setResult(-1);
-			model.setMsg("用户不存在！");
+			model.setMsg("idfa不能为空！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
 		
 		//查询任务完成情况
-		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-		TChannelAdverInfo tChannelAdverInfo = new TChannelAdverInfo();
-		tChannelAdverInfo.setAdverStatusEnd(2);
-		List<TChannelAdverInfo> adverInfoList = appChannelAdverInfoService.getByCondition(tChannelAdverInfo);
-		BigDecimal scoreSum = new BigDecimal("0.0");
-		scoreSum.setScale(1, BigDecimal.ROUND_HALF_UP);
-		if(adverInfoList != null)
+		String[] propertyNames = new String[1];
+		propertyNames[0] = "idfa";
+		Object[] values = new Object[1];
+		values[0] = idfa;
+		List<TUserappidAdverid> adverCompleteList = userappidAdveridService.getAllByCondition(TUserappidAdverid.class, propertyNames, values);
+		for(TUserappidAdverid adverid : adverCompleteList) 
 		{
-			for(TChannelAdverInfo item:adverInfoList)
-			{
-				TUserappidAdverid info = new TUserappidAdverid();
-				info.setUserAppId(Integer.valueOf(userAppId));
-				info.setAdverId(item.getAdverId());
-				info.setStatus("2");
-				Integer completeCount = userappidAdveridService.queryMissionCount(info);
-				
-				Map<String,Object> adverInfo = new HashMap<String,Object>();
-				adverInfo.put("adid", item.getAdid());
-				adverInfo.put("adverName", item.getAdverName());
-				adverInfo.put("adverDayStart", item.getAdverDayStart());
-				adverInfo.put("adverDayEnd", item.getAdverDayEnd());
-				adverInfo.put("adverCount", item.getAdverCount());
-				adverInfo.put("adverPrice", item.getAdverPrice());
-				adverInfo.put("completeCount", completeCount);
-				BigDecimal score = new BigDecimal(completeCount*item.getAdverPrice());
-				scoreSum = scoreSum.add(score);
-				adverInfo.put("score", score.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
-				list.add(adverInfo);
-			}
+			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverid.getAdverId()));
+			adverid.setAdverName(adverInfo.getAdverName());
+			adverid.setAdverPrice(adverInfo.getAdverPrice());
 		}
 		
-		TUserScore tUserScore = tUserApp.getUserScore();
-		if(tUserScore == null)
-		{
-			tUserScore = new TUserScore();
-		}
-		tUserScore.setScore(scoreSum.floatValue());
-		tUserApp.setUserScore(tUserScore);
-		
-		Map<String,Object> map = new HashMap<String,Object>(4);
-		map.put("userInfo", tUserApp);
-		map.put("adverInfo", list);
-		
-		model.setObj(map);
+		page.setResult(adverCompleteList);
+		model.setObj(page);
 		model.setResult(1);
 		model.setMsg("查询成功！");
 		super.writeJsonDataApp(response, model);
 	}
 	
+	
 	/**
-	 * 我的已完成任务--明细
+	 * 任务是否完成
 	 */
 	@RequestMapping("queryTaskDetail")
 	public void queryTaskDetail(HttpServletResponse response, HttpServletRequest request, Page<TUserappidAdverid> page)

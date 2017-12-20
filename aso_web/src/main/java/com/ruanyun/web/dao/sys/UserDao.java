@@ -1,7 +1,9 @@
 package com.ruanyun.web.dao.sys;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.stereotype.Repository;
+
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.utils.SQLUtils;
 import com.ruanyun.web.model.sys.TUser;
