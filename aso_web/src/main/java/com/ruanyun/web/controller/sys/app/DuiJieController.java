@@ -206,7 +206,7 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName());
 		
 		if(checkChannelInfoModel.getResult() == -1)
 		{
@@ -582,6 +582,15 @@ public class DuiJieController extends BaseController
 					return;
 				}
 			}
+			else if("6".equals(channelInfo.getChannelNum()))
+			{
+				model = MZDQChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+				if(model.getResult() == -1)
+				{
+					super.writeJsonDataApp(response, model);
+					return;
+				}
+			}
 			else
 			{
 				model.setResult(-1);
@@ -775,7 +784,7 @@ public class DuiJieController extends BaseController
     
 	//检测任务信息
 	private AppCommonModel checkChannelInfo(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
-			String userAppId, String adverId, String userNum) throws NumberFormatException, UnsupportedEncodingException 
+			String userAppId, String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = new AppCommonModel(1, "任务领取成功！");
 		
@@ -807,8 +816,11 @@ public class DuiJieController extends BaseController
 		}
 		else if("5".equals(channelInfo.getChannelNum()))
 		{
-			//利得基金
 			model = isDYDChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+		}
+		else if("6".equals(channelInfo.getChannelNum()))
+		{
+			model = isMZDQChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
 		}
 		else
 		{
@@ -869,6 +881,21 @@ public class DuiJieController extends BaseController
 			throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = DYDChannel.clickDYD(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+		
+		return model;
+	}
+	
+	private AppCommonModel isMZDQChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName) 
+			throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = MZDQChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = MZDQChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
+		}
 		
 		return model;
 	}

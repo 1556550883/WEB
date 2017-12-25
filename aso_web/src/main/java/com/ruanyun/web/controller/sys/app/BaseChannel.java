@@ -13,7 +13,6 @@ import net.sf.json.JSONObject;
 
 public abstract class BaseChannel 
 {
-	
 	/**
 	 * 获取回调地址
 	 */
