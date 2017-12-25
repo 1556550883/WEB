@@ -591,6 +591,15 @@ public class DuiJieController extends BaseController
 					return;
 				}
 			}
+			else if("7".equals(channelInfo.getChannelNum()))
+			{
+				model = APYSChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+				if(model.getResult() == -1)
+				{
+					super.writeJsonDataApp(response, model);
+					return;
+				}
+			}
 			else
 			{
 				model.setResult(-1);
@@ -822,6 +831,10 @@ public class DuiJieController extends BaseController
 		{
 			model = isMZDQChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
 		}
+		else if("7".equals(channelInfo.getChannelNum()))
+		{
+			model = isAPYSChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
+		}
 		else
 		{
 			model.setResult(-1);
@@ -896,6 +909,15 @@ public class DuiJieController extends BaseController
 			//调用第三方点击接口
 			model = MZDQChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
 		}
+		
+		return model;
+	}
+	
+	private AppCommonModel isAPYSChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName) 
+			throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = APYSChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
 		
 		return model;
 	}
