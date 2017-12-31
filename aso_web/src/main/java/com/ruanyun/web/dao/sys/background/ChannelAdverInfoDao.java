@@ -130,8 +130,19 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	/**
 	 * 批量审核
 	 */
-	public void updateAdverStatus(Integer status,String ids){
-		StringBuilder sql=new StringBuilder("update t_channel_adver_info set adver_status ="+status+" where adver_id in ("+ids+")");
+	public void updateAdverStatus(Integer status, String ids)
+	{
+		StringBuilder sql;
+		//当时启动任务的时候，默认任务最高等级
+		if(status == 1) 
+		{
+			sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+",level=10 where adver_id in ("+ids+")");
+		}
+		else
+		{
+			sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+" where adver_id in ("+ids+")");
+		}
+		
 		sqlDao.execute(sql.toString());
 	}
 	

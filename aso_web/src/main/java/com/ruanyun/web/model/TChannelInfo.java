@@ -34,8 +34,8 @@ public class TChannelInfo  implements java.io.Serializable
 	private String flag1;
 	private String flag2;
 	private String flag3;
-	private String flag4;
-	private String flag5;
+	private Integer dayTotal;
+	private Integer cumulativeTotal;
 	private String loginName;
 	private String channelType;  //渠道类型编码
 	private String channelTypeName;  //渠道类型名称
@@ -49,7 +49,7 @@ public class TChannelInfo  implements java.io.Serializable
     public TChannelInfo(String channelName, String channelNum, String channelDesc, 
     		Integer channelLevel, String channelUser, Date createDate, String appKey, 
     		String appPassword, String appOther, String appCallbackKey, String channelImg, 
-    		String flag1, String flag2, String flag3, String flag4, String flag5) 
+    		String flag1, String flag2, String flag3, Integer dayTotal, Integer cumulativeTotal) 
     {
        this.channelName = channelName;
        this.channelNum = channelNum;
@@ -65,8 +65,8 @@ public class TChannelInfo  implements java.io.Serializable
        this.flag1 = flag1;
        this.flag2 = flag2;
        this.flag3 = flag3;
-       this.flag4 = flag4;
-       this.flag5 = flag5;
+       this.dayTotal = dayTotal;
+       this.cumulativeTotal = cumulativeTotal;
     }
    
     @Id 
@@ -237,26 +237,26 @@ public class TChannelInfo  implements java.io.Serializable
         this.flag3 = flag3;
     }
     
-    @Column(name="flag4", length=100)
-    public String getFlag4()
+    @Column(name="day_total")
+    public Integer getDayTotal()
     {
-        return this.flag4;
+        return this.dayTotal;
     }
     
-    public void setFlag4(String flag4) 
+    public void setDayTotal(Integer dayTotal) 
     {
-        this.flag4 = flag4;
+        this.dayTotal = dayTotal;
     }
     
-    @Column(name="flag5", length=100)
-    public String getFlag5() 
+    @Column(name="cumulative_total")
+    public Integer getCumulativeTotal() 
     {
-        return this.flag5;
+        return this.cumulativeTotal;
     }
     
-    public void setFlag5(String flag5)
+    public void setCumulativeTotal(Integer cumulativeTotal)
     {
-        this.flag5 = flag5;
+        this.cumulativeTotal = cumulativeTotal;
     }
 
     @Transient

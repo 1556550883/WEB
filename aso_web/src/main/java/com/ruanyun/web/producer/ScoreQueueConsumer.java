@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
@@ -11,14 +14,16 @@ import com.rabbitmq.client.ShutdownSignalException;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.service.background.UserScoreService;
 
+@Component
 public class ScoreQueueConsumer extends EndPoint implements  Runnable
 {
 	public static ExecutorService pool = Executors.newFixedThreadPool(1); 
+	@Autowired
 	private UserScoreService userScoreService;
-	public ScoreQueueConsumer(String endpointName, UserScoreService userScoreService) throws IOException, TimeoutException 
+	
+	public ScoreQueueConsumer() throws IOException, TimeoutException 
 	{
-		super(endpointName, false);
-		this.userScoreService = userScoreService;
+		super("socre", false);
 	}
 
 	@Override

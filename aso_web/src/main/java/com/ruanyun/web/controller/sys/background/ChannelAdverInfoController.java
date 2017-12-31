@@ -26,10 +26,8 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
-import com.ruanyun.web.producer.ScoreQueueConsumer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
-import com.ruanyun.web.service.background.UserScoreService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
@@ -48,12 +46,6 @@ public class ChannelAdverInfoController extends BaseController
 	private AppChannelAdverInfoService appChannelAdverInfoService;
 	@Autowired
 	private UserappidAdveridService userappidAdveridService;
-	@Autowired
-	private UserScoreService userScoreService;
-	
-	private static ScoreQueueConsumer scoreConsumer;
-	
-	private static ArrayBlockQueueProducer mAdverProducer;
 	/**
 	 * 查询广告列表（后台显示）
 	 */
@@ -201,39 +193,20 @@ public class ChannelAdverInfoController extends BaseController
 	{
 		try
 		{
-			channelAdverInfoService.updateAdverStatus(status, ids);
 			//启动的时候产生生产者
-				String[] adverIds = ids.split(",");  
-				for(String adverId : adverIds) 
+			channelAdverInfoService.updateAdverStatus(status, ids);
+			String[] adverIds = ids.split(",");  
+			for(String adverId : adverIds) 
+			{
+				if(status == 1)
 				{
-					if(status == 1)
-					{
-						if(!ArrayBlockQueueProducer.adverList1.contains(adverId)) 
-						{
-							ArrayBlockQueueProducer.adverList.add(adverId);
-						}
-						
-						if(mAdverProducer == null) 
-						{
-							mAdverProducer = new ArrayBlockQueueProducer(channelAdverInfoService, appChannelAdverInfoService, userappidAdveridService);
-							
-							ArrayBlockQueueProducer.pool.execute(mAdverProducer);
-						}
-						
-						if(scoreConsumer == null) 
-						{
-							scoreConsumer = new ScoreQueueConsumer("socre", userScoreService);
-							ScoreQueueConsumer.pool.execute(scoreConsumer);
-						}
-					}
-					else
-					{
-						if(ArrayBlockQueueProducer.adverList1.contains(adverId)) 
-						{
-							ArrayBlockQueueProducer.removeAdverList.add(adverId);
-						}
-					}
+					ArrayBlockQueueProducer.addAdverList.add(adverId);
 				}
+				else
+				{
+					ArrayBlockQueueProducer.removeAdverList.add(adverId);
+				}
+			}
 			
 			//super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "redirect"));
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));

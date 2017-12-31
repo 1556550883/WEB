@@ -3,22 +3,13 @@ package com.ruanyun.web.producer;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class QueueProducer extends EndPoint
 {  
-	private static QueueProducer scoreQueue;
-	
-	private QueueProducer(String endpointName) throws IOException, TimeoutException 
+	private QueueProducer() throws IOException, TimeoutException 
 	{
-		super(endpointName, false);
-	}
-    
-	public static QueueProducer getQueueProducer() throws IOException, TimeoutException 
-	{
-		if(scoreQueue == null) 
-		{
-			scoreQueue = new QueueProducer("socre");
-		}
-		
-		return scoreQueue;
+		super("socre", false);
 	}
 }

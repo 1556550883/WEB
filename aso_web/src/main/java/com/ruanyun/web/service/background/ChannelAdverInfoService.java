@@ -29,10 +29,6 @@ import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.NumUtils;
 import com.ruanyun.web.util.UploadCommon;
 
-/**
- *@author feiyang
- *@date 2016-1-7
- */
 @Service
 public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo> 
 {

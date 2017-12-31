@@ -53,6 +53,8 @@ public class DuiJieController extends BaseController
 	private DictionaryService dictionaryService;
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
+	@Autowired
+	private QueueProducer queueProducer;
 	
 	/**
 	 * 查询系统参数
@@ -97,8 +99,6 @@ public class DuiJieController extends BaseController
 		String adid = request.getParameter("adid");//广告id（第三方提供）
 		String idfa = request.getParameter("idfa");//手机广告标识符
 		String ip = request.getRemoteAddr();//手机ip
-//		String idfa = 9999 + Math.random() * 9000 + "";//手机广告标识符
-//		String ip = 1000 + Math.random() * 9000 + "";//手机ip
 		String userAppId = request.getParameter("userAppId");//用户Id
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
@@ -179,8 +179,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
-		//AdverQueueConsumer adverConsumer = new AdverQueueConsumer(endPointName);
-		if(AdverQueueConsumer.adverQueueConsumerMap.get(endPointName) == null) 
+		if(AdverQueueConsumer.consumerMap.get(endPointName) == null) 
 		{
 			model.setResult(-1);
 			model.setMsg("任务需要管理员重新启动!");
@@ -188,7 +187,7 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		boolean success = AdverQueueConsumer.adverQueueConsumerMap.get(endPointName).getMessage(endPointName);
+		boolean success = AdverQueueConsumer.getMessage(endPointName);
 		if(!success) 
 		{
 			TChannelAdverInfo lastAdverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
@@ -440,7 +439,7 @@ public class DuiJieController extends BaseController
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
 		score.setScore(adverInfo.getAdverPrice());
-		QueueProducer.getQueueProducer().sendMessage(score, "socre");
+		queueProducer.sendMessage(score, "socre");
 		
 		model.setResult(1);
 		model.setMsg("success！");
@@ -625,7 +624,7 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			queueProducer.sendMessage(score, "socre");
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -675,7 +674,7 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			queueProducer.sendMessage(score, "socre");
 		}
 		else
 		{//异常情况
