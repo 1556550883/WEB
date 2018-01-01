@@ -53,8 +53,6 @@ public class DuiJieController extends BaseController
 	private DictionaryService dictionaryService;
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
-	@Autowired
-	private QueueProducer queueProducer;
 	
 	/**
 	 * 查询系统参数
@@ -409,8 +407,11 @@ public class DuiJieController extends BaseController
 		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		//快速任务不需要回调
-		if(adverInfo != null && "0".equals(adverInfo.getTaskType())) 
+		if(adverInfo == null || "0".equals(adverInfo.getTaskType())) 
 		{
+			model.setResult(-1);
+			model.setMsg("回调失败，未找到任务或者任务为快速任务");
+			super.writeJsonDataApp(response, model);
 			return;
 		}
 		
@@ -424,7 +425,7 @@ public class DuiJieController extends BaseController
 		if(rowCount == 0)
 		{
 			model.setResult(-1);
-			model.setMsg("未完成。原因：更改任务状态失败！");
+			model.setMsg("未完成。原因：回调更改任务状态失败！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -439,7 +440,7 @@ public class DuiJieController extends BaseController
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
 		score.setScore(adverInfo.getAdverPrice());
-		queueProducer.sendMessage(score, "socre");
+		QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		
 		model.setResult(1);
 		model.setMsg("success！");
@@ -624,7 +625,7 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			queueProducer.sendMessage(score, "socre");
+			QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -674,7 +675,7 @@ public class DuiJieController extends BaseController
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
 			score.setScore(adverInfo.getAdverPrice());
-			queueProducer.sendMessage(score, "socre");
+			QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		}
 		else
 		{//异常情况
