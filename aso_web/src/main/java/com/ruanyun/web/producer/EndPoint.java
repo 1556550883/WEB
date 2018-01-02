@@ -33,7 +33,7 @@ public class EndPoint
 	      factory.setUsername("aso");  
 	      factory.setPassword("123456");  
 	      factory.setVirtualHost("aso_host"); 
-	      factory.setConnectionTimeout(5000);
+	      factory.setConnectionTimeout(10000);
 	      //getting a connection  
 	      connection = factory.newConnection();  
 	        

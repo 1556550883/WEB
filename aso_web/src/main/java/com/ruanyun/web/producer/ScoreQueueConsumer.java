@@ -30,6 +30,7 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 	public void run()
 	{
 		int prefetchCount = 1;  
+		int count = 0;
 	    
 		try 
 	    {
@@ -58,6 +59,8 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 				TUserScore score = (TUserScore)SerializationUtils.deserialize(delivery.getBody());
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);  
+				count = count + 1;
+				System.out.println(count);
 				userScoreService.updateScore(userScoreService.getScore(score.getUserNum()), score.getScore());
 			}
 			catch (ShutdownSignalException e) 

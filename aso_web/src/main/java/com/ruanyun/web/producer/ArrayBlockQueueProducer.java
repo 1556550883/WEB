@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.rabbitmq.client.ConsumerCancelledException;
+import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
@@ -59,6 +60,13 @@ public class ArrayBlockQueueProducer implements Runnable
 						TChannelAdverInfo infoA = mChannelAdverInfoService.getInfoById(Integer.parseInt(adverId));
 						String endPointName = infoA.getAdverName() + "_" + infoA.getAdverId();
 						//移除消费者
+						QueueingConsumer queueingConsumer = AdverQueueConsumer.consumerMap.get(endPointName);
+						if(queueingConsumer != null) 
+						{
+							queueingConsumer.getChannel().close();
+							queueingConsumer.getChannel().getConnection().close();
+						}
+				
 						AdverQueueConsumer.consumerMap.remove(endPointName);
 						//删除 rabbitmq queue
 						AdverProducer adver = adverProducer.get(endPointName);
@@ -68,7 +76,9 @@ public class ArrayBlockQueueProducer implements Runnable
 						}
 						
 						adver.channel.queueDelete(endPointName, false, false);
+						adver.close();
 						
+						adverProducer.remove(endPointName);
 						mUserappidAdveridService.updateStatus2Invalid(infoA);
 						//更新任务数量
 						mAppChannelAdverInfoService.updateAdverCountRemain(infoA);
