@@ -16,9 +16,11 @@ public class AdverListener implements ApplicationContextAware
 	private ArrayBlockQueueProducer mAdverProducer;
 	@Autowired
 	private ScoreQueueConsumer mScoreQueueConsumer;
+	
 	@Override
 	public void setApplicationContext(ApplicationContext arg0) throws BeansException 
 	{
+		System.out.println("------------------------web start------------------------");
 		ArrayBlockQueueProducer.pool.execute(mAdverProducer);
 		ScoreQueueConsumer.pool.execute(mScoreQueueConsumer);
 	}

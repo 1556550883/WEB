@@ -8,6 +8,7 @@ import java.util.concurrent.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
+
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -30,7 +31,6 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 	public void run()
 	{
 		int prefetchCount = 1;  
-		int count = 0;
 	    
 		try 
 	    {
@@ -59,8 +59,6 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 				TUserScore score = (TUserScore)SerializationUtils.deserialize(delivery.getBody());
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);  
-				count = count + 1;
-				System.out.println(count);
 				userScoreService.updateScore(userScoreService.getScore(score.getUserNum()), score.getScore());
 			}
 			catch (ShutdownSignalException e) 
