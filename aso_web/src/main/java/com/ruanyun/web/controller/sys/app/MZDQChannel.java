@@ -77,7 +77,7 @@ public class MZDQChannel extends BaseChannel
 				.append("?adid=").append(adid)
 				.append("&idfa=").append(idfa)
 				.append("&channel=").append(ChannelNum)
-				.append("&ip=").append("180.125.115.31")
+				.append("&ip=").append(ip)
 				.append("&keywords=").append(adverName)
 				.append("&sign=").append(sign)
 				.append("&callbackurl=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
