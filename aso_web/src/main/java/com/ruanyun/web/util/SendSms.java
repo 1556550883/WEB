@@ -58,13 +58,13 @@ public class SendSms
 		}
 	}
 	
-	public static void sendMessage(String phone,int yzm)
+	public static void sendMessage(String phone, int yzm)
 	{
 		String url = "http://sms.253.com/msg/";// 应用地址
 		String un = "N6746363";// 账号
 		String pw = "0UiF81pR2Tea28";// 密码
 		//phone = "18762672247";// 手机号码，多个号码使用","分割
-		String msg = "钻石社区·您好，你的验证码是"+yzm;// 短信内容
+		String msg = "Happy赚·您好，你的验证码是"+yzm;// 短信内容
 		String rd = "1";// 是否需要状态报告，需要1，不需要0
 		String ex = null;// 扩展码
 		try 

@@ -5,20 +5,25 @@
  */
 package com.ruanyun.web.controller.sys.app;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserLogin;
-import com.ruanyun.web.model.UserAppModel;
 import com.ruanyun.web.service.app.AppUserLoginService;
+import com.ruanyun.web.service.background.UserAppService;
+import com.ruanyun.web.util.PhoneFormatCheckUtils;
 
 @Controller
 @RequestMapping("app/user")
@@ -26,6 +31,8 @@ public class AppUserLoginController extends BaseController
 {
 	@Autowired
 	private AppUserLoginService appUserLoginService;
+	@Autowired	
+	private UserAppService userAppService;
 
 	/**
 	 * 
@@ -57,37 +64,6 @@ public class AppUserLoginController extends BaseController
 	}
 	
 	/**
-	 * 手机端接口:游客登录
-	 */
-	@RequestMapping("visitorLogin")
-	public void visitorLogin(HttpServletResponse response,HttpServletRequest request,TUserApp tUserApp) 
-	{
-		AppCommonModel model = new AppCommonModel(-1, "登录失败！");
-		String ip = request.getRemoteAddr();
-		if(tUserApp == null || !StringUtils.hasText(tUserApp.getIdfa()))
-		{
-			model.setResult(-1);
-			model.setMsg("请求参数idfa不能为空！");
-		}
-		else
-		{
-			try
-			{
-				//model = appUserLoginService.visitorLogin(request, tUserApp, ip);
-				model.setResult(-1);
-				model.setMsg("此版本未开放！");
-			}
-			catch (Exception e) 
-			{
-				model.setResult(-1);
-				model.setMsg(e.getMessage());
-			}
-		}
-		
-		super.writeJsonDataApp(response, model);
-	}
-	
-	/**
 	 * 功能描述:发送短信
 	 * 
 	 * @param response
@@ -96,12 +72,33 @@ public class AppUserLoginController extends BaseController
 	 * @param request
 	 */
 	@RequestMapping("send_msg")
-	public void sendMsg(HttpServletResponse response, String loginName, String type) 
+	public void sendMsg(HttpServletResponse response, String loginName, HttpServletRequest request) 
 	{
 		AppCommonModel model = null;
 		try 
 		{
-			model = appUserLoginService.sendMsg(loginName, type);
+			if(PhoneFormatCheckUtils.isPhoneLegal(loginName)) 
+			{
+				model = appUserLoginService.sendMsg(loginName);
+			}
+			else
+			{
+				model = new AppCommonModel(-1,"错误的手机号码！");
+			}
+			
+			if(model.getResult() == 1)
+			{
+				TUserApp tUserApp = new TUserApp();
+				tUserApp.setUserApppType(2);
+				tUserApp.setLoginName(loginName);
+				tUserApp.setLoginPwd(model.getObj() + "");
+				tUserApp.setLoginControl("1");
+				tUserApp.setLevel(1);
+				tUserApp.setUserNick("手机号码注册登录");
+				tUserApp.setCreateDate(new Date());
+				
+				userAppService.saveOrUpdate(tUserApp, request, null);
+			}
 		}
 		catch (Exception e) 
 		{
@@ -109,6 +106,7 @@ public class AppUserLoginController extends BaseController
 			model = new AppCommonModel(-1,e.getMessage());
 		}
 		
+		model.setObj("{}");
 		super.writeJsonDataApp(response, model);
 	}	
 

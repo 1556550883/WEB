@@ -122,7 +122,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	 */
 	public int updateStatus2Invalid(TChannelAdverInfo adverInfo)
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status<='1.5' ");
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE (TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status<='1.5') or status = '1.7' ");
 		
 		if(EmptyUtils.isNotEmpty(adverInfo))
 		{

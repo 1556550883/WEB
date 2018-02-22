@@ -183,18 +183,8 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 		return model;
 	}
 	
-	public AppCommonModel sendMsg(String loginName, String type) 
+	public AppCommonModel sendMsg(String loginName) 
 	{
-		TUserLogin userLogin = userLoginService.getUserLogin(loginName, 1);
-		if (userLogin == null && "1".equals(type))
-		{ // 给系统用户发送短信
-			return new AppCommonModel(-1, "用户不存在", "");
-		}
-		else if (userLogin != null && "2".equals(type))
-		{ // 给不是平台用户发短信
-			return new AppCommonModel(-1, "用户已存在", "");
-		}
-		
 		int random = (int) (1000 + Math.random() * 9000);
 		SendSms.sendMessage(loginName, random);
 		

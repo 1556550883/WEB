@@ -975,6 +975,11 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
+		tUserappidAdverid.setIdfa(idfa);
+		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
+		tUserappidAdverid.setStatus("1.7");
+		userappidAdveridService.updateTaskStatus(tUserappidAdverid);
 		model.setResult(1);
 		model.setMsg("成功！");
 		super.writeJsonDataApp(response, model);
