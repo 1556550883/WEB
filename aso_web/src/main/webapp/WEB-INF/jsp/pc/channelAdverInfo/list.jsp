@@ -25,7 +25,6 @@
 	<div class="panelBar">
 		<ul class="toolBar">
 			<li><a class="add" onclick="openNav('channelAdverInfo/toedit?channelNum=${bean.channelNum}','添加广告信息','main_index3')"><span>添加</span></a></li>
-			<li><a class="delete" title="确定要删除选择的信息吗？" href="channelAdverInfo/delAll"  target="selectedTodo" postType="string" rel="ids"><span>删除</span></a></li>
 			<li><a class="edit" title="确定要启用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
 			<li><a class="edit" title="确定要停用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=2"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
 			<li><a class="edit" title="确定要刷新选择的信息吗？" href="channelAdverInfo/freshAdverNum"  target="selectedTodo" postType="string" rel="ids"><span>刷新</span></a></li>
