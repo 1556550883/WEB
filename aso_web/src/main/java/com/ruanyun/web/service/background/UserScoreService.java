@@ -23,6 +23,7 @@ import com.ruanyun.web.model.TUserApprentice;
 import com.ruanyun.web.model.TUserLevel;
 import com.ruanyun.web.model.TUserLevelRate;
 import com.ruanyun.web.model.TUserScore;
+import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.util.CommonMethod;
 import com.ruanyun.web.util.Constants;
 
@@ -45,6 +46,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	private UserLevelService userLevelService;
 	@Autowired
 	private UserAppService userAppService;
+	
 	
 	@Override
 	public Page<TUserScore> queryPage(Page<TUserScore> page, TUserScore t) {
@@ -75,6 +77,12 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	public List<TUserScore> getScoreListByUserNums(String userNums)
 	{
 		return	userScoreDao.getScoreListByUserNums(userNums);
+	}
+	
+	
+	public List<TUserScoreInfo> getScoreInfoListByUserNums(String userNums)
+	{
+		return	userScoreInfoService.getScoreInfoListByUserNums(userNums);
 	}
 	
 	/**
@@ -174,6 +182,13 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		}
 	}
 	
+	public int addPutForward(String userNum, Float forward)
+	{
+		TUserApp userApp = userAppService.getUserAppByNum(userNum);
+		userScoreInfoService.saveUserScoreInfo(userNum,"forward", forward, 1, userApp.getUserApppType());
+		return 1;
+	}
+	
 	/**
 	 * 功能描述:直接修改分数 不做记录
 	 *
@@ -187,6 +202,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		if(userScore != null) 
 		{
 			userScore.setScore(userScore.getScore() + score);
+			userScore.setScoreDay(userScore.getScoreDay() + score);
 			userScore.setScoreSum(userScore.getScoreSum() + score);
 			
 			update(userScore);

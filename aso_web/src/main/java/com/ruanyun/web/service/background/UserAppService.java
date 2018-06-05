@@ -90,6 +90,11 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		return super.get(TUserApp.class, userId);
 	}
 	
+	public TUserApp getUserAppByUserName(String  loginName)
+	{
+		return super.get(TUserApp.class, "loginName", loginName);
+	}
+	
 	public TUserApp getUserAppByNum(String userNum)
 	{
 		return super.get(TUserApp.class,"userNum", userNum);
@@ -145,8 +150,9 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 				}
 			}
 			
-			BeanUtils.copyProperties(userApp, olUuser, new String[] {"userAppId", "userNum", "headImg","phoneSerialNumber","createDate"
-					,"invitationCode","taskNewStatus","zhifubao","weixin","zhifubaoName","userApppType","appStore"});
+			BeanUtils.copyProperties(userApp, olUuser, new String[] {"userAppId", "userNum", "headImg","phoneSerialNumber",
+					"createDate"
+					,"invitationCode","taskNewStatus","zhifubao","weixin","zhifubaoName","userApppType","appStore", "masterID"});
 			olUuser.setLevel(userApp.getLevel());
 			if (EmptyUtils.isNotEmpty(vo) && vo.getResult()==1) 
 			{
@@ -261,6 +267,25 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		super.update(userApp);
 	}
 	
+	//updateMaterID
+	public void updateMaterID(HttpServletRequest request, TUserApp userApp,String masterID) 
+	{
+		userApp.setMasterID(masterID);
+		super.update(userApp);
+	}
+	
+
+	//updateLimitTime
+	public void updateLimitTime(TUserApp userApp,Integer limitTime) 
+	{
+		userApp.setLimitTime(limitTime);;
+		super.update(userApp);
+	}
+	
+	public void upPhoneDetail(Integer userAppId, String device, String os) 
+	{
+		userAppDao.updatePhoneDetails(userAppId, device, os);
+	}
 	/**
 	 * 获取当前的广告列表
 	 */

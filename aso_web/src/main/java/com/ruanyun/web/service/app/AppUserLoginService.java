@@ -36,10 +36,6 @@ import com.ruanyun.web.util.NumUtils;
 import com.ruanyun.web.util.SendSms;
 import com.ruanyun.web.util.UploadCommon;
 
-/**
- * @author feiyang
- * @date 2016-1-11
- */
 @Service
 public class AppUserLoginService extends BaseServiceImpl<TUserLogin> 
 {
@@ -67,7 +63,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	 *            LoginType 登录类型 1--账号登陆 2-QQ登陆 3-微信登陆 4--微博登陆 5-- 游客登录 手机唯一序列号
 	 * @return
 	 */
-	public AppCommonModel addLogin(HttpServletRequest request, TUserLogin tUserLogin, String phoneSerialNumber,String ip) 
+	public AppCommonModel addLogin(HttpServletRequest request, TUserLogin tUserLogin, String phoneSerialNumber,String ip, String masterID) 
 	{
 
 		AppCommonModel model = new AppCommonModel(-1, "登录失败！");
@@ -107,6 +103,23 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			appModel.setLoginType(user.getLoginType());
 			appModel.setUserNum(user.getUserNum());
 			appModel.setUserApppType(userApp.getUserApppType());
+			appModel.setWeChatHeadUrl(userApp.getFlag5());
+			appModel.setWeixin(userApp.getWeixin());
+			appModel.setPhoneNum(userApp.getPhoneNum());
+			appModel.setMasterIDExisted(EmptyUtils.isNotEmpty(userApp.getMasterID()));
+			
+			if(EmptyUtils.isNotEmpty(userApp.getMasterID())) 
+			{
+				model.setMsg("禁止重复添加邀请人！");
+			}
+			else
+			{
+				if(userApp.getUserApppType() == 2)
+				{
+					
+					userAppService.updateMaterID(request,userApp,masterID);
+				}
+			}
 			
 			model.setObj(appModel);
 			userAppService.updateIp(request,userApp,ip);//保存最近登录ip地址
@@ -340,6 +353,8 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 		return model;
 	}
 
+	
+	
 	/**
 	 * 
 	 * 功能描述:根据手机 序列号一键注册
@@ -477,5 +492,58 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 		model.setResult(result);
 		return model;
 	}
+	
+	public AppCommonModel updateUserWeiXin(String userNum,String weiXinName,String headImgUrl,String openID) 
+	{
+		AppCommonModel model = new AppCommonModel();
+		int result = appUserService.updateUserWeiXin(userNum,weiXinName,headImgUrl, openID);
+		if(result == 1) 
+		{
+			model.setMsg("修改成功");
+		}
+		else
+		{
+			model.setMsg("此微信已经被绑定！");
+		}
+		model.setResult(result);
+		return model;
+	}
+	
+	//updateUserName
+	public AppCommonModel updateUserName(String userNum,String userName) 
+	{
+		AppCommonModel model = new AppCommonModel();
+		int result = appUserService.updateUserName(userNum,userName);
+		model.setMsg("修改成功");
+		model.setResult(result);
+		return model;
+	}
+	
+	//updateUserAlipay
+	public AppCommonModel updateUserAlipay(String userNum,String alipay) 
+	{
+		AppCommonModel model = new AppCommonModel();
+		int result = appUserService.updateUserAlipay(userNum,alipay);
+		model.setMsg("修改成功");
+		model.setResult(result);
+		return model;
+	}
+	
+	public AppCommonModel updateUserPhoneNum(String userNum,String phoneNum)
+	{
+		AppCommonModel model = new AppCommonModel();
+		int result = appUserService.updateUserPhoneNum(userNum,phoneNum);
+		model.setMsg("修改成功");
+		model.setResult(result);
+		return model;
+	}
 
+	public AppCommonModel tixianRequest(String userNum)
+	{
+		AppCommonModel model = new AppCommonModel();
+		//int result = appUserService.tixianRequest(userNum);
+		model.setMsg("修改成功");
+		model.setResult(1);
+		return model;
+	}
 }

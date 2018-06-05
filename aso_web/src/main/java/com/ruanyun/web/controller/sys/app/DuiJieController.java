@@ -67,6 +67,9 @@ public class DuiJieController extends BaseController
 			Map<String,Object> map = new HashMap<String,Object>(4);
 			map.put("appleIdCheck", dictionaryService.getAppleIdCheck());
 			map.put("leastTaskTime", dictionaryService.getLeastTaskTime());
+			map.put("leastForward", dictionaryService.getLeastForward());
+			map.put("notice", dictionaryService.getNotice());
+			map.put("downloadUrl", dictionaryService.getDownloadUrl());
 			model.setObj(map);
 			model.setResult(1);
 			model.setMsg("成功！");
@@ -101,6 +104,8 @@ public class DuiJieController extends BaseController
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
 		String userNum = request.getParameter("userNum");
+		String phoneModel = request.getParameter("phoneModel");
+		String phoneVersion = request.getParameter("phoneVersion");
 		
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
 				|| !StringUtils.hasText(userAppId) || !StringUtils.hasText(adverId))
@@ -131,12 +136,14 @@ public class DuiJieController extends BaseController
 		}
 		
 		//判断当天领取到的任务
-		Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
+		//Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
+		
+		Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfaOrIP(idfa, ip);
 		
 		if (taskList != null && !taskList.getResult().isEmpty())
 		{
 			//判断idfa是否重复
-			AppCommonModel checkIdfaModel = checkIDFADuplicated(taskList, idfa, adverId);
+			AppCommonModel checkIdfaModel = checkIDFADuplicated(adid, taskList, idfa, adverId);
 			if(checkIdfaModel.getResult() != 2) 
 			{
 				super.writeJsonDataApp(response, checkIdfaModel);
@@ -144,7 +151,7 @@ public class DuiJieController extends BaseController
 			}
 			
 			//判断当天IP是否重复
-			AppCommonModel checkIpModel = checkIPDuplicated(taskList, idfa);
+			AppCommonModel checkIpModel = checkIPDuplicated(adid, taskList, idfa);
 			if(checkIpModel.getResult() != 2) 
 			{
 				super.writeJsonDataApp(response, checkIpModel);
@@ -225,6 +232,8 @@ public class DuiJieController extends BaseController
 		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
 		tUserappidAdverid.setStatus("1");
 		tUserappidAdverid.setReceiveTime(new Date());
+		tUserappidAdverid.setPhoneModel(phoneModel);
+		tUserappidAdverid.setPhoneVersion(phoneVersion);
 		tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
 		
 		if(tUserappidAdverid == null)
@@ -279,7 +288,7 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
-	private AppCommonModel checkIDFADuplicated(Page<TUserappidAdverid> taskList, String idfa, String adverId) 
+	private AppCommonModel checkIDFADuplicated(String adid, Page<TUserappidAdverid> taskList, String idfa, String adverId) 
 	{
 		AppCommonModel model = new AppCommonModel(2, "没有符合条件！");
 		
@@ -287,25 +296,30 @@ public class DuiJieController extends BaseController
 		{
 			if(item.getIdfa().equals(idfa))
 			{
-				if (item.getStatus().compareTo("2") >= 0) 
+				if (item.getStatus().compareTo("2") >= 0 && adid.equals(item.getAdid())) 
 				{
 					model.setResult(-1);
 					model.setMsg("领取任务失败。原因：任务已完成，不能重复领取！");
 				} 
-				else if (item.getStatus().compareTo("1.6") == 0) 
+				else if (item.getStatus().compareTo("1.6") == 0 && adid.equals(item.getAdid())) 
 				{
 					model.setResult(-1);
 					model.setMsg("领取任务失败。原因：任务没有在规定时间内完成，导致任务已失效！");
 				}
-				else if (!item.getAdverId().equals(Integer.valueOf(adverId))) 
+				else if (!item.getAdverId().equals(Integer.valueOf(adverId)) && adid.equals(item.getAdid()))  
 				{
 					model.setResult(-1);
 					model.setMsg("领取任务失败。原因：已领取过此类任务，不能重复领取！");
 				}
-				else if (item.getStatus().compareTo("1.6") < 0) 
+				else if (item.getStatus().compareTo("1.6") < 0  && adid.equals(item.getAdid()))  
 				{
 					model.setResult(1);
 					model.setMsg("你已成功领取任务，不需重复领取！");
+				}
+				else if (item.getStatus().compareTo("1.6") < 0  && !adid.equals(item.getAdid()))  
+				{
+					model.setResult(-1);
+					model.setMsg("你已存在未完成的任务，请先去完成！");
 				}
 			}
 		}
@@ -314,13 +328,15 @@ public class DuiJieController extends BaseController
 	}
 	
 	//判断ip是否重复
-	private AppCommonModel checkIPDuplicated(Page<TUserappidAdverid> taskList, String idfa)
+	private AppCommonModel checkIPDuplicated(String adid, Page<TUserappidAdverid> taskList, String idfa)
 	{
 		AppCommonModel model = new AppCommonModel(2, "通过！");
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 		for (TUserappidAdverid item : taskList.getResult())
 		{
-			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date())) && !idfa.equals(item.getIdfa())) 
+			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date())) 
+					&& !idfa.equals(item.getIdfa()) 
+					&& adid.equals(item.getAdid())) 
 			{
 				model.setResult(-1);
 				model.setMsg("领取任务失败。原因：IP重复！");
@@ -383,6 +399,7 @@ public class DuiJieController extends BaseController
 	
 	/**
 	 * 回调（由第三方调用）
+	 * {"success":true,"message":'ok'}
 	 */
 	@RequestMapping("callback")
 	public void callback(HttpServletResponse response,HttpServletRequest request) 
@@ -430,20 +447,28 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		if(userNum.equals("null")) 
-		{
-			TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
-			userNum = tUserApp.getUserNum();
-		}
+		TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
+		userNum = tUserApp.getUserNum();
 		
 		//更新金额
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
-		score.setScore(adverInfo.getAdverPrice());
+		if(tUserApp.getUserApppType() == 1) //工作室
+		{
+			float sco = (float) (adverInfo.getAdverPrice() - 0.2);
+			score.setScore(sco);
+		}
+		else
+		{
+			score.setScore(adverInfo.getAdverPrice());
+		}
 		QueueProducer.getQueueProducer().sendMessage(score, "socre");
+		masterWork(tUserApp);
 		
 		model.setResult(1);
-		model.setMsg("success！");
+		model.setMsg("success!");
+		model.setSuccess(true);
+		model.setMessage("ok");
 		super.writeJsonDataApp(response, model);
 	}
 	
@@ -497,11 +522,8 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		if(userNum == null) 
-		{
-			TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(task.getUserAppId()));
-			userNum = tUserApp.getUserNum();
-		}
+		TUserApp tUserApp  = userAppService.getUserAppById(Integer.valueOf(task.getUserAppId()));
+		userNum = tUserApp.getUserNum();
 		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		
@@ -609,6 +631,15 @@ public class DuiJieController extends BaseController
 					return;
 				}
 			}
+			else if("9".equals(channelInfo.getChannelNum()))
+			{
+				model = AiPuYouChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+				if(model.getResult() == -1)
+				{
+					super.writeJsonDataApp(response, model);
+					return;
+				}
+			}
 			else
 			{
 				model.setResult(-1);
@@ -633,8 +664,18 @@ public class DuiJieController extends BaseController
 			//把单子发送到队列
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
-			score.setScore(adverInfo.getAdverPrice());
+			if(tUserApp.getUserApppType() == 1) //工作室
+			{
+				float sco = (float) (adverInfo.getAdverPrice() - 0.2);
+				score.setScore(sco);
+			}
+			else
+			{
+				score.setScore(adverInfo.getAdverPrice());
+			}
+			
 			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			masterWork(tUserApp);
 		}
 		else if("1".equals(adverInfo.getTaskType()))
 		{
@@ -683,8 +724,18 @@ public class DuiJieController extends BaseController
 			//更改金额
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
-			score.setScore(adverInfo.getAdverPrice());
+			if(tUserApp.getUserApppType() == 1) //工作室
+			{
+				float sco = (float) (adverInfo.getAdverPrice() - 0.2);
+				score.setScore(sco);
+			}
+			else
+			{
+				score.setScore(adverInfo.getAdverPrice());
+			}
 			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			//计算师傅获取到的利润
+			masterWork(tUserApp);
 		}
 		else
 		{//异常情况
@@ -699,6 +750,26 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 
+	//计算师傅获取到的利润
+	private void masterWork(TUserApp tUserApp) throws IOException, TimeoutException
+	{
+		if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0)
+		{
+			TUserApp masterUserApp  = userAppService.getUserAppById(Integer.valueOf(tUserApp.getMasterID()));
+			if(masterUserApp != null)
+			{
+				TUserScore score = new TUserScore();
+				score.setUserNum(masterUserApp.getUserNum());
+				score.setScore((float) 1);
+				QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			}
+			
+			//updateLimitTime
+			Integer ltime = tUserApp.getLimitTime() - 1;
+			userAppService.updateLimitTime(masterUserApp, ltime);
+		}
+	}
+	
 	/**
 	 * 我的已完成任务--明细
 	 */
@@ -848,6 +919,10 @@ public class DuiJieController extends BaseController
 		{
 			model = isJZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
 		}
+		else if("9".equals(channelInfo.getChannelNum())) 
+		{
+			model = isAPYChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
+		}
 		else
 		{
 			model.setResult(-1);
@@ -943,6 +1018,21 @@ public class DuiJieController extends BaseController
 		{
 			//调用第三方点击接口
 			model = JvZhangChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
+		}
+		
+		return model;
+	}
+	
+	private AppCommonModel isAPYChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = AiPuYouChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			TUserApp userApp = userAppService.getUserAppById(Integer.parseInt(userAppId));
+			model = AiPuYouChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName, userApp);
 		}
 		
 		return model;

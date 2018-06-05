@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +21,7 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserLogin;
 import com.ruanyun.web.service.app.AppUserLoginService;
+import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.util.PhoneFormatCheckUtils;
 
@@ -33,6 +33,8 @@ public class AppUserLoginController extends BaseController
 	private AppUserLoginService appUserLoginService;
 	@Autowired	
 	private UserAppService userAppService;
+	@Autowired
+	private DictionaryService dictionaryService;
 
 	/**
 	 * 
@@ -47,13 +49,13 @@ public class AppUserLoginController extends BaseController
 	 */
 	@RequestMapping("login")
 	public void doLogin(HttpServletResponse response, HttpServletRequest request, TUserLogin tUserLogin,
-			HttpSession session, String phoneSerialNumber, String userNum, String sign)
+			HttpSession session, String phoneSerialNumber, String userNum, String sign, String masterID)
 	{
 		AppCommonModel acm = null;
 		String ip = request.getRemoteAddr();
 		try 
 		{
-			acm = appUserLoginService.addLogin(request, tUserLogin, phoneSerialNumber, ip);
+			acm = appUserLoginService.addLogin(request, tUserLogin, phoneSerialNumber, ip, masterID);
 		} 
 		catch (Exception e) 
 		{
@@ -86,15 +88,23 @@ public class AppUserLoginController extends BaseController
 				model = new AppCommonModel(-1,"错误的手机号码！");
 			}
 			
+			TUserApp tUserApp = userAppService.getUserAppByUserName(loginName);
+			
 			if(model.getResult() == 1)
 			{
-				TUserApp tUserApp = new TUserApp();
+				if(tUserApp == null) 
+				{
+					
+					tUserApp = new TUserApp();
+				}
+				
 				tUserApp.setUserApppType(2);
 				tUserApp.setLoginName(loginName);
 				tUserApp.setLoginPwd(model.getObj() + "");
 				tUserApp.setLoginControl("1");
-				tUserApp.setLevel(1);
-				tUserApp.setUserNick("手机号码注册登录");
+				tUserApp.setLevel(dictionaryService.getVestorLevel());
+				tUserApp.setLimitTime(10);
+				//tUserApp.setUserNick("手机号码注册登录");
 				tUserApp.setCreateDate(new Date());
 				
 				userAppService.saveOrUpdate(tUserApp, request, null);
@@ -154,6 +164,61 @@ public class AppUserLoginController extends BaseController
 		super.writeJsonDataApp(response, acm);
 	}
 	
+	@RequestMapping("updateUserWeiXin")
+	public void updateUserWeiXin(HttpServletResponse response,String userNum,String weiXinName,String headImgUrl, String openID) 
+	{
+		AppCommonModel acm = new AppCommonModel();
+		try {
+			acm = appUserLoginService.updateUserWeiXin(userNum,weiXinName,headImgUrl,openID);
+		} catch (Exception e) {
+			acm = new AppCommonModel(e.getMessage(), "{}");
+		}
+		super.writeJsonDataApp(response, acm);
+	}
+	
+	@RequestMapping("updateUserName")
+	public void updateUserName(HttpServletResponse response,String userNum,String userName) {
+		AppCommonModel acm = new AppCommonModel();
+		try {
+			acm = appUserLoginService.updateUserName(userNum,userName);
+		} catch (Exception e) {
+			acm = new AppCommonModel(e.getMessage(), "{}");
+		}
+		super.writeJsonDataApp(response, acm);
+	}
+	
+	@RequestMapping("updateUserAlipay")
+	public void updateUserAlipay(HttpServletResponse response,String userNum,String alipay) {
+		AppCommonModel acm = new AppCommonModel();
+		try {
+			acm = appUserLoginService.updateUserAlipay(userNum, alipay);
+		} catch (Exception e) {
+			acm = new AppCommonModel(e.getMessage(), "{}");
+		}
+		super.writeJsonDataApp(response, acm);
+	}
+	
+	@RequestMapping("tixianRequest")
+	public void tixianRequest(HttpServletResponse response,String userNum) {
+		AppCommonModel acm = new AppCommonModel();
+		try {
+			acm = appUserLoginService.tixianRequest(userNum);
+		} catch (Exception e) {
+			acm = new AppCommonModel(e.getMessage(), "{}");
+		}
+		super.writeJsonDataApp(response, acm);
+	}
+	
+	@RequestMapping("updateUserPhoneNum")
+	public void updateUserPhoneNum(HttpServletResponse response,String userNum,String phoneNum) {
+		AppCommonModel acm = new AppCommonModel();
+		try {
+			acm = appUserLoginService.updateUserPhoneNum(userNum,phoneNum);
+		} catch (Exception e) {
+			acm = new AppCommonModel(e.getMessage(), "{}");
+		}
+		super.writeJsonDataApp(response, acm);
+	}
 	/**
 	 * 
 	 * 功能描述:修改个人头像

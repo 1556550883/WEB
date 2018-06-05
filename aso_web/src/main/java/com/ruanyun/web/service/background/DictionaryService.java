@@ -22,6 +22,13 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	
 	private static Integer leastTaskTime = -1;
 	
+	private static Integer leastForward = 20;
+	
+	private static String notice = "目前没消息！";
+	
+	private static String downloadUrl = "none";
+	
+	private static Integer vestorLevel = 6;
 	/**
 	 * 功能描述:查询字典表 父级
 	 * @author wsp  2016-10-20 下午05:48:44
@@ -35,7 +42,8 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	/**
 	 * 修改系统参数
 	 */
-	public void updateSystemParameter(String appleIdCheck2, Integer leastTaskTime2)
+	public void updateSystemParameter(String appleIdCheck2, Integer leastTaskTime2, Integer leastForward2, String notice2, 
+			String downloadUrl2, Integer vestorLevel2)
 	{
 		if(StringUtils.hasText(appleIdCheck2))
 		{
@@ -51,6 +59,39 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 			oldInfo.setItemCode(String.valueOf(leastTaskTime2));
 			super.update(oldInfo);
 			leastTaskTime= leastTaskTime2;
+		}
+		
+		if(leastForward2 != null && leastForward2 > 0)
+		{
+			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "LEAST_FORWARD");
+			oldInfo.setItemCode(String.valueOf(leastForward2));
+			super.update(oldInfo);
+			leastForward= leastForward2;
+		}
+		
+		if(StringUtils.hasText(notice2))
+		{
+			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "NOTICE");
+			oldInfo.setItemCode(notice2);
+			super.update(oldInfo);
+			notice = notice2;
+		}
+		
+		if(StringUtils.hasText(downloadUrl2))
+		{
+			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "DOWNLOAD_URL");
+			oldInfo.setItemCode(downloadUrl2);
+			super.update(oldInfo);
+			downloadUrl = downloadUrl2;
+		}
+		
+		
+		if(vestorLevel2 != null && vestorLevel2 > 0)
+		{
+			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "VESTOR_LEVEL");
+			oldInfo.setItemCode(String.valueOf(vestorLevel2));
+			super.update(oldInfo);
+			vestorLevel= leastTaskTime2;
 		}
 	}
 	
@@ -96,6 +137,69 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 		return leastTaskTime;
 	}
 
+	public Integer getLeastForward()
+	{
+		TDictionary dictionary = super.get(TDictionary.class, "parentCode", "LEAST_FORWARD");
+		if (dictionary == null)
+		{
+			leastForward = 20;//默认20元
+		}
+		else
+		{
+			leastForward = Integer.valueOf(dictionary.getItemCode());
+		}
+		
+		return leastForward;
+	}
+	
+	public String getNotice()
+	{
+		TDictionary dictionary = super.get(TDictionary.class, "parentCode", "NOTICE");
+		if (dictionary == null)
+		{
+			notice = "没消息！";
+		}
+		else
+		{
+			notice = dictionary.getItemCode();
+		}
+		
+		return notice;
+	}
+	
+	
+	public String getDownloadUrl()
+	{
+		TDictionary dictionary = super.get(TDictionary.class, "parentCode", "DOWNLOAD_URL");
+		if (dictionary == null)
+		{
+			downloadUrl = "未获取到下载地址！";
+		}
+		else
+		{
+			downloadUrl = dictionary.getItemCode();
+		}
+		
+		return downloadUrl;
+	}
+	
+	public Integer getVestorLevel()
+	{
+		if(leastTaskTime == -1)
+		{
+			TDictionary dictionary = super.get(TDictionary.class, "parentCode", "VESTOR_LEVEL");
+			if (dictionary == null)
+			{
+				vestorLevel = 6;//默认180秒
+			}
+			else
+			{
+				vestorLevel = Integer.valueOf(dictionary.getItemCode());
+			}
+		}
+		
+		return vestorLevel;
+	}
 	/**
 	 * 功能描述:按条件查询
 	 * @author wsp  2016-11-24 上午09:12:31

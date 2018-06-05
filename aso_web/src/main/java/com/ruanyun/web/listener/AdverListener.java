@@ -21,6 +21,7 @@ public class AdverListener implements ApplicationContextAware
 	public void setApplicationContext(ApplicationContext arg0) throws BeansException 
 	{
 		System.out.println("------------------------web start------------------------");
+		
 		ArrayBlockQueueProducer.pool.execute(mAdverProducer);
 		ScoreQueueConsumer.pool.execute(mScoreQueueConsumer);
 	}

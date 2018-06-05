@@ -74,7 +74,8 @@ public class APYSChannel extends BaseChannel
 					.append("?appid=").append(adid)
 					.append("&source=").append(ChannelSource)
 					.append("&idfa=").append(idfa)
-					.append("&sign=").append(sign);
+					.append("&sign=").append(sign)
+					.append("&ip=").append(ip);
 
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		

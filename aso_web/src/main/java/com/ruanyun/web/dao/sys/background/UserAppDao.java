@@ -57,6 +57,12 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 		StringBuffer sql=new StringBuffer(" SELECT * from t_user_app WHERE user_app_id ='" + userAppid + "'");
 		return sqlDao.get(TUserApp.class, sql.toString());
 	}
+	
+	public TUserApp getUserByOpenID(String openID)
+	{
+		StringBuffer sql=new StringBuffer(" SELECT * from t_user_app WHERE open_id ='" + openID + "'");
+		return sqlDao.get(TUserApp.class, sql.toString());
+	}
 	/**
 	 * 
 	 * 功能描述:根据序列号获取用户
@@ -94,4 +100,9 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 		return sqlDao.getCount(sql.toString());
 	}
 	
+	public int updatePhoneDetails(Integer userAppId, String device, String os)
+	{
+		StringBuffer sql = new StringBuffer(" UPDATE t_user_app set flag3 ='"+device+"'" + ", flag4 = '"+os+"'" + " where user_app_id = '"+userAppId+"'");
+		return sqlDao.execute(sql.toString());
+	}
 }

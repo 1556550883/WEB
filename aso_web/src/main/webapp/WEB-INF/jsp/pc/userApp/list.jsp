@@ -77,10 +77,7 @@
 				<th align="center">支付宝账号</th>
 				<th align="center">微信账号</th>
 				<th align="center">用户等级</th>
-				
-				<!--<th align="center">用户类型</th>-->	
-				<!--<th align="center">手机号</th>	
-				<th align="center">新手任务是否完成</th>-->	
+				<th align="center">邀请人ID</th>
 				
 				<th align="center">操作</th>			
 			</tr>
@@ -101,6 +98,7 @@
 	                <td>${item.zhifubao}</td>
 	                <td>${item.weixin}</td>
 	                <td>${item.level }</td>
+	                <td>${item.masterID }</td>
 	                
 	                <!--<td><ry:show parentCode="USER_APP_TYPE" itemCode="${item.userApppType}"></ry:show></td>-->
 	                <!--<td>${item.phoneNum}</td>

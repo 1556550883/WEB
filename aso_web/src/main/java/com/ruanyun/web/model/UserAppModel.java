@@ -5,10 +5,6 @@
  */
 package com.ruanyun.web.model;
 
-/**
- *@author feiyang
- *@date 2016-1-11
- */
 public class UserAppModel {
 	private Integer userAppId;
 	private String userNum;
@@ -34,6 +30,8 @@ public class UserAppModel {
     private String weixin;
     private String zhifubaoName;
     private String appStore;
+    private String weChatHeadUrl;
+    private boolean isMasterIDExisted;
     
 	public UserAppModel() {
 
@@ -183,5 +181,17 @@ public class UserAppModel {
 	}
 	public void setAppStore(String appStore) {
 		this.appStore = appStore;
+	}
+	public String getWeChatHeadUrl() {
+		return weChatHeadUrl;
+	}
+	public void setWeChatHeadUrl(String weChatHeadUrl) {
+		this.weChatHeadUrl = weChatHeadUrl;
+	}
+	public boolean isMasterIDExisted() {
+		return isMasterIDExisted;
+	}
+	public void setMasterIDExisted(boolean isMasterIDExisted) {
+		this.isMasterIDExisted = isMasterIDExisted;
 	}
 }

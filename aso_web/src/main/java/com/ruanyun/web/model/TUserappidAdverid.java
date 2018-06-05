@@ -37,7 +37,9 @@ public class TUserappidAdverid implements Serializable
 	private String completeTimeStr;
 	private Float adverPrice;
 	private String loginName;
-	
+	private String phoneModel;
+	private String phoneVersion;
+
     @Column(name="user_app_id")
     public Integer getUserAppId()
     {
@@ -251,5 +253,23 @@ public class TUserappidAdverid implements Serializable
 	public void setLoginName(String loginName) 
 	{
 		this.loginName = loginName;
+	}
+
+	@Column(name="phone_model")
+	public String getPhoneModel() {
+		return phoneModel;
+	}
+
+	public void setPhoneModel(String phoneModel) {
+		this.phoneModel = phoneModel;
+	}
+
+	@Column(name="phone_version")
+	public String getPhoneVersion() {
+		return phoneVersion;
+	}
+
+	public void setPhoneVersion(String phoneVersion) {
+		this.phoneVersion = phoneVersion;
 	}
 }

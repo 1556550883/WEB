@@ -2,6 +2,8 @@ package com.ruanyun.web.model;
 // Generated 2016-1-5 21:43:29 by Hibernate Tools 3.2.2.GA
 
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +12,6 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -60,7 +61,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String flag2;
      private String flag3;
      private String flag4;
-     private String flag5;
+     private Integer openTime;
      private Integer level; 
      private Integer isAuth;
      private String adverRemand;
@@ -87,7 +88,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
     		Date adverDayEnd, String adverTimeStart, String adverTimeEnd, Integer adverStepCount,
     		Date adverCreatetime, int adverActivationCount, String fileType, String fileUrl, 
     		int downloadCount, Integer adverStatus, String flag1, String flag2, String flag3, 
-    		String flag4, String flag5, Integer level) 
+    		String flag4, Integer openTime, Integer level) 
     {
        this.adverName = adverName;
        this.adverNum = adverNum;
@@ -110,7 +111,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
        this.flag2 = flag2;
        this.flag3 = flag3;
        this.flag4 = flag4;
-       this.flag5 = flag5;
+       this.openTime = openTime;
        this.level = level;
     }
    
@@ -386,13 +387,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
         this.flag4 = flag4;
     }
     
-    @Column(name="flag5", length=100)
-    public String getFlag5() {
-        return this.flag5;
+    @Column(name="open_time", length=100)
+    public Integer getOpenTime() {
+        return this.openTime;
     }
     
-    public void setFlag5(String flag5) {
-        this.flag5 = flag5;
+    public void setOpenTime(Integer openTime) {
+        this.openTime = openTime;
     }
     
     @Column(name="level")

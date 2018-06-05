@@ -75,7 +75,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append(" and channel_num in (select b.channel_num from t_channel_info b where b.channel_type='").append(channelType).append("' and b.system_type='").append(systemType).append("')");
 		sql.append(SQLUtils.popuHqlMax("phone_type", phoneType));
 		sql.append(SQLUtils.popuHqlMax("ios_version", Integer.parseInt(osversion)));
-		sql.append(SQLUtils.popuHqlMax2("adver_day_start", new Date()));
+		//sql.append(SQLUtils.popuHqlMax2("adver_day_start", new Date()));
 		sql.append(SQLUtils.popuHqlMin2("adver_day_end", new Date()));
 		sql.append(SQLUtils.popuHqlMax("level", level));
 		sql.append(" and adver_status=1");

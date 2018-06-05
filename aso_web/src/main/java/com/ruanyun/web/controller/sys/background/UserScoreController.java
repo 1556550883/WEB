@@ -21,10 +21,8 @@ import com.ruanyun.web.service.background.UserScoreService;
  */
 @Controller
 @RequestMapping("userScore")
-public class UserScoreController extends BaseController{
-	
-
-	
+public class UserScoreController extends BaseController
+{
 	@Autowired
 	private UserScoreService userScoreService;
 	/**

@@ -83,13 +83,17 @@ public class ChannelInfoController extends BaseController
 	 * 员工idfa统计
 	 */
 	@RequestMapping("employeeIdfaStatistics")
-	public String employeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime, Model model) throws ParseException{
+	public String employeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime, Model model) throws ParseException
+	{
 		completeTime = StringUtils.hasText(completeTime)?completeTime.replaceAll("-", ""):new SimpleDateFormat("yyyyMMdd").format(new Date());
 		addModel(model, "pageList", channelInfoService.queryEmployeeIdfaStatistics(page, userAppId, completeTime));
-		try {
+		try 
+		{
 			addModel(model, "userAppId", userAppId);
 			addModel(model, "completeTime", new SimpleDateFormat("yyyyMMdd").parse(completeTime));
-		} catch (ParseException e) {
+		} 
+		catch (ParseException e) 
+		{
 			e.printStackTrace();
 		}
 		return "pc/employeeIdfa/list";

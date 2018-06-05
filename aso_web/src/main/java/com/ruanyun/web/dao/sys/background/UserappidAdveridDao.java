@@ -86,7 +86,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	
 	public int updateStatus2Complete(TUserappidAdverid info) 
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=?,complete_time=? WHERE status<='1.5' ");
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=?,complete_time=? WHERE status ='1.5' ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
@@ -143,6 +143,22 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 			.append(" where adid='").append(adid).append("'")
 			.append(" and receive_time>'").append(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime())).append("'")
 			.append(" and (idfa='").append(idfa).append("' or ip='").append(ip).append("')");
+		
+		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
+		page.setNumPerPage(Integer.MAX_VALUE);
+		
+		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
+	}
+	
+	public Page<TUserappidAdverid> getTasksByIdfaOrIP(String idfa, String ip)
+	{
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.set(Calendar.DATE, calendar.get(Calendar.DATE)-2);
+		
+		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+				.append(" where receive_time>'").append(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime())).append("'")
+				.append(" and (idfa='").append(idfa).append("' or ip='").append(ip).append("')");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		page.setNumPerPage(Integer.MAX_VALUE);

@@ -70,6 +70,8 @@
 				<th align="center" width="300px;">idfa</th>
 				<th align="center" width="100px;">ip</th>
 				<th align="center" width="250px;">苹果账号</th>
+				<th align="center" width="250px;">手机型号</th>
+				<th align="center" width="250px;">手机系统版本</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -83,6 +85,8 @@
 	                <td style="text-align:left;">${item.idfa}</td>
 	                <td style="text-align:left;">${item.ip}</td>
 	                <td style="text-align:left;">${item.appleId}</td>
+	                <td style="text-align:left;">${item.phoneModel}</td>
+	                 <td style="text-align:left;">${item.phoneVersion}</td>
 				</tr>
 			</c:forEach>
 		</tbody>

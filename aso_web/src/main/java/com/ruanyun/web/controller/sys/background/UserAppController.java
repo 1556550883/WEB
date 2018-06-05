@@ -31,10 +31,6 @@ import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpSessionUtils;
 
-/**
- *@author feiyang
- *@date 2016-1-7
- */
 @Controller
 @RequestMapping("/userApp")
 public class UserAppController extends BaseController
@@ -53,9 +49,6 @@ public class UserAppController extends BaseController
 	 * @param page
 	 * @param info
 	 * @param model
-	 * @return
-	 *@author feiyang
-	 *@date 2016-1-6
 	 */
 	@RequestMapping("list")
 	public String getUserAppList(Page<TUserApp> page,TUserApp info,Model model)
@@ -96,8 +89,6 @@ public class UserAppController extends BaseController
 	 * @param info
 	 * @param model
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-27
 	 */
 	@RequestMapping("delScoreInfo")
 	public void delScoreInfo(String userScoreInfoNum,Integer pageNum,String userAppNum,Model model,HttpServletResponse response){

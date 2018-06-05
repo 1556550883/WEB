@@ -1,7 +1,6 @@
 package com.ruanyun.web.model;
 // Generated 2016-1-16 16:06:25 by Hibernate Tools 3.2.2.GA
 
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Column;
@@ -16,6 +15,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name="t_user_score")
+
 public class TUserScore  implements java.io.Serializable 
 {
 	private static final long serialVersionUID = 1L;
@@ -38,6 +38,7 @@ public class TUserScore  implements java.io.Serializable
      private Integer redPackageCountDay;//今日可以抢红包数量
      private Float redPackageScoreDay;//今日红包奖励
      private Float redPackageScoreCount;//红包总奖励
+     private float forward;
      
     public TUserScore() {
     }
@@ -213,11 +214,17 @@ public class TUserScore  implements java.io.Serializable
 	public void setLevelName(String levelName) {
 		this.levelName = levelName;
 	}
-
 	
+	@Column(name="put_forward")
+	public float getForward() 
+	{
+		return forward;
+	}
 
-
-
+	public void setForward(float forward) 
+	{
+		this.forward = forward;
+	}
 
 }
 

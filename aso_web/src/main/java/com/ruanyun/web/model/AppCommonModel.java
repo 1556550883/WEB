@@ -1,4 +1,5 @@
 package com.ruanyun.web.model;
+
 /**
  * 
  *  #(c) IFlytek zqb <br/>
@@ -18,6 +19,27 @@ public class AppCommonModel
 	public static final int ERROR_NOUSER=-10;
 	public static final int SUCCESS=1;
 	
+	/**
+	 * 执行结果
+	 */
+	private Integer result=1;
+	/**
+	 * 消息
+	 */
+	private String msg="";
+	
+	/**
+	 * 返回对象
+	 */
+	private Object obj="{}";
+	/**
+	 * sessionId
+	 */
+	private String sessionId="";
+	
+	private boolean success = false;
+	
+	private String message = "";
 	/**
 	 * 系统异常创建对象
 	 * @param msg
@@ -63,26 +85,7 @@ public class AppCommonModel
 		this.msg = msg;
 		this.obj = obj;
 	}
-	
-	/**
-	 * 执行结果
-	 */
-	private Integer result=1;
-	/**
-	 * 消息
-	 */
-	private String msg="";
-	
-	/**
-	 * 返回对象
-	 */
-	private Object obj="{}";
-	/**
-	 * sessionId
-	 */
-	private String sessionId="";
-
-	
+		
 	public Integer getResult() {
 		return result;
 	}
@@ -107,7 +110,21 @@ public class AppCommonModel
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-	
-	
 
+	public boolean getSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
 }

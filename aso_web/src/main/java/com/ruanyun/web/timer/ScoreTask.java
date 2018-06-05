@@ -32,7 +32,7 @@ public class ScoreTask
 	@Autowired
 	private LoginIpService loginIpService;
 	
-	@Scheduled(cron="0 39 10 ? * * ")   //每天23点59分执行清除用户当天数据  
+	@Scheduled(cron="0 00 00 ? * * ")   //每天00点00分执行清除用户当天数据  
     public void clearUserScore()
 	{  
 		userScoreService.clearUserScoreDay();

@@ -6,6 +6,7 @@
 package com.ruanyun.web.service.background;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruanyun.common.model.Page;
+import com.ruanyun.common.orm.ICommonSqlDao;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.web.dao.sys.background.UserScoreInfoDao;
 import com.ruanyun.web.model.TUserScore;
@@ -30,6 +32,9 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 	private UserScoreInfoDao userScoreInfoDao;
 	@Autowired
 	private UserScoreService userScoreService;
+	@Autowired
+	@Qualifier("commonSqlExpandDao")
+	protected ICommonSqlDao sqlDao;
 	
 	/**
 	 * 功能描述:保存得分记录
@@ -50,9 +55,18 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 		userScoreInfo.setScoreTime(new Date());
 		userScoreInfo.setScoreType(scoreType);
 		userScoreInfo.setUserAppNum(userAppNum);
+		userScoreInfo.setStatus(0);
 		userScoreInfo.setUserType(userType);
 		save(userScoreInfo);
 		userScoreInfo.setUserScoreInfoNum(getNewScoreInfoNum(userScoreInfo.getUserScoreInfoId()));
+	}
+	
+	public int updateScoreInfoStatus(String userScoreInfoId)
+	{
+		StringBuffer sql = new StringBuffer(" UPDATE t_user_score_info set status = ? WHERE user_score_info_id='"+userScoreInfoId+"'");
+		Object[] params = new Object[1];
+		params[0] = 1;
+		return sqlDao.update(params, sql.toString());
 	}
 	
 	@Transactional
@@ -64,10 +78,16 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 	}
 	
 	
-	public String getNewScoreInfoNum(int id){
+	public String getNewScoreInfoNum(int id)
+	{
 		return "USI_"+String.format("%08d", id);
 	}
 	
+	public List<TUserScoreInfo> getScoreInfoListByUserNums(String userNums)
+	{
+		StringBuffer sql=new StringBuffer(" SELECT * FROM t_user_score_info WHERE user_app_num='"+userNums+"'");
+		return sqlDao.getAll(TUserScoreInfo.class, sql.toString());
+	}
 	/**
 	 * 
 	 * 功能描述:后台手机用户获取用户的积分明细

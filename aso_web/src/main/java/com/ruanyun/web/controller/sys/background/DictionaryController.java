@@ -44,6 +44,14 @@ public class DictionaryController extends BaseController{
 		addModel(model, "bean", dictionaryService.get(TDictionary.class,"parentCode","APPLE_ID_CHECK"));
 		//app最少体验时间
 		addModel(model, "leastTaskTime", dictionaryService.get(TDictionary.class,"parentCode","LEAST_TASK_TIME").getItemCode());
+		//app最小提现金额
+		addModel(model, "leastForward", dictionaryService.get(TDictionary.class,"parentCode","LEAST_FORWARD").getItemCode());
+		
+		addModel(model, "notice", dictionaryService.get(TDictionary.class,"parentCode","NOTICE").getItemCode());
+		
+		addModel(model, "downloadUrl", dictionaryService.get(TDictionary.class,"parentCode","DOWNLOAD_URL").getItemCode());
+		
+		addModel(model, "vestorLevel", dictionaryService.get(TDictionary.class,"parentCode","VESTOR_LEVEL").getItemCode());
 		return "pc/dictionary/edit";
 	}
 	
@@ -51,9 +59,10 @@ public class DictionaryController extends BaseController{
 	 * 修改系统参数
 	 */
 	@RequestMapping("saveOrUpdate")
-	public void saveOrUpdate(Model model, String appleIdCheck, Integer leastTaskTime, HttpServletResponse response)
+	public void saveOrUpdate(Model model, String appleIdCheck, Integer leastTaskTime, Integer leastForward,
+			String notice,String downloadUrl,Integer vestorLevel,  HttpServletResponse response)
 	{
-		dictionaryService.updateSystemParameter(appleIdCheck, leastTaskTime);
+		dictionaryService.updateSystemParameter(appleIdCheck, leastTaskTime, leastForward, notice, downloadUrl, vestorLevel);
 		
 		super.writeJsonData(response,CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_", "dictionary/toEdit", "redirect"));
 	}

@@ -32,7 +32,8 @@ public class TUserApp implements java.io.Serializable {
 	private String headImg;
 	private String loginName;
 	private String loginPwd;
-	private String flag1;
+	private String masterID;
+	private Integer limitTime;
 	private String flag2;
 	private String flag3;
 	private String flag4;
@@ -42,6 +43,7 @@ public class TUserApp implements java.io.Serializable {
 	private String phoneNum;//手机号码
     private String zhifubao;
     private String weixin;
+    private String openID;
     private String zhifubaoName;
 	private String invitationCode;//邀请码
 	private Integer taskNewStatus;//新手任务完成状态
@@ -59,8 +61,8 @@ public class TUserApp implements java.io.Serializable {
 
 	public TUserApp(String userNum, String userNick, String birthday,
 			String sex, String headImg, String loginName, String loginPwd,
-			String flag1, String flag2, String flag3, String flag4,
-			String flag5, Integer level) {
+			String masterID, String flag2, String flag3, String flag4,
+			String flag5, Integer level, Integer limitTime) {
 		this.userNum = userNum;
 		this.userNick = userNick;
 		this.birthday = birthday;
@@ -68,12 +70,13 @@ public class TUserApp implements java.io.Serializable {
 		this.headImg = headImg;
 		this.loginName = loginName;
 		this.loginPwd = loginPwd;
-		this.flag1 = flag1;
+		this.masterID = masterID;
 		this.flag2 = flag2;
 		this.flag3 = flag3;
 		this.flag4 = flag4;
 		this.flag5 = flag5;
 		this.level = level;
+		this.limitTime = limitTime;
 	}
 
 	@Id
@@ -150,13 +153,13 @@ public class TUserApp implements java.io.Serializable {
 		this.loginPwd = loginPwd;
 	}
 
-	@Column(name = "flag1", length = 100)
-	public String getFlag1() {
-		return this.flag1;
+	@Column(name = "master_id", length = 100)
+	public String getMasterID() {
+		return this.masterID;
 	}
 
-	public void setFlag1(String flag1) {
-		this.flag1 = flag1;
+	public void setMasterID(String masterID) {
+		this.masterID = masterID;
 	}
 
 	@Column(name = "flag2", length = 100)
@@ -319,6 +322,24 @@ public class TUserApp implements java.io.Serializable {
 
 	public void setIdfa(String idfa) {
 		this.idfa = idfa;
+	}
+
+	@Column(name = "limit_time")
+	public Integer getLimitTime() {
+		return limitTime;
+	}
+
+	public void setLimitTime(Integer limitTime) {
+		this.limitTime = limitTime;
+	}
+	
+	@Column(name = "open_id")
+	public String getOpenID() {
+		return openID;
+	}
+
+	public void setOpenID(String openID) {
+		this.openID = openID;
 	}
 	
 }
