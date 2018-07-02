@@ -15,10 +15,6 @@ import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.service.app.AppDictionaryService;
 
-/**
- *@author feiyang
- *@date 2016-1-13
- */
 @Controller
 @RequestMapping("app/dictionary")
 public class AppDictionaryController extends BaseController{

@@ -30,8 +30,6 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo>
 	 * @param params
 	 * @return
 	 * channelType 1/2/3 自由渠道/CP专区/快赚钱
-	 *@author feiyang
-	 *@date 2016-1-13
 	 */
 	@Override
 	protected String queryPageSql(TChannelInfo t, Map<String, Object> params) 

@@ -6,7 +6,9 @@
 package com.ruanyun.web.service.app;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -94,7 +96,9 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 			}
 			page2.setTotalCount(page2.getResult().size());
 		}
-		
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+		String date = df.format(new Date());
+		page2.setFlag(date);
 		model.setObj(page2);
 		return model;
 	}

@@ -72,6 +72,8 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String commonNumName;
      private Integer adverStatusEnd;
      private String adversJson;
+     private Integer downloadType;
+     private String adverAdid;
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -482,5 +484,26 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	public void setTimeLimit(Float timeLimit) 
 	{
 		this.timeLimit = timeLimit;
+	}
+	
+	@Column(name="download_type")
+	public Integer getDownloadType() 
+	{
+		return downloadType;
+	}
+	public void setDownloadType(Integer downloadType)
+	{
+		this.downloadType = downloadType;
+	}
+	
+	@Column(name="adver_adid", length=100)
+	public String getAdverAdid()
+	{
+		return adverAdid;
+	}
+	
+	public void setAdverAdid(String adverAdid)
+	{
+		this.adverAdid = adverAdid;
 	}
 }

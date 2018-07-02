@@ -12,9 +12,6 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserappidAdverid;
 
-/**
- *@author 向轴
- */
 @Repository("userappidAdveridDao")
 public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	
@@ -156,9 +153,12 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		calendar.setTime(new Date());
 		calendar.set(Calendar.DATE, calendar.get(Calendar.DATE)-2);
 		
+//		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+//				.append(" where receive_time>'").append(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime())).append("'")
+//				.append(" and (idfa='").append(idfa).append("' or ip='").append(ip).append("')");
+		
 		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
-				.append(" where receive_time>'").append(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime())).append("'")
-				.append(" and (idfa='").append(idfa).append("' or ip='").append(ip).append("')");
+				.append(" where idfa='").append(idfa).append("' or ip='").append(ip).append("'");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		page.setNumPerPage(Integer.MAX_VALUE);

@@ -16,10 +16,6 @@ import com.ruanyun.web.dao.sys.background.ChannelInfoDao;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelInfo;
 
-/**
- *@author feiyang
- *@date 2016-1-13
- */
 @Service
 public class AppChannelInfoService extends BaseServiceImpl<TChannelInfo>{
 
@@ -32,8 +28,6 @@ public class AppChannelInfoService extends BaseServiceImpl<TChannelInfo>{
 	 * 功能描述:根据类型获取渠道列表
 	 * @param info
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-13
 	 */
 	public AppCommonModel getChannelByType(Page<TChannelInfo> page,TChannelInfo info){
 		AppCommonModel model=new AppCommonModel(-1,"获取失败");
