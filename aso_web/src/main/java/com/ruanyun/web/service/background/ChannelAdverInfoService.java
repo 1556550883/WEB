@@ -163,6 +163,15 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	}
 	
 	/**
+	 * 修改所有任务的状体
+	 * @param status
+	 * @param ids
+	 */
+	public void updateAdverStatusAll (Integer status)
+	{
+		channelAdverInfoDao.updateAdverStatusAll(status);
+	}
+	/**
 	 * 批量支付
 	 */
 	public String updateAdverStatus2Pay(Integer status,String ids)

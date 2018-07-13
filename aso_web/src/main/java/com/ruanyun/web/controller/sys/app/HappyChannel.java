@@ -71,12 +71,12 @@ public class HappyChannel extends BaseChannel
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
 			Integer userAppId, Integer adverId, String userNum, String adverName) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		
+		String keywords =  URLEncoder.encode(adverName, "utf-8");
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&key=").append(key)
 				.append("&idfa=").append(idfa)
-				.append("&keywords=").append(URLEncoder.encode(adverName, "utf-8"))
+				.append("&keywords=").append(keywords)
 				.append("&ip=").append(ip)
 				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
@@ -111,7 +111,7 @@ public class HappyChannel extends BaseChannel
 		
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
-				.append("&ch=").append(key)
+				.append("&key=").append(key)
 				.append("&idfa=").append(idfa);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		

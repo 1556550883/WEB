@@ -146,6 +146,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sqlDao.execute(sql.toString());
 	}
 	
+	
+	/**
+	 * 修改任务状态
+	 */
+	public void updateAdverStatusAll(Integer status)
+	{
+		StringBuilder sql;
+		//当时启动任务的时候，默认任务最高等级
+		sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+"");
+		
+		sqlDao.execute(sql.toString());
+	}
 	/**
 	 * 批量支付
 	 */

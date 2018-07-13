@@ -14,18 +14,11 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 	{
 		String tablename = table_prefix+ adid + key;
 			
-//	    SimpleDateFormat date = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
-//        long now = System.currentTimeMillis();
-    
-//		StringBuilder sql = new StringBuilder("INSERT INTO  ");
-//		sql.append(tablename);
-//		sql.append(" (idfa,status,receive_time) values ");
-//		sql.append("('"+tExternalChannelTask.getIdfa()+"','"+tExternalChannelTask.getStatus()+"','"+date.format(now)+"')");
-		
 		StringBuilder sql = new StringBuilder("INSERT INTO  ");
 		sql.append(tablename);
-		sql.append(" (idfa,status) values ");
-		sql.append("('"+tExternalChannelTask.getIdfa()+"','"+tExternalChannelTask.getStatus()+"')");
+		sql.append(" (idfa,status,receive_time) values ");
+		sql.append("('"+tExternalChannelTask.getIdfa()+"','"+tExternalChannelTask.getStatus()+"', NOW())");
+		
 		sqlDao.execute(sql.toString());
 	}
 	
@@ -54,6 +47,7 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 		StringBuilder sql = new StringBuilder("UPDATE "+tablename+" SET");
 		sql.append(" status=");
 		sql.append("'"+tExternalChannelTask.getStatus()+"' ");
+		sql.append(" ,complete_time = NOW() ");
 		sql.append("WHERE idfa=");
 		sql.append(" '"+tExternalChannelTask.getIdfa()+"'");
 		return sqlDao.execute(sql.toString());

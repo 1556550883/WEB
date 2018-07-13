@@ -3,6 +3,8 @@ package com.ruanyun.web.timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.LoginIpService;
 import com.ruanyun.web.service.background.UserScoreService;
@@ -38,7 +40,14 @@ public class ScoreTask
 		userScoreService.clearUserScoreDay();
     }  
 	
-	@Scheduled(cron="0 00 03 ? * FRI ")   //每个星期五执行操作
+	@Scheduled(cron="0 00 01 ? * * ")   //每天01点00分执行清除用户当天数据  
+    public void stopTask()
+	{  
+		channelAdverInfoService.updateAdverStatusAll(2);
+		ArrayBlockQueueProducer.removeAdverList.addAll(ArrayBlockQueueProducer.adverList);
+    }  
+	
+	@Scheduled(cron="0 00 03 ? * FRI")   //每个星期五执行操作
     public void bakAdverInfoTable()
 	{  
 		channelAdverInfoService.adverInfoTableBak();
