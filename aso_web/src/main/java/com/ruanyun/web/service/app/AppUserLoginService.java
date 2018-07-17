@@ -91,7 +91,12 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			
 			if (EmptyUtils.isNotEmpty(userApp))
 			{
-				if (!phoneSerialNumber.equals(userApp.getPhoneSerialNumber()))
+				if(userApp.getUserApppType() == 2 && userApp.getPhoneSerialNumber() != null && !phoneSerialNumber.equals(userApp.getPhoneSerialNumber()))
+				{
+					model.setMsg("此账号已经在其他手机上注册！");
+					return model;
+				}
+				else if (userApp.getPhoneSerialNumber() != null && !phoneSerialNumber.equals(userApp.getPhoneSerialNumber()))
 				{
 					userApp.setPhoneSerialNumber(phoneSerialNumber); // 如果序列号不一致就更改序列号
 					appUserService.update(userApp);
@@ -241,8 +246,6 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	 * @param picFile
 	 * @param tUserApp
 	 * @return
-	 * @author feiyang
-	 * @date 2016-1-21
 	 */
 	public AppCommonModel updateUserHeadImg(HttpServletRequest request, MultipartFile picFile, TUserApp tUserApp) {
 		AppCommonModel model = new AppCommonModel(-1, "修改头像失败");
@@ -272,8 +275,6 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	 * @param tUserLogin
 	 * @param newPassword
 	 * @return
-	 * @author feiyang
-	 * @date 2016-1-21
 	 */
 	public AppCommonModel updatePassword(TUserLogin tUserLogin, String newPassword) {
 		AppCommonModel model = new AppCommonModel(-1, "修改失败");
@@ -380,7 +381,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			model.setObj(appModel);
 			return model;
 		}
-		TUserApp parentUserApp=parentUserApp=updateUserApprentice(parentUserId);
+		TUserApp parentUserApp = updateUserApprentice(parentUserId);
 		tUserApp.setCreateDate(new Date());
 		tUserApp.setUserApppType(Constants.USER_APPP_TYPE_1);// 普通用户
 		tUserApp.setTaskNewStatus(1);// 新手任务默认未完成
@@ -434,6 +435,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	 *            用户编号
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	public synchronized AppCommonModel updateUserApprentice(String invintedNum, String userNum) {
 
 		AppCommonModel model = new AppCommonModel();

@@ -21,11 +21,6 @@ import com.ruanyun.web.service.background.AdverInferfaceService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 
-
-/**
- *@author feiyang
- *@date 2016-1-25
- */
 @Controller
 @RequestMapping("adverInferface")
 public class AdverInferfaceController extends BaseController {

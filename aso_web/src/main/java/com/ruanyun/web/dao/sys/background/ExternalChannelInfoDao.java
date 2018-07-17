@@ -8,5 +8,5 @@ import com.ruanyun.web.model.TExternalChannelInfo;
 @Repository("externalChannelInfoDao")
 public class ExternalChannelInfoDao extends BaseDaoImpl<TExternalChannelInfo>  
 {
-
+	
 }

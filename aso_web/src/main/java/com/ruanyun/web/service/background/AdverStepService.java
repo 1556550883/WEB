@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.ruanyun.common.orm.ICommonHqlDao;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
-import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelAdverStep;
 import com.ruanyun.web.util.NumUtils;

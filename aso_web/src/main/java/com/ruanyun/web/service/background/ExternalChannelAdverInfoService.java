@@ -69,4 +69,9 @@ public class ExternalChannelAdverInfoService extends BaseServiceImpl<TExternalCh
 	{
 		return externalChannelAdverInfoDao.createAdverTable(adid, key);
 	}
+	
+	public TExternalChannelAdverInfo getExternalChannelAdverInfo(Integer externalAdverId) 
+	{
+		return super.get(TExternalChannelAdverInfo.class, "externalAdverId", externalAdverId);
+	}
 }

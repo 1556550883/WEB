@@ -13,7 +13,9 @@ import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TExternalChannelAdverInfo;
+import com.ruanyun.web.model.TExternalChannelAdverTaskInfo;
 import com.ruanyun.web.model.TExternalChannelInfo;
+import com.ruanyun.web.model.TExternalChannelTask;
 import com.ruanyun.web.service.background.ExternalChannelAdverInfoService;
 import com.ruanyun.web.service.background.ExternalChannelInfoService;
 import com.ruanyun.web.util.CallbackAjaxDone;
@@ -79,5 +81,30 @@ public class ExternalChannelAdverInfoController extends BaseController
 		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
 		}
+	}
+	
+	@RequestMapping("completeList")
+	public String completeList(Page<TExternalChannelAdverTaskInfo> page,TExternalChannelTask task,Model model)
+	{
+		page.setNumPerPage(10);
+		TExternalChannelAdverInfo externalChannelAdverInfo = externalChannelAdverInfoService.getExternalChannelAdverInfo(Integer.parseInt(task.getAdverId()));
+		TExternalChannelInfo externalChannelInfo = externalChannelInfoService.getInfoByChannelNum(externalChannelAdverInfo.getExternalChannelNum());
+		Page<TExternalChannelAdverTaskInfo> page1 = externalChannelInfoService.completeListInfo(page, externalChannelInfo, externalChannelAdverInfo);
+		addModel(model, "pageList", page1);
+		addModel(model, "bean", task);
+		return "pc/externalChannelAdverInfo/taskCompleteList";
+	}
+	
+	
+	@RequestMapping("adverCompleteInfo")
+	public String adverCompleteInfo(Page<TExternalChannelTask> page,TExternalChannelTask task,Model model)
+	{
+		page.setNumPerPage(10);
+		TExternalChannelAdverInfo externalChannelAdverInfo = externalChannelAdverInfoService.getExternalChannelAdverInfo(Integer.parseInt(task.getAdverId()));
+		TExternalChannelInfo externalChannelInfo = externalChannelInfoService.getInfoByChannelNum(externalChannelAdverInfo.getExternalChannelNum());
+		Page<TExternalChannelTask> page1 = externalChannelInfoService.adverCompleteInfo(page, externalChannelInfo, externalChannelAdverInfo);
+		addModel(model, "pageList", page1);
+		addModel(model, "bean", task);
+		return "pc/externalChannelAdverInfo/taskCompleteInfoList";
 	}
 }

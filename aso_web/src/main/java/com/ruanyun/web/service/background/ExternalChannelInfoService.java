@@ -11,8 +11,12 @@ import org.springframework.stereotype.Service;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.web.dao.sys.background.ExternalChannelAdverInfoDao;
 import com.ruanyun.web.dao.sys.background.ExternalChannelInfoDao;
+import com.ruanyun.web.model.TExternalChannelAdverInfo;
+import com.ruanyun.web.model.TExternalChannelAdverTaskInfo;
 import com.ruanyun.web.model.TExternalChannelInfo;
+import com.ruanyun.web.model.TExternalChannelTask;
 import com.ruanyun.web.util.NumUtils;
 
 @Service
@@ -21,7 +25,9 @@ public class ExternalChannelInfoService extends BaseServiceImpl<TExternalChannel
 	@Autowired
 	@Qualifier("externalChannelInfoDao")
 	private ExternalChannelInfoDao externalChannelInfoDao;
-	
+	@Autowired
+	@Qualifier("externalChannelAdverInfoDao")
+	private ExternalChannelAdverInfoDao externalChannelAdverInfoDao;
 	@Override
 	public Page<TExternalChannelInfo> queryPage(Page<TExternalChannelInfo> page, TExternalChannelInfo t) 
 	{
@@ -103,6 +109,28 @@ public class ExternalChannelInfoService extends BaseServiceImpl<TExternalChannel
 		
 		return 1;
 	}
+	
+	public TExternalChannelTask getExternalChannelTask(String adverId) 
+	{
+		return super.get(TExternalChannelTask.class, "adverId", adverId);
+	}
+	
+	/**
+	 * 广告完成情况
+	 */
+	public Page<TExternalChannelAdverTaskInfo> completeListInfo(Page<TExternalChannelAdverTaskInfo> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
+	{
+		return	externalChannelAdverInfoDao.completeListInfo(page, externalChannelInfo, t);
+	}
+	
+	/**
+	 * 广告完成详情
+	 */
+	public Page<TExternalChannelTask> adverCompleteInfo(Page<TExternalChannelTask> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
+	{
+		return	externalChannelAdverInfoDao.adverCompleteInfo(page, externalChannelInfo, t);
+	}
+	
 	
 	 public static String getRandomString(int length){
 	     String str="abcdefghijklmnopqrstuvwxyz0123456789";

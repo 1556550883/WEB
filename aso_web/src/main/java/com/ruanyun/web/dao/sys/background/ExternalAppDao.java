@@ -53,7 +53,7 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 		return sqlDao.execute(sql.toString());
 	}
 	
-	public TExternalChannelTask getExternalAdverInfo(TExternalChannelTask tExternalChannelTask, String adid, String key) 
+	public TExternalChannelTask getExternalTaskInfo(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{
 		String tablename = table_prefix+ adid + key;
 		

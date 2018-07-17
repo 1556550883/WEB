@@ -46,6 +46,7 @@
 				<th align="center">状态</th>
 				<th align="center">创建时间</th>
 				<th align="center">操作</th>
+				<th align="center">外放任务记录 </th>	
 			</tr>
 		</thead>
 		<tbody>
@@ -64,6 +65,9 @@
 	       
 	                <td><ry:formatDate date="${item.externalAdverCreatetime}" toFmt="yyyy-MM-dd"></ry:formatDate> </td> 
 					<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="openNav('externalChannelAdverInfo/toedit?id=${item.externalAdverId}','修改广告信息','main_index3')"><span>修改</span></a></td>
+					<td>
+						<a style="cursor: pointer;" onclick="openNav('externalChannelAdverInfo/completeList?adverId=${item.externalAdverId}','广告完成情况','main_index2')"><div style="color: blue">广告完成情况</div></a>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>

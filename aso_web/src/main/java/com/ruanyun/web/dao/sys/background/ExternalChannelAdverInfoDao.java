@@ -1,10 +1,19 @@
 package com.ruanyun.web.dao.sys.background;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.TExternalChannelAdverInfo;
+import com.ruanyun.web.model.TExternalChannelAdverTaskInfo;
+import com.ruanyun.web.model.TExternalChannelInfo;
+import com.ruanyun.web.model.TExternalChannelTask;
 
 @Repository("externalChannelAdverInfoDao")
 public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdverInfo>  
@@ -52,5 +61,63 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 		int result = sqlDao.execute(sql);
 		
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Page<TExternalChannelAdverTaskInfo> completeListInfo(Page<TExternalChannelAdverTaskInfo> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
+	{
+		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
+		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 GROUP BY keywords";
+		Query query  = sqlDao.createQuery(sql);
+		List<Object[]> result = query.list();
+		List<TExternalChannelAdverTaskInfo> list = new ArrayList<TExternalChannelAdverTaskInfo>();
+		for(Object[] objs : result)
+		{
+            TExternalChannelAdverTaskInfo info = new TExternalChannelAdverTaskInfo();
+            info.setAdverId(t.getExternalAdverId());
+            info.setKeywords(objs[0] + "");
+            info.setNum(objs[1] + "");
+            
+            list.add(info);
+	    }
+		
+		page.setResult(list);
+		
+		return page;
+	}
+	
+	//查询任务详情
+	@SuppressWarnings("unchecked")
+	public Page<TExternalChannelTask> adverCompleteInfo(Page<TExternalChannelTask> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
+	{
+		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
+		String sql = "SELECT * FROM " + tableName + " WHERE status = 3 and receive_time >= DATE_SUB(CURDATE(),INTERVAL 1 DAY)";
+		Query query  = sqlDao.createQuery(sql);
+		List<Object[]> result = query.list();
+		List<TExternalChannelTask> list = new ArrayList<TExternalChannelTask>();
+		java.text.SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(Object[] objs : result)
+		{
+			TExternalChannelTask info = new TExternalChannelTask();
+            info.setAdverId(t.getExternalAdverId() + "");
+            info.setIp(objs[1] + "");
+            info.setIdfa(objs[2] + "");
+            info.setKeywords(objs[3] + "");
+            
+            try 
+            {
+				info.setReceiveTime(formatter.parse(objs[7] + ""));
+				info.setCompleteTime(formatter.parse(objs[8] + ""));
+			} 
+            catch (ParseException e)
+            {
+				e.printStackTrace();
+			}
+            
+            list.add(info);
+	    }
+		
+		page.setResult(list);
+		return page;
 	}
 }

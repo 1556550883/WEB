@@ -23,10 +23,6 @@ import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.service.app.AppUserService;
 import com.ruanyun.web.util.NumUtils;
 
-/**
- *@author feiyang
- *@date 2016-1-7
- */
 @Service
 public class AdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiveInfo>{
 	

@@ -18,11 +18,10 @@ public class ExternalAppService extends BaseServiceImpl<TExternalChannelTask>
 		externalAppDao.save(tExternalChannelTask, adid, key);
 	}
 	
-	public TExternalChannelTask getExternalAdverInfo(TExternalChannelTask tExternalChannelTask, String adid, String key) 
+	public TExternalChannelTask geTExternalTaskInfo(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{
-		return externalAppDao.getExternalAdverInfo(tExternalChannelTask, adid, key);
+		return externalAppDao.getExternalTaskInfo(tExternalChannelTask, adid, key);
 	}
-	
 	
 	public int update(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{
