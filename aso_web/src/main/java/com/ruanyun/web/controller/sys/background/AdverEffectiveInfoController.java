@@ -6,9 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
-import com.ruanyun.web.model.TAdverEffectiveInfo;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.service.background.AdverEffectiveInfoService;
 

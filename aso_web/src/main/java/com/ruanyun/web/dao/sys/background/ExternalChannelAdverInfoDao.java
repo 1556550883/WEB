@@ -44,7 +44,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	//创建对应的广告表：adid+key
 	public int createAdverTable(String adid, String key) 
 	{
-		String tableName = "t_external_channel" + adid + key;
+		String tableName = "t_external_channel" + adid;
 		String sql = "CREATE TABLE "+ tableName +" (" + 
 				"  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID'," + 
 				"  `ip` VARCHAR(20) NULL COMMENT '用户IP'," + 
@@ -53,6 +53,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 				"  `callback` VARCHAR(200) NULL COMMENT '回调地址'," + 
 				"  `adver_id` INT(11) NULL COMMENT '广告ID'," + 
 				"  `status` VARCHAR(3) NOT NULL COMMENT '状态（0-排重-1-点击-3-激活）'," + 
+				"  `channel_key` VARCHAR(100) NULL COMMENT '关键词'," + 
 				"  `receive_time` DATETIME DEFAULT NULL COMMENT '领取时间'," + 
 				"  `complete_time` DATETIME DEFAULT NULL COMMENT '完成时间'," + 
 				"   CONSTRAINT idfa_no_repeat UNIQUE (idfa),"+
@@ -66,8 +67,8 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	@SuppressWarnings("unchecked")
 	public Page<TExternalChannelAdverTaskInfo> completeListInfo(Page<TExternalChannelAdverTaskInfo> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
 	{
-		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
-		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 GROUP BY keywords";
+		String tableName = "t_external_channel" + t.getAdid();
+		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' GROUP BY keywords";
 		Query query  = sqlDao.createQuery(sql);
 		List<Object[]> result = query.list();
 		List<TExternalChannelAdverTaskInfo> list = new ArrayList<TExternalChannelAdverTaskInfo>();
@@ -90,8 +91,8 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	@SuppressWarnings("unchecked")
 	public Page<TExternalChannelTask> adverCompleteInfo(Page<TExternalChannelTask> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
 	{
-		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
-		String sql = "SELECT * FROM " + tableName + " WHERE status = 3 and receive_time >= DATE_SUB(CURDATE(),INTERVAL 1 DAY)";
+		String tableName = "t_external_channel" + t.getAdid();
+		String sql = "SELECT * FROM " + tableName + " WHERE status = 3 and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' and receive_time >= DATE_SUB(CURDATE(),INTERVAL 1 DAY)";
 		Query query  = sqlDao.createQuery(sql);
 		List<Object[]> result = query.list();
 		List<TExternalChannelTask> list = new ArrayList<TExternalChannelTask>();
@@ -106,8 +107,8 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
             
             try 
             {
-				info.setReceiveTime(formatter.parse(objs[7] + ""));
-				info.setCompleteTime(formatter.parse(objs[8] + ""));
+				info.setReceiveTime(formatter.parse(objs[8] + ""));
+				info.setCompleteTime(formatter.parse(objs[9] + ""));
 			} 
             catch (ParseException e)
             {

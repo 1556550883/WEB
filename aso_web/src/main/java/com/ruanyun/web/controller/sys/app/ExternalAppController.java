@@ -30,7 +30,7 @@ public class ExternalAppController extends BaseController
 		
 		try 
 		{
-			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid);
 			
 			if(taskInfo != null && taskInfo.getIdfa() != null) 
 			{
@@ -71,7 +71,7 @@ public class ExternalAppController extends BaseController
 		JSONObject obj = new JSONObject();
 		try 
 		{
-			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid);
 			if(taskInfo == null) 
 			{
 				obj.element("code", -1);
@@ -129,7 +129,7 @@ public class ExternalAppController extends BaseController
 		
 		try 
 		{
-			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid);
 			if(taskInfo == null) 
 			{
 				obj.element("code", -1);

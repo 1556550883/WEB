@@ -21,6 +21,7 @@ public class TExternalChannelTask
 	private String callback;
 	private String adverId;
 	private String status;
+	private String channelKey;
 	private Date receiveTime;
 	private Date completeTime;
 	
@@ -134,5 +135,14 @@ public class TExternalChannelTask
 	public void setCompleteTime(Date completeTime) 
 	{
 		this.completeTime = completeTime;
+	}
+
+	@Column(name="channel_key")
+	public String getChannelKey() {
+		return channelKey;
+	}
+
+	public void setChannelKey(String channelKey) {
+		this.channelKey = channelKey;
 	}
 }
