@@ -26,8 +26,6 @@ public class AppDictionaryController extends BaseController{
 	 * 手机端接口:根据parentCode 获取集合
 	 * @param response
 	 * @param parentCode
-	 *@author feiyang
-	 *@date 2016-1-13
 	 */
 	@RequestMapping("getType")
 	public void getDictionaryList(HttpServletResponse response,String parentCode,String userNum,String sign){

@@ -16,6 +16,7 @@ import com.ruanyun.web.model.TExternalChannelAdverInfo;
 import com.ruanyun.web.model.TExternalChannelAdverTaskInfo;
 import com.ruanyun.web.model.TExternalChannelInfo;
 import com.ruanyun.web.model.TExternalChannelTask;
+import com.ruanyun.web.service.app.ExternalAppService;
 import com.ruanyun.web.service.background.ExternalChannelAdverInfoService;
 import com.ruanyun.web.service.background.ExternalChannelInfoService;
 import com.ruanyun.web.util.CallbackAjaxDone;
@@ -29,6 +30,9 @@ public class ExternalChannelAdverInfoController extends BaseController
 	private ExternalChannelAdverInfoService externalChannelAdverInfoService;
 	@Autowired
 	private ExternalChannelInfoService externalChannelInfoService;
+	
+	@Autowired
+	private ExternalAppService externalAppService;
 	
 	@RequestMapping("list")
 	public String getChannelAdverInfoList(Page<TExternalChannelAdverInfo> page,TExternalChannelAdverInfo info,Model model)
@@ -63,6 +67,12 @@ public class ExternalChannelAdverInfoController extends BaseController
 		}
 	}
 
+	@RequestMapping("import")
+	public String importCSV()
+	{
+		externalAppService.importCsv();
+		return "pc/externalChannelAdverInfo/importResult";
+	}
 	/**
 	 * 
 	 * 功能描述：增加

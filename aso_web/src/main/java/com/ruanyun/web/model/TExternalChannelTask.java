@@ -24,6 +24,16 @@ public class TExternalChannelTask
 	private Date receiveTime;
 	private Date completeTime;
 	
+	public TExternalChannelTask() {}
+	
+	public TExternalChannelTask(String ip, String idfa, String keywords, String status) 
+	{
+		this.ip = ip;
+		this.idfa = idfa;
+		this.keywords = keywords;
+		this.status = status;
+	}
+	
 	@Id @GeneratedValue(strategy=IDENTITY)
 	@Column(name="id", unique=true, nullable=false)
 	public int getId() 

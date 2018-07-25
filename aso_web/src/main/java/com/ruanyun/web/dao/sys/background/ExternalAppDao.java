@@ -1,5 +1,7 @@
 package com.ruanyun.web.dao.sys.background;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
@@ -21,6 +23,23 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 		
 		sqlDao.execute(sql.toString());
 	}
+	
+	
+	public void saveList(List<TExternalChannelTask> tExternalChannelTasks, String tableName) 
+	{
+		StringBuilder sql = new StringBuilder("INSERT INTO  ");
+		sql.append(tableName);
+		sql.append(" (ip,idfa,keywords,status,receive_time,complete_time) values ");
+		for(int i = 0; i < tExternalChannelTasks.size(); i++) 
+		{
+			sql.append("('"+tExternalChannelTasks.get(i).getIp()+"','"+tExternalChannelTasks.get(i).getIdfa()+ "','"+tExternalChannelTasks.get(i).getKeywords()+"','3', NOW(), NOW()),");
+		}
+		
+		String str = sql.toString();
+		str = str.substring(0,sql.length() - 1) + ";";
+		sqlDao.execute(str);
+	}
+
 	
 	public int update(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{

@@ -126,8 +126,6 @@ public class AppUserLoginController extends BaseController
 	 * 
 	 * @param response
 	 * @param session
-	 *@author feiyang
-	 *@date 2016-1-14
 	 */
 	@RequestMapping("getUser")
 	public void getUser(HttpServletResponse response, TUserApp tUserApp,
@@ -141,6 +139,20 @@ public class AppUserLoginController extends BaseController
 		super.writeJsonDataApp(response, acm);
 	}
 
+	@RequestMapping("invite")
+	public void invite(HttpServletResponse response,String id)
+	{
+		AppCommonModel acm = new AppCommonModel();
+		try 
+		{
+		} 
+		catch (Exception e)
+		{
+		}
+		
+		super.writeJsonDataApp(response, acm);
+	}
+	
 	/**
 	 * 
 	 * 手机端接口:修改个人信息
@@ -149,9 +161,6 @@ public class AppUserLoginController extends BaseController
 	 * @param userNum
 	 * @param sign
 	 * @param picFile
-	 *@author feiyang
-	 *type 1/ 新手任务
-	 *@date 2016-1-21
 	 */
 	@RequestMapping("updateUser")
 	public void updateUser(HttpServletResponse response, TUserApp tUserApp,String userNum,String sign,Integer type) {
