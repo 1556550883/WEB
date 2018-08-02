@@ -14,12 +14,25 @@ import com.ruanyun.web.util.FileUtils;
 @RequestMapping("download")
 public class AppDownloadController extends BaseController
 {
-	@RequestMapping("app")
-	public void getDictionaryList(HttpServletResponse response, String fileName)
+	@RequestMapping("HappyApp.plist")
+	public void getDictionaryList(HttpServletResponse response)
 	{
 		try 
 		{
-			FileUtils.downloadLocal(response, fileName);
+			FileUtils.downloadLocal(response, "HappyApp.plist");
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping("mySolution.ipa")
+	public void getipa(HttpServletResponse response)
+	{
+		try 
+		{
+			FileUtils.downloadLocal(response, "mySolution.ipa");
 		}
 		catch (FileNotFoundException e) 
 		{
