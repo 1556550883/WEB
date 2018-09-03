@@ -110,6 +110,10 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		return	userAppDao.getUserNum(type,createTime);
 	}
 	
+	public int getApprenticeNum(String id) 
+	{
+		return userAppDao.getApprenticeNum(id);
+	}
 
 	/**
 	 * 功能描述:修改手机用户
@@ -273,13 +277,31 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		userApp.setMasterID(masterID);
 		super.update(userApp);
 	}
-	
 
+	public void updatePhoneNum(HttpServletRequest request, TUserApp userApp,String phoneNum) 
+	{
+		userApp.setPhoneNum(phoneNum);;
+		super.update(userApp);
+	}
+	
+	public void updateSmsCode(HttpServletRequest request, TUserApp userApp,String smsCode) 
+	{
+		userApp.setInvitationCode(smsCode);
+		super.update(userApp);
+	}
+		
 	//updateLimitTime
 	public void updateLimitTime(TUserApp userApp,Integer limitTime) 
 	{
 		userApp.setLimitTime(limitTime);;
 		super.update(userApp);
+	}
+	
+	public void updateIdfa(TUserApp userApp, String idfa) 
+	{
+		userApp.setIdfa(idfa);
+		userAppDao.updateIdfa(userApp.getUserAppId(), idfa);
+		//super.update(userApp);
 	}
 	
 	public void upPhoneDetail(Integer userAppId, String device, String os) 

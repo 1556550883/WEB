@@ -2,7 +2,7 @@
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
 <%@include file="/WEB-INF/jsp/inc/ume.jsp"%>
     
-<ry:binding bingdingName="taskType,phoneType,adverStepCount,adverType,fileType,effectiveType,effectiveSource,userLevel,iosVersion" parentCode="TASK_TYPE,PHONE_TYPE,ADVER_STEP_COUNT,ADVER_TYPE,FILE_TYPE,EFFECTIVE_TYPE,EFFECTIVE_SOURCE,USER_LEVEL,OS_VERSION"></ry:binding>
+<ry:binding bingdingName="downloadType,taskType,phoneType,adverStepCount,adverType,fileType,effectiveType,effectiveSource,userLevel,iosVersion" parentCode="DOWNLOAD_TYPE,TASK_TYPE,PHONE_TYPE,ADVER_STEP_COUNT,ADVER_TYPE,FILE_TYPE,EFFECTIVE_TYPE,EFFECTIVE_SOURCE,USER_LEVEL,OS_VERSION"></ry:binding>
 <ry:binding parentCode="IS_AUTH" bingdingName="isAuth"></ry:binding>
 <style>
 <style>
@@ -17,7 +17,7 @@
 <div class="pageContent">
 	<form method="post" id="myform"  action="channelAdverInfo/edit?channelNum=${channelNum}" onsubmit="return iframeCallback(this,navTabAjaxDone);" enctype="multipart/form-data" >
 		<div class="pageFormContent nowrap" layoutH="57">
-  		    <dl class="nowrap" style="width: 100%">
+  		   <dl class="nowrap" style="width: 100%">
 				<dt>任务类型：</dt>
 				<dd>
 				   <select name="taskType" class="mustFill" title="任务类型">
@@ -34,12 +34,12 @@
 				   <select name="phoneType" class="mustFill" title="手机型号">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${phoneType}" var="item"> 
-				   			<option value="${item.itemCode}"<c:if test="${item.itemCode==bean.phoneType}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.phoneType}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
 		    </dl>
-		       <dl class="nowrap" style="width: 100%">
+		    <dl class="nowrap" style="width: 100%">
 				<dt>手机系统：</dt>
 				<dd>
 				   <select name="iosVersion" class="mustFill" title="手机系统">
@@ -50,10 +50,8 @@
 				   </select>
 				</dd>
 		    </dl>
-		    
-		    
-		    
-		        <dl class="nowrap" style="width: 100%">
+
+		    <dl class="nowrap" style="width: 100%">
 				<dt>任务等级：</dt>
 				<dd>
 				   <select name="level" class="mustFill" title="任务等级">
@@ -64,6 +62,27 @@
 				   </select>
 				</dd>
 		    </dl>
+		    
+		    <dl class="nowrap" style="width: 100%">
+				<dt>下载类型：</dt>
+				<dd>
+				   <select name="downloadType" class="mustFill" title="下载类型">
+				   		<option value="">请选择</option>
+				   		<c:forEach items="${downloadType}" var="item"> 
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.downloadType}">selected</c:if>>${item.itemName}</option>
+				   		</c:forEach>
+				   </select>
+				</dd>
+		    </dl>
+		    
+		    <dl class="nowrap" style="width: 100%">
+				<dt>是否为注册任务：</dt>
+				<dd>
+				    是：<input type="radio" id="isRegister_1" name="isRegister"  value="1"/>
+				   否 ：<input type="radio" id="isRegister_0" name="isRegister"  value="0"/>
+				</dd>
+		    </dl>
+		    
 			<dl>
 				<dt>广告ID：</dt>
 				<dd>
@@ -165,6 +184,18 @@
 	</form>
 	
 	<script type="text/javascript">
+		 $(function(){
+			var val = '${bean.isRegister}';
+			if(val == 1)
+			{
+				$("#isRegister_1").attr("checked", true);
+			}
+			else
+			{
+				$("#isRegister_0").attr("checked", true);
+			}
+		})
+		
 		function checkForm()
 		{
 			//$("#adverRemand").val(ue.getContent());

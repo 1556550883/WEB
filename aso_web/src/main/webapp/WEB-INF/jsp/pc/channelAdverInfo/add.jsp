@@ -75,6 +75,14 @@
 				</dd>
 		    </dl>
 		    
+		    <dl class="nowrap" style="width: 100%">
+				<dt>是否为注册任务：</dt>
+				<dd>
+				    是：<input type="radio" name="isRegister"  value="1"/>
+				   否 ：<input type="radio" name="isRegister"  value="0"/>
+				</dd>
+		    </dl>
+		    
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告storeID：</dt>
 				<dd>
@@ -192,6 +200,7 @@
 	</form>
 	
 	<script type="text/javascript">
+	
 		function checkForm(){
 			//$("#adverRemand").val(ue.getContent());
 			if(check()){

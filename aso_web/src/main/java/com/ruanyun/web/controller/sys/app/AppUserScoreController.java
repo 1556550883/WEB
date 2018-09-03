@@ -72,7 +72,7 @@ public class AppUserScoreController extends BaseController
 			return;
 		}
 		TUserScore userScore = userScoreService.getScore(userNum);
-		if(userScore.getScore() > forward)
+		if(userScore.getScore() >= forward)
 		{
 			model.setResult(userScoreService.addPutForward(userNum, forward));
 			
@@ -80,6 +80,7 @@ public class AppUserScoreController extends BaseController
 			if(model.getResult() == 1)
 			{
 				TUserScore score = new TUserScore();
+				score.setType(2);
 				score.setUserNum(userNum);
 				score.setScore(-forward);
 				

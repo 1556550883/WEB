@@ -23,7 +23,7 @@
 
 
 
-	<mvc:view-controller path="/" view-name="redirect:/login" />
+	<mvc:view-controller path="/" view-name="redirect:/invite/guest" />
 	<!--
 		当在web.xml 中 DispatcherServlet使用 <url-pattern>/</url-pattern> 映射时，
 		静态资源也会被拦截掉。所以不设置是没法直接访问的。

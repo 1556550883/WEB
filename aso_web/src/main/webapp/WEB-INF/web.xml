@@ -35,7 +35,7 @@
 
 	<!-- spring servlet -->
 	<servlet>
-		<servlet-name>sjjz</servlet-name>
+		<servlet-name>/</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
@@ -43,7 +43,7 @@
 		</init-param>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>sjjz</servlet-name>
+		<servlet-name>/</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	<listener>

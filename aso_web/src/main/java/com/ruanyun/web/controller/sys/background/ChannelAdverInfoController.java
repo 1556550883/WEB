@@ -98,6 +98,10 @@ public class ChannelAdverInfoController extends BaseController
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			info.setAdverDayStart(simpleDateFormat.parse(info.getAdverTimeStart()));
 			info.setAdverDayEnd(simpleDateFormat.parse(info.getAdverTimeEnd()));
+			if(info.getIsRegister() == null) 
+			{
+				info.setIsRegister(0);//代表任务不是注册任务 1代表为注册任务
+			}
 			//任务类型
 			if(info.getChannelNum().equals("3") && !info.getTaskType().equals("2"))
 			{

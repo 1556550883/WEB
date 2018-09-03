@@ -74,6 +74,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String adversJson;
      private Integer downloadType;
      private String adverAdid;
+     private Integer isRegister;//is_register 
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -505,5 +506,16 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	public void setAdverAdid(String adverAdid)
 	{
 		this.adverAdid = adverAdid;
+	}
+	
+	@Column(name="is_register")
+	public Integer getIsRegister() 
+	{
+		return isRegister;
+	}
+	
+	public void setIsRegister(Integer isRegister)
+	{
+		this.isRegister = isRegister;
 	}
 }

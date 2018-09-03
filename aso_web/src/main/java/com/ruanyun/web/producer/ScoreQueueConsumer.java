@@ -58,8 +58,14 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 			{
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 				TUserScore score = (TUserScore)SerializationUtils.deserialize(delivery.getBody());
-				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);  
-				userScoreService.updateScore(userScoreService.getScore(score.getUserNum()), score.getScore());
+				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+				TUserScore sss = userScoreService.getScore(score.getUserNum());
+				if(score.getType() == 1) 
+				{
+					sss.setRankingNum(score.getRankingNum());	
+				}
+				
+				userScoreService.updateScore(sss, score.getScore(), score.getType());
 			}
 			catch (ShutdownSignalException e) 
 			{

@@ -91,6 +91,12 @@ public class UserScoreDao extends BaseDaoImpl<TUserScore>{
 		return sqlDao.execute(sql);
 	}
 	
+	
+	public int updateApprentice(String usernum, int count)
+	{
+		String sql="UPDATE t_user_score SET apprentice_count= "+count+" where user_num = '"+usernum+ "'";
+		return sqlDao.execute(sql);
+	}
 	/**
 	 * 功能描述: 清楚红包数量
 	 *

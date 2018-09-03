@@ -69,6 +69,7 @@ public class DuiJieController extends BaseController
 			map.put("leastForward", dictionaryService.getLeastForward());
 			map.put("notice", dictionaryService.getNotice());
 			map.put("downloadUrl", dictionaryService.getDownloadUrl());
+			map.put("appVersion", dictionaryService.getAppVersion());
 			model.setObj(map);
 			model.setResult(1);
 			model.setMsg("成功！");
@@ -129,7 +130,7 @@ public class DuiJieController extends BaseController
 		if(adverInfo.getAdverStatus() != 1) 
 		{
 			model.setResult(-1);
-			model.setMsg("领取任务失败。原因：任务已被管理员停止！");
+			model.setMsg("任务已完结或已下线！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -150,7 +151,7 @@ public class DuiJieController extends BaseController
 			}
 			
 			//判断数据库里IP是否重复
-			AppCommonModel checkIpModel = checkIPDuplicated(adid, taskList, idfa);
+			AppCommonModel checkIpModel = checkIPDuplicated(adid, taskList, ip);
 			if(checkIpModel.getResult() != 2) 
 			{
 				super.writeJsonDataApp(response, checkIpModel);
@@ -334,7 +335,7 @@ public class DuiJieController extends BaseController
 	}
 	
 	//判断ip是否重复
-	private AppCommonModel checkIPDuplicated(String adid, Page<TUserappidAdverid> taskList, String idfa)
+	private AppCommonModel checkIPDuplicated(String adid, Page<TUserappidAdverid> taskList, String ip)
 	{
 		AppCommonModel model = new AppCommonModel(2, "通过！");
 		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -343,7 +344,7 @@ public class DuiJieController extends BaseController
 //			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date())) 
 //					&& !idfa.equals(item.getIdfa()) 
 //					&& adid.equals(item.getAdid())) 
-			if (!idfa.equals(item.getIdfa()) && adid.equals(item.getAdid())) 
+			if (ip.equals(item.getIp()) && adid.equals(item.getAdid())) 
 			{
 				model.setResult(-1);
 				model.setMsg("领取任务失败。原因：IP重复！");
@@ -460,6 +461,7 @@ public class DuiJieController extends BaseController
 		//更新金额
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
+		score.setType(0);
 		if(tUserApp.getUserApppType() == 1) //工作室
 		{
 			float sco = (float) (adverInfo.getAdverPrice() - 0.2);
@@ -642,6 +644,7 @@ public class DuiJieController extends BaseController
 			//把单子发送到队列
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
+			score.setType(0);
 			if(tUserApp.getUserApppType() == 1) //工作室
 			{
 				float sco = (float) (adverInfo.getAdverPrice() - 0.2);
@@ -702,6 +705,7 @@ public class DuiJieController extends BaseController
 			//更改金额
 			TUserScore score = new TUserScore();
 			score.setUserNum(userNum);
+			score.setType(0);
 			if(tUserApp.getUserApppType() == 1) //工作室
 			{
 				float sco = (float) (adverInfo.getAdverPrice() - 0.2);
@@ -737,8 +741,10 @@ public class DuiJieController extends BaseController
 			if(masterUserApp != null)
 			{
 				TUserScore score = new TUserScore();
-				score.setUserNum(masterUserApp.getUserNum());
-				score.setScore((float) 1);
+				score.setType(1);
+				score.setUserNum(masterUserApp.getUserNum());//师傅num
+				score.setRankingNum(tUserApp.getUserNum());//用来表示徒弟num
+				score.setScore((float) 0.5);
 				QueueProducer.getQueueProducer().sendMessage(score, "socre");
 			}
 			
@@ -1054,11 +1060,11 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-//		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-//		tUserappidAdverid.setIdfa(idfa);
-//		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-//		tUserappidAdverid.setStatus("1.7");
-//		userappidAdveridService.updateTaskStatus(tUserappidAdverid);
+		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
+		tUserappidAdverid.setIdfa(idfa);
+		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
+		tUserappidAdverid.setStatus("1.7");
+		userappidAdveridService.updateTaskStatus(tUserappidAdverid);
 		model.setResult(1);
 		model.setMsg("成功！");
 		super.writeJsonDataApp(response, model);

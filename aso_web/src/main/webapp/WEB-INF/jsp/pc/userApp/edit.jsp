@@ -8,7 +8,7 @@
 			<dl>
 				<dt>登录名：</dt>
 				<dd>
-					<input type="text" name="loginName"  value="${bean.loginName}" maxlength="20" size="30" class="required" alt="请输入登录名"  />
+					<input type="text" name="loginName"  value="${bean.loginName}" maxlength="100" size="100" class="required" alt="请输入登录名"  />
 				</dd>
 			</dl>
 			<dl>

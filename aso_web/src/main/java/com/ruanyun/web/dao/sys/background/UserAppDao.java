@@ -6,6 +6,7 @@
 package com.ruanyun.web.dao.sys.background;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;
@@ -77,6 +78,12 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	}
 	
 	
+	public int getApprenticeNum(String id) 
+	{
+		//StringBuffer sql = new StringBuffer(" SELECT count(*) from t_user_app WHERE master_id='"+id+"'");
+		String sql = "SELECT count(*) from t_user_app WHERE master_id= '"+id+"'";
+		return sqlDao.getCount(sql);
+	}
 	
 	/**
 	 * 
@@ -103,6 +110,12 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	public int updatePhoneDetails(Integer userAppId, String device, String os)
 	{
 		StringBuffer sql = new StringBuffer(" UPDATE t_user_app set flag3 ='"+device+"'" + ", flag4 = '"+os+"'" + " where user_app_id = '"+userAppId+"'");
+		return sqlDao.execute(sql.toString());
+	}
+	
+	public int updateIdfa(Integer userAppId, String idfa)
+	{
+		StringBuffer sql = new StringBuffer(" UPDATE t_user_app set idfa ='"+idfa+"'" + " where user_app_id = '"+userAppId+"'");
 		return sqlDao.execute(sql.toString());
 	}
 }

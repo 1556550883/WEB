@@ -31,7 +31,7 @@
 			
 			.bottom_menu
 			{
-				height:47%;
+				height:50%;
 				width:100%;
 				background:url('../img/invite/dibu.png') no-repeat;
 				position: fixed;
@@ -42,7 +42,7 @@
 			.bottom_pic_1
 			{
 				width:60%;
-				height:20px;
+				height:15px;
 				margin-top:5px;
 				margin-left:20%;
 				text-align:center; 
@@ -61,7 +61,7 @@
 			.bottom_pic_2
 			{
 				width:60%;
-				height:20px;
+				height:15px;
 				margin-top:5px;
 				margin-left:20%;
 				text-align:center; 
@@ -70,40 +70,47 @@
 			
 			.text_style
 			{
-				margin-top:65%;
+				margin-top:50%;
 				text-align: center;
 				width:80%;
 				margin-left:10%;
 				color: white;
 			}
 				
-			.black_overlay{
-			display: none;
-			position: absolute;
-			top: 0%;
-			left: 0%;
-			width: 100%;
-			height: 100%;
-			background-color: black;
-			z-index:1001;
-			-moz-opacity: 0.8;
-			opacity:.50;
-			filter: alpha(opacity=50);
-		}
-		
-		.white_content {
-		    display: none;
-		    position: absolute;
-		    width: 50%;
-			top: 35%;
-		    left: 25%;
-			text-align: center;
-		    border: 2px solid #d3d3d3;
-		    background-color: white;
-		    z-index: 1002;
-			/* overflow: auto; */
-		}
-		
+			.text_style_1
+			{
+				margin-top:12px;
+				text-align: center;
+				width:80%;
+				margin-left:10%;
+				color: blue;
+			}
+			
+	   .black_overlay{
+         display: none; 
+         position: absolute;  
+         top: 0%;  
+         left: 0%;  
+         width: 100%;  
+         height: 100%;  
+         background-color: #ffffff;  
+         z-index:1001;  
+         -moz-opacity: 0.8;  
+         opacity:.80;  
+         filter: alpha(opacity=80);  
+    } 
+    
+    .white_content {
+        display: none;  
+        position: absolute; 
+        top: 10%; 
+        left: 5%;   
+        right:5%;  
+        bottom:10%;        
+        background-color: white; 
+        z-index:1002; /* 数字的大小指明了div的相对层，数字大的在上层 */
+        overflow: auto;
+    }
 		.tip_content {
 		    position: absolute;
 		    width: 90%;
@@ -142,7 +149,6 @@
         </style>
         
 		<script type="text/javascript">
-		
 			function ShowDiv(show_div,bg_div)
 			{
 				var scrollHeight = document.body.scrollHeight; //文档高度
@@ -160,23 +166,19 @@
 				document.getElementById(bg_div).style.display='none';
 			};
 		
-			function goToAdd(){
-				var ipt = document.getElementById('phone');//获取input的节点
-				var v = ipt.value;
-				var masterid = ${master};
-				document.getElementById('MyDiv').style.display='none';
-				document.getElementById('fade').style.display='none';
-				
+			function goToAdd(deviceUuid){
+				var masterid = "${master}";
 				ajax({ 
 					  type:"POST", 
-					  url:"invite/phone", 
+					  url:"invite/deviceUuid", 
 					  dataType:"json", 
-					  data:{"phone":v,"master":masterid}, 
+					  data:{"deviceUuid":deviceUuid,"masterid":masterid}, 
 					  beforeSend:function(){ 
 							//失败和成功，最后都会执行
 					  }, 
 					  success:function(msg){ 
 						  //请求成功执行
+						  alert(msg);
 					  }, 
 					  error:function(){ 
 						 //请求失败
@@ -239,6 +241,35 @@
 			    return data; 
 			  } 
 			}
+			
+			function hrefs(v)
+			{
+				var url = "" ;  
+				if(v == 0){
+					var userId = "${userId}";
+					url = "https://moneyzhuan.com/download/happyzhuan.mobileconfig?masterid=" +  "${master}" + "&userId=" + userId;
+				}
+				else
+				{
+
+
+					url = "happyzhuan://mySolutiontion.com?udid=" + "${udid}";
+				}
+				
+				window.location.href = url;
+			}
+			 
+			 function openWindow()
+			 {
+			        document.getElementById("light_jiaoxue").style.display='block';
+			        document.getElementById('fade').style.display='block';
+			 }
+			 
+		    function closeWindow(){
+		        document.getElementById('light_jiaoxue').style.display='none';
+		        document.getElementById('fade').style.display='none';
+		    }
+				 
 		</script>
 		
 		<%
@@ -249,38 +280,25 @@
     </head>
     <body>
 	   <div class="text_style">下载立送现金红包，零成本，零投入，高奖励，完成任务可得现金！</div>
+	   <div class="text_style_1" onclick="openWindow()">查看安装说明</div>
        <div class="bottom_menu">
-       			<div style="width:100%;text-align:center;color: white; margin-top:15%;">一、安装入口后，可快速打开</div>
-	       		<div class="bottom_pic_1" onClick="ShowDiv('MyDiv','fade')"> 
+       			<div style="width:100%;text-align:center;color: red; margin-top:13%;">一、安装助手，务必获取设备信任</div>
+	       		<div class="bottom_pic_1" onClick="window.location.href='itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist'"> 
+	           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
+	           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">安装助手</div>
+	            </div>
+           		 <div style="width:100%;text-align:center;color: red; margin-top:8%;">二、安装入口后，可快速打开</div>
+	           	<div class="bottom_pic_2" onClick="hrefs(0)"> 
 	           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
 	           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">安装入口</div>
 	            </div>
-           		 <div style="width:100%;text-align:center;color: white; margin-top:8%;">二、下载完成后，务必点击</div>
-	           	<div class="bottom_pic_2" onClick="window.location.href='happyzhuan://com.mySolutiontion'"> 
+	             <div style="width:100%;text-align:center;color: red; margin-top:8%;">三、下载完成后，务必点击</div>
+	           	<div class="bottom_pic_2" onClick="hrefs(1)"> 
 	           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
 	           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">打开助手</div>
 	            </div>
-	            <div style="width:100%;text-align:center;color: white; margin-top:8%;">
-	    			<a href="itms-services://?action=download-manifest&url=https://qisu.ink/sjjz/download/HappyApp.plist">
-	    			如不能打开，请先下载助手
-	    			</a> 
-	    		</div>
+	           
   	 		 </div>
-  	  
-  	  <div id="fade" class="black_overlay"></div>
-	  
-	<div id="MyDiv" class="white_content">
-		<div style="text-align: center; cursor: default; margin-top:10px;margin-bottom:10px;">
-			<span style="font-size: 16px; color: #56BE2D; font-weight: 600;cursor:pointer;"  onclick="CloseDiv('MyDiv','fade')">关闭</span>
-		</div>
-		<div style="margin-left: 10%; width:80%">
-			<div class="floatleft editor" style="font-size:16px;height: 24px;line-height: 24px;"><input type="text" id="phone" name="phone" placeholder="手机号码:"/></div>
-		</div>
-		<HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3); margin-top: 10px;" width="90%" color=#ddd SIZE=2>
-		<div style="width:80%; margin-bottom: 10px; margin-top: 10px; margin-left: 10%;">
-			<input type="button" style="width:100%;" onclick="goToAdd()" value="添加"/>
-		</div>
-	</div>
 	
 	 <div id="fade_1" class="black_overlay_1"></div>
 	<div id="safariTip" class="tip_content">
@@ -291,6 +309,9 @@
 			<img src="<%=path %>/img/invite/safari_tip.png" width="100%"/>
 		</div>
 	</div>
+	
+<div id="light_jiaoxue" class="white_content"> <img src="<%=path %>/img/invite/jiaoxue.jpg" onClick="closeWindow()" height="100%" width="100%"/></div>
+<div id="fade" class="black_overlay"  onClick="closeWindow()"></div>
 	<script>
 		var issafariBrowser = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
 		if(issafariBrowser == true)

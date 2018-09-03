@@ -5,8 +5,6 @@
  */
 package com.ruanyun.web.controller.sys.app;
 
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,7 +19,6 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserLogin;
 import com.ruanyun.web.service.app.AppUserLoginService;
-import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.util.PhoneFormatCheckUtils;
 
@@ -33,8 +30,6 @@ public class AppUserLoginController extends BaseController
 	private AppUserLoginService appUserLoginService;
 	@Autowired	
 	private UserAppService userAppService;
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	/**
 	 * 
@@ -74,40 +69,27 @@ public class AppUserLoginController extends BaseController
 	 * @param request
 	 */
 	@RequestMapping("send_msg")
-	public void sendMsg(HttpServletResponse response, String loginName, HttpServletRequest request) 
+	public void sendMsg(HttpServletResponse response,String userId, String phoneNumber, HttpServletRequest request) 
 	{
 		AppCommonModel model = null;
 		try 
 		{
-			if(PhoneFormatCheckUtils.isPhoneLegal(loginName)) 
+			if(PhoneFormatCheckUtils.isPhoneLegal(phoneNumber)) 
 			{
-				model = appUserLoginService.sendMsg(loginName);
+				model = appUserLoginService.sendMsg(phoneNumber);
 			}
 			else
 			{
 				model = new AppCommonModel(-1,"错误的手机号码！");
 			}
 			
-			TUserApp tUserApp = userAppService.getUserAppByUserName(loginName);
+			TUserApp tUserApp = userAppService.getUserAppById(Integer.parseInt(userId));
 			
 			if(model.getResult() == 1)
 			{
-				if(tUserApp == null) 
-				{
-					
-					tUserApp = new TUserApp();
-				}
+				String smsCode =  model.getObj() + "";
 				
-				tUserApp.setUserApppType(2);
-				tUserApp.setLoginName(loginName);
-				tUserApp.setLoginPwd(model.getObj() + "");
-				tUserApp.setLoginControl("1");
-				tUserApp.setLevel(dictionaryService.getVestorLevel());
-				tUserApp.setLimitTime(10);
-				//tUserApp.setUserNick("手机号码注册登录");
-				tUserApp.setCreateDate(new Date());
-				
-				userAppService.saveOrUpdate(tUserApp, request, null);
+				userAppService.updateSmsCode(request, tUserApp, smsCode);
 			}
 		}
 		catch (Exception e) 
@@ -120,6 +102,45 @@ public class AppUserLoginController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}	
 
+	@RequestMapping("verifySmsCode")
+	public void verifySmsCode(HttpServletResponse response,String userId, String phoneNumber, String smsCode,HttpServletRequest request) 
+	{
+		AppCommonModel model = new AppCommonModel();
+		if(phoneNumber == null || smsCode == null) 
+		{
+			model.setResult(-1);
+			model.setMsg("号码和验证码不能为空！");
+			model.setObj("{}");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		TUserApp tUserApp = userAppService.getUserAppById(Integer.parseInt(userId));
+		if( tUserApp.getInvitationCode() != null && tUserApp.getInvitationCode().equals(smsCode)) 
+		{
+			try 
+			{
+				userAppService.updatePhoneNum(request, tUserApp, phoneNumber);
+				model.setResult(1);
+				model.setMsg("绑定成功！");
+				model.setObj("{}");
+			}
+			catch (Exception e) 
+			{
+				model.setResult(-1);
+				model.setMsg("号码已经被使用！");
+				model.setObj("{}");
+			}
+		}
+		else
+		{
+			model.setResult(-1);
+			model.setMsg("号码和验证码不能为空！");
+			model.setObj("{}");
+		}
+		
+		super.writeJsonDataApp(response, model);
+	}
 	/**
 	 * 
 	 * 手机端接口:获取个人信息
@@ -139,6 +160,17 @@ public class AppUserLoginController extends BaseController
 		super.writeJsonDataApp(response, acm);
 	}
 
+	@RequestMapping("getUserForUdid")
+	public void getUserForUdid(HttpServletResponse response, String udid, String idfa) {
+		AppCommonModel acm = new AppCommonModel();
+		try {
+			acm = appUserLoginService.getUserForUdid(udid, idfa);
+		} catch (Exception e) {
+			acm = new AppCommonModel(e.getMessage(), "{}");
+		}
+		super.writeJsonDataApp(response, acm);
+	}
+	
 	@RequestMapping("invite")
 	public void invite(HttpServletResponse response,String id)
 	{
@@ -177,33 +209,49 @@ public class AppUserLoginController extends BaseController
 	public void updateUserWeiXin(HttpServletResponse response,String userNum,String weiXinName,String headImgUrl, String openID) 
 	{
 		AppCommonModel acm = new AppCommonModel();
-		try {
+		
+		try
+		{
 			acm = appUserLoginService.updateUserWeiXin(userNum,weiXinName,headImgUrl,openID);
-		} catch (Exception e) {
-			acm = new AppCommonModel(e.getMessage(), "{}");
 		}
+		catch (Exception e) 
+		{
+			acm.setMsg("微信账号已被使用！");
+			acm.setResult(-1);
+		}
+		
 		super.writeJsonDataApp(response, acm);
 	}
 	
 	@RequestMapping("updateUserName")
-	public void updateUserName(HttpServletResponse response,String userNum,String userName) {
+	public void updateUserName(HttpServletResponse response,String userNum,String userName)
+	{
 		AppCommonModel acm = new AppCommonModel();
-		try {
+		try 
+		{
 			acm = appUserLoginService.updateUserName(userNum,userName);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			acm = new AppCommonModel(e.getMessage(), "{}");
 		}
 		super.writeJsonDataApp(response, acm);
 	}
 	
 	@RequestMapping("updateUserAlipay")
-	public void updateUserAlipay(HttpServletResponse response,String userNum,String alipay) {
+	public void updateUserAlipay(HttpServletResponse response,String userNum,String alipay) 
+	{
 		AppCommonModel acm = new AppCommonModel();
-		try {
+		try 
+		{
 			acm = appUserLoginService.updateUserAlipay(userNum, alipay);
-		} catch (Exception e) {
-			acm = new AppCommonModel(e.getMessage(), "{}");
+		} 
+		catch (Exception e)
+		{
+			acm.setMsg("支付宝账号已被绑定！");
+			acm.setResult(-1);
 		}
+		
 		super.writeJsonDataApp(response, acm);
 	}
 	
@@ -228,6 +276,7 @@ public class AppUserLoginController extends BaseController
 		}
 		super.writeJsonDataApp(response, acm);
 	}
+	
 	/**
 	 * 
 	 * 功能描述:修改个人头像
@@ -237,8 +286,6 @@ public class AppUserLoginController extends BaseController
 	 * @param userNum
 	 * @param sign
 	 * @param picFile
-	 *@author feiyang
-	 *@date 2016-1-21
 	 */
 	@RequestMapping("updateUserHeadImg")
 	public void updateUserHeadImg(HttpServletRequest request,HttpServletResponse response, TUserApp tUserApp, String userNum,

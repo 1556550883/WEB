@@ -45,7 +45,7 @@ public class AppUserForwardRecordController extends BaseController
 			
 			if (result == 1) 
 			{
-				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE,Constants.MESSAGE_SUCCESS, "main_","userAppForwardRecord/list", "redirect"));
+				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
 			} 
 		} 
 		catch (Exception e) 

@@ -24,6 +24,7 @@ import com.ruanyun.web.model.TUserLevel;
 import com.ruanyun.web.model.TUserLevelRate;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
+import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.util.CommonMethod;
 import com.ruanyun.web.util.Constants;
 
@@ -46,8 +47,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	private UserLevelService userLevelService;
 	@Autowired
 	private UserAppService userAppService;
-	
-	
+	@Autowired
+	private AppUserApprenticeService appUserApprenticeService;
 	@Override
 	public Page<TUserScore> queryPage(Page<TUserScore> page, TUserScore t) {
 		return userScoreDao.queryPage(page, t);
@@ -197,13 +198,22 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param userScore 用户分数对象
 	 * @param score 分数
 	 */
-	public int updateScore(TUserScore userScore, Float score)
+	public int updateScore(TUserScore userScore, Float score, int type)
 	{
 		if(userScore != null) 
 		{
 			userScore.setScore(userScore.getScore() + score);
 			userScore.setScoreDay(userScore.getScoreDay() + score);
-			userScore.setScoreSum(userScore.getScoreSum() + score);
+			if(type != 2) 
+			{
+				userScore.setScoreSum(userScore.getScoreSum() + score);
+			}
+			//1代表师傅获取的分红  0表示标准任务的金额
+			if(type == 1)
+			{
+				userScore.setApprenticeScore(userScore.getApprenticeScore() + score);
+				appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), userScore.getRankingNum(), score);
+			}
 			
 			update(userScore);
 			
@@ -243,6 +253,11 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		}
 		userScoreInfoService.saveUserScoreInfo(userScore.getUserNum(), scoreName, score, scoreType, userType);
 		update(userScore);
+	}
+	
+	public int updateApprentice(String usernum, int count)
+	{
+		return userScoreDao.updateApprentice(usernum, count);
 	}
 	
 	/**

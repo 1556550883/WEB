@@ -35,17 +35,20 @@ public class AppUserApprenticeController extends BaseController{
 	 * @param info
 	 * @param type 1/2 今日/全部
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-21
 	 */
 	@RequestMapping("getList")
-	public void getUserApprenticeList(HttpServletResponse response,Page<TUserApprentice>page,TUserApprentice info,Integer type,String userNum,String sign){
+	public void getUserApprenticeList(HttpServletResponse response,Page<TUserApprentice>page,String userNum)
+	{
 		AppCommonModel model = new AppCommonModel();
-		try {
-			model = appUserApprenticeService.getMyApprenticeList(page, info,type,0);
-		} catch (Exception e) {
+		try 
+		{
+			model = appUserApprenticeService.getMyApprenticeList(page, userNum);
+		}
+		catch (Exception e) 
+		{
 			model = new AppCommonModel(-1, "数据异常");
 		}
+		
 		super.writeJsonDataApp(response, model);
 	}
 

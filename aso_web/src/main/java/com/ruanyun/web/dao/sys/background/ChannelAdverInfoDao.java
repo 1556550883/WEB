@@ -78,7 +78,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		//sql.append(SQLUtils.popuHqlMax2("adver_day_start", new Date()));
 		sql.append(SQLUtils.popuHqlMin2("adver_day_end", new Date()));
 		sql.append(SQLUtils.popuHqlMax("level", level));
-		sql.append(" and adver_status=1");
+		//sql.append(" and adver_status=1");
 		sql.append(" ORDER BY adver_createtime desc");
 		return sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 	}

@@ -5,6 +5,8 @@
  */
 package com.ruanyun.web.service.app;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,16 +17,9 @@ import com.ruanyun.web.dao.sys.UserApprenticeDao;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TUserApprentice;
 
-/**
- *@author feiyang
- *@date 2016-1-20
- */
 @Service
-public class AppUserApprenticeService extends BaseServiceImpl<TUserApprentice>{
-
-	
-	
-	
+public class AppUserApprenticeService extends BaseServiceImpl<TUserApprentice>
+{
 	@Autowired
 	@Qualifier("userApprenticeDao")
 	private UserApprenticeDao userApprenticeDao;
@@ -37,8 +32,6 @@ public class AppUserApprenticeService extends BaseServiceImpl<TUserApprentice>{
 	 * @param info
 	 * @param type 1/2 今日/全部
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-21
 	 */
 	public AppCommonModel getMyApprenticeList(Page<TUserApprentice>page,TUserApprentice info,Integer type,Integer userApprenticeType){
 		AppCommonModel model=new AppCommonModel();
@@ -46,5 +39,24 @@ public class AppUserApprenticeService extends BaseServiceImpl<TUserApprentice>{
 		model.setResult(1);
 		model.setObj(list);
 		return model;
+	}
+	
+	public AppCommonModel getMyApprenticeList(Page<TUserApprentice>page,String masterNum)
+	{
+		AppCommonModel model=new AppCommonModel();
+		Page<TUserApprentice> list=userApprenticeDao.pageSql(page, masterNum);
+		model.setResult(1);
+		model.setObj(list);
+		return model;
+	}
+	
+	public void addMyApprenticeScore(String masterNum, String ApprenticeNum, Float score) 
+	{
+		TUserApprentice userApprentice = new TUserApprentice();
+		userApprentice.setUserNum(masterNum);
+		userApprentice.setApprenticeUserNum(ApprenticeNum);
+		userApprentice.setScore(score);
+		userApprentice.setApprenticeTime(new Date());
+		super.save(userApprentice);
 	}
 }

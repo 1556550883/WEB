@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -190,8 +191,7 @@ public class FileUtils {
 		}
 	}
 	
-	
-	 public static void downloadLocal(HttpServletResponse response, String fileName) throws FileNotFoundException 
+	 public static void downloadLocal(HttpServletResponse response, String fileName, String conType) throws FileNotFoundException 
 	 {
 	     // 下载本地文件
 	     // 读到流中C:\Program Files\Apache Software Foundation\download
@@ -199,18 +199,60 @@ public class FileUtils {
 		 InputStream inStream = new FileInputStream(path + fileName);// 文件的存放路径
         // 设置输出的格式
 		 response.reset();
-		 response.setContentType("bin");
+		 response.setContentType(conType);
 		 response.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 		 // 循环取出流中的数据
 		 byte[] b = new byte[100];
 		 int len;
-		 try {
+		 try 
+		 {
 			 while ((len = inStream.read(b)) > 0)
-				 response.getOutputStream().write(b, 0, len);
+			 response.getOutputStream().write(b, 0, len);
 			 inStream.close();
-		 } catch (IOException e) {
+		 }
+		 catch (IOException e) 
+		 {
             e.printStackTrace();
 		 }
     }
 
+	 public static void downloadMobileConfig(HttpServletResponse response, String fileName, String conType, String masterid, String userId) throws FileNotFoundException 
+	 {
+	     // 下载本地文件
+	     // 读到流中C:\Program Files\Apache Software Foundation\download
+		 String path = "C:/Program Files/Apache Software Foundation/download/";
+		 InputStream inStream = new FileInputStream(path + fileName);// 文件的存放路径
+        // 设置输出的格式
+		 response.reset();
+		 response.setContentType(conType);
+		 response.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+		 // 循环取出流中的数据
+		 byte[] b = new byte[100];
+		 ByteBuffer byteBuf = ByteBuffer.allocate(10240);   //临时存放总共读取的字节,大小自己估计
+		 int len;
+		 int sum = 0;
+		 try {
+			 while ((len = inStream.read(b)) > 0) 
+			 {
+				 byteBuf.put(b);
+				 sum += len;
+			 }
+			byte[] bytes = new byte[sum];
+			for(int i = 0;i<sum; i++){
+			     bytes[i] = byteBuf.get(i);
+			}
+
+			String str = new String(bytes,"utf-8");
+			String master = "masterid=" + masterid +"_" + userId;
+			String s1 = str.replaceAll("masterid=11",master);
+			System.out.println("-----------" + s1);
+			byte[] result =  s1.getBytes();
+			response.getOutputStream().write(result, 0, result.length);
+			inStream.close();
+		 } 
+		 catch (IOException e)
+		 {
+            e.printStackTrace();
+		 }
+    }
 }

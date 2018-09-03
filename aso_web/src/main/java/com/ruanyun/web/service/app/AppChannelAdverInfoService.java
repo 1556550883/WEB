@@ -89,7 +89,12 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 			while(iterator.hasNext())
 			{
 				TChannelAdverInfo adver = iterator.next();
-				if(StringUtils.hasText(tUserApp.getExcludeAdverId()) && tUserApp.getExcludeAdverId().indexOf(String.valueOf(adver.getAdverId())) >= 0)
+//				if(StringUtils.hasText(tUserApp.getExcludeAdverId()) && tUserApp.getExcludeAdverId().indexOf(String.valueOf(adver.getAdverId())) >= 0)
+//				{
+//					iterator.remove();
+//				}
+				
+				if((tUserApp.getUserApppType() <= 1 && adver.getAdverStatus() == 2) || (adver.getAdverStatus() == 0))
 				{
 					iterator.remove();
 				}

@@ -30,8 +30,6 @@ public class UserApprenticeDao extends BaseDaoImpl<TUserApprentice>{
  * @param type 1/2 今日/全部
  * userApprenticeType 1 徒弟 2徒孙
  * @return
- *@author feiyang
- *@date 2016-1-21
  */
 	public Page<TUserApprentice> pageSql(Page<TUserApprentice>page,TUserApprentice info,Integer type,Integer userApprenticeType){
 		StringBuffer sql=new StringBuffer(" SELECT tua.*,tua1.user_nick user_nick");
@@ -47,6 +45,13 @@ public class UserApprenticeDao extends BaseDaoImpl<TUserApprentice>{
 			sql.append(" and tua.user_apprentice_type="+userApprenticeType);
 		}
 		sql.append(" ORDER BY tua.apprentice_time  DESC");
+		return sqlDao.queryPage(page, TUserApprentice.class, sql.toString());
+	}
+	
+	public Page<TUserApprentice> pageSql(Page<TUserApprentice>page, String userNum)
+	{
+		StringBuffer sql=new StringBuffer("SELECT * from t_user_apprentice where user_num = '"+userNum+"'");
+		sql.append(" ORDER BY apprentice_time  DESC");
 		return sqlDao.queryPage(page, TUserApprentice.class, sql.toString());
 	}
 }

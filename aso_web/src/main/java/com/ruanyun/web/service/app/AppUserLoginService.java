@@ -76,13 +76,16 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 				model.setMsg("用户名不存在.");
 				return model;
 			}
-			if (!user.getPassword().equals(tUserLogin.getPassword()))
+			
+			
+			TUserApp userApp = appUserService.getUserByUserNum(user.getUserNum());
+			
+			if (userApp.getUserApppType() == 1 && !user.getPassword().equals(tUserLogin.getPassword()))
 			{
 				model.setMsg("密码错误.");
 				return model;
 			}
 			
-			TUserApp userApp = appUserService.getUserByUserNum(user.getUserNum());
 			if ("0".equals(userApp.getLoginControl())) 
 			{
 				model.setMsg("该用户被禁止登录.");
@@ -91,15 +94,15 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			
 			if (EmptyUtils.isNotEmpty(userApp))
 			{
-				if(userApp.getUserApppType() == 2 && userApp.getPhoneSerialNumber() != null && !phoneSerialNumber.equals(userApp.getPhoneSerialNumber()))
-				{
-					model.setMsg("此账号已经在其他手机上注册！");
-					return model;
-				}
-				else if (userApp.getPhoneSerialNumber() != null && !phoneSerialNumber.equals(userApp.getPhoneSerialNumber()))
+				if (userApp.getUserApppType() == 2 && userApp.getPhoneSerialNumber() != null && userApp.getPhoneSerialNumber().equals("-1"))
 				{
 					userApp.setPhoneSerialNumber(phoneSerialNumber); // 如果序列号不一致就更改序列号
 					appUserService.update(userApp);
+				}
+				else if(userApp.getUserApppType() == 2 && userApp.getPhoneSerialNumber() != null && !phoneSerialNumber.equals(userApp.getPhoneSerialNumber()))
+				{
+					model.setMsg("手机广告标识已被修改,请联系管理员！");
+					return model;
 				}
 			}
 			
@@ -113,18 +116,18 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			appModel.setPhoneNum(userApp.getPhoneNum());
 			appModel.setMasterIDExisted(EmptyUtils.isNotEmpty(userApp.getMasterID()));
 			
-			if(EmptyUtils.isNotEmpty(userApp.getMasterID())) 
-			{
-				model.setMsg("禁止重复添加邀请人！");
-			}
-			else
-			{
-				if(userApp.getUserApppType() == 2)
-				{
-					
-					userAppService.updateMaterID(request,userApp,masterID);
-				}
-			}
+//			if(EmptyUtils.isNotEmpty(userApp.getMasterID())) 
+//			{
+//				model.setMsg("禁止重复添加邀请人！");
+//			}
+//			else
+//			{
+//				if(userApp.getUserApppType() == 2)
+//				{
+//					
+//					userAppService.updateMaterID(request,userApp,masterID);
+//				}
+//			}
 			
 			model.setObj(appModel);
 			userAppService.updateIp(request,userApp,ip);//保存最近登录ip地址
@@ -238,6 +241,60 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 		return model;
 	}
 
+	public AppCommonModel getUserForUdid(String udid, String idfa)
+	{
+		AppCommonModel model = new AppCommonModel(-1, "");
+		if (udid == null) 
+		{
+			model.setMsg("failed");
+			return model;
+		}
+		
+		TUserLogin user = userLoginDao.getUserByLoginName(udid, 1);
+		
+		if(user != null)
+		{
+			TUserApp userApp = appUserService.getUserByUserNum(user.getUserNum());
+
+			if ("0".equals(userApp.getLoginControl())) 
+			{
+				model.setMsg("该用户被禁止登录.");
+				return model;
+			}
+			
+			UserAppModel appModel = userLoginDao.getUserModelByNum(user.getUserNum());
+			
+			if (EmptyUtils.isNotEmpty(userApp))
+			{
+				if (userApp.getUserApppType() == 2 && userApp.getIdfa() == null)
+				{
+					userAppService.updateIdfa(userApp, idfa);
+				}
+				else if(userApp.getUserApppType() == 2 && userApp.getIdfa() != null && !idfa.equals(userApp.getIdfa()))
+				{
+					model.setMsg("手机广告标识已被修改,请联系管理员！");
+					return model;
+				}
+			}
+			appModel.setLoginName(user.getLoginName());
+			appModel.setLoginType(user.getLoginType());
+			appModel.setUserNum(user.getUserNum());
+			appModel.setUserApppType(userApp.getUserApppType());
+			appModel.setWeChatHeadUrl(userApp.getFlag5());
+			appModel.setWeixin(userApp.getWeixin());
+			appModel.setPhoneNum(userApp.getPhoneNum());
+			appModel.setMasterIDExisted(EmptyUtils.isNotEmpty(userApp.getMasterID()));
+			model.setObj(appModel);
+			model.setResult(1);
+			model.setMsg("success");
+		} 
+		else
+		{
+			model.setMsg("用户不存在");
+		}
+		
+		return model;
+	}
 	/**
 	 * 
 	 * 手机端接口:修改头像
@@ -310,8 +367,6 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	 * @param newPassword
 	 *            \type 1 是新手任务
 	 * @return
-	 * @author feiyang
-	 * @date 2016-1-18
 	 */
 	public AppCommonModel updateUser(TUserApp tUserApp, Integer type) {
 		AppCommonModel model = new AppCommonModel(-1, "修改失败");

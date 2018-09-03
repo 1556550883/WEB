@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
 <ry:binding parentCode="USER_SCORE_TYPE" bingdingName="channellevel"></ry:binding>
-<form id="pagerForm" method="post" action="userScore/list">
+<form id="pagerForm" method="post" action="userAppForwardRecord/list">
 	<input type="hidden" name="pageNum" value="${pageList.pageNum }" />
 	<input type="hidden" name="numPerPage" value="${pageList.numPerPage}" />
 	<input type="hidden" name="orderField" value="${param.orderField}">
@@ -36,8 +36,8 @@
 	                <td>${item.userType}</td>
 	                <td>${item.score}</td>
 	                <td>${item.scoreTime}</td>
-	                <td>${item.status}</td>
-	                <td><a style="cursor: pointer;" onclick="openNav('userAppForwardRecord/verify?userScoreInfoId=${item.userScoreInfoId}','审核','main_index2')"><div style="color: blue">审核</div></a></td>
+	                <td>${item.status == 1?'审核通过' : '未审核'}</td>
+	                <td><a style="cursor: pointer;" href="userAppForwardRecord/verify?userScoreInfoId=${item.userScoreInfoId}"><div style="color: blue">审核</div></a></td>
 				</tr>
 			</c:forEach>
 		</tbody>

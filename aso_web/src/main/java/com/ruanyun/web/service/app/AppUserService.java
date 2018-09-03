@@ -16,10 +16,7 @@ import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
 import com.ruanyun.web.model.TUserApp;
-/**
- *@author feiyang
- *@date 2016-1-14
- */
+
 @Service
 public class AppUserService extends BaseServiceImpl<TUserApp>{
 
@@ -32,8 +29,6 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 	 * 功能描述:根据NUM获取用户
 	 * @param userNum
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-14
 	 */
 	public TUserApp getUserByUserNum(String userNum)
 	{		
@@ -58,8 +53,6 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 	 * 功能描述:根据序列号获取用户
 	 * @param phoneSerialNumber
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-14
 	 */
 	public TUserApp getUserBySerialNum(String phoneSerialNumber){
 		return userAppDao.getUserBySerialNum(phoneSerialNumber);

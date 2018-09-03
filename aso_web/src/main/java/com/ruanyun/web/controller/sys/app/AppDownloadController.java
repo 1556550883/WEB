@@ -19,7 +19,7 @@ public class AppDownloadController extends BaseController
 	{
 		try 
 		{
-			FileUtils.downloadLocal(response, "HappyApp.plist");
+			FileUtils.downloadLocal(response, "HappyApp.plist", "bin");
 		}
 		catch (FileNotFoundException e) 
 		{
@@ -32,7 +32,32 @@ public class AppDownloadController extends BaseController
 	{
 		try 
 		{
-			FileUtils.downloadLocal(response, "mySolution.ipa");
+			FileUtils.downloadLocal(response, "mySolution.ipa", "bin");
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping("happyzhuan.mobileconfig")
+	public void getMobileProvision(HttpServletResponse response, String masterid, String userId)
+	{
+		try 
+		{
+			if(masterid == null) 
+			{
+				masterid = "-1";
+			}
+			
+			if(userId == null) 
+			{
+				userId = "-1";
+			}
+			
+			String str = "application/x-apple-aspen-config";
+			FileUtils.downloadMobileConfig(response, "happyzhuan.mobileconfig", str, masterid, userId);
+			
 		}
 		catch (FileNotFoundException e) 
 		{

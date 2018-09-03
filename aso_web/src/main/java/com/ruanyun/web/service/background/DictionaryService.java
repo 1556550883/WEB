@@ -29,6 +29,8 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	private static String downloadUrl = "none";
 	
 	private static Integer vestorLevel = 6;
+	
+	private static String appVersion = "v1.0";
 	/**
 	 * 功能描述:查询字典表 父级
 	 * @author wsp  2016-10-20 下午05:48:44
@@ -181,6 +183,21 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 		}
 		
 		return downloadUrl;
+	}
+	
+	public String getAppVersion()
+	{
+		TDictionary dictionary = super.get(TDictionary.class, "parentCode", "APP_VERSION");
+		if (dictionary == null)
+		{
+			appVersion = "v1.0";
+		}
+		else
+		{
+			appVersion = dictionary.getItemCode();
+		}
+		
+		return appVersion;
 	}
 	
 	public Integer getVestorLevel()
