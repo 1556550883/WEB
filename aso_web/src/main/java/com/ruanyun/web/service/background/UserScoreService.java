@@ -97,12 +97,22 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	public void addNewUserScore(String userNum,Integer type)
 	{
 		TUserScore score=new TUserScore();
-		score.setUserNum(userNum);
-		score.setScore(0f);
-		score.setScore(0f);
-		score.setScoreSum(0f);
+		
+		if(type == 2) 
+		{
+			score.setScore(1f);
+			score.setScoreSum(1f);
+			score.setScoreDay(1f);
+		}
+		else
+		{
+			score.setScore(0f);
+			score.setScoreSum(0f);
+			score.setScoreDay(0f);
+		}
+		
 		score.setType(type);
-		score.setScoreDay(0f);
+		score.setUserNum(userNum);
 		score.setApprenticeCountDay(0);
 		score.setApprenticeCount(0);
 		score.setApprenticeScoreDay(0f);

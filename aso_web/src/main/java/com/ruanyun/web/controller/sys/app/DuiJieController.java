@@ -210,7 +210,7 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName());
+		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion);
 		
 		if(checkChannelInfoModel.getResult() == -1)
 		{
@@ -614,6 +614,12 @@ public class DuiJieController extends BaseController
 				case 10:
 					model = HappyChannel.activate(adverInfo.getFlag4(), adid, idfa);
 					break;
+				case 11:
+					model = Huizhuan.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+					break;
+				case 12:
+					model = BeeChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+					break;
 	
 				default:
 					model.setResult(-1);
@@ -857,7 +863,7 @@ public class DuiJieController extends BaseController
     
 	//检测任务信息
 	private AppCommonModel checkChannelInfo(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
-			String userAppId, String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
+			String userAppId, String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = new AppCommonModel(1, "任务领取成功！");
 		
@@ -904,6 +910,12 @@ public class DuiJieController extends BaseController
 			break;
 		case 10:
 			model =  isHappyChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
+			break;
+		case 11:
+			model =  isHZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			break;
+		case 12:
+			model =  isBeeChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
 		default:
 			model.setResult(-1);
@@ -1028,6 +1040,38 @@ public class DuiJieController extends BaseController
 		{
 			//调用第三方点击接口
 			model = HappyChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
+		}
+		
+		return model;
+	}
+	
+	private AppCommonModel isHZChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//会赚
+		//调用第三方排重接口
+		AppCommonModel model = Huizhuan.paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = Huizhuan.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneModel, phoneVersion);
+		}
+		
+		return model;
+	}
+	
+	private AppCommonModel isBeeChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//会赚
+		//调用第三方排重接口
+		AppCommonModel model = BeeChannel.paiChong(adverInfo.getFlag2(), adid, idfa, ip);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = BeeChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName ,phoneModel, phoneVersion);
 		}
 		
 		return model;

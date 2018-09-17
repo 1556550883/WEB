@@ -7,33 +7,28 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
-import com.ruanyun.web.model.TChannelAdverInfo;
 
 import net.sf.json.JSONObject;
 
-/**
- * 云聚
- * @author 向轴
- */
-public class YunJu extends BaseChannel 
+public class Huizhuan extends BaseChannel 
 {
-	private static final Log log = LogFactory.getLog(YunJu.class);
+	private static final Log log = LogFactory.getLog(Huizhuan.class);
 	
 	//我们的渠道号
-	private static final String CH = "qisu";
+	private static final String channel = "Qisu";
 	
 	/**
 	 * 排重
 	 */
-	public static AppCommonModel paiChong(String domain, String adid, String idfa)
+	public static AppCommonModel paiChong(String domain, String appid, String idfa)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(domain)
-				.append("?adid=").append(adid)
-				.append("&ch=").append(CH)
-				.append("&idfa=").append(idfa);
+				.append("?appid=").append(appid)
+				.append("&idfa=").append(idfa)
+				.append("&channel=").append(channel);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)
@@ -45,7 +40,7 @@ public class YunJu extends BaseChannel
 		else
 		{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer status = (Integer)jsonObject.get(idfa);
+			Integer status = (Integer)jsonObject.get("errno");
 			if(status == null)
 			{
 				model.setResult(-1);
@@ -74,16 +69,19 @@ public class YunJu extends BaseChannel
 	/**
 	 * 点击
 	 */
-	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException {
+	public static AppCommonModel dianJi(String domain, String appid, String idfa, String ip,
+			Integer userAppId, Integer adverId, String userNum, String phoneModel, String phoneVersion) throws UnsupportedEncodingException
+	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url = new StringBuilder(domain)
-				.append("?adid=").append(adid)
-				.append("&ch=").append(CH)
+				.append("?appid=").append(appid)
+				.append("&channel=").append(channel)
 				.append("&idfa=").append(idfa)
+				.append("&sysver=").append(phoneVersion)
+				.append("&model=").append(phoneModel)
 				.append("&ip=").append(ip)
-				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
+				.append("&callback=").append(getCallbackUrl(appid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){
@@ -92,7 +90,7 @@ public class YunJu extends BaseChannel
 			model.setMsg("领取任务失败。原因：系统出错！");
 		}else{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer code = (Integer)jsonObject.get("code");
+			Integer code = (Integer)jsonObject.get("errno");
 			if(code == null){
 				model.setResult(-1);
 				model.setMsg("领取任务失败！");
@@ -111,18 +109,22 @@ public class YunJu extends BaseChannel
 	/**
 	 * 激活上报
 	 */
-	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip) {
+	public static AppCommonModel activate(String domain, String appid, String adverName, String idfa, String ip) {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url;
-		try {
+		try
+		{
+			String keyword =  URLEncoder.encode(adverName, "utf-8");
 			url = new StringBuilder(domain)
-					.append("?adid=").append(adid)
-					.append("&ch=").append(CH)
+					.append("?appid=").append(appid)
+					.append("&channel=").append(channel)
 					.append("&idfa=").append(idfa)
-					.append("&kid=").append(URLEncoder.encode(adverName, "utf-8"))
+					.append("&keyword=").append(keyword)
 					.append("&ip=").append(ip);
-		} catch (UnsupportedEncodingException e) {
+		} 
+		catch (UnsupportedEncodingException e) 
+		{
 			e.printStackTrace();
 			model.setResult(-1);
 			model.setMsg("未完成。原因：系统出错！");
@@ -136,11 +138,11 @@ public class YunJu extends BaseChannel
 			model.setMsg("未完成。原因：调用第三方平台出错！");
 		}else{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer code = (Integer)jsonObject.get("code");
+			Integer code = (Integer)jsonObject.get("errno");
 			if(code == null){
 				model.setResult(-1);
 				model.setMsg("渠道未返回状态，未完成！");
-			}else if(code == 0 || code == 1){
+			}else if(code == 0){
 				model.setResult(1);
 				model.setMsg(code + "：已完成！");
 			}else{
@@ -152,20 +154,4 @@ public class YunJu extends BaseChannel
 		return model;
 	}
 
-	public static AppCommonModel isYunJvChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
-			String userAppId, String adverId, String userNum) 
-					throws NumberFormatException, UnsupportedEncodingException
-	{
-		//云聚
-		//调用第三方排重接口
-		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
-		}
-		
-		return model;
-	}
 }

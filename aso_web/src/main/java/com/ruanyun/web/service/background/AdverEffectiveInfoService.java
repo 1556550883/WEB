@@ -50,7 +50,10 @@ public class AdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiveIn
 			task.setAdverName(adverInfo.getAdverName());
 			task.setAdverPrice(adverInfo.getAdverPrice());
 			TUserApp userApp = appUserService.get(TUserApp.class, "userAppId", task.getUserAppId());
-			task.setLoginName(userApp.getLoginName());
+			if(userApp != null) 
+			{
+				task.setLoginName(userApp.getLoginName());
+			}
 		}
 		
 		return page;

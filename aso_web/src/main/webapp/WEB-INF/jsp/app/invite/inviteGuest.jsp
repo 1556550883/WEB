@@ -31,7 +31,18 @@
 			
 			.bottom_menu
 			{
-				height:50%;
+				height:40%;
+				width:100%;
+				background:url('../img/invite/dibu.png') no-repeat;
+				position: fixed;
+				bottom: 0;
+				text-align:center; 
+			}
+			
+			.bottom_menu_1
+			{
+			 	display: none;  
+				height:40%;
 				width:100%;
 				background:url('../img/invite/dibu.png') no-repeat;
 				position: fixed;
@@ -62,7 +73,7 @@
 			{
 				width:60%;
 				height:15px;
-				margin-top:5px;
+				margin-top:15px;
 				margin-left:20%;
 				text-align:center; 
 				position:relative;
@@ -281,25 +292,28 @@
     <body>
 	   <div class="text_style">下载立送现金红包，零成本，零投入，高奖励，完成任务可得现金！</div>
 	   <div class="text_style_1" onclick="openWindow()">查看安装说明</div>
-       <div class="bottom_menu">
-       			<div style="width:100%;text-align:center;color: red; margin-top:13%;">一、安装助手，务必获取设备信任</div>
-	       		<div class="bottom_pic_1" onClick="window.location.href='itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist'"> 
-	           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
-	           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">安装助手</div>
-	            </div>
-           		 <div style="width:100%;text-align:center;color: red; margin-top:8%;">二、安装入口后，可快速打开</div>
-	           	<div class="bottom_pic_2" onClick="hrefs(0)"> 
-	           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
-	           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">安装入口</div>
-	            </div>
-	             <div style="width:100%;text-align:center;color: red; margin-top:8%;">三、下载完成后，务必点击</div>
-	           	<div class="bottom_pic_2" onClick="hrefs(1)"> 
-	           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
-	           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">打开助手</div>
-	            </div>
-	           
-  	 		 </div>
+       <div id="register_user" class="bottom_menu">
+          	<div style="width:100%;text-align:center;color: red; margin-top:20%;">第一步：安装入口，快速注册</div>
+           	<div class="bottom_pic_2" onClick="hrefs(0)"> 
+           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
+           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">快速注册</div>
+            </div>
+  	  </div>
 	
+	 <div id="install_app" class="bottom_menu_1">
+         	<div style="width:100%;text-align:center;color: red; margin-top:13%;">第二步：安装助手，务必获取设备信任</div>
+       		<div class="bottom_pic_1" onClick="window.location.href='itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist'"> 
+           	 	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
+           	 	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">安装助手</div>
+            </div>
+            
+            <div style="width:100%;text-align:center;color: red; margin-top:8%;">第三步：下载完成后，务必点击</div>
+	        <div class="bottom_pic_2" onClick="hrefs(1)"> 
+	         	<img src="<%=path %>/img/invite/button.png" height="auto" width="100%"/>
+	           	<div style="width:100%;position:absolute;z-indent:2;text-align:center;color: white; top:50%;">打开助手</div>
+	        </div>
+  	  </div>
+  	  
 	 <div id="fade_1" class="black_overlay_1"></div>
 	<div id="safariTip" class="tip_content">
 		<div style="text-align: center; cursor: default; margin-top:10px;margin-bottom:10px;">
@@ -314,10 +328,17 @@
 <div id="fade" class="black_overlay"  onClick="closeWindow()"></div>
 	<script>
 		var issafariBrowser = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+		var udid = "${udid}";
 		if(issafariBrowser == true)
 		{
 			document.getElementById("fade_1").style.display='none';
 			document.getElementById("safariTip").style.display='none';
+		}
+		
+		if(udid != -1)
+		{
+			document.getElementById("register_user").style.display='none';
+		    document.getElementById('install_app').style.display='block';
 		}
 	</script>
     </body>

@@ -60,7 +60,6 @@ public class AppUserInviteController extends BaseController
 	@RequestMapping("deviceUuid")
 	public void guestPhone(HttpServletResponse response, HttpServletRequest request, Model model, String masterid) throws IOException
 	{
-		 System.out.println("run this ====================");
 	    request.setCharacterEncoding("UTF-8");
 	    String udid = "";
 	    //工作室账号使用
@@ -92,7 +91,6 @@ public class AppUserInviteController extends BaseController
 	   	    //进行xml解析即可
 	   	    udid = content.substring(content.indexOf("<string>") + 8,content.indexOf("</string>"));
 	   	    
-	   	    System.out.println("=======================" + udid);
 	   	    TUserApp tUserApp = userAppService.getUserAppByUserName(udid);
 	   		   
 	   	    if(tUserApp == null) 

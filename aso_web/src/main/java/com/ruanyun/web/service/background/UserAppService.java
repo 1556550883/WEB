@@ -197,7 +197,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 			userLoginService.save(userLogin);
 			
 			//保存用户积分
-			userScoreService.addNewUserScore(userApp.getUserNum(), 2);//手机app
+			userScoreService.addNewUserScore(userApp.getUserNum(), userApp.getUserApppType());//手机app
 		}
 		
 		return 1;

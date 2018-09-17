@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.producer.QueueProducer;
+import com.ruanyun.web.service.app.AppUserService;
 import com.ruanyun.web.service.background.UserScoreService;
 
 @Controller
@@ -31,6 +33,8 @@ public class AppUserScoreController extends BaseController
 {
 	@Autowired
 	private UserScoreService userScoreService;
+	@Autowired
+	private AppUserService appUserService;
 	/**
 	 * 
 	 * 手机端接口:判断当前用户是否可以兑换该商品
@@ -71,6 +75,16 @@ public class AppUserScoreController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+		
+		TUserApp userApp = appUserService.getUserByUserNum(userNum);
+		if ("0".equals(userApp.getLoginControl())) 
+		{
+			model.setResult(-1);
+			model.setMsg("该用户被禁止登录.");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
 		TUserScore userScore = userScoreService.getScore(userNum);
 		if(userScore.getScore() >= forward)
 		{

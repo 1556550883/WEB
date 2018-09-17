@@ -77,7 +77,6 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 				return model;
 			}
 			
-			
 			TUserApp userApp = appUserService.getUserByUserNum(user.getUserNum());
 			
 			if (userApp.getUserApppType() == 1 && !user.getPassword().equals(tUserLogin.getPassword()))

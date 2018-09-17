@@ -40,6 +40,19 @@ public class AppDownloadController extends BaseController
 		}
 	}
 	
+	@RequestMapping("happywebclip.mobileconfig")
+	public void getWebClip(HttpServletResponse response)
+	{
+		try 
+		{
+			FileUtils.downloadLocal(response, "happywebclip.mobileconfig", "bin");
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	@RequestMapping("happyzhuan.mobileconfig")
 	public void getMobileProvision(HttpServletResponse response, String masterid, String userId)
 	{

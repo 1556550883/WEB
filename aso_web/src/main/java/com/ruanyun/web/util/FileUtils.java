@@ -228,7 +228,7 @@ public class FileUtils {
 		 response.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 		 // 循环取出流中的数据
 		 byte[] b = new byte[100];
-		 ByteBuffer byteBuf = ByteBuffer.allocate(10240);   //临时存放总共读取的字节,大小自己估计
+		 ByteBuffer byteBuf = ByteBuffer.allocate(2048);   //临时存放总共读取的字节,大小自己估计
 		 int len;
 		 int sum = 0;
 		 try {
@@ -245,7 +245,6 @@ public class FileUtils {
 			String str = new String(bytes,"utf-8");
 			String master = "masterid=" + masterid +"_" + userId;
 			String s1 = str.replaceAll("masterid=11",master);
-			System.out.println("-----------" + s1);
 			byte[] result =  s1.getBytes();
 			response.getOutputStream().write(result, 0, result.length);
 			inStream.close();
