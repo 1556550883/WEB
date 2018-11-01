@@ -239,7 +239,7 @@ public class DuiJieController extends BaseController
 		if(tUserappidAdverid == null)
 		{
 			model.setResult(-1);
-			model.setMsg("领取任务失败。原因：保存任务失败！");
+			model.setMsg("领取任务失败，请修改ip地址重新尝试！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -441,11 +441,18 @@ public class DuiJieController extends BaseController
 		}
 		
 		//状态改为已完成
-		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-		tUserappidAdverid.setIdfa(idfa);
-		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
+		TUserappidAdverid tUserappidAdverid = getTask(adverId, idfa);
 		tUserappidAdverid.setStatus("2");
 		tUserappidAdverid.setCompleteTime(new Date());
+		if(tUserappidAdverid != null && tUserappidAdverid.getStatus().equals("1.6"))
+		{
+			model.setResult(-1);
+			model.setMsg("未完成。原因：任务已经超时！");
+			userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
 		int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
 		if(rowCount == 0)
 		{
@@ -609,7 +616,7 @@ public class DuiJieController extends BaseController
 					model = JvZhangChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
 					break;
 				case 9:
-					model = AiPuYouChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+					model = AiyinliChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
 					break;
 				case 10:
 					model = HappyChannel.activate(adverInfo.getFlag4(), adid, idfa);
@@ -620,7 +627,12 @@ public class DuiJieController extends BaseController
 				case 12:
 					model = BeeChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
 					break;
-	
+				case 13:
+					model = FrogsChannel.activate();
+					break;
+				case 14:
+					model = FrogsTChannel.activate(adverInfo.getFlag4(), adid, idfa, ip);
+					break;
 				default:
 					model.setResult(-1);
 					model.setMsg("未完成。原因：渠道未在后台配置！");
@@ -906,7 +918,7 @@ public class DuiJieController extends BaseController
 			model = isJZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
 			break;
 		case 9:
-			model = isAPYChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
+			model = isAiYLChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
 			break;
 		case 10:
 			model =  isHappyChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
@@ -916,6 +928,12 @@ public class DuiJieController extends BaseController
 			break;
 		case 12:
 			model =  isBeeChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			break;
+		case 13:
+			model =  isFrogsChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			break;
+		case 14:
+			model =  isFrogsTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
 		default:
 			model.setResult(-1);
@@ -1016,16 +1034,16 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
-	private AppCommonModel isAPYChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+	private AppCommonModel isAiYLChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
 			String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
 	{
-		AppCommonModel model = AiPuYouChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		AppCommonModel model = AiyinliChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
 			TUserApp userApp = userAppService.getUserAppById(Integer.parseInt(userAppId));
-			model = AiPuYouChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName, userApp);
+			model = AiyinliChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName, userApp);
 		}
 		
 		return model;
@@ -1077,6 +1095,32 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
+	
+	private AppCommonModel isFrogsChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//会赚
+		//调用第三方排重接口
+		AppCommonModel model = FrogsChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = FrogsChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+		}
+		
+		return model;
+	}
+	
+	private AppCommonModel isFrogsTChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//调用第三方排重接口
+		AppCommonModel model = FrogsTChannel.paiChong(adverInfo.getFlag2(), adid, idfa, ip);
+		
+		return model;
+	}
+	
 	//设置任务时间超时
 	@RequestMapping("setTaskTimeout")
 	public void setTaskTimeout(HttpServletResponse response,HttpServletRequest request) 
@@ -1104,11 +1148,17 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-		tUserappidAdverid.setIdfa(idfa);
-		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-		tUserappidAdverid.setStatus("1.7");
-		userappidAdveridService.updateTaskStatus(tUserappidAdverid);
+		//查询个人信息
+		TUserApp tUserApp = userAppService.get(TUserApp.class, "userAppId", Integer.valueOf(task.getUserAppId()));
+		if(tUserApp.getUserApppType() == 2) 
+		{
+			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
+			tUserappidAdverid.setIdfa(idfa);
+			tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
+			tUserappidAdverid.setStatus("1.7");
+			userappidAdveridService.updateTaskStatus(tUserappidAdverid);
+		}
+		
 		model.setResult(1);
 		model.setMsg("成功！");
 		super.writeJsonDataApp(response, model);

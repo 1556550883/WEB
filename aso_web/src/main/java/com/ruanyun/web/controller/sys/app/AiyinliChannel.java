@@ -15,9 +15,9 @@ import com.ruanyun.web.util.MD5;
 
 import net.sf.json.JSONObject;
 
-public class AiPuYouChannel extends BaseChannel 
+public class AiyinliChannel extends BaseChannel 
 {
-	private static final Log log = LogFactory.getLog(AiPuYouChannel.class);
+	private static final Log log = LogFactory.getLog(AiyinliChannel.class);
 	private static final String key = "8086e6975b91962d514435167b2184c5";
 	
 	public static AppCommonModel paiChong(String domain, String adid, String idfa)

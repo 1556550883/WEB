@@ -97,7 +97,8 @@ public class BeeChannel extends BaseChannel
 				.append("&device_type=").append(phoneModel)
 				.append("&source=").append(ChannelSource)
 				.append("&timestamp=").append(timestamp)
-				.append("&sign=").append(sign);
+				.append("&sign=").append(sign)
+				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)

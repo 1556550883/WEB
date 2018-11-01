@@ -83,7 +83,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	
 	public int updateStatus2Complete(TUserappidAdverid info) 
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=?,complete_time=? WHERE status ='1.5' ");
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=?,complete_time=? WHERE status >= '1' ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))

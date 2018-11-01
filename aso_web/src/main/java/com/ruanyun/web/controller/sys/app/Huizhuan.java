@@ -15,7 +15,7 @@ public class Huizhuan extends BaseChannel
 	private static final Log log = LogFactory.getLog(Huizhuan.class);
 	
 	//我们的渠道号
-	private static final String channel = "Qisu";
+	private static final String channel = "ynkalw";
 	
 	/**
 	 * 排重

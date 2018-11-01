@@ -1,7 +1,6 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,16 +9,12 @@ import com.ruanyun.web.model.AppCommonModel;
 
 import net.sf.json.JSONObject;
 
-/**
- * 云聚
- * @author 向轴
- */
-public class YunJu extends BaseChannel 
+public class FrogsChannel extends BaseChannel 
 {
-	private static final Log log = LogFactory.getLog(YunJu.class);
+	private static final Log log = LogFactory.getLog(FrogsChannel.class);
 	
 	//我们的渠道号
-	private static final String CH = "qisu";
+	private static final String channel = "frog";
 	
 	/**
 	 * 排重
@@ -30,8 +25,8 @@ public class YunJu extends BaseChannel
 		
 		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(domain)
-				.append("?adid=").append(adid)
-				.append("&ch=").append(CH)
+				.append("?appid=").append(adid)
+				.append("&channel=").append(channel)
 				.append("&idfa=").append(idfa);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
@@ -44,13 +39,9 @@ public class YunJu extends BaseChannel
 		else
 		{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer status = (Integer)jsonObject.get(idfa);
-			if(status == null)
-			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
-			}
-			else if(status == 0)
+			String statusStr = (String)jsonObject.get(idfa);
+			Integer status = Integer.parseInt(statusStr);
+			if(status == 0)
 			{
 				model.setResult(1);
 				model.setMsg("未重复，可以领取任务！");
@@ -74,13 +65,15 @@ public class YunJu extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException {
+			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException 
+	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url = new StringBuilder(domain)
-				.append("?adid=").append(adid)
-				.append("&ch=").append(CH)
+				.append("?adid=").append(88)
+				.append("&promoter=").append(channel)
 				.append("&idfa=").append(idfa)
+				.append("&rtjson=1")
 				.append("&ip=").append(ip)
 				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
@@ -91,14 +84,15 @@ public class YunJu extends BaseChannel
 			model.setMsg("领取任务失败。原因：系统出错！");
 		}else{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer code = (Integer)jsonObject.get("code");
-			if(code == null){
-				model.setResult(-1);
-				model.setMsg("领取任务失败！");
-			}else if(code == 0){
+			boolean code = false;
+			code = (Boolean)jsonObject.get("success");
+			if(code)
+			{
 				model.setResult(1);
 				model.setMsg("领取任务成功！");
-			}else{
+			}
+			else
+			{
 				model.setResult(-1);
 				model.setMsg("领取任务失败！");
 			}
@@ -110,44 +104,11 @@ public class YunJu extends BaseChannel
 	/**
 	 * 激活上报
 	 */
-	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip) {
+	public static AppCommonModel activate() 
+	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		
-		StringBuilder url;
-		try {
-			url = new StringBuilder(domain)
-					.append("?adid=").append(adid)
-					.append("&ch=").append(CH)
-					.append("&idfa=").append(idfa)
-					.append("&kid=").append(URLEncoder.encode(adverName, "utf-8"))
-					.append("&ip=").append(ip);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			model.setResult(-1);
-			model.setMsg("未完成。原因：系统出错！");
-			return model;
-		}
-		JSONObject jsonObject = httpGet(url.toString(), false);
-		
-		if(jsonObject == null){
-			log.error("request url：" + url + "。response：null");
-			model.setResult(-1);
-			model.setMsg("未完成。原因：调用第三方平台出错！");
-		}else{
-			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer code = (Integer)jsonObject.get("code");
-			if(code == null){
-				model.setResult(-1);
-				model.setMsg("渠道未返回状态，未完成！");
-			}else if(code == 0 || code == 1){
-				model.setResult(1);
-				model.setMsg(code + "：已完成！");
-			}else{
-				model.setResult(-1);
-				model.setMsg("渠道提示，未完成！");
-			}
-		}
-		
+		model.setResult(1);
+		model.setMsg("完成,等待回调！");
 		return model;
 	}
 }
