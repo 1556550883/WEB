@@ -53,6 +53,7 @@ public class DuiJieController extends BaseController
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
 	
+	private static java.util.Random random = new java.util.Random();
 	/**
 	 * 查询系统参数
 	 */
@@ -83,6 +84,115 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
+	
+	public String getPhoneModel() 
+	{	
+		String phonemodel_sim = "iPhone7,1";
+		int result = random.nextInt(15);
+		switch (result)
+		{
+		case 0:
+			phonemodel_sim = "iPhone7,2";
+			break;
+		case 1:
+			phonemodel_sim = "iPhone8,1";
+			break;
+		case 2:
+			phonemodel_sim = "iPhone8,2";
+			break;
+		case 3:
+			phonemodel_sim = "iPhone8,4";
+			break;
+		case 4:
+			phonemodel_sim = "iPhone9,1";
+			break;
+		case 5:
+			phonemodel_sim = "iPhone9,2";
+			break;
+		case 6:
+			phonemodel_sim = "iPhone9,3";
+			break;
+		case 7:
+			phonemodel_sim = "iPhone9,4";
+			break;
+		case 8:
+			phonemodel_sim = "iPhone9,5";
+			break;
+		case 9:
+			phonemodel_sim = "iPhone9,6";
+			break;
+		case 10:
+			phonemodel_sim = "iPhone10,1";
+			break;
+		case 11:
+			phonemodel_sim = "iPhone10,4";
+			break;	
+		case 12:
+			phonemodel_sim = "iPhone10,2";
+			break;
+		case 13:
+			phonemodel_sim = "iPhone10,5";
+			break;
+		case 14:
+			phonemodel_sim = "iPhone7,1";
+			break;
+		default:
+			phonemodel_sim = "iPhone7,1";
+			break;
+		}
+		
+		return phonemodel_sim;
+	}
+	
+	
+	public String getPhoneName() throws UnsupportedEncodingException 
+	{	
+		String phonemodel_sim = "iPhone6Plus";
+		int result = random.nextInt(11);
+		switch (result)
+		{
+		case 0:
+			phonemodel_sim = "iPhone6";
+			break;
+		case 1:
+			phonemodel_sim = "iPhone6s";
+			break;
+		case 2:
+			phonemodel_sim = "iPhone6sPlus";
+			break;
+		case 3:
+			phonemodel_sim = "iPhoneSE";
+			break;
+		case 4:
+			phonemodel_sim = "iPhone7";
+			break;
+		case 5:
+			phonemodel_sim = "iPhone7";
+			break;
+		case 6:
+			phonemodel_sim = "iPhone7";
+			break;
+		case 7:
+			phonemodel_sim = "iPhone7Plus";
+			break;
+		case 8:
+			phonemodel_sim = "iPhone8";
+			break;
+		case 9:
+			phonemodel_sim = "iPhone8Plus";
+			break;	
+		case 10:
+			phonemodel_sim = "iPhone6Plus";
+			break;
+		default:
+			phonemodel_sim = "iPhone6Plus";
+			break;
+		}
+		
+//		phonemodel_sim =  URLEncoder.encode(phonemodel_sim,"UTF-8");
+//		phonemodel_sim = phonemodel_sim.replaceAll("\\+","%20");
+		return phonemodel_sim;
+	}
 	/**
 	 * 领取任务
 	 * @throws InterruptedException 
@@ -104,8 +214,14 @@ public class DuiJieController extends BaseController
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String appleId = request.getParameter("appleId");//苹果账号
 		String userNum = request.getParameter("userNum");
-		String phoneModel = request.getParameter("phoneModel");
+		String phoneModel_real = request.getParameter("phoneModel") + "-";
+		String phoneVersion_real = request.getParameter("phoneVersion") + "-";
+		String phoneModel = getPhoneName();
 		String phoneVersion = request.getParameter("phoneVersion");
+		if(phoneModel.compareTo("iPhone8") >= 0) 
+		{
+			phoneVersion = "12.0";
+		}
 		
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
 				|| !StringUtils.hasText(userAppId) || !StringUtils.hasText(adverId))
@@ -232,8 +348,8 @@ public class DuiJieController extends BaseController
 		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
 		tUserappidAdverid.setStatus("1");
 		tUserappidAdverid.setReceiveTime(new Date());
-		tUserappidAdverid.setPhoneModel(phoneModel);
-		tUserappidAdverid.setPhoneVersion(phoneVersion);
+		tUserappidAdverid.setPhoneModel(phoneModel_real + phoneModel);
+		tUserappidAdverid.setPhoneVersion(phoneVersion_real + phoneVersion);
 		tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
 		
 		if(tUserappidAdverid == null)
@@ -622,7 +738,11 @@ public class DuiJieController extends BaseController
 					model = HappyChannel.activate(adverInfo.getFlag4(), adid, idfa);
 					break;
 				case 11:
-					model = Huizhuan.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+					String phoneModel = task.getPhoneModel();
+					String phoneOs = task.getPhoneVersion();
+					String [] arr1=phoneModel.split("-");
+					String [] arr2=phoneOs.split("-");
+					model = Huizhuan.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr1[1], arr2[1]);
 					break;
 				case 12:
 					model = BeeChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
@@ -1068,12 +1188,12 @@ public class DuiJieController extends BaseController
 	{
 		//会赚
 		//调用第三方排重接口
-		AppCommonModel model = Huizhuan.paiChong(adverInfo.getFlag2(), adid, idfa);
+		AppCommonModel model = Huizhuan.paiChong(adverInfo.getFlag2(), adid, idfa, phoneModel, phoneVersion, adverName);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = Huizhuan.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneModel, phoneVersion);
+			model = Huizhuan.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneModel, phoneVersion, adverName);
 		}
 		
 		return model;

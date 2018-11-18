@@ -152,6 +152,12 @@
 					<input name="adverTimeEnd" id="adverTimeEnd" type="hidden" value="<c:out value="${bean.adverTimeEnd}"></c:out>" maxlength="100"/>
 				</dd>
 		    </dl>
+		     <dl class="nowrap" style="width: 100%;">
+				<dt>下载地址：</dt>
+				<dd>
+				    <input name="fileUrl" id="fileUrl" style="width: 467px" class="" title="下载地址" type="text" value="<c:out value="${bean.fileUrl}"></c:out>" maxlength="1000" size="60"/>
+				</dd>
+		    </dl>
 		    <dl class="nowrap" style="width: 100%;">
 				<dt>排重地址：</dt>
 				<dd>

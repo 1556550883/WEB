@@ -13,14 +13,13 @@ import net.sf.json.JSONObject;
 public class Huizhuan extends BaseChannel 
 {
 	private static final Log log = LogFactory.getLog(Huizhuan.class);
-	
 	//我们的渠道号
 	private static final String channel = "ynkalw";
 	
 	/**
 	 * 排重
 	 */
-	public static AppCommonModel paiChong(String domain, String appid, String idfa)
+	public static AppCommonModel paiChong(String domain, String appid, String idfa, String phoneModel, String phoneVersion, String keyword)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -28,6 +27,9 @@ public class Huizhuan extends BaseChannel
 		StringBuilder url = new StringBuilder(domain)
 				.append("?appid=").append(appid)
 				.append("&idfa=").append(idfa)
+				.append("&keyword=").append(keyword)
+				.append("&model=").append(phoneModel)
+				.append("&sysver=").append(phoneVersion)
 				.append("&channel=").append(channel);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
@@ -70,7 +72,7 @@ public class Huizhuan extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, String appid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String phoneModel, String phoneVersion) throws UnsupportedEncodingException
+			Integer userAppId, Integer adverId, String userNum, String phoneModel, String phoneVersion, String keyword) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -80,6 +82,7 @@ public class Huizhuan extends BaseChannel
 				.append("&idfa=").append(idfa)
 				.append("&sysver=").append(phoneVersion)
 				.append("&model=").append(phoneModel)
+				.append("&keyword=").append(keyword)
 				.append("&ip=").append(ip)
 				.append("&callback=").append(getCallbackUrl(appid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
@@ -109,7 +112,7 @@ public class Huizhuan extends BaseChannel
 	/**
 	 * 激活上报
 	 */
-	public static AppCommonModel activate(String domain, String appid, String adverName, String idfa, String ip) {
+	public static AppCommonModel activate(String domain, String appid, String adverName, String idfa, String ip, String phoneModel, String phoneVersion) {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url;
@@ -120,6 +123,8 @@ public class Huizhuan extends BaseChannel
 					.append("?appid=").append(appid)
 					.append("&channel=").append(channel)
 					.append("&idfa=").append(idfa)
+					.append("&sysver=").append(phoneVersion)
+					.append("&model=").append(phoneModel)
 					.append("&keyword=").append(keyword)
 					.append("&ip=").append(ip);
 		} 
