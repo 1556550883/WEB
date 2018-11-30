@@ -105,7 +105,6 @@ public class ExternalChannelAdverInfoController extends BaseController
 		return "pc/externalChannelAdverInfo/taskCompleteList";
 	}
 	
-	
 	@RequestMapping("adverCompleteInfo")
 	public String adverCompleteInfo(Page<TExternalChannelTask> page,TExternalChannelTask task,Model model)
 	{

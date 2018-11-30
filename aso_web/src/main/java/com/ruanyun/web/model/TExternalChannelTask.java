@@ -22,6 +22,8 @@ public class TExternalChannelTask
 	private String adverId;
 	private String status;
 	private String channelKey;
+	private String model;
+	private String sysver;
 	private Date receiveTime;
 	private Date completeTime;
 	
@@ -144,5 +146,23 @@ public class TExternalChannelTask
 
 	public void setChannelKey(String channelKey) {
 		this.channelKey = channelKey;
+	}
+
+	@Column(name="model")
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	@Column(name="sysver")
+	public String getSysver() {
+		return sysver;
+	}
+
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
 	}
 }

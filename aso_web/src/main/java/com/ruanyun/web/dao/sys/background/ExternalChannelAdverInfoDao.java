@@ -54,6 +54,8 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 				"  `adver_id` INT(11) NULL COMMENT '广告ID'," + 
 				"  `status` VARCHAR(3) NOT NULL COMMENT '状态（0-排重-1-点击-3-激活）'," + 
 				"  `channel_key` VARCHAR(100) NULL COMMENT '关键词'," + 
+				"  `model` VARCHAR(50) NOT NULL COMMENT '手机版本'," + 
+				"  `sysver` VARCHAR(50) NOT NULL COMMENT '手机系统'," + 
 				"  `receive_time` DATETIME DEFAULT NULL COMMENT '领取时间'," + 
 				"  `complete_time` DATETIME DEFAULT NULL COMMENT '完成时间'," + 
 				"   CONSTRAINT idfa_no_repeat UNIQUE (idfa),"+

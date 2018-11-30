@@ -51,6 +51,10 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 		sql.append("'"+tExternalChannelTask.getIp()+"'");
 		sql.append(" ,keywords=");
 		sql.append("'"+tExternalChannelTask.getKeywords()+"'");
+		sql.append(" ,model=");
+		sql.append("'"+tExternalChannelTask.getModel()+"'");
+		sql.append(" ,sysver=");
+		sql.append("'"+tExternalChannelTask.getSysver()+"'");
 		sql.append(" ,callback=");
 		sql.append("'"+tExternalChannelTask.getCallback()+"' ");
 		sql.append("WHERE idfa=");

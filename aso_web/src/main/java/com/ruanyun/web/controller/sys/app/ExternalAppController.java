@@ -59,14 +59,16 @@ public class ExternalAppController extends BaseController
 	}
 
 	@RequestMapping("happy_click")
-	public void clickInterface(HttpServletResponse response, HttpServletRequest request, String adid, String key, String idfa, String keywords, String ip, String 
-			callbackurl)
+	public void clickInterface(HttpServletResponse response, HttpServletRequest request, String adid, String key, String idfa, String keywords, String ip, 
+			String model, String sysver, String callbackurl)
 	{
 		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
 		tExternalChannelTask.setIdfa(idfa);
 		tExternalChannelTask.setStatus("2");
 		tExternalChannelTask.setIp(ip);
 		tExternalChannelTask.setKeywords(keywords);
+		tExternalChannelTask.setModel(model);
+		tExternalChannelTask.setSysver(sysver);
 		tExternalChannelTask.setCallback(callbackurl);
 		JSONObject obj = new JSONObject();
 		try 
