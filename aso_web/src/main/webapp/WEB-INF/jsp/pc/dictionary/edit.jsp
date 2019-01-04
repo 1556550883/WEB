@@ -41,6 +41,14 @@
 				<input type="text" name="vestorLevel" value="${vestorLevel}" size="100" class="required" alt="散户等级" />
 			</p>
 		</dl>
+		
+		<p>
+			<label>刷机开关：</label>
+			<select name="idfaCheck">
+				<option value="1" <c:if test="${idfaCheck.itemCode == 1}">selected="selected"</c:if>>开启</option>
+				<option value="0" <c:if test="${idfaCheck.itemCode == 0}">selected="selected"</c:if>>关闭</option>
+			</select>
+		</p>
 		<input type="hidden" value="${bean.parentCode }" name="parentCode">
 </div>
 

@@ -42,6 +42,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Float timeLimit;//任务时效
      
      private Float adverPrice;
+     private Float priceDiff;
      private Integer iosVersion;
      private String adverImg;
      private Date adverDayStart;
@@ -75,6 +76,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer downloadType;
      private String adverAdid;
      private Integer isRegister;//is_register 
+     private Integer isMock;//is_register 
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -517,5 +519,21 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	public void setIsRegister(Integer isRegister)
 	{
 		this.isRegister = isRegister;
+	}
+	
+	@Column(name="price_diff")
+	public Float getPriceDiff() {
+		return priceDiff;
+	}
+	public void setPriceDiff(Float priceDiff) {
+		this.priceDiff = priceDiff;
+	}
+	
+	@Column(name="is_mock")
+	public Integer getIsMock() {
+		return isMock;
+	}
+	public void setIsMock(Integer isMock) {
+		this.isMock = isMock;
 	}
 }

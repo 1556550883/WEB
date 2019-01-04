@@ -47,6 +47,9 @@ public class AdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiveIn
 		page = userappidAdveridDao.PageSql(page, t);
 		for(TUserappidAdverid task:page.getResult()){
 			TChannelAdverInfo adverInfo = channelAdverInfoService.getInfoById(task.getAdverId());
+			if(adverInfo == null) {
+				continue;
+			}
 			task.setAdverName(adverInfo.getAdverName());
 			task.setAdverPrice(adverInfo.getAdverPrice());
 			TUserApp userApp = appUserService.get(TUserApp.class, "userAppId", task.getUserAppId());

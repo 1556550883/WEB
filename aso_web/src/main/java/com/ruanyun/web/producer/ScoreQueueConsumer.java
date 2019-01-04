@@ -65,6 +65,7 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 					sss.setRankingNum(score.getRankingNum());	
 				}
 				
+				System.out.println(score.getUserNick() +  "here is a tip!");
 				userScoreService.updateScore(sss, score.getScore(), score.getType());
 			}
 			catch (ShutdownSignalException e) 

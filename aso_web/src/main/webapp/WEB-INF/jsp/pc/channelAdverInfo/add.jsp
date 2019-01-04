@@ -82,7 +82,13 @@
 				   否 ：<input type="radio" name="isRegister"  value="0"/>
 				</dd>
 		    </dl>
-		    
+	       <dl class="nowrap" style="width: 100%">
+			<dt>是否为模拟 任务：</dt>
+			<dd>
+			    是：<input type="radio" name="isMock"  value="1"/>
+			   否 ：<input type="radio" name="isMock"  value="0"/>
+			</dd>
+		    </dl>
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告storeID：</dt>
 				<dd>
@@ -114,6 +120,12 @@
 				<dt>广告价格：</dt>
 				<dd>
 				    <input name="adverPrice" id="adverPrice" class="mustFill" title="广告价格" type="text" value="<c:out value="${bean.adverPrice}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
+		     <dl class="nowrap" style="width: 100%">
+				<dt>广告差价：</dt>
+				<dd>
+				    <input name="priceDiff" id="priceDiff" class="mustFill" title="广告差价" type="text" value="<c:out value="${bean.priceDiff}"></c:out>" maxlength="100"/>
 				</dd>
 		    </dl>
 		    <dl class="nowrap" style="width: 100%">

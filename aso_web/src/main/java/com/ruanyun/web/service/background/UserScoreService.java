@@ -25,6 +25,7 @@ import com.ruanyun.web.model.TUserLevelRate;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.service.app.AppUserApprenticeService;
+import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.CommonMethod;
 import com.ruanyun.web.util.Constants;
 
@@ -212,19 +213,22 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	{
 		if(userScore != null) 
 		{
-			userScore.setScore(userScore.getScore() + score);
-			userScore.setScoreDay(userScore.getScoreDay() + score);
+			System.out.println(score + "++++1");
+			System.out.println(userScore.getScore() + "++++2");
+			//(float)ArithUtil.add(userScore.getScore(), score)
+			userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
+			userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));
 			if(type != 2) 
 			{
-				userScore.setScoreSum(userScore.getScoreSum() + score);
+				userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), score));
 			}
 			//1代表师傅获取的分红  0表示标准任务的金额
 			if(type == 1)
 			{
-				userScore.setApprenticeScore(userScore.getApprenticeScore() + score);
+				userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), score));
 				appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), userScore.getRankingNum(), score);
 			}
-			
+			System.out.println(userScore.getScore() + "++++3");
 			update(userScore);
 			
 			return 1;

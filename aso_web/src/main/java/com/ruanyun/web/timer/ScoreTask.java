@@ -40,14 +40,14 @@ public class ScoreTask
 		userScoreService.clearUserScoreDay();
     }  
 	
-	@Scheduled(cron="0 00 01 ? * * ")   //每天01点00分执行清除用户当天数据  
+	@Scheduled(cron="0 00 05 ? * * ")   //每天05点00分执行清除用户当天数据  
     public void stopTask()
 	{  
 		channelAdverInfoService.updateAdverStatusAll(2);
 		ArrayBlockQueueProducer.removeAdverList.addAll(ArrayBlockQueueProducer.adverList);
     }  
 	
-	@Scheduled(cron="0 00 03 ? * FRI")   //每个星期五执行操作
+	@Scheduled(cron="0 00 06 ? * FRI")   //每个星期五执行操作
     public void bakAdverInfoTable()
 	{  
 		channelAdverInfoService.adverInfoTableBak();

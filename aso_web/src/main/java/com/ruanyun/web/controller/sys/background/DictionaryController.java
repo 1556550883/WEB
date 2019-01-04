@@ -52,6 +52,8 @@ public class DictionaryController extends BaseController{
 		addModel(model, "downloadUrl", dictionaryService.get(TDictionary.class,"parentCode","DOWNLOAD_URL").getItemCode());
 		
 		addModel(model, "vestorLevel", dictionaryService.get(TDictionary.class,"parentCode","VESTOR_LEVEL").getItemCode());
+		
+		addModel(model, "idfaCheck", dictionaryService.get(TDictionary.class,"parentCode","IDFA_CHECK"));
 		return "pc/dictionary/edit";
 	}
 	
@@ -60,9 +62,9 @@ public class DictionaryController extends BaseController{
 	 */
 	@RequestMapping("saveOrUpdate")
 	public void saveOrUpdate(Model model, String appleIdCheck, Integer leastTaskTime, Integer leastForward,
-			String notice,String downloadUrl,Integer vestorLevel,  HttpServletResponse response)
+			String notice,String downloadUrl,Integer vestorLevel,  String idfaCheck, HttpServletResponse response)
 	{
-		dictionaryService.updateSystemParameter(appleIdCheck, leastTaskTime, leastForward, notice, downloadUrl, vestorLevel);
+		dictionaryService.updateSystemParameter(appleIdCheck, leastTaskTime, leastForward, notice, downloadUrl, vestorLevel, idfaCheck);
 		
 		super.writeJsonData(response,CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_", "dictionary/toEdit", "redirect"));
 	}

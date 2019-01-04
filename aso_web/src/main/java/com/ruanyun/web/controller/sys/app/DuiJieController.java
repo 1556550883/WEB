@@ -35,6 +35,7 @@ import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
+import com.ruanyun.web.util.ArithUtil;
 
 @Controller
 @RequestMapping("app/duijie")
@@ -71,6 +72,7 @@ public class DuiJieController extends BaseController
 			map.put("notice", dictionaryService.getNotice());
 			map.put("downloadUrl", dictionaryService.getDownloadUrl());
 			map.put("appVersion", dictionaryService.getAppVersion());
+			map.put("idfaCheck", dictionaryService.getIdfaCheck());
 			model.setObj(map);
 			model.setResult(1);
 			model.setMsg("成功！");
@@ -88,11 +90,11 @@ public class DuiJieController extends BaseController
 	public String getPhoneModel() 
 	{	
 		String phonemodel_sim = "iPhone7,1";
-		int result = random.nextInt(15);
+		int result = random.nextInt(18);
 		switch (result)
 		{
 		case 0:
-			phonemodel_sim = "iPhone7,2";
+			phonemodel_sim = "iPhone10,6";
 			break;
 		case 1:
 			phonemodel_sim = "iPhone8,1";
@@ -134,10 +136,19 @@ public class DuiJieController extends BaseController
 			phonemodel_sim = "iPhone10,5";
 			break;
 		case 14:
-			phonemodel_sim = "iPhone7,1";
+			phonemodel_sim = "iPhone11,2";
+			break;
+		case 15:
+			phonemodel_sim = "iPhone11,4";
+			break;
+		case 16:
+			phonemodel_sim = "iPhone11,6";
+			break;
+		case 17:
+			phonemodel_sim = "iPhone11,8";
 			break;
 		default:
-			phonemodel_sim = "iPhone7,1";
+			phonemodel_sim = "iPhone8,1";
 			break;
 		}
 		
@@ -145,54 +156,54 @@ public class DuiJieController extends BaseController
 	}
 	
 	
-	public String getPhoneName() throws UnsupportedEncodingException 
-	{	
-		String phonemodel_sim = "iPhone6Plus";
-		int result = random.nextInt(11);
-		switch (result)
-		{
-		case 0:
-			phonemodel_sim = "iPhone6";
-			break;
-		case 1:
-			phonemodel_sim = "iPhone6s";
-			break;
-		case 2:
-			phonemodel_sim = "iPhone6sPlus";
-			break;
-		case 3:
-			phonemodel_sim = "iPhoneSE";
-			break;
-		case 4:
-			phonemodel_sim = "iPhone7";
-			break;
-		case 5:
-			phonemodel_sim = "iPhone7";
-			break;
-		case 6:
-			phonemodel_sim = "iPhone7";
-			break;
-		case 7:
-			phonemodel_sim = "iPhone7Plus";
-			break;
-		case 8:
-			phonemodel_sim = "iPhone8";
-			break;
-		case 9:
-			phonemodel_sim = "iPhone8Plus";
-			break;	
-		case 10:
-			phonemodel_sim = "iPhone6Plus";
-			break;
-		default:
-			phonemodel_sim = "iPhone6Plus";
-			break;
-		}
-		
-//		phonemodel_sim =  URLEncoder.encode(phonemodel_sim,"UTF-8");
-//		phonemodel_sim = phonemodel_sim.replaceAll("\\+","%20");
-		return phonemodel_sim;
-	}
+//	public String getPhoneName() throws UnsupportedEncodingException 
+//	{	
+//		String phonemodel_sim = "iPhone6Plus";
+//		int result = random.nextInt(11);
+//		switch (result)
+//		{
+//		case 0:
+//			phonemodel_sim = "iPhone6";
+//			break;
+//		case 1:
+//			phonemodel_sim = "iPhone6s";
+//			break;
+//		case 2:
+//			phonemodel_sim = "iPhone6sPlus";
+//			break;
+//		case 3:
+//			phonemodel_sim = "iPhoneSE";
+//			break;
+//		case 4:
+//			phonemodel_sim = "iPhone7";
+//			break;
+//		case 5:
+//			phonemodel_sim = "iPhone7";
+//			break;
+//		case 6:
+//			phonemodel_sim = "iPhone7";
+//			break;
+//		case 7:
+//			phonemodel_sim = "iPhone7Plus";
+//			break;
+//		case 8:
+//			phonemodel_sim = "iPhone8";
+//			break;
+//		case 9:
+//			phonemodel_sim = "iPhone8Plus";
+//			break;	
+//		case 10:
+//			phonemodel_sim = "iPhone6Plus";
+//			break;
+//		default:
+//			phonemodel_sim = "iPhone6Plus";
+//			break;
+//		}
+//		
+////		phonemodel_sim =  URLEncoder.encode(phonemodel_sim,"UTF-8");
+////		phonemodel_sim = phonemodel_sim.replaceAll("\\+","%20");
+//		return phonemodel_sim;
+//	}
 	/**
 	 * 领取任务
 	 * @throws InterruptedException 
@@ -216,11 +227,11 @@ public class DuiJieController extends BaseController
 		String userNum = request.getParameter("userNum");
 		String phoneModel_real = request.getParameter("phoneModel") + "-";
 		String phoneVersion_real = request.getParameter("phoneVersion") + "-";
-		String phoneModel = getPhoneName();
+		String phoneModel = getPhoneModel();
 		String phoneVersion = request.getParameter("phoneVersion");
-		if(phoneModel.compareTo("iPhone8") >= 0) 
+		if(phoneModel.compareTo("iPhone10,1") >= 0) 
 		{
-			phoneVersion = "12.0";
+			phoneVersion = "12.1.2";
 		}
 		
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
@@ -247,6 +258,14 @@ public class DuiJieController extends BaseController
 		{
 			model.setResult(-1);
 			model.setMsg("任务已完结或已下线！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		if(adverInfo.getIsMock() != 0) 
+		{
+			model.setResult(-1);
+			model.setMsg("抢任务人数过多，请稍后再试！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -359,7 +378,7 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-		
+		//model.setObj(tUserappidAdverid);
 		model.setResult(1);
 		model.setMsg("领取任务成功，请在规定时间内完成任务，否则不计分！");
 		super.writeJsonDataApp(response, model);
@@ -410,6 +429,7 @@ public class DuiJieController extends BaseController
 		
 		for (TUserappidAdverid item : taskList.getResult())
 		{
+			//model.setObj(item);
 			if(item.getIdfa().equals(idfa))
 			{
 				if (item.getStatus().compareTo("2") >= 0 && adid.equals(item.getAdid())) 
@@ -433,12 +453,12 @@ public class DuiJieController extends BaseController
 				else if (item.getStatus().compareTo("1.6") < 0  && adid.equals(item.getAdid()))  
 				{
 					model.setResult(1);
+					//model.setObj(item);
 					model.setMsg("你已成功领取任务，不需重复领取！");
 					break;
 				}
 				else if (item.getStatus().compareTo("1.6") < 0  && !adid.equals(item.getAdid()))  
 				{
-					
 					//撤除检测是否已经存在任务
 					model.setResult(2);
 					//model.setResult(-1);
@@ -584,10 +604,14 @@ public class DuiJieController extends BaseController
 		//更新金额
 		TUserScore score = new TUserScore();
 		score.setUserNum(userNum);
+		score.setUserNick(tUserappidAdverid.getIdfa());
 		score.setType(0);
 		if(tUserApp.getUserApppType() == 1) //工作室
 		{
-			float sco = (float) (adverInfo.getAdverPrice() - 0.2);
+			//float sco = (float) (adverInfo.getAdverPrice() - adverInfo.getPriceDiff());
+			float sco = ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
+			System.out.println(tUserappidAdverid.getIdfa() +  "this is a tip 2");
+			System.out.println(sco);
 			score.setScore(sco);
 		}
 		else
@@ -631,11 +655,11 @@ public class DuiJieController extends BaseController
 		
 		String adid = request.getParameter("adid");//广告id（第三方提供）
 		String idfa = request.getParameter("idfa");//手机广告标识符
-		String ip = request.getRemoteAddr();//手机ip
+		//String ip = request.getRemoteAddr();//手机ip
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String userNum = request.getParameter("userNum");
 		
-		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
+		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa)
 				|| !StringUtils.hasText(adverId))
 		{
 			model.setResult(-1);
@@ -654,13 +678,14 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		String ip = task.getIp();
 		TUserApp tUserApp  = userAppService.getUserAppById(Integer.valueOf(task.getUserAppId()));
 		userNum = tUserApp.getUserNum();
 		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		
 		//判断任务状态
-		if(task.getStatus().compareTo("2") >= 0 && "1".equals(adverInfo.getTaskType()))
+		if(task.getStatus().compareTo("2") >= 0)
 		{
 			model.setResult(1);
 			model.setMsg("已完成！");
@@ -705,6 +730,10 @@ public class DuiJieController extends BaseController
 			}
 			
 			int num = Integer.parseInt(channelInfo.getChannelNum());
+			String phoneModel = task.getPhoneModel();
+			String phoneOs = task.getPhoneVersion();
+			String [] arr1=phoneModel.split("-");
+			String [] arr2=phoneOs.split("-");
 			switch (num)
 			{
 				case 1:
@@ -738,10 +767,6 @@ public class DuiJieController extends BaseController
 					model = HappyChannel.activate(adverInfo.getFlag4(), adid, idfa);
 					break;
 				case 11:
-					String phoneModel = task.getPhoneModel();
-					String phoneOs = task.getPhoneVersion();
-					String [] arr1=phoneModel.split("-");
-					String [] arr2=phoneOs.split("-");
 					model = Huizhuan.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr1[1], arr2[1]);
 					break;
 				case 12:
@@ -752,6 +777,9 @@ public class DuiJieController extends BaseController
 					break;
 				case 14:
 					model = FrogsTChannel.activate(adverInfo.getFlag4(), adid, idfa, ip);
+					break;
+				case 15:
+					model = FrogsTTChannel.activate(adverInfo.getFlag4(), adid, idfa, ip, adverInfo.getAdverName(),arr1[1], arr2[1]);
 					break;
 				default:
 					model.setResult(-1);
@@ -774,18 +802,22 @@ public class DuiJieController extends BaseController
 			int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
 			if(rowCount == 0)
 			{
-				model.setResult(1);
-				model.setMsg("任务已经完成！");
+				model.setResult(-1);
+				model.setMsg("状态错误，请稍后请求！");
 				super.writeJsonDataApp(response, model);
 				return;
 			}
 			//把单子发送到队列
 			TUserScore score = new TUserScore();
+			score.setUserNick(tUserappidAdverid.getIdfa());
 			score.setUserNum(userNum);
 			score.setType(0);
 			if(tUserApp.getUserApppType() == 1) //工作室
 			{
-				float sco = (float) (adverInfo.getAdverPrice() - 0.2);
+				float sco = ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
+				//float sco = (float) (adverInfo.getAdverPrice() - adverInfo.getPriceDiff());
+				System.out.println(tUserappidAdverid.getIdfa() +  "this is a tip 1");
+				System.out.println(rowCount  + "this is rowcount");
 				score.setScore(sco);
 			}
 			else
@@ -835,18 +867,23 @@ public class DuiJieController extends BaseController
 			int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
 			if(rowCount == 0)
 			{
-				model.setResult(1);
-				model.setMsg("任务已经完成！");
+				model.setResult(-1);
+				model.setMsg("状态错误，请稍后请求！");
 				super.writeJsonDataApp(response, model);
 				return;
 			}
 			//更改金额
 			TUserScore score = new TUserScore();
+			score.setUserNick(tUserappidAdverid.getIdfa());
 			score.setUserNum(userNum);
 			score.setType(0);
 			if(tUserApp.getUserApppType() == 1) //工作室
 			{
-				float sco = (float) (adverInfo.getAdverPrice() - 0.2);
+				//float sco = (float) (adverInfo.getAdverPrice() - adverInfo.getPriceDiff());
+				float sco = ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
+				System.out.println(tUserappidAdverid.getIdfa() +  "this is a tip 3");
+				System.out.println(rowCount  + "this is rowcount");
+				System.out.println(sco);
 				score.setScore(sco);
 			}
 			else
@@ -920,7 +957,8 @@ public class DuiJieController extends BaseController
 		{
 			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverid.getAdverId()));
 			adverid.setAdverName(adverInfo.getAdverName());
-			adverid.setAdverPrice(adverInfo.getAdverPrice());
+			//float sco = (float)ArithUtil.sub(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
+			adverid.setAdverPrice(ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff()));
 		}
 		
 		page.setResult(adverCompleteList);
@@ -1054,6 +1092,9 @@ public class DuiJieController extends BaseController
 			break;
 		case 14:
 			model =  isFrogsTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			break;
+		case 15:
+			model =  isFrogsTTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
 		default:
 			model.setResult(-1);
@@ -1237,6 +1278,22 @@ public class DuiJieController extends BaseController
 	{
 		//调用第三方排重接口
 		AppCommonModel model = FrogsTChannel.paiChong(adverInfo.getFlag2(), adid, idfa, ip);
+		
+		return model;
+	}
+	
+	//TT frogs - 15
+	private AppCommonModel isFrogsTTChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String deviceType, String osVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//调用第三方排重接口 
+		AppCommonModel model = FrogsTTChannel.paiChong(adverInfo.getFlag2(), adid, idfa, ip, adverName,deviceType, osVersion);
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = FrogsTTChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
+					userNum, deviceType, osVersion, adverName);
+		}
 		
 		return model;
 	}

@@ -82,7 +82,12 @@
 				   否 ：<input type="radio" id="isRegister_0" name="isRegister"  value="0"/>
 				</dd>
 		    </dl>
-		    
+		      <dl class="nowrap" style="width: 100%">
+			<dt>是否为模拟 任务：</dt>
+			<dd>
+			    是：<input type="radio" id="isMock_1"  name="isMock"  value="1"/>
+			   否 ：<input type="radio" id="isMock_0" name="isMock"  value="0"/>
+			</dd>  </dl>
 			<dl>
 				<dt>广告ID：</dt>
 				<dd>
@@ -124,6 +129,12 @@
 				<dt>广告价格：</dt>
 				<dd>
 				    <input name="adverPrice" id="adverPrice" class="mustFill" title="广告价格" type="text" value="<c:out value="${bean.adverPrice}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
+		       <dl class="nowrap" style="width: 100%">
+				<dt>广告差价：</dt>
+				<dd>
+				    <input name="priceDiff" id="priceDiff" class="mustFill" title="广告差价" type="text" value="<c:out value="${bean.priceDiff}"></c:out>" maxlength="100"/>
 				</dd>
 		    </dl>
 		    <dl class="nowrap" style="width: 100%">
@@ -199,6 +210,16 @@
 			else
 			{
 				$("#isRegister_0").attr("checked", true);
+			}
+			
+			var val2 = '${bean.isMock}';
+			if(val2 == 1)
+			{
+				$("#isMock_1").attr("checked", true);
+			}
+			else
+			{
+				$("#isMock_0").attr("checked", true);
 			}
 		})
 		

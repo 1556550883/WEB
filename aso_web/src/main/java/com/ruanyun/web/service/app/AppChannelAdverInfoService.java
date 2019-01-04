@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
@@ -28,6 +27,7 @@ import com.ruanyun.web.dao.sys.background.UserAppDao;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
+import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.CSVUtils;
 
 /**
@@ -93,10 +93,16 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 //				{
 //					iterator.remove();
 //				}
-				
 				if((tUserApp.getUserApppType() <= 1 && adver.getAdverStatus() == 2) || (adver.getAdverStatus() == 0))
 				{
 					iterator.remove();
+					continue;
+				}
+				
+				if(tUserApp.getUserApppType() <= 1)
+				{
+					float s = ArithUtil.subf(adver.getAdverPrice(), adver.getPriceDiff());
+					adver.setAdverPrice(s);
 				}
 			}
 			page2.setTotalCount(page2.getResult().size());

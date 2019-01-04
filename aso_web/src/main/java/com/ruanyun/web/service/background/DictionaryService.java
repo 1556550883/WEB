@@ -31,6 +31,8 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	private static Integer vestorLevel = 6;
 	
 	private static String appVersion = "v1.0";
+	
+	private static String idfaCheck = "-1";
 	/**
 	 * 功能描述:查询字典表 父级
 	 * @author wsp  2016-10-20 下午05:48:44
@@ -45,7 +47,7 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	 * 修改系统参数
 	 */
 	public void updateSystemParameter(String appleIdCheck2, Integer leastTaskTime2, Integer leastForward2, String notice2, 
-			String downloadUrl2, Integer vestorLevel2)
+			String downloadUrl2, Integer vestorLevel2,  String idfaCheck2)
 	{
 		if(StringUtils.hasText(appleIdCheck2))
 		{
@@ -95,6 +97,15 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 			super.update(oldInfo);
 			vestorLevel= leastTaskTime2;
 		}
+		
+		
+		if(StringUtils.hasText(idfaCheck2))
+		{
+			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "IDFA_CHECK");
+			oldInfo.setItemCode(idfaCheck2);
+			super.update(oldInfo);
+			idfaCheck = idfaCheck2;
+		}
 	}
 	
 	/**
@@ -116,6 +127,29 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 		}
 		
 		return appleIdCheck;
+	}
+	
+	
+	
+	/**
+	 * 查询appleId排重开关
+	 */
+	public String getIdfaCheck()
+	{
+		if(idfaCheck.equals("-1")) 
+		{
+			TDictionary dictionary = super.get(TDictionary.class, "parentCode", "IDFA_CHECK");
+			if (dictionary == null) 
+			{
+				idfaCheck = "1";
+			}
+			else 
+			{
+				idfaCheck = dictionary.getItemCode();
+			}
+		}
+		
+		return idfaCheck;
 	}
 	
 	/**

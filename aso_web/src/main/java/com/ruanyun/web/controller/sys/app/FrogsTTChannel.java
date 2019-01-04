@@ -1,38 +1,77 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.util.MD5;
+
 import net.sf.json.JSONObject;
 
-public class BeeChannel extends BaseChannel 
+public class FrogsTTChannel  extends BaseChannel 
 {
-	private static final Log log = LogFactory.getLog(BeeChannel.class);
-	private static final String ChannelSource = "zszs";
-	private static final String ChannelKey = "ua7227oetq6rr5p1pa4wlew4bduuvlae";
+	private static final Log log = LogFactory.getLog(FrogsTChannel.class);
+	
+	//我们的渠道号
+	private static final String source = "zuanshi";
+	private static final String source_key = "345fcb48f33e6a7dcf5ab8b64c4886b6";
+	
+	
+	private static String getFormatedDateString()
+	 {  
+		 String _timeZone = "GMT+8:00";
+	     TimeZone timeZone = null;  
+	     timeZone = TimeZone.getTimeZone(_timeZone);  
+	     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	     sdf.setTimeZone(timeZone);  
+	     return sdf.format(new Date());  
+	}  
+	 
+	private static long getTimestamp() 
+	{
+		String stridddg = getFormatedDateString();
+		Date d = null;
+		try 
+		{
+			d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stridddg);
+		} 
+		catch (ParseException e)
+		{
+			e.printStackTrace();
+		}
+		long t1 = d.getTime();
+		return t1 = t1/1000;
+	}
 	
 	/**
 	 * 排重
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static AppCommonModel paiChong(String domain, String adid, String idfa, String ip)
+	public static AppCommonModel paiChong(String domain, String adid, String idfa, String ip, String keyword, 
+			String deviceType, String osVersion) throws UnsupportedEncodingException
 	{
-		long timestamp = System.currentTimeMillis()/1000;
-		String sign = ChannelSource+"|"+adid +"|" + idfa +"|"+ChannelKey + "|" + timestamp;
-		sign = MD5.MD5Encode(sign);
-
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		long timestamp = getTimestamp();
+		String sign = source + "|" + adid + "|" + idfa + "|" + source_key + "|" + timestamp;
+		sign = MD5.MD5Encode(sign);
 		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
-				.append("&idfa=").append(idfa)
 				.append("&ip=").append(ip)
-				.append("&source=").append(ChannelSource)
+				.append("&idfa=").append(idfa)
+				.append("&keyword=").append(keyword)
+				.append("&device_type=").append(deviceType)
+				.append("&os_version=").append(osVersion)
+				.append("&source=").append(source)
 				.append("&timestamp=").append(timestamp)
 				.append("&sign=").append(sign);
+		
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)
@@ -44,13 +83,8 @@ public class BeeChannel extends BaseChannel
 		else
 		{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer status = (Integer)jsonObject.get("err_code");
-			if(status == null)
-			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
-			}
-			else if(status == 0)
+			Integer status = (Integer)jsonObject.get("code");
+			if(status == 0)
 			{
 				JSONObject resultObject = (JSONObject)jsonObject.get("result");
 				Integer result = (Integer)resultObject.get(idfa);
@@ -62,8 +96,14 @@ public class BeeChannel extends BaseChannel
 				else
 				{
 					model.setResult(-1);
-					model.setMsg("重复任务！");
+					model.setMsg("重复任务！-1");
 				}
+			}
+			else if(status == 1)
+			{
+				String msg = (String)jsonObject.get("msg");
+				model.setResult(-1);
+				model.setMsg(msg);
 			}
 			else
 			{
@@ -79,30 +119,26 @@ public class BeeChannel extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws UnsupportedEncodingException
+			Integer userAppId, Integer adverId, String userNum, String deviceType, String osVersion, String keyword) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		
-		long timestamp = System.currentTimeMillis()/1000;
-		String sign = ChannelSource+"|"+adid +"|" + idfa +"|"+ChannelKey + "|" + timestamp;
+		long timestamp = getTimestamp();
+		String sign = source + "|" + adid + "|" + idfa + "|" + source_key + "|" + timestamp;
 		sign = MD5.MD5Encode(sign);
-		String keyword =  URLEncoder.encode(adverName, "utf-8");
-		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&idfa=").append(idfa)
 				.append("&ip=").append(ip)
 				.append("&keyword=").append(keyword)
-				.append("&os_version=").append(phoneVersion)
-				.append("&device_type=").append(phoneModel)
-				.append("&source=").append(ChannelSource)
+				.append("&device_type=").append(deviceType)
+				.append("&os_version=").append(osVersion)
+				.append("&source=").append(source)
 				.append("&timestamp=").append(timestamp)
 				.append("&sign=").append(sign)
 				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
-		JSONObject jsonObject = httpGet(url.toString(), false);
 		
-		if(jsonObject == null)
-		{
+		JSONObject jsonObject = httpGet(url.toString(), false);
+		if(jsonObject == null){
 			log.error("request url：" + url + "。response：null");
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：系统出错！");
@@ -110,13 +146,8 @@ public class BeeChannel extends BaseChannel
 		else
 		{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer status = (Integer)jsonObject.get("err_code");
-			if(status == null)
-			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
-			}
-			else if(status == 0)
+			Integer status = (Integer)jsonObject.get("code");
+			if(status == 0)
 			{
 				JSONObject resultObject = (JSONObject)jsonObject.get("result");
 				Integer result = (Integer)resultObject.get(idfa);
@@ -128,8 +159,14 @@ public class BeeChannel extends BaseChannel
 				else
 				{
 					model.setResult(-1);
-					model.setMsg("重复任务！");
+					model.setMsg("领取任务失败！-1");
 				}
+			}
+			else if(status == 1)
+			{
+				String msg = (String)jsonObject.get("msg");
+				model.setResult(-1);
+				model.setMsg(msg);
 			}
 			else
 			{
@@ -144,28 +181,25 @@ public class BeeChannel extends BaseChannel
 	/**
 	 * 激活上报
 	 */
-	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip) 
+	public static AppCommonModel activate(String domain, String adid, String idfa, String ip, String keyword, 
+			String deviceType, String osVersion) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		
-		if(domain == null || domain.isEmpty()) 
-		{
-			model.setResult(1);
-			model.setMsg("任务完成！");
-			return model;
-		}
-		
-		long timestamp = System.currentTimeMillis()/1000;
-		String sign = ChannelSource+"|"+adid +"|" + idfa +"|"+ChannelKey + "|" + timestamp;
+		long timestamp = getTimestamp();
+		String sign = source + "|" + adid + "|" + idfa + "|" + source_key + "|" + timestamp;
 		sign = MD5.MD5Encode(sign);
-
+		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
-				.append("&idfa=").append(idfa)
 				.append("&ip=").append(ip)
-				.append("&source=").append(ChannelSource)
+				.append("&idfa=").append(idfa)
+				.append("&keyword=").append(keyword)
+				.append("&device_type=").append(deviceType)
+				.append("&os_version=").append(osVersion)
+				.append("&source=").append(source)
 				.append("&timestamp=").append(timestamp)
 				.append("&sign=").append(sign);
+		
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)
@@ -177,34 +211,36 @@ public class BeeChannel extends BaseChannel
 		else
 		{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer status = (Integer)jsonObject.get("err_code");
-			if(status == null)
-			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
-			}
-			else if(status == 0)
+			Integer status = (Integer)jsonObject.get("code");
+			if(status == 0)
 			{
 				JSONObject resultObject = (JSONObject)jsonObject.get("result");
 				Integer result = (Integer)resultObject.get(idfa);
 				if(result == 1) 
 				{
 					model.setResult(1);
-					model.setMsg("任务完成！");
+					model.setMsg("任务成功！");
 				}
 				else
 				{
 					model.setResult(-1);
-					model.setMsg("渠道返回任务失败！");
+					model.setMsg("任务失败-1！");
 				}
+			}
+			else if(status == 1)
+			{
+				String msg = (String)jsonObject.get("msg");
+				model.setResult(-1);
+				model.setMsg(msg);
 			}
 			else
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
+				model.setMsg("领取任务失败。原因：系统出错-2！");
 			}
 		}
 		
 		return model;
 	}
+
 }
