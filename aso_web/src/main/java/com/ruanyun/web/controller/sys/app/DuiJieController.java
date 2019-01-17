@@ -155,6 +155,31 @@ public class DuiJieController extends BaseController
 		return phonemodel_sim;
 	}
 	
+	public String  getPhoneVersion()
+	{
+		String phoneVersion = "12.1.2";
+		int result = random.nextInt(4);
+		switch (result)
+		{
+			case 0:
+				phoneVersion = "12.0";
+				break;
+			case 1:
+				phoneVersion = "12.1";
+				break;
+			case 2:
+				phoneVersion = "12.1.1";
+				break;	
+			case 3:
+				phoneVersion = "12.1.2";
+				break;	
+			default:
+				phoneVersion = "12.1.2";
+				break;
+		}
+				
+		return phoneVersion;
+	}
 	
 //	public String getPhoneName() throws UnsupportedEncodingException 
 //	{	
@@ -231,7 +256,7 @@ public class DuiJieController extends BaseController
 		String phoneVersion = request.getParameter("phoneVersion");
 		if(phoneModel.compareTo("iPhone10,1") >= 0) 
 		{
-			phoneVersion = "12.1.2";
+			phoneVersion = getPhoneVersion();
 		}
 		
 		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
@@ -1229,7 +1254,7 @@ public class DuiJieController extends BaseController
 	{
 		//会赚
 		//调用第三方排重接口
-		AppCommonModel model = Huizhuan.paiChong(adverInfo.getFlag2(), adid, idfa, phoneModel, phoneVersion, adverName);
+		AppCommonModel model = Huizhuan.paiChong(adverInfo.getFlag2(), adid, idfa, phoneModel, phoneVersion, adverName, ip);
 		
 		if(model.getResult() != -1)
 		{

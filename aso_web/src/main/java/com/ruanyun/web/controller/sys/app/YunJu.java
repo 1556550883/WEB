@@ -19,7 +19,7 @@ public class YunJu extends BaseChannel
 	private static final Log log = LogFactory.getLog(YunJu.class);
 	
 	//我们的渠道号
-	private static final String CH = "qisu";
+	private static final String CH = "happyzhuan";
 	
 	/**
 	 * 排重

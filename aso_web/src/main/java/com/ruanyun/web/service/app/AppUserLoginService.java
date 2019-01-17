@@ -576,10 +576,10 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	}
 	
 	//updateUserAlipay
-	public AppCommonModel updateUserAlipay(String userNum,String alipay) 
+	public AppCommonModel updateUserAlipay(String userNum,String alipay,  String userName) 
 	{
 		AppCommonModel model = new AppCommonModel();
-		int result = appUserService.updateUserAlipay(userNum,alipay);
+		int result = appUserService.updateUserAlipay(userNum,alipay, userName);
 		model.setMsg("修改成功");
 		model.setResult(result);
 		return model;

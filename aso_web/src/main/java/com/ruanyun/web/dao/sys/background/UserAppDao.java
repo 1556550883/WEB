@@ -6,7 +6,6 @@
 package com.ruanyun.web.dao.sys.background;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;

@@ -19,7 +19,7 @@ public class Huizhuan extends BaseChannel
 	/**
 	 * 排重
 	 */
-	public static AppCommonModel paiChong(String domain, String appid, String idfa, String phoneModel, String phoneVersion, String keyword)
+	public static AppCommonModel paiChong(String domain, String appid, String idfa, String phoneModel, String phoneVersion, String keyword, String ip)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -30,6 +30,7 @@ public class Huizhuan extends BaseChannel
 				.append("&keyword=").append(keyword)
 				.append("&model=").append(phoneModel)
 				.append("&sysver=").append(phoneVersion)
+				.append("&ip=").append(ip)
 				.append("&channel=").append(channel);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		

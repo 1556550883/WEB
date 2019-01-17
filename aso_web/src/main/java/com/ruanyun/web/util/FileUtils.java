@@ -182,6 +182,7 @@ public class FileUtils {
 			byte[] buff = new byte[2048];
 			int bytesRead;
 			while (-1 != (bytesRead = inputStream.read(buff, 0, buff.length))) {  
+				System.out.println(buff.toString() + "this is test!");
 				outputStream.write(buff, 0, bytesRead);  
 			}
 			  inputStream.close();  
@@ -216,7 +217,7 @@ public class FileUtils {
 		 }
     }
 
-	 public static void downloadMobileConfig(HttpServletResponse response, String fileName, String conType, String masterid, String userId) throws FileNotFoundException 
+	 public static void downloadMobileConfig(HttpServletResponse response, String fileName, String conType, String masterid) throws FileNotFoundException 
 	 {
 	     // 下载本地文件
 	     // 读到流中C:\Program Files\Apache Software Foundation\download
@@ -243,7 +244,7 @@ public class FileUtils {
 			}
 
 			String str = new String(bytes,"utf-8");
-			String master = "masterid=" + masterid +"_" + userId;
+			String master = "masterid=" + masterid;
 			String s1 = str.replaceAll("masterid=11",master);
 			byte[] result =  s1.getBytes();
 			response.getOutputStream().write(result, 0, result.length);

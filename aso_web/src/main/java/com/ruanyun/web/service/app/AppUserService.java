@@ -129,14 +129,23 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 	}
 	
 	//updateUserAlipay
-	public int updateUserAlipay(String userNum,String alipay) 
+	public int updateUserAlipay(String userNum,String alipay, String userName) 
 	{
 		TUserApp userApp = get(TUserApp.class, "userNum", userNum);
 		if(EmptyUtils.isEmpty(userApp)){
 			return 2;
 		}
 		
-		userApp.setZhifubao(alipay);
+		try
+		{
+			userApp.setUserNick(URLDecoder.decode(userName, "UTF-8"));
+			userApp.setZhifubao(URLDecoder.decode(alipay, "UTF-8"));
+		} 
+		catch (UnsupportedEncodingException e) 
+		{
+			e.printStackTrace();
+		}
+
 		update(userApp);
 		return 1;
 	}

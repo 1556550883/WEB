@@ -239,12 +239,12 @@ public class AppUserLoginController extends BaseController
 	}
 	
 	@RequestMapping("updateUserAlipay")
-	public void updateUserAlipay(HttpServletResponse response,String userNum,String alipay) 
+	public void updateUserAlipay(HttpServletResponse response, String userNum, String alipay, String userName) 
 	{
 		AppCommonModel acm = new AppCommonModel();
 		try 
 		{
-			acm = appUserLoginService.updateUserAlipay(userNum, alipay);
+			acm = appUserLoginService.updateUserAlipay(userNum, alipay, userName);
 		} 
 		catch (Exception e)
 		{

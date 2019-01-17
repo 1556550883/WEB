@@ -54,7 +54,7 @@ public class AppDownloadController extends BaseController
 	}
 	
 	@RequestMapping("happyzhuan.mobileconfig")
-	public void getMobileProvision(HttpServletResponse response, String masterid, String userId)
+	public void getMobileProvision(HttpServletResponse response, String masterid)
 	{
 		try 
 		{
@@ -63,14 +63,23 @@ public class AppDownloadController extends BaseController
 				masterid = "-1";
 			}
 			
-			if(userId == null) 
-			{
-				userId = "-1";
-			}
-			
 			String str = "application/x-apple-aspen-config";
-			FileUtils.downloadMobileConfig(response, "happyzhuan.mobileconfig", str, masterid, userId);
+			FileUtils.downloadMobileConfig(response, "happyzhuan.mobileconfig", str, masterid);
 			
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@RequestMapping("install.mobileprovision")
+	public void installProvision(HttpServletResponse response)
+	{
+		try 
+		{
+			FileUtils.downloadLocal(response, "install.mobileprovision", "bin");
 		}
 		catch (FileNotFoundException e) 
 		{

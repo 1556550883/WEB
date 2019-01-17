@@ -602,5 +602,6 @@ public class Constants {
     public static int CART_STATUS_2=2;//审核通过
     public static int CART_STATUS_1_=3;//审核失败
     
-
+    public static String BASD_URL =  "https://moneyzhuan.com";
+    //public static String BASD_URL =  "http://192.168.0.101:8080";
 }
