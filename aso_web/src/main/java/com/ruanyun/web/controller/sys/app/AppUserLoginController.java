@@ -69,7 +69,7 @@ public class AppUserLoginController extends BaseController
 	 * @param request
 	 */
 	@RequestMapping("send_msg")
-	public void sendMsg(HttpServletResponse response,String userId, String phoneNumber, HttpServletRequest request) 
+	public void sendMsg(HttpServletResponse response,String udid, String phoneNumber, HttpServletRequest request) 
 	{
 		AppCommonModel model = null;
 		try 
@@ -83,7 +83,7 @@ public class AppUserLoginController extends BaseController
 				model = new AppCommonModel(-1,"错误的手机号码！");
 			}
 			
-			TUserApp tUserApp = userAppService.getUserAppById(Integer.parseInt(userId));
+			TUserApp tUserApp = userAppService.getUserAppByUserName(udid);
 			
 			if(model.getResult() == 1)
 			{
@@ -103,7 +103,7 @@ public class AppUserLoginController extends BaseController
 	}	
 
 	@RequestMapping("verifySmsCode")
-	public void verifySmsCode(HttpServletResponse response,String userId, String phoneNumber, String smsCode,HttpServletRequest request) 
+	public void verifySmsCode(HttpServletResponse response,String udid, String phoneNumber, String smsCode,HttpServletRequest request) 
 	{
 		AppCommonModel model = new AppCommonModel();
 		if(phoneNumber == null || smsCode == null) 
@@ -115,7 +115,8 @@ public class AppUserLoginController extends BaseController
 			return;
 		}
 		
-		TUserApp tUserApp = userAppService.getUserAppById(Integer.parseInt(userId));
+		TUserApp tUserApp = userAppService.getUserAppByUserName(udid);
+		
 		if( tUserApp.getInvitationCode() != null && tUserApp.getInvitationCode().equals(smsCode)) 
 		{
 			try 
@@ -161,13 +162,34 @@ public class AppUserLoginController extends BaseController
 	}
 
 	@RequestMapping("getUserForUdid")
-	public void getUserForUdid(HttpServletResponse response, String udid, String idfa) {
+	public void getUserForUdid(HttpServletResponse response, String udid) 
+	{
 		AppCommonModel acm = new AppCommonModel();
-		try {
-			acm = appUserLoginService.getUserForUdid(udid, idfa);
-		} catch (Exception e) {
+		try
+		{
+			acm = appUserLoginService.getUserForUdid(udid);
+		}
+		catch (Exception e) 
+		{
 			acm = new AppCommonModel(e.getMessage(), "{}");
 		}
+		
+		super.writeJsonDataApp(response, acm);
+	}
+	
+	@RequestMapping("updateUserByUdid")
+	public void updateUserByUdid(HttpServletResponse response, String udid, String idfa, String phoneModel, String phoneVersion) 
+	{
+		AppCommonModel acm = new AppCommonModel();
+		try 
+		{
+			acm = appUserLoginService.updateUserByUdid(udid, idfa, phoneModel, phoneVersion);
+		} 
+		catch (Exception e)
+		{
+			acm = new AppCommonModel(e.getMessage(), "{}");
+		}
+		
 		super.writeJsonDataApp(response, acm);
 	}
 	
@@ -206,13 +228,13 @@ public class AppUserLoginController extends BaseController
 	}
 	
 	@RequestMapping("updateUserWeiXin")
-	public void updateUserWeiXin(HttpServletResponse response,String userNum,String weiXinName,String headImgUrl, String openID) 
+	public void updateUserWeiXin(HttpServletResponse response,String udid,String weiXinName,String headImgUrl, String openID) 
 	{
 		AppCommonModel acm = new AppCommonModel();
 		
 		try
 		{
-			acm = appUserLoginService.updateUserWeiXin(userNum,weiXinName,headImgUrl,openID);
+			acm = appUserLoginService.updateUserWeiXin(udid,weiXinName,headImgUrl,openID);
 		}
 		catch (Exception e) 
 		{
@@ -239,12 +261,12 @@ public class AppUserLoginController extends BaseController
 	}
 	
 	@RequestMapping("updateUserAlipay")
-	public void updateUserAlipay(HttpServletResponse response, String userNum, String alipay, String userName) 
+	public void updateUserAlipay(HttpServletResponse response, String alipay, String udid,String usernick) 
 	{
 		AppCommonModel acm = new AppCommonModel();
 		try 
 		{
-			acm = appUserLoginService.updateUserAlipay(userNum, alipay, userName);
+			acm = appUserLoginService.updateUserAlipay(alipay, udid,usernick);
 		} 
 		catch (Exception e)
 		{

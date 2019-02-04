@@ -50,12 +50,18 @@ public class AppUserApprenticeService extends BaseServiceImpl<TUserApprentice>
 		return model;
 	}
 	
-	public void addMyApprenticeScore(String masterNum, String ApprenticeNum, Float score) 
+	public Page<TUserApprentice> getMyApprentices(Page<TUserApprentice>page,String masterNum)
+	{
+		 return userApprenticeDao.pageSql(page, masterNum);
+	}
+	
+	public void addMyApprenticeScore(String masterNum, String ApprenticeNum, Float score, int type) 
 	{
 		TUserApprentice userApprentice = new TUserApprentice();
 		userApprentice.setUserNum(masterNum);
 		userApprentice.setApprenticeUserNum(ApprenticeNum);
 		userApprentice.setScore(score);
+		userApprentice.setUserApprenticeType(type);
 		userApprentice.setApprenticeTime(new Date());
 		super.save(userApprentice);
 	}

@@ -74,13 +74,15 @@ public class YunJu extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException {
+			Integer userAppId, Integer adverId, String userNum, String sysver, String phonemodel) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&ch=").append(CH)
 				.append("&idfa=").append(idfa)
+				.append("&sysver=").append(sysver)
+				.append("&model=").append(phonemodel)
 				.append("&ip=").append(ip)
 				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
@@ -110,7 +112,7 @@ public class YunJu extends BaseChannel
 	/**
 	 * 激活上报
 	 */
-	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip) {
+	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip, String sysver, String phonemodel) {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url;
@@ -119,6 +121,8 @@ public class YunJu extends BaseChannel
 					.append("?adid=").append(adid)
 					.append("&ch=").append(CH)
 					.append("&idfa=").append(idfa)
+					.append("&sysver=").append(sysver)
+					.append("&model=").append(phonemodel)
 					.append("&kid=").append(URLEncoder.encode(adverName, "utf-8"))
 					.append("&ip=").append(ip);
 		} catch (UnsupportedEncodingException e) {

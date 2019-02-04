@@ -242,24 +242,50 @@ public class DuiJieController extends BaseController
 			throws NumberFormatException, InterruptedException, ShutdownSignalException, ConsumerCancelledException, IOException, TimeoutException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		
-		String adid = request.getParameter("adid");//广告id（第三方提供）
-		String idfa = request.getParameter("idfa");//手机广告标识符
+		String udid = request.getParameter("udid");
+		String adverId = request.getParameter("adverId");
 		String ip = request.getRemoteAddr();//手机ip
-		String userAppId = request.getParameter("userAppId");//用户Id
-		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
-		String appleId = request.getParameter("appleId");//苹果账号
-		String userNum = request.getParameter("userNum");
-		String phoneModel_real = request.getParameter("phoneModel") + "-";
-		String phoneVersion_real = request.getParameter("phoneVersion") + "-";
-		String phoneModel = getPhoneModel();
-		String phoneVersion = request.getParameter("phoneVersion");
-		if(phoneModel.compareTo("iPhone10,1") >= 0) 
+		//String adid = "";//广告id（第三方提供）
+		String idfa = "";//手机广告标识符
+		String userAppId = "";//用户Id
+		String appleId = "";//苹果账号
+		String userNum = "";
+		String phoneModel_real = "";
+		String phoneVersion_real = "";
+		String phoneModel = "";
+		String phoneVersion = "";
+		TUserApp userApp;
+		if(udid != null && !udid.isEmpty()) 
 		{
-			phoneVersion = getPhoneVersion();
+			userApp = userAppService.getUserAppByUserName(udid);
+			idfa = userApp.getIdfa();
+			userAppId = userApp.getUserAppId() + "";
+			userNum = userApp.getUserNum();
+			phoneModel_real = userApp.getPhoneModel() + "-";
+			phoneVersion_real = userApp.getPhoneVersion() + "-";
+			phoneModel = userApp.getPhoneModel();
+			phoneVersion = userApp.getPhoneVersion();
+		}
+		else 
+		{
+			 //adid = request.getParameter("adid");//广告id（第三方提供）
+			 idfa = request.getParameter("idfa");//手机广告标识符
+			 userAppId = request.getParameter("userAppId");//用户Id
+			 appleId = request.getParameter("appleId");//苹果账号
+			 userNum = request.getParameter("userNum");
+			 phoneModel_real = request.getParameter("phoneModel") + "-";
+			 phoneVersion_real = request.getParameter("phoneVersion") + "-";
+			 phoneModel = getPhoneModel();
+			 phoneVersion = request.getParameter("phoneVersion");
+			if(phoneModel.compareTo("iPhone10,1") >= 0) 
+			{
+				phoneVersion = getPhoneVersion();
+			}
+			
+			userApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
 		}
 		
-		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
+		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
 				|| !StringUtils.hasText(userAppId) || !StringUtils.hasText(adverId))
 		{
 			model.setResult(-1);
@@ -297,7 +323,7 @@ public class DuiJieController extends BaseController
 		
 		//判断当天领取到的任务
 		//Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
-		
+		String adid = adverInfo.getAdid();
 		Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfaOrIP(idfa, ip);
 		
 		if (taskList != null && !taskList.getResult().isEmpty())
@@ -320,7 +346,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//检测apple是否可以使用
-		AppCommonModel checkAppleIDModel = checkAppleIDDuplicated(userAppId, appleId, adid);
+		AppCommonModel checkAppleIDModel = checkAppleIDDuplicated(userApp, appleId, adid);
 		if(checkAppleIDModel.getResult() != 2)
 		{
 			super.writeJsonDataApp(response, checkAppleIDModel);
@@ -328,7 +354,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//判断是否有任务在进行中
-		AppCommonModel checkAdverInProcessModel = checkAdverInProcess(taskList);
+		AppCommonModel checkAdverInProcessModel = checkAdverInProcess(taskList, userApp);
 		if(checkAdverInProcessModel.getResult() != 2)
 		{
 			super.writeJsonDataApp(response, checkAdverInProcessModel);
@@ -410,7 +436,7 @@ public class DuiJieController extends BaseController
 		return;
 	}
 	
-	private AppCommonModel checkAdverInProcess(Page<TUserappidAdverid> taskList) 
+	private AppCommonModel checkAdverInProcess(Page<TUserappidAdverid> taskList, TUserApp userApp) 
 	{
 		AppCommonModel model = new AppCommonModel(2, "通过！");
 		
@@ -420,16 +446,21 @@ public class DuiJieController extends BaseController
 			{
 				//model.setResult(-1);
 				//model.setMsg("此类广告已经领取过，请勿重复领取！");
+				if(userApp != null && userApp.getUserApppType() == 2) {
+					//散户等于2 todo
+					model.setResult(-1);
+					model.setMsg("此类广告已经领取过，请勿重复领取！");
+				}
 			}
 		}
 		
 		return model;
 	}
 	
-	private AppCommonModel checkAppleIDDuplicated(String userAppId, String appleId, String adid) 
+	private AppCommonModel checkAppleIDDuplicated(TUserApp tUserApp, String appleId, String adid) 
 	{
 		AppCommonModel model = new AppCommonModel(2, "通过！");
-		TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
+		//TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
 		//appleId排重开关开启且为普通用户时，判断appleId是否重复(此排重要放在idfa排重和ip排重之后)
 		if(1 == tUserApp.getUserApppType() && "1".equals(dictionaryService.getAppleIdCheck()))
 		{
@@ -527,10 +558,9 @@ public class DuiJieController extends BaseController
 		
 		String idfa = request.getParameter("idfa");
 		String adverId = request.getParameter("adverId");
-		String taskType = request.getParameter("taskType");
+		//String taskType = request.getParameter("taskType");
 		
-		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(adverId)
-				|| !StringUtils.hasText(taskType))
+		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(adverId))
 		{
 			model.setResult(-1);
 			model.setMsg("idfa、adverId、taskType不能为空！");
@@ -601,50 +631,30 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		//状态改为已完成
-		TUserappidAdverid tUserappidAdverid = getTask(adverId, idfa);
-		tUserappidAdverid.setStatus("2");
-		tUserappidAdverid.setCompleteTime(new Date());
-		if(tUserappidAdverid != null && tUserappidAdverid.getStatus().equals("1.6"))
-		{
-			model.setResult(-1);
-			model.setMsg("未完成。原因：任务已经超时！");
-			userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
-		int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
-		if(rowCount == 0)
-		{
-			model.setResult(-1);
-			model.setMsg("未完成。原因：回调更改任务状态失败！");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
 		TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
 		userNum = tUserApp.getUserNum();
 		
 		//更新金额
 		TUserScore score = new TUserScore();
+		score.setUserNick(idfa);//标记任务的idfa
 		score.setUserNum(userNum);
-		score.setUserNick(tUserappidAdverid.getIdfa());
-		score.setType(0);
+		score.setUserScoreId(Integer.valueOf(adverId));//标记得分的 任务
+		score.setType(-1);
 		if(tUserApp.getUserApppType() == 1) //工作室
 		{
-			//float sco = (float) (adverInfo.getAdverPrice() - adverInfo.getPriceDiff());
 			float sco = ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
-			System.out.println(tUserappidAdverid.getIdfa() +  "this is a tip 2");
-			System.out.println(sco);
 			score.setScore(sco);
 		}
 		else
 		{
 			score.setScore(adverInfo.getAdverPrice());
 		}
+		
 		QueueProducer.getQueueProducer().sendMessage(score, "socre");
-		masterWork(tUserApp);
+		
+		if(tUserApp.getUserApppType() == 1) {
+			masterWork(tUserApp);
+		}
 		
 		model.setResult(1);
 		model.setMsg("success!");
@@ -674,17 +684,21 @@ public class DuiJieController extends BaseController
 	 */
 	@RequestMapping("queryOneMission")
 	public void queryOneMission(HttpServletResponse response, HttpServletRequest request)
-			throws Exception
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
-		String adid = request.getParameter("adid");//广告id（第三方提供）
-		String idfa = request.getParameter("idfa");//手机广告标识符
+		//String adid = request.getParameter("adid");//广告id（第三方提供）
+		String idfa = request.getParameter("idfa");//手机广告标识符l
 		//String ip = request.getRemoteAddr();//手机ip
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
-		String userNum = request.getParameter("userNum");
+		String udid = request.getParameter("udid");
+		if(udid != null && !udid.isEmpty()) {
+			TUserApp userApp = userAppService.getUserAppByUserName(udid);
+			idfa = userApp.getIdfa();
+		}
+		//String userNum = request.getParameter("userNum");
 		
-		if(!StringUtils.hasText(adid) || !StringUtils.hasText(idfa)
+		if(!StringUtils.hasText(idfa)
 				|| !StringUtils.hasText(adverId))
 		{
 			model.setResult(-1);
@@ -703,9 +717,10 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		String adid = task.getAdid();
 		String ip = task.getIp();
 		TUserApp tUserApp  = userAppService.getUserAppById(Integer.valueOf(task.getUserAppId()));
-		userNum = tUserApp.getUserNum();
+		String userNum = tUserApp.getUserNum();
 		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		
@@ -764,7 +779,7 @@ public class DuiJieController extends BaseController
 				case 1:
 					//云聚
 					//调用第三方激活上报接口
-					model = YunJu.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+					model = YunJu.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr2[1], arr1[1]);
 					break;
 				case 2:
 					//掌上互动
@@ -818,31 +833,16 @@ public class DuiJieController extends BaseController
 				return;
 			}	
 			
-			//状态改为已完成
-			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-			tUserappidAdverid.setIdfa(idfa);
-			tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-			tUserappidAdverid.setStatus("2");
-			tUserappidAdverid.setCompleteTime(new Date());
-			int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
-			if(rowCount == 0)
-			{
-				model.setResult(-1);
-				model.setMsg("状态错误，请稍后请求！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
 			//把单子发送到队列
 			TUserScore score = new TUserScore();
-			score.setUserNick(tUserappidAdverid.getIdfa());
+			score.setUserNick(idfa);//标记任务的idfa
 			score.setUserNum(userNum);
+			score.setUserScoreId(Integer.valueOf(adverId));//标记得分的 任务
 			score.setType(0);
 			if(tUserApp.getUserApppType() == 1) //工作室
 			{
 				float sco = ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
 				//float sco = (float) (adverInfo.getAdverPrice() - adverInfo.getPriceDiff());
-				System.out.println(tUserappidAdverid.getIdfa() +  "this is a tip 1");
-				System.out.println(rowCount  + "this is rowcount");
 				score.setScore(sco);
 			}
 			else
@@ -850,7 +850,15 @@ public class DuiJieController extends BaseController
 				score.setScore(adverInfo.getAdverPrice());
 			}
 			
-			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			try {
+				QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			} catch (Exception e) {
+				e.printStackTrace();
+				model.setResult(-1);
+				model.setMsg("发送给到结算队列失败，请稍后尝试！");
+				super.writeJsonDataApp(response, model);
+			}
+			
 			masterWork(tUserApp);
 		}
 		else if("1".equals(adverInfo.getTaskType()))
@@ -883,39 +891,34 @@ public class DuiJieController extends BaseController
 				super.writeJsonDataApp(response, model);
 				return;
 			}
-			//状态改为已完成
-			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-			tUserappidAdverid.setIdfa(idfa);
-			tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-			tUserappidAdverid.setStatus("2");
-			tUserappidAdverid.setCompleteTime(new Date());
-			int rowCount = userappidAdveridService.updateStatus2Complete(tUserappidAdverid);
-			if(rowCount == 0)
-			{
-				model.setResult(-1);
-				model.setMsg("状态错误，请稍后请求！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
+			
 			//更改金额
 			TUserScore score = new TUserScore();
-			score.setUserNick(tUserappidAdverid.getIdfa());
+			score.setUserNick(idfa);//标记任务的idfa
 			score.setUserNum(userNum);
+			score.setUserScoreId(Integer.valueOf(adverId));//标记得分的 任务
 			score.setType(0);
+			
 			if(tUserApp.getUserApppType() == 1) //工作室
 			{
 				//float sco = (float) (adverInfo.getAdverPrice() - adverInfo.getPriceDiff());
 				float sco = ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
-				System.out.println(tUserappidAdverid.getIdfa() +  "this is a tip 3");
-				System.out.println(rowCount  + "this is rowcount");
-				System.out.println(sco);
 				score.setScore(sco);
 			}
 			else
 			{
 				score.setScore(adverInfo.getAdverPrice());
 			}
-			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			
+			try {
+				QueueProducer.getQueueProducer().sendMessage(score, "socre");
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				model.setResult(-1);
+				model.setMsg("发送给到结算队列失败，请稍后尝试！");
+				super.writeJsonDataApp(response, model);
+			}
 			//计算师傅获取到的利润
 			masterWork(tUserApp);
 		}
@@ -928,12 +931,12 @@ public class DuiJieController extends BaseController
 		}
 		
 		model.setResult(1);
-		model.setMsg("已完成！");
+		model.setMsg("成功，进入结算！");
 		super.writeJsonDataApp(response, model);
 	}
 
 	//计算师傅获取到的利润
-	private void masterWork(TUserApp tUserApp) throws IOException, TimeoutException
+	private void masterWork(TUserApp tUserApp)
 	{
 		if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0)
 		{
@@ -945,12 +948,14 @@ public class DuiJieController extends BaseController
 				score.setUserNum(masterUserApp.getUserNum());//师傅num
 				score.setRankingNum(tUserApp.getUserNum());//用来表示徒弟num
 				score.setScore((float) 0.5);
-				QueueProducer.getQueueProducer().sendMessage(score, "socre");
+				try {
+					QueueProducer.getQueueProducer().sendMessage(score, "socre");
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (TimeoutException e) {
+					e.printStackTrace();
+				}
 			}
-			
-			//updateLimitTime
-			Integer ltime = tUserApp.getLimitTime() - 1;
-			userAppService.updateLimitTime(masterUserApp, ltime);
 		}
 	}
 	
@@ -982,7 +987,6 @@ public class DuiJieController extends BaseController
 		{
 			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverid.getAdverId()));
 			adverid.setAdverName(adverInfo.getAdverName());
-			//float sco = (float)ArithUtil.sub(adverInfo.getAdverPrice(), adverInfo.getPriceDiff());
 			adverid.setAdverPrice(ArithUtil.subf(adverInfo.getAdverPrice(), adverInfo.getPriceDiff()));
 		}
 		
@@ -1074,7 +1078,7 @@ public class DuiJieController extends BaseController
 		switch (num) {
 		case 1:
 			//云聚
-			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel);
 			break;
 		case 2:
 			//云聚
@@ -1101,7 +1105,7 @@ public class DuiJieController extends BaseController
 			model = isJZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
 			break;
 		case 9:
-			model = isAiYLChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
+			model = isAiYLChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName,  phoneModel, phoneVersion);
 			break;
 		case 10:
 			model =  isHappyChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
@@ -1120,6 +1124,9 @@ public class DuiJieController extends BaseController
 			break;
 		case 15:
 			model =  isFrogsTTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			break;
+		case 16:
+			model =  isGourdChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
 		default:
 			model.setResult(-1);
@@ -1148,7 +1155,7 @@ public class DuiJieController extends BaseController
 	
 	//排重+点击+云聚
 	private AppCommonModel isYunJvChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
-			String userAppId, String adverId, String userNum) 
+			String userAppId, String adverId, String userNum, String  phoneVersion, String  phoneModel) 
 					throws NumberFormatException, UnsupportedEncodingException
 	{
 		//云聚
@@ -1158,7 +1165,7 @@ public class DuiJieController extends BaseController
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = YunJu.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+			model = YunJu.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel);
 		}
 		
 		return model;
@@ -1221,15 +1228,14 @@ public class DuiJieController extends BaseController
 	}
 	
 	private AppCommonModel isAiYLChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = AiyinliChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			TUserApp userApp = userAppService.getUserAppById(Integer.parseInt(userAppId));
-			model = AiyinliChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName, userApp);
+			model = AiyinliChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName, phoneModel, phoneVersion);
 		}
 		
 		return model;
@@ -1323,6 +1329,23 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
+	//TT 葫芦渠道 - 16
+	private AppCommonModel isGourdChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//调用第三方排重接口 
+		AppCommonModel model = GourdChannel.paiChong(adverInfo.getFlag2(), adverInfo.getAdverAdid(), adid, idfa);
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = GourdChannel.dianJi(adverInfo.getFlag3(),adverInfo, idfa, phoneModel,phoneVersion, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
+					userNum);
+		}
+		
+		return model;
+	}
+	
+	
 	//设置任务时间超时
 	@RequestMapping("setTaskTimeout")
 	public void setTaskTimeout(HttpServletResponse response,HttpServletRequest request) 
@@ -1332,7 +1355,12 @@ public class DuiJieController extends BaseController
 		
 		String idfa = request.getParameter("idfa");
 		String adverId = request.getParameter("adverId");
-	
+		String udid = request.getParameter("udid");
+		if(udid != null && !udid.isEmpty()) {
+			TUserApp userApp = userAppService.getUserAppByUserName(udid);
+			idfa = userApp.getIdfa();
+		}
+		
 		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(adverId))
 		{
 			model.setResult(-1);

@@ -73,7 +73,7 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 	public void deleteScoreInfo(String userScoreInfoNum,String userAppNum){
 		TUserScoreInfo userScoreInfo=get(TUserScoreInfo.class,"userScoreInfoNum", userScoreInfoNum);
 		TUserScore usreScore=userScoreService.getScore(userAppNum);
-		userScoreService.updateScore(usreScore, -userScoreInfo.getScore(), usreScore.getType());
+		//userScoreService.updateScore(usreScore, -userScoreInfo.getScore(), usreScore.getType());
 		super.delete(userScoreInfo);
 	}
 	

@@ -24,8 +24,8 @@ function showModal(title,content,fun){
 	$('#content').after(divHtml);
 	if(fun == null || fun==''){
 		$('#aok').hide();
-	}
+    }
+    
 	$('#myModals').modal('show');
-	
 }
 

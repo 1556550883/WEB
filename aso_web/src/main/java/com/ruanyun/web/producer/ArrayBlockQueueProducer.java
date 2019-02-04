@@ -1,29 +1,26 @@
 package com.ruanyun.web.producer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 
 @Component
-public class ArrayBlockQueueProducer implements Runnable
+public class ArrayBlockQueueProducer extends Observable implements Runnable
 {
 	@Autowired
 	private ChannelAdverInfoService mChannelAdverInfoService;
@@ -153,25 +150,11 @@ public class ArrayBlockQueueProducer implements Runnable
 					 }
 				}
             } 
-			catch (TimeoutException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			} 
-			catch (ShutdownSignalException e)
-			{
-				e.printStackTrace();
-			} 
-			catch (ConsumerCancelledException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
+				 setChanged();
+		         notifyObservers();
 			}
 		}
 	}

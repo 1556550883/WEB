@@ -18,7 +18,6 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
-import com.ruanyun.web.service.background.UserAppService;
 
 @Controller
 @RequestMapping("app/channelAdverInfo")
@@ -27,8 +26,6 @@ public class AppChannelAdverInfoController extends BaseController
 
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
-	@Autowired	
-	private UserAppService userAppService;
 	
 	/**
 	 * 手机端接口:获取广告列表
@@ -50,8 +47,7 @@ public class AppChannelAdverInfoController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-		
-		userAppService.upPhoneDetail(userAppId, phoneType, osversion);
+
 		String[] isv = osversion.split("\\.");
 		model = appChannelAdverInfoService.getAdverInfoByChannelNum2(page, channelType, systemType, phoneType, userAppId, isv[0]);
 		

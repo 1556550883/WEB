@@ -22,7 +22,15 @@ public class AdverListener implements ApplicationContextAware
 	{
 		System.out.println("------------------------web start------------------------");
 		
+		 //创建观察者对象
+		AdverBlockQueueObserver  adverBlockQueueObserver = new AdverBlockQueueObserver();
+		mAdverProducer.addObserver(adverBlockQueueObserver);
 		ArrayBlockQueueProducer.pool.execute(mAdverProducer);
-		ScoreQueueConsumer.pool.execute(mScoreQueueConsumer);
+		
+		
+        scoreQueueObserver simpleObserver = new scoreQueueObserver();
+        mScoreQueueConsumer.addObserver(simpleObserver);
+        //启动被观察者，观察者线程也会同时被启动
+        ScoreQueueConsumer.pool.execute(mScoreQueueConsumer);
 	}
 } 

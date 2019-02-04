@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SQLUtils;
+import com.ruanyun.web.model.HUserAppModel;
 import com.ruanyun.web.model.TUserApp;
 
 /**
@@ -51,6 +52,10 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 		return sqlDao.get(TUserApp.class, sql.toString());
 	}
 	
+	public TUserApp getUserByUdid(String loginName){
+		StringBuffer sql=new StringBuffer(" SELECT * FROM t_user_app WHERE login_name='"+loginName+"'");
+		return sqlDao.get(TUserApp.class, sql.toString());
+	}
 	
 	public TUserApp getUserByUserAppid(String userAppid)
 	{
@@ -105,16 +110,19 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 		}
 		return sqlDao.getCount(sql.toString());
 	}
-	
-	public int updatePhoneDetails(Integer userAppId, String device, String os)
-	{
-		StringBuffer sql = new StringBuffer(" UPDATE t_user_app set flag3 ='"+device+"'" + ", flag4 = '"+os+"'" + " where user_app_id = '"+userAppId+"'");
-		return sqlDao.execute(sql.toString());
-	}
-	
+		
 	public int updateIdfa(Integer userAppId, String idfa)
 	{
 		StringBuffer sql = new StringBuffer(" UPDATE t_user_app set idfa ='"+idfa+"'" + " where user_app_id = '"+userAppId+"'");
 		return sqlDao.execute(sql.toString());
+	}
+	
+	public HUserAppModel getHUserModelByappid(String appid) 
+	{
+		StringBuffer sql = new StringBuffer("SELECT t_user_app.user_app_id, t_user_app.user_num,t_user_score.score_day,t_user_score.score,");
+		sql.append( "t_user_score.score_sum,t_user_app.flag5,t_user_app.weixin,t_user_app.login_control,t_user_app.user_nick, t_user_app.zhifubao,t_user_app.phone_num");
+		sql.append(" FROM  t_user_app LEFT JOIN t_user_score ON t_user_app.`user_num` = t_user_score.`user_num`");
+		sql.append(" WHERE t_user_app.`user_app_id`='"+appid+"'");
+		return sqlDao.get(HUserAppModel.class, sql.toString());
 	}
 }

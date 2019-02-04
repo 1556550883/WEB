@@ -10,6 +10,7 @@ img{border:none}
 .clearfix:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; } 
 
 /**首页*****/
+.head_div{ background:#EE4000;width:100%;height:30%; }
 .head_bg{ background:#fff;width:100%;height:100px; }
 .head{height:100px; position:absolute;top:0px;z-index:999;left:0;width:100%;}
 h2 img{margin-top:13px}

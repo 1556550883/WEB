@@ -75,7 +75,7 @@ public class AiyinliChannel extends BaseChannel
 	}
 	
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String adverName, TUserApp userApp) throws UnsupportedEncodingException
+			Integer userAppId, Integer adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 
@@ -110,8 +110,8 @@ public class AiyinliChannel extends BaseChannel
 				.append("&isbreak=").append(0)
 				.append("&sign=").append(sign)
 				.append("&timestamp=").append(t1)
-				.append("&device=").append(userApp.getFlag3())
-				.append("&os=").append(userApp.getFlag4())
+				.append("&device=").append(phoneModel)
+				.append("&os=").append(phoneVersion)
 				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		

@@ -72,7 +72,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	public Page<TChannelAdverInfo> PageSql2(Page<TChannelAdverInfo> page, String channelType, String systemType, String phoneType, int level, String osversion)
 	{
 		StringBuffer sql = new StringBuffer("SELECT * from t_channel_adver_info WHERE 1=1 ");
-		sql.append(" and channel_num in (select b.channel_num from t_channel_info b where b.channel_type='").append(channelType).append("' and b.system_type='").append(systemType).append("')");
+		//sql.append(" and channel_num in (select b.channel_num from t_channel_info b where b.channel_type='").append(channelType).append("' and b.system_type='").append(systemType).append("')");
 		sql.append(SQLUtils.popuHqlMax("phone_type", phoneType));
 		sql.append(SQLUtils.popuHqlMax("ios_version", Integer.parseInt(osversion)));
 		//sql.append(SQLUtils.popuHqlMax2("adver_day_start", new Date()));
@@ -288,10 +288,9 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	@SuppressWarnings("rawtypes")
 	public List exportExcel(Integer id)
 	{
-		StringBuffer sql = new StringBuffer("select B.adver_name, ip, idfa, receive_time, complete_time "
-				+ "FROM t_userappid_adverid as A, `t_channel_adver_info` as B WHERE A.status = '2'");
+		StringBuffer sql = new StringBuffer("select B.adver_name, ip, idfa, date_format(complete_time, '%Y-%m-%d %H:%i:%s') as complete_time"
+				+ " FROM t_userappid_adverid as A left  join  `t_channel_adver_info` as B  on A.adver_id = B.adver_id WHERE A.status = '2'");
 		sql.append(SQLUtils.popuHqlEq("A.adver_id", id));
-		sql.append(SQLUtils.popuHqlEq("B.adver_id", id));
 		return sqlDao.getAll(sql.toString());
 	}
 }

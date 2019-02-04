@@ -153,7 +153,6 @@ public class NumUtils {
 		return pix+"_"+String.format("%010d", id);
 	}
 	
-	
 	public static String getCommondUserNum(int id){
 		return String.format("%06d", id);
 	}

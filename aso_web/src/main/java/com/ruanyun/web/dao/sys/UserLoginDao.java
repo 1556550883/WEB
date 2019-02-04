@@ -8,6 +8,7 @@ package com.ruanyun.web.dao.sys;
 import org.springframework.stereotype.Repository;
 
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
+import com.ruanyun.web.model.HUserAppModel;
 import com.ruanyun.web.model.TUserLogin;
 import com.ruanyun.web.model.UserAppModel;
 
@@ -61,4 +62,14 @@ public class UserLoginDao extends BaseDaoImpl<TUserLogin>
 		sql.append(" AND tul.level_num=tus.user_level_num ");
 		return sqlDao.get(UserAppModel.class, sql.toString());
 	}
+	
+	public HUserAppModel getHUserModel(String udid) 
+	{
+		StringBuffer sql = new StringBuffer("SELECT t_user_app.user_app_id, t_user_app.user_num,t_user_score.score_day,t_user_score.score,");
+		sql.append( "t_user_score.score_sum,t_user_app.flag5,t_user_app.weixin,t_user_app.login_control,t_user_app.user_nick, t_user_app.zhifubao,t_user_app.phone_num");
+		sql.append(" FROM  t_user_app LEFT JOIN t_user_score ON t_user_app.`user_num` = t_user_score.`user_num`");
+		sql.append(" WHERE t_user_app.`login_name`='"+udid+"'");
+		return sqlDao.get(HUserAppModel.class, sql.toString());
+	}
+	
 }

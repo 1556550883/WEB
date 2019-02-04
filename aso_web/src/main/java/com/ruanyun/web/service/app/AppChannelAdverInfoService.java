@@ -5,9 +5,7 @@
  */
 package com.ruanyun.web.service.app;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.dao.sys.ChannelAdverStepDao;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
@@ -28,7 +27,7 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.util.ArithUtil;
-import com.ruanyun.web.util.CSVUtils;
+import com.ruanyun.web.util.ExcelUtils;
 
 /**
  *@author feiyang
@@ -119,8 +118,6 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	 * 功能描述:根据编号获取详情
 	 * @param info
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-13
 	 */
 	public AppCommonModel getDetailByAdverNum(String adverNum,String userNum) 
 	{
@@ -165,22 +162,20 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		return channelAdverInfoDao.getByCondition(adverInfo);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void exprotIDFA(Integer id, HttpServletResponse response) throws IllegalArgumentException, IllegalAccessException, IOException
+
+	public void exprotIDFA(Integer id, HttpServletResponse response)
 	{
 		List list = channelAdverInfoDao.exportExcel(id);
-		Calendar date = Calendar.getInstance();
-		int year = date.get(Calendar.YEAR);
-		int month = date.get(Calendar.MONTH) + 1;
-		int day = date.get(Calendar.DAY_OF_MONTH);
-		String iYear = year + "-";
-		String iMonth = month + "-";
-		String iDay   = day + "";
-		String fileName = iYear + iMonth + iDay + "-IDFA-" + id;
-		String[] columns = {"adver_name","ip","idfa","receive_time","complete_time"};
-		String[] headers = {"关键词","IP","IDFA","开始时间","结束时间"};
-//		ExcelUtils.exportExcel(response, fileName, list, columns, headers,
-//		SysCode.DATE_FORMAT_STR_L);
-		CSVUtils.exportCsv(fileName, headers, columns, list);
+		String fileName = "IDFA-" + id;
+		String[] columns = {"idfa","ip","complete_time","adver_name"};
+		String[] headers = {"IDFA","IP","结束时间","关键词"};
+		try {
+			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+			SysCode.DATE_FORMAT_STR_L);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//CSVUtils.exportCsv(fileName, headers, columns, list);
 	}
 }

@@ -1,7 +1,5 @@
 package com.ruanyun.web.controller.sys.app;
 
-import java.io.UnsupportedEncodingException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,7 +73,7 @@ public class FrogsTChannel extends BaseChannel
 	/**
 	 * 点击
 	 */
-	public static AppCommonModel activate(String domain, String adid, String idfa, String ip) throws UnsupportedEncodingException 
+	public static AppCommonModel activate(String domain, String adid, String idfa, String ip)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		

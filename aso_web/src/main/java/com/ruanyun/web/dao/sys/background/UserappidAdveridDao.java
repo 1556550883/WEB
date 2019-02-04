@@ -10,6 +10,7 @@ import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
+import com.ruanyun.web.model.TUserScoreDetail;
 import com.ruanyun.web.model.TUserappidAdverid;
 
 @Repository("userappidAdveridDao")
@@ -45,6 +46,15 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		}
 		
 		return sqlDao.getCount(sql.toString());
+	}
+	
+	public Page<TUserScoreDetail> getScoreDetails(Page<TUserScoreDetail> page, String appid ){
+		
+		StringBuilder sql = new StringBuilder("SELECT A.adver_name,A.adver_price,A.price_diff,A.task_type,B.status,B.receive_time,B.complete_time from t_channel_adver_info AS A ");
+		sql.append(" LEFT JOIN t_userappid_adverid AS B ON A.adver_id = B.adver_id");
+		sql.append(" WHERE B.user_app_id='" + appid +"'");
+		sql.append(" ORDER BY B.receive_time desc");
+		return sqlDao.queryPage(page, TUserScoreDetail.class, sql.toString());
 	}
 	
 	public Page<TUserappidAdverid> PageSql(Page<TUserappidAdverid> page,TUserappidAdverid info) {

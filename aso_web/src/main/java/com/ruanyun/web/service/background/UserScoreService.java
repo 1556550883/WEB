@@ -5,6 +5,7 @@
  */
 package com.ruanyun.web.service.background;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import com.ruanyun.web.model.TUserLevel;
 import com.ruanyun.web.model.TUserLevelRate;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
+import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.CommonMethod;
@@ -50,6 +52,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	private UserAppService userAppService;
 	@Autowired
 	private AppUserApprenticeService appUserApprenticeService;
+	@Autowired
+	private UserappidAdveridService userappidAdveridService;
 	@Override
 	public Page<TUserScore> queryPage(Page<TUserScore> page, TUserScore t) {
 		return userScoreDao.queryPage(page, t);
@@ -201,34 +205,87 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		return 1;
 	}
 	
+	//根据adverid和idfa获取领取到的任务
+	private TUserappidAdverid getTask(String adverId, String idfa) 
+	{
+		TUserappidAdverid task = null;
+		
+		String[] propertyNames = new String[2];
+		propertyNames[0] = "adverId";
+		propertyNames[1] = "idfa";
+		Object[] values = new Object[2];
+		values[0] = Integer.valueOf(adverId);
+		values[1] = idfa;
+		task = userappidAdveridService.get(TUserappidAdverid.class, propertyNames, values);
+		
+		return task;
+	}
 	/**
 	 * 功能描述:直接修改分数 不做记录
 	 *
 	 * @author yangliu  2016年7月22日 上午10:02:33
-	 * 
+	 * @param type 0正常做任务得分  1邀请徒弟分红 2代表提现操作
 	 * @param userScore 用户分数对象
 	 * @param score 分数
 	 */
-	public int updateScore(TUserScore userScore, Float score, int type)
+	public int updateScore(TUserScore userScore, Float score, int type, int adverid, String idfa)
 	{
 		if(userScore != null) 
 		{
+			//任务计分
+			if(type <= 0) {
+				TUserappidAdverid userappidAdver = getTask(adverid + "", idfa); 
+				//如果任务不是在1.5状态下就不再次积分
+				if(!userappidAdver.getStatus().equals("1.5") && type == 0) {
+					return 1;
+				}
+				
+				//回调任务
+				if(type == -1 && userappidAdver.getStatus().compareTo("1.6")  >= 0) {
+					return 1;
+				}
+				
+				userappidAdver.setStatus("2");
+				userappidAdver.setCompleteTime(new Date());
+				userappidAdveridService.updateStatus2Complete(userappidAdver);
+			}
+			
 			System.out.println(score + "++++1");
 			System.out.println(userScore.getScore() + "++++2");
 			//(float)ArithUtil.add(userScore.getScore(), score)
 			userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
 			userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));
-			if(type != 2) 
+			if(type != 2) //提现的时候type为2
 			{
 				userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), score));
 			}
-			//1代表师傅获取的分红  0表示标准任务的金额
+			
+			//1代表师傅获取的分红  0表示标准任务的金额 3表示徒弟 做5个任务  4表示收取10个徒弟
 			if(type == 1)
 			{
-				userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), score));
-				appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), userScore.getRankingNum(), score);
+				//记录徒弟分红
+				TUserApp tUserApp = userAppService.getUserAppByNum(userScore.getRankingNum());//获取徒弟
+				if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0) {
+					userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), score));
+					appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), userScore.getRankingNum(), score, type);
+					//updateLimitTime
+					if(tUserApp.getLimitTime() == 26) {
+						//徒弟第五次完成任务，师傅直接得到5元 
+						userScore.setScore(ArithUtil.addf(userScore.getScore(), 5.0f));
+						userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), 5.0f));
+						
+						appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), userScore.getRankingNum(), 5.0f, 3);
+					}
+					Integer ltime = tUserApp.getLimitTime() - 1;
+					userAppService.updateLimitTime(tUserApp, ltime);
+				}else {
+					return 1;
+				}
+			}else if(type == 2) {
+				//存入提现 记录
+				appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), "", score, type);
 			}
-			System.out.println(userScore.getScore() + "++++3");
+			
 			update(userScore);
 			
 			return 1;

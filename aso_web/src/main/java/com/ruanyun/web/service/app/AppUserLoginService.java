@@ -21,6 +21,7 @@ import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.UserLoginDao;
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.HUserAppModel;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserApprentice;
 import com.ruanyun.web.model.TUserLogin;
@@ -240,6 +241,36 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 		return model;
 	}
 
+	public AppCommonModel getUserForUdid(String udid)
+	{
+		AppCommonModel model = new AppCommonModel(-1, "");
+		if (udid == null) 
+		{
+			model.setMsg("failed");
+			return model;
+		}
+		HUserAppModel userModel = userLoginDao.getHUserModel(udid);
+		
+		if(userModel != null)
+		{
+			if ("0".equals(userModel.getLoginControl())) 
+			{
+				model.setMsg("该用户被禁止登录.");
+				return model;
+			}
+			
+			model.setObj(userModel);
+			model.setResult(1);
+			model.setMsg("success");
+		} 
+		else
+		{
+			model.setMsg("用户不存在");
+		}
+		
+		return model;
+	}
+	
 	public AppCommonModel getUserForUdid(String udid, String idfa)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "");
@@ -549,10 +580,18 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 		return model;
 	}
 	
-	public AppCommonModel updateUserWeiXin(String userNum,String weiXinName,String headImgUrl,String openID) 
+	public AppCommonModel updateUserByUdid(String udid,String idfa,String phoneModel,String phoneVersion) 
 	{
 		AppCommonModel model = new AppCommonModel();
-		int result = appUserService.updateUserWeiXin(userNum,weiXinName,headImgUrl, openID);
+		int result = appUserService.updateUserByUdid(udid, idfa, phoneModel, phoneVersion);
+		model.setResult(result);
+		return model;
+	}
+	
+	public AppCommonModel updateUserWeiXin(String udid,String weiXinName,String headImgUrl,String openID) 
+	{
+		AppCommonModel model = new AppCommonModel();
+		int result = appUserService.updateUserWeiXin(udid,weiXinName,headImgUrl, openID);
 		if(result == 1) 
 		{
 			model.setMsg("修改成功");
@@ -576,10 +615,10 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	}
 	
 	//updateUserAlipay
-	public AppCommonModel updateUserAlipay(String userNum,String alipay,  String userName) 
+	public AppCommonModel updateUserAlipay(String alipay,  String udid, String usernick) 
 	{
 		AppCommonModel model = new AppCommonModel();
-		int result = appUserService.updateUserAlipay(userNum,alipay, userName);
+		int result = appUserService.updateUserAlipay(alipay, udid, usernick);
 		model.setMsg("修改成功");
 		model.setResult(result);
 		return model;

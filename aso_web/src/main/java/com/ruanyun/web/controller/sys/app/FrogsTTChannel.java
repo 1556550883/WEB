@@ -61,6 +61,13 @@ public class FrogsTTChannel  extends BaseChannel
 		String sign = source + "|" + adid + "|" + idfa + "|" + source_key + "|" + timestamp;
 		sign = MD5.MD5Encode(sign);
 		//调用第三方排重接口
+		if(domain == null || domain == "") 
+		{
+			model.setResult(1);
+			model.setMsg("未重复，可以领取任务！");
+			return model;
+		}
+		
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&ip=").append(ip)
@@ -182,7 +189,7 @@ public class FrogsTTChannel  extends BaseChannel
 	 * 激活上报
 	 */
 	public static AppCommonModel activate(String domain, String adid, String idfa, String ip, String keyword, 
-			String deviceType, String osVersion) throws UnsupportedEncodingException
+			String deviceType, String osVersion)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		long timestamp = getTimestamp();

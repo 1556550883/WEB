@@ -2,6 +2,7 @@ package com.ruanyun.web.producer;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Observable;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.SerializationUtils;
@@ -12,7 +13,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
-public class EndPoint
+public class EndPoint extends Observable
 {  
 	 protected Channel channel;  
 	 protected Connection connection;  

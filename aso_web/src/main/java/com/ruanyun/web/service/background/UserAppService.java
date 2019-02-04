@@ -28,6 +28,7 @@ import com.ruanyun.common.utils.CommonUtils;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
+import com.ruanyun.web.model.HUserAppModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserLogin;
@@ -89,6 +90,8 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 	{
 		return super.get(TUserApp.class, userId);
 	}
+	
+	
 	
 	public TUserApp getUserAppByUserName(String  loginName)
 	{
@@ -156,7 +159,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 			
 			BeanUtils.copyProperties(userApp, olUuser, new String[] {"userAppId", "userNum", "headImg","phoneSerialNumber",
 					"createDate"
-					,"invitationCode","taskNewStatus","zhifubao","weixin","zhifubaoName","userApppType","appStore", "masterID"});
+					,"invitationCode","phoneVersion","phoneModel","idfa","taskNewStatus","zhifubao","weixin","zhifubaoName","userApppType","appStore", "masterID"});
 			olUuser.setLevel(userApp.getLevel());
 			if (EmptyUtils.isNotEmpty(vo) && vo.getResult()==1) 
 			{
@@ -272,7 +275,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 	}
 	
 	//updateMaterID
-	public void updateMaterID(HttpServletRequest request, TUserApp userApp,String masterID) 
+	public void updateMaterID(TUserApp userApp,String masterID) 
 	{
 		userApp.setMasterID(masterID);
 		super.update(userApp);
@@ -304,10 +307,6 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		//super.update(userApp);
 	}
 	
-	public void upPhoneDetail(Integer userAppId, String device, String os) 
-	{
-		userAppDao.updatePhoneDetails(userAppId, device, os);
-	}
 	/**
 	 * 获取当前的广告列表
 	 */
@@ -345,5 +344,9 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		}
 		
 		return adverAuthoritys;
+	}
+	
+	public HUserAppModel getHUserAppModelbyid(String appid) {
+		return userAppDao.getHUserModelByappid(appid);
 	}
 }

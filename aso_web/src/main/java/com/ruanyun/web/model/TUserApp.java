@@ -35,8 +35,8 @@ public class TUserApp implements java.io.Serializable {
 	private String masterID;
 	private Integer limitTime;
 	private String flag2;
-	private String flag3;
-	private String flag4;
+	private String phoneModel;
+	private String phoneVersion;
 	private String flag5;
 	private Integer level;
 	private String phoneSerialNumber;//手机序列号
@@ -61,7 +61,7 @@ public class TUserApp implements java.io.Serializable {
 
 	public TUserApp(String userNum, String userNick, String birthday,
 			String sex, String headImg, String loginName, String loginPwd,
-			String masterID, String flag2, String flag3, String flag4,
+			String masterID, String flag2, String phoneModel, String phoneVersion,
 			String flag5, Integer level, Integer limitTime) {
 		this.userNum = userNum;
 		this.userNick = userNick;
@@ -72,8 +72,8 @@ public class TUserApp implements java.io.Serializable {
 		this.loginPwd = loginPwd;
 		this.masterID = masterID;
 		this.flag2 = flag2;
-		this.flag3 = flag3;
-		this.flag4 = flag4;
+		this.phoneModel = phoneModel;
+		this.phoneVersion = phoneVersion;
 		this.flag5 = flag5;
 		this.level = level;
 		this.limitTime = limitTime;
@@ -171,22 +171,22 @@ public class TUserApp implements java.io.Serializable {
 		this.flag2 = flag2;
 	}
 
-	@Column(name = "flag3", length = 100)
-	public String getFlag3() {
-		return this.flag3;
+	@Column(name = "phone_model", length = 100)
+	public String getPhoneModel() {
+		return this.phoneModel;
 	}
 
-	public void setFlag3(String flag3) {
-		this.flag3 = flag3;
+	public void setPhoneModel(String phoneModel) {
+		this.phoneModel = phoneModel;
 	}
 
-	@Column(name = "flag4", length = 100)
-	public String getFlag4() {
-		return this.flag4;
+	@Column(name = "phone_version", length = 100)
+	public String getPhoneVersion() {
+		return this.phoneVersion;
 	}
 
-	public void setFlag4(String flag4) {
-		this.flag4 = flag4;
+	public void setPhoneVersion(String phoneVersion) {
+		this.phoneVersion = phoneVersion;
 	}
 
 	@Column(name = "flag5", length = 100)

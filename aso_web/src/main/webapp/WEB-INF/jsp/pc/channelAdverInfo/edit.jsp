@@ -88,6 +88,14 @@
 			    是：<input type="radio" id="isMock_1"  name="isMock"  value="1"/>
 			   否 ：<input type="radio" id="isMock_0" name="isMock"  value="0"/>
 			</dd>  </dl>
+			
+			<dl class="nowrap" style="width: 100%;">
+				<dt>广告storeID：</dt>
+				<dd>
+					<input name="adverAdid" value="${bean.adverAdid}" size="30" maxlength="100" class='' title="广告storeID" />
+				</dd>
+			</dl>
+			
 			<dl>
 				<dt>广告ID：</dt>
 				<dd>

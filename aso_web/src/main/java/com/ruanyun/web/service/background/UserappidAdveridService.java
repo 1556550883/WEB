@@ -8,6 +8,7 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.web.dao.sys.background.UserappidAdveridDao;
 import com.ruanyun.web.model.TChannelAdverInfo;
+import com.ruanyun.web.model.TUserScoreDetail;
 import com.ruanyun.web.model.TUserappidAdverid;
 
 /**
@@ -33,6 +34,11 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 	public Page<TUserappidAdverid> queryMissionDistinct(Page<TUserappidAdverid> page, TUserappidAdverid info)
 	{
 		return userappidAdveridDao.PageSqlDistinct(page, info);
+	}
+	
+	public Page<TUserScoreDetail> queryUserScoreDetail(Page<TUserScoreDetail> page, String appid)
+	{
+		return userappidAdveridDao.getScoreDetails(page, appid);
 	}
 	
 	public int updateStatus2OpenApp(TUserappidAdverid info)

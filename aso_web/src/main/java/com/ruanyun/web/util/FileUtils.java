@@ -217,7 +217,7 @@ public class FileUtils {
 		 }
     }
 
-	 public static void downloadMobileConfig(HttpServletResponse response, String fileName, String conType, String masterid) throws FileNotFoundException 
+	 public static void downloadMobileConfig(HttpServletResponse response, String fileName, String conType) throws FileNotFoundException 
 	 {
 	     // 下载本地文件
 	     // 读到流中C:\Program Files\Apache Software Foundation\download
@@ -244,9 +244,7 @@ public class FileUtils {
 			}
 
 			String str = new String(bytes,"utf-8");
-			String master = "masterid=" + masterid;
-			String s1 = str.replaceAll("masterid=11",master);
-			byte[] result =  s1.getBytes();
+			byte[] result =  str.getBytes();
 			response.getOutputStream().write(result, 0, result.length);
 			inStream.close();
 		 } 

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.web.model.TUserApp;
+import com.ruanyun.web.model.TUserScore;
+import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserScoreService;
@@ -52,7 +54,7 @@ public class AppUserInviteController extends BaseController
 	}
 	
 	@RequestMapping("deviceUuid")
-	public void guestPhone(HttpServletResponse response, HttpServletRequest request, Model model, String masterid) throws IOException
+	public void guestPhone(HttpServletResponse response, HttpServletRequest request, Model model) throws IOException
 	{
 	    request.setCharacterEncoding("UTF-8");
 	    InputStream is = request.getInputStream();
@@ -69,9 +71,24 @@ public class AppUserInviteController extends BaseController
   	    //content就是接收到的xml字符串
   	    //进行xml解析即可
   	    String udid = content.substring(content.indexOf("<string>") + 8,content.indexOf("</string>"));
-  	    
-  	    TUserApp tUserApp = userAppService.getUserAppByUserName(udid);
-  		   
+  	  
+	    response.setContentType("text/html;charset=UTF-8");
+	    response.setStatus(301);
+
+	    if(udid  != null && !udid.equals("-1")) 
+	    {
+	    	response.setHeader("Location", Constants.BASD_URL  + "/invite/uuidpage?udid=" + udid);
+	    }
+	    else
+	    {
+	    	response.setHeader("Location", Constants.BASD_URL  + "/invite/error");
+	    }
+	}
+	
+	@RequestMapping("userRegister")
+	public void setMaster(HttpServletResponse response, HttpServletRequest request, Model model, String udid, String masterID)
+	{
+		TUserApp tUserApp = userAppService.getUserAppByUserName(udid);
   	    if(tUserApp == null) 
   		{
   			tUserApp = new TUserApp();
@@ -79,37 +96,39 @@ public class AppUserInviteController extends BaseController
   			tUserApp.setLoginName(udid);
   			tUserApp.setLoginPwd("");
   			tUserApp.setLoginControl("1");
+  			tUserApp.setMasterID(masterID);
   			tUserApp.setPhoneSerialNumber("-1");
   			tUserApp.setLevel(dictionaryService.getVestorLevel());
-  			tUserApp.setMasterID(masterid);
-  			tUserApp.setLimitTime(20);
+  			tUserApp.setLimitTime(30);
   			tUserApp.setCreateDate(new Date());
   			
   			userAppService.saveOrUpdate(tUserApp, request, null);
+  			
+  			//师傅 
+			TUserApp masterUser = userAppService.getUserAppById(Integer.parseInt(masterID));
+	    	int count = userAppService.getApprenticeNum(masterID);
+	    	if(masterUser != null && count > 0) 
+	    	{
+	    		//更新师傅徒弟数量
+	    		userScoreService.updateApprentice(masterUser.getUserNum(), count);
+	    		
+	    		if(count != 0 && count%10 == 0) {
+	    			
+	    			TUserScore score = new TUserScore();
+					score.setType(4);
+					score.setUserNum(masterUser.getUserNum());//师傅num
+					score.setRankingNum(tUserApp.getUserNum());//用来表示第十个徒弟num。如果不为空
+					score.setScore((float) 10);
+					try {
+						QueueProducer.getQueueProducer().sendMessage(score, "socre");
+					} catch (Exception e) {
+						e.printStackTrace();
+						}
+	  	    	}
+	    	}
   		}
   	    
-  	    if(!masterid.equals("-1")) 
-  	    {
-  	    	 TUserApp masterUser = userAppService.getUserAppById(Integer.parseInt(masterid));
-  	    	//TUserScore score = userScoreService.getScore(masterUser.getUserNum());
-  	    	int count = userAppService.getApprenticeNum(masterid);
-  	    	if(masterUser != null && count > 0) 
-  	    	{
-  	    		userScoreService.updateApprentice(masterUser.getUserNum(), count);
-  	    	}
-  	    }
-   
-	    response.setContentType("text/html;charset=UTF-8");
-	    response.setStatus(301);
-	    
-	    if(udid  != null && !udid.equals("-1")) 
-	    {
-	    	response.setHeader("Location", Constants.BASD_URL  + "/invite/guest?udid=" + udid);
-	    }
-	    else
-	    {
-	    	response.setHeader("Location", Constants.BASD_URL  + "/invite/error");
-	    }
+		super.writeJsonDataApp(response, model);
 	}
 	
 	@RequestMapping("home")
@@ -124,6 +143,13 @@ public class AppUserInviteController extends BaseController
 		return "app/invite/homePage";
 	}
 	
+	
+	@RequestMapping("uuidpage")
+	public String uuidpage(HttpServletResponse response, HttpServletRequest request, Model model, String udid)
+	{	
+		addModel(model, "udid", udid);
+		return "app/invite/uuidPage";
+	}
 	
 	@RequestMapping("error")
 	public String homePage(HttpServletResponse response, HttpServletRequest request)

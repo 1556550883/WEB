@@ -35,6 +35,7 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 		return userAppDao.getUserByUserNum(userNum);
 	}
 	
+
 	//getUserByUserAppid
 	
 	
@@ -43,6 +44,10 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 		return userAppDao.getUserByUserAppid(appid);
 	}
 	
+	public TUserApp getUserByUdid(String udid)
+	{		
+		return userAppDao.getUserByUdid(udid);
+	}
 	
 	public TUserApp getUserByOpenID(String openID)
 	{		
@@ -77,14 +82,28 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 		return 1;
 	}
 	
-	public int updateUserWeiXin(String userNum,String weiXinName,String headImgUrl, String openID)
+	public int updateUserByUdid(String udid,String idfa,String phoneModel, String phoneVersion)
+	{
+		TUserApp userApp = userAppDao.getUserByUdid(udid);
+		if(userApp == null) {
+			return -1;
+		}
+	
+		userApp.setIdfa(idfa);
+		userApp.setPhoneModel(phoneModel);
+		userApp.setPhoneVersion(phoneVersion);
+		update(userApp);
+		return 1;
+	}
+	
+	public int updateUserWeiXin(String udid,String weiXinName,String headImgUrl, String openID)
 	{
 		TUserApp userApp = getUserByOpenID(openID);
 		if(userApp != null) {
 			return -1;
 		}
 		
-		userApp = get(TUserApp.class, "userNum", userNum);
+		userApp = getUserByUdid(udid);
 		if(EmptyUtils.isEmpty(userApp))
 		{
 			return 2;
@@ -129,16 +148,16 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 	}
 	
 	//updateUserAlipay
-	public int updateUserAlipay(String userNum,String alipay, String userName) 
+	public int updateUserAlipay(String alipay, String udid, String usernick) 
 	{
-		TUserApp userApp = get(TUserApp.class, "userNum", userNum);
+		TUserApp userApp = getUserByUdid(udid);
 		if(EmptyUtils.isEmpty(userApp)){
-			return 2;
+			return -1;
 		}
 		
 		try
 		{
-			userApp.setUserNick(URLDecoder.decode(userName, "UTF-8"));
+			userApp.setUserNick(URLDecoder.decode(usernick, "UTF-8"));
 			userApp.setZhifubao(URLDecoder.decode(alipay, "UTF-8"));
 		} 
 		catch (UnsupportedEncodingException e) 

@@ -9,14 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
 
-import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.service.background.UserScoreService;
 
 @Component
-public class ScoreQueueConsumer extends EndPoint implements  Runnable
+public class ScoreQueueConsumer extends EndPoint implements Runnable
 {
 	public static ExecutorService pool = Executors.newFixedThreadPool(1); 
 	@Autowired
@@ -65,25 +63,15 @@ public class ScoreQueueConsumer extends EndPoint implements  Runnable
 					sss.setRankingNum(score.getRankingNum());	
 				}
 				
-				System.out.println(score.getUserNick() +  "here is a tip!");
-				userScoreService.updateScore(sss, score.getScore(), score.getType());
+				userScoreService.updateScore(sss, score.getScore(), score.getType(), score.getUserScoreId(), score.getUserNick());
+				
 			}
-			catch (ShutdownSignalException e) 
+			catch (Exception e) 
 			{
 				e.printStackTrace();
+				 setChanged();
+		         notifyObservers();
 			} 
-			catch (ConsumerCancelledException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}  
         }  
 	}
 }
