@@ -1345,7 +1345,6 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
-	
 	//设置任务时间超时
 	@RequestMapping("setTaskTimeout")
 	public void setTaskTimeout(HttpServletResponse response,HttpServletRequest request) 
@@ -1380,12 +1379,13 @@ public class DuiJieController extends BaseController
 		
 		//查询个人信息
 		TUserApp tUserApp = userAppService.get(TUserApp.class, "userAppId", Integer.valueOf(task.getUserAppId()));
+		//外放人员
 		if(tUserApp.getUserApppType() == 2) 
 		{
 			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 			tUserappidAdverid.setIdfa(idfa);
 			tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-			tUserappidAdverid.setStatus("1.7");
+			tUserappidAdverid.setStatus("1.6");
 			userappidAdveridService.updateTaskStatus(tUserappidAdverid);
 		}
 		

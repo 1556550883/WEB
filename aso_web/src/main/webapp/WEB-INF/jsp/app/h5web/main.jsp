@@ -33,7 +33,7 @@
  	</div>
  	
  	<div style="background:#FFAEB9;width:100%;border-radius:5px;">
- 		<marquee width=100% scrollamount=4> 
+ 		<marquee width=100% scrollamount=4>
  		<a href="itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist">
  		<FONT face=楷体_GB2312 color=#FFFFFF size=3><STRONG>用户交流群4群：496011441。申请进群请正确输入happy赚ID，官方唯一客服QQ：2126572197</STRONG></FONT></a></marquee>
  	</div>
@@ -71,7 +71,6 @@
 		function showdata(){
 			//如果udid被手动清理，需要 去 重新注册设备
  			var udid = localStorage.getItem("happyzhuan_user_udid");
-			//udid = "d6638e6de42f029649654ad4b17badf532bb9bcc";
 	 		if(udid == null || udid == ""){
 	 			url = "qisu://com.qisu?udid=none";
 	 	 		window.location.href = url;
@@ -118,10 +117,6 @@
 	 	
  	 	var base_url  = "https://moneyzhuan.com/";
  		function taskDetail(){
-	         //document.write("<form action='/task' method=post name=manageDepForm style='display:none'>");
-	         //document.write("<input type=hidden name='udid' value="+ udid +">");//参数1s
-	         //document.write("</form>");
-	         //document.manageDepForm.submit(); 
 	         window.location.href = base_url + "task"
  		}
  	 	

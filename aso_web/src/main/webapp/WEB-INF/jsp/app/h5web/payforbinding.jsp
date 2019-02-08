@@ -23,17 +23,17 @@
     	<div style="background:#fff; margin-top:5px;height:600px">
     			<div style="margin-top:20px;margin-left:20px;position:absolute;"><span>支付宝账户实名</span></div>
     			<input type="text" id="usernick" style="margin-top:45px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
-    			position:absolute;" placeholder="请输入绑定支付宝账户实名"/>
+    			position:absolute;"onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5]/g,'')" placeholder="请输入绑定支付宝账户实名"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:78px;position:absolute"></div>
     			
     			<div style="margin-top:95px;margin-left:20px;position:absolute;"><span>支付宝账户</span></div>
     			<input type="text" id="payfornum" style="margin-top:120px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
-    			position:absolute;" placeholder="请输入需绑定支付宝账户"/>
+    			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')" placeholder="请输入需绑定支付宝账户"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:153px;position:absolute"></div>
     			
     			<div style="margin-top:170px;margin-left:20px;position:absolute;"><span>确认支付宝账户</span></div>
     			<input type="text" id="payfornum_t" style="margin-top:195px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
-    			position:absolute;" placeholder="请再次确认支付宝账户"/>
+    			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')"  placeholder="请再次确认支付宝账户"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:228px;position:absolute"></div>
     			
     			<div onclick= "payforbinding()" style="position:absolute;background:#FFA500; text-align: center;margin-left:2%;width:96%;margin-top:270px;color:#FFFFFF; font-size: 0.5rem;border:1px dashed #CDCDC1;border-radius:10px;"><span>绑定支付宝</span></div>

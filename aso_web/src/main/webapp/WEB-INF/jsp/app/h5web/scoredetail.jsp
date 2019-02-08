@@ -29,10 +29,11 @@
 				var data = result[position];
 				var name =  data.adverName;
 				var price = "+" + data.adverPrice + "元"
+				alert(data.status + "sssss")
 				if(data.status != ""){
 					if(data.status < 1.6){
 						price = "正在进行..."
-					}else if(data.status = 1.6){
+					}else if(data.status == 1.6){
 						price = "任务超时"
 					}
 				}else{

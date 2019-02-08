@@ -105,6 +105,7 @@ public class AppH5WebController extends BaseController
 		String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(id));
 		TUserScore userScore = userScoreService.getScore(userNum);
 		addModel(model, "appuserscore", userScore);
+		
 		return "app/h5web/invite";
 	}
 	
@@ -116,6 +117,7 @@ public class AppH5WebController extends BaseController
 		String appid = request.getParameter("id");
 		String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(appid));
 		page = userappidAdveridService.queryUserScoreDetail(page, appid);
+		//任务明细
 		List<TUserScoreDetail>  userScoreDetail = page.getResult();
 		//收徒 提现 的明细
 		pages = appUserApprenticeService.getMyApprentices(pages, userNum);
@@ -137,11 +139,10 @@ public class AppH5WebController extends BaseController
 		Collections.sort(userScoreDetail); // 按receivetime 排序
 
 		//JSONArray listArray = JSONArray.fromObject(userScoreDetail);
-		
 		JsonConfig jsonConfig = new JsonConfig();
 		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
 		JSONArray jsonObject = JSONArray.fromObject(userScoreDetail, jsonConfig); 
-
+		
 		addModel(model, "appuserscoredetails", jsonObject);
 		
 		return "app/h5web/scoredetail";
@@ -166,68 +167,67 @@ public class AppH5WebController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 		
-	
 	private String  phoneModelChange(String phoneModel) 
+	{
+		switch (phoneModel)
 		{
-			switch (phoneModel)
-			{
-			  case "iPhone5,1":    
-			  case "iPhone5,2":   
-			  phoneModel= "iPhone5";
-				  break;
-			   case "iPhone5,3":
-			   case"iPhone5,4":                
-			   phoneModel = "iPhone5c";
-				   break;
-			   case "iPhone6,1":
-			   case "iPhone6,2":                  
-				   phoneModel = "iPhone5s";
-				   break;
-			   case "iPhone7,2":                           
-				   phoneModel =  "iPhone6";
-				   break;
-			   case "iPhone7,1":                             
-				   phoneModel =  "iPhone6" ; 
-				   break;
-			   case "iPhone8,1":                               
-				   phoneModel =  "iPhone6s" ;
-				   break;
-			   case "iPhone8,2":                            
-				   phoneModel =  "iPhone6s" ; 
-				   break;
-			   case "iPhone8,4":                             
-				   phoneModel =  "iPhone6s" ; 
-				   break;
-				case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  
-					phoneModel =  "iPhone7";
-					break;
-				case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    
-					phoneModel =  "iPhone8";
-					break;
-				case "iPhone10,3":case  "iPhone10,6":   
-					phoneModel = "iPhoneX"; 
-					break;
-				case "iPhone11,2": case "iPhone11,4": case "iPhone11,6":    
-					phoneModel =  "iPhoneXs"; 
-					break;
-				case "iPhone11,8":   
+		  case "iPhone5,1":    
+		  case "iPhone5,2":   
+		  phoneModel= "iPhone5";
+			  break;
+		   case "iPhone5,3":
+		   case"iPhone5,4":                
+		   phoneModel = "iPhone5c";
+			   break;
+		   case "iPhone6,1":
+		   case "iPhone6,2":                  
+			   phoneModel = "iPhone5s";
+			   break;
+		   case "iPhone7,2":                           
+			   phoneModel =  "iPhone6";
+			   break;
+		   case "iPhone7,1":                             
+			   phoneModel =  "iPhone6" ; 
+			   break;
+		   case "iPhone8,1":                               
+			   phoneModel =  "iPhone6s" ;
+			   break;
+		   case "iPhone8,2":                            
+			   phoneModel =  "iPhone6s" ; 
+			   break;
+		   case "iPhone8,4":                             
+			   phoneModel =  "iPhone6s" ; 
+			   break;
+			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  
+				phoneModel =  "iPhone7";
+				break;
+			case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    
+				phoneModel =  "iPhone8";
+				break;
+			case "iPhone10,3":case  "iPhone10,6":   
+				phoneModel = "iPhoneX"; 
+				break;
+			case "iPhone11,2": case "iPhone11,4": case "iPhone11,6":    
+				phoneModel =  "iPhoneXs"; 
+				break;
+			case "iPhone11,8":   
+				phoneModel =  "iPhoneXr";
+				break;
+			default:
+				if(phoneModel.compareTo("iPhone11,8") > 0) 
+				{
 					phoneModel =  "iPhoneXr";
-					break;
-				default:
-					if(phoneModel.compareTo("iPhone11,8") > 0) 
-					{
-						phoneModel =  "iPhoneXr";
-					}
-					else if(phoneModel.compareTo("iPhone5,1") < 0) 
-					{
-						phoneModel =  "iPhone4";
-					}else {
-						phoneModel =  "iPhone6";
-					}
-					
-					break;
 				}
-			
-				return phoneModel;
+				else if(phoneModel.compareTo("iPhone5,1") < 0) 
+				{
+					phoneModel =  "iPhone4";
+				}else {
+					phoneModel =  "iPhone6";
+				}
+				
+				break;
 			}
+		
+			return phoneModel;
+		}
 }

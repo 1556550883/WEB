@@ -285,12 +285,15 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		}
 	}
 	
+	//导出idfa
 	@SuppressWarnings("rawtypes")
-	public List exportExcel(Integer id)
+	public List exportExcel(String adverIds)
 	{
 		StringBuffer sql = new StringBuffer("select B.adver_name, ip, idfa, date_format(complete_time, '%Y-%m-%d %H:%i:%s') as complete_time"
-				+ " FROM t_userappid_adverid as A left  join  `t_channel_adver_info` as B  on A.adver_id = B.adver_id WHERE A.status = '2'");
-		sql.append(SQLUtils.popuHqlEq("A.adver_id", id));
+				+ " from t_userappid_adverid as A left  join  `t_channel_adver_info` as B  ON A.adver_id = B.adver_id WHERE A.status = '2'");
+		sql.append(" and B.adver_id IN  (");
+		sql.append(adverIds);
+		sql.append(") ORDER BY B.adver_name DESC, A.complete_time ASC");
 		return sqlDao.getAll(sql.toString());
 	}
 }

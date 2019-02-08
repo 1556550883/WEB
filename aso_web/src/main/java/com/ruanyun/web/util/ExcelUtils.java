@@ -1,7 +1,8 @@
 package com.ruanyun.web.util;
 
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ExcelUtils {
 	 */
 	public static void exportExcel(HttpServletResponse response,
 			String fileName, List<?> list, String[] colums, String[] headers,
-			String dateFormat) throws Exception {
+			String dateFormat){
 		int rowIndex = 0;
 		Workbook workbook = new HSSFWorkbook(); // 创建一个工作簿
 		Sheet sheet = workbook.createSheet(); // 创建一个Sheet页
@@ -68,12 +69,21 @@ public class ExcelUtils {
 		
 		String ddate = new SimpleDateFormat("yyyyMMddhhmmss").format(Calendar.getInstance().getTime());
 		response.setContentType("application/vnd.ms-excel;charset=UTF-8");
-		//response.setHeader("Content-Disposition", "attachment; filename="+ new String(fileName.getBytes("gb2312"),"iso8859-1") + "_" + ddate + ".xls");// 设定输出文件头
-		//OutputStream output = response.getOutputStream("D:\\" + "out.xlsx");
-		OutputStream output = new FileOutputStream("D:/" + fileName + "-" + ddate + ".xlsx");
-		workbook.write(output);
-		output.flush();
-		output.close();
+		try {
+			response.setHeader("Content-Disposition", "attachment; filename="+ new String(fileName.getBytes("gb2312"),"iso8859-1") + "_" + ddate + ".xls");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}// 设定输出文件头
+		
+		//OutputStream output = new FileOutputStream("C:/export/" + fileName + "-" + ddate + ".xlsx");
+		try {
+			OutputStream output = response.getOutputStream();
+			workbook.write(output);
+			output.flush();
+			output.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static String getValue(Object obj){

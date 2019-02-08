@@ -32,7 +32,6 @@
  		var result = "";
  		var base_url  = "https://moneyzhuan.com/";
  		var udid = localStorage.getItem("happyzhuan_user_udid");
-		//udid = "d6638e6de42f029649654ad4b17badf532bb9bcc";
 		
  		function taskdetail(position){
  			if(position == null && position != 0){

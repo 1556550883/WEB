@@ -50,6 +50,7 @@ public class AppUserInviteController extends BaseController
 		
 		addModel(model, "master", id);
 		addModel(model, "udid", udid);
+		
 		return "app/invite/inviteGuest";
 	}
 	
@@ -142,7 +143,6 @@ public class AppUserInviteController extends BaseController
 		addModel(model, "udid", udid);
 		return "app/invite/homePage";
 	}
-	
 	
 	@RequestMapping("uuidpage")
 	public String uuidpage(HttpServletResponse response, HttpServletRequest request, Model model, String udid)

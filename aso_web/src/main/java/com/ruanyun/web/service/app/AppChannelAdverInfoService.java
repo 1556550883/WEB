@@ -163,10 +163,10 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	}
 	
 
-	public void exprotIDFA(Integer id, HttpServletResponse response)
+	public void exprotIDFA(HttpServletResponse response, String  adverIds)
 	{
-		List list = channelAdverInfoDao.exportExcel(id);
-		String fileName = "IDFA-" + id;
+		List list = channelAdverInfoDao.exportExcel(adverIds);
+		String fileName = "IDFA";
 		String[] columns = {"idfa","ip","complete_time","adver_name"};
 		String[] headers = {"IDFA","IP","结束时间","关键词"};
 		try {

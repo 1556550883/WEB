@@ -23,12 +23,12 @@
     	<div style="background:#fff; margin-top:5px;height:600px">
     			<div style="margin-top:20px;margin-left:20px;position:absolute;"><span>手机号码</span></div>
     			<input type="text" id="userphone" style="margin-top:45px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
-    			position:absolute;" placeholder="请输入真实手机号码">
+    			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')" placeholder="请输入真实手机号码">
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:78px;position:absolute"></div>
     			
     			<div style="margin-top:95px;margin-left:20px;position:absolute;"><span>验证码</span></div>
     			<input type="text" id="phonecode" style="margin-top:120px;margin-left:20px;width:40%;  border: 0px;font-size:20px;
-    			position:absolute;" placeholder="请输入验证码">
+    			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')"  placeholder="请输入验证码">
     			<span onclick="sendsms()" id="send_sms" type="button" style= "margin-top:120px; font-size:20px; float:right;width:140px;margin-right:30px;border:1px solid #AAAAAA;border-radius:10px;color:#AAAAAA;text-align: center; ">获取验证码</span>
     			<div style = "width:40%;margin-left:20px; height:1px; background:#aab2bd;margin-top:153px;position:absolute"></div>
     			
@@ -40,7 +40,6 @@
     	var udid = localStorage.getItem("happyzhuan_user_udid");
 		//udid = "d6638e6de42f029649654ad4b17badf532bb9bcc";
 		var test = sessionStorage.getItem('count_time'); 
-		console.log(test);
     	function phonebinding(){
     		
     		var userphone = $("#userphone").val();

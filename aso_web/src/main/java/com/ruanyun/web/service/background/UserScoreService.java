@@ -19,6 +19,7 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.UserScoreDao;
+import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserApprentice;
 import com.ruanyun.web.model.TUserLevel;
@@ -26,6 +27,8 @@ import com.ruanyun.web.model.TUserLevelRate;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.model.TUserappidAdverid;
+import com.ruanyun.web.producer.AdverQueueConsumer;
+import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.CommonMethod;
@@ -54,6 +57,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	private AppUserApprenticeService appUserApprenticeService;
 	@Autowired
 	private UserappidAdveridService userappidAdveridService;
+	@Autowired
+	private AppChannelAdverInfoService appChannelAdverInfoService;
 	@Override
 	public Page<TUserScore> queryPage(Page<TUserScore> page, TUserScore t) {
 		return userScoreDao.queryPage(page, t);
@@ -220,6 +225,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		
 		return task;
 	}
+	
 	/**
 	 * 功能描述:直接修改分数 不做记录
 	 *
@@ -240,18 +246,30 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 					return 1;
 				}
 				
-				//回调任务
-				if(type == -1 && userappidAdver.getStatus().compareTo("1.6")  >= 0) {
-					return 1;
+				//回调任务 如果任务还有，但是超时了，如果回调来了继续计算 否则放弃
+				if(type == -1) {
+					if(userappidAdver.getStatus().compareTo("1.6") == 0) {
+						TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", adverid);
+						if(adverInfo.getAdverCountRemain()  >   0) {
+							String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
+							boolean success = AdverQueueConsumer.getMessage(endPointName);
+							if(!success) {
+								return 1;
+							}
+						}else {
+							return 1;
+						}
+					}else if(userappidAdver.getStatus().compareTo("2") == 0) {
+						return 1;
+					}
 				}
 				
+				//设定任务完结
 				userappidAdver.setStatus("2");
 				userappidAdver.setCompleteTime(new Date());
 				userappidAdveridService.updateStatus2Complete(userappidAdver);
 			}
 			
-			System.out.println(score + "++++1");
-			System.out.println(userScore.getScore() + "++++2");
 			//(float)ArithUtil.add(userScore.getScore(), score)
 			userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
 			userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));

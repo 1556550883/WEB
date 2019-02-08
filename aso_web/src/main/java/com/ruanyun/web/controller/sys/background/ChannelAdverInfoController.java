@@ -245,23 +245,23 @@ public class ChannelAdverInfoController extends BaseController
 	}
 	
 	@RequestMapping("export")
-	public void exportIDFA(String ids, HttpServletResponse response)
+	public void exportIDFA(String adverIds, HttpServletResponse response)
 	{
-		try 
-		{
-			String[] adverIds = ids.split(",");
+		//List<String> adveradid =   new ArrayList<>();
+		appChannelAdverInfoService.exprotIDFA(response, adverIds);
+//		String[] ids = adverIds.split(",");
+//	
+//		for(String adverId : ids) 
+//		{
+//			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+//			if(!adveradid.contains(adverInfo.getAdid())) {
+//				appChannelAdverInfoService.exprotIDFA(adverInfo.getAdid(), response, adverInfo.getAdverCreatetime());
+//				adveradid.add(adverInfo.getAdid());
+//			}
+//			
+//		}
 		
-			for(String adverId : adverIds) 
-			{
-				appChannelAdverInfoService.exprotIDFA(Integer.valueOf(adverId), response);
-			}
-			
-			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
-		} 
-		catch (Exception e) 
-		{
-			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
-		}
+		//super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
 	}
 	
 	@InitBinder
