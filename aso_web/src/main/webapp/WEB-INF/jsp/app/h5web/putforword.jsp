@@ -15,26 +15,34 @@
 </head>
 
 <body style="background:#F0F0F0; margin:0px;font-size:15px;text-align: center;">
-	 <div class="title">
-	 		<span onclick="go()" style="line-height:0.8rem;color:Blue;font-size:0.6rem;float:left;margin-left:15px;margin-bottom:10px"><</span>
-            <span style=".flex1; line-height:0.8rem; font-weight: bold;text-align: center; color: #4a4a4a;width:100%; font-size: 0.4rem;">个人提现</span>
+   <div onclick="go()" class="title">
+	 		<img style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
+            <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">个人提现</span>
     </div>
-
+    
+    
     <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
     	<div style="background:#fff; margin-top:5px;height:600px; position: relative">
-    			<div style="margin-top:20px;margin-left:20px;position:absolute;"><span>支付宝账户</span></div>
-    			<div style="margin-top:55px;position:absolute;">
+    			<div style="margin-top:10px;margin-left:20px;position:absolute;"><span>提现账户id：</span>
+    			<span id="user_app_id"></span>
+    			</div>
+    			
+    			<div style="margin-top:40px;margin-left:20px;position:absolute;"><span>可用余额：</span>
+    			<span id="user_score"></span>
+    			</div>
+    			<div style="margin-top:70px;margin-left:20px;position:absolute;"><span>支付宝账户</span></div>
+    			<div style="margin-top:105px;position:absolute;">
     				<span id="payfornum" style="margin-left:20px;color:#AAAAAA;"></span>
     			</div>
     			
-    			<div style = "width:70%;margin-left:20px; height:1px; background:#AAAAAA;margin-top:78px;position:absolute"></div>
+    			<div style = "width:70%;margin-left:20px; height:1px; background:#AAAAAA;margin-top:128px;position:absolute"></div>
     		
     		<div onclick="selectscore(10)">
-		 		<span  id="10_score" style="width:40%;padding-top:7px;padding-bottom:7px;margin-left:30px;float:left;border-radius:4px;margin-top:120px;border:1px solid">提现10元</span>
+		 		<span  id="10_score" style="width:40%;padding-top:7px;padding-bottom:7px;margin-left:30px;float:left;border-radius:4px;margin-top:170px;border:1px solid">提现10元</span>
 		 	</div>
     		
     		<div onclick="selectscore(30)">
-		 		<span  id="30_score"  style="width:40%;padding-top:7px;padding-bottom:7px;margin-right:30px;float:right;border-radius:4px;margin-top:120px;border:1px solid">提现30元</span>
+		 		<span  id="30_score"  style="width:40%;padding-top:7px;padding-bottom:7px;margin-right:30px;float:right;border-radius:4px;margin-top:170px;border:1px solid">提现30元</span>
 		 	</div>
     		
     		<div onclick="selectscore(50)">
@@ -56,6 +64,11 @@
     </div>
     
     <script>
+	    var userScore  = "${HUserAppModel.score}";
+		var usernum = "${HUserAppModel.userNum}";
+		var appid = "${HUserAppModel.userAppId}";
+		$("#user_app_id").text(appid)
+		$("#user_score").text(userScore)
     	$("#payfornum").text("${HUserAppModel.zhifubao}")
     	var oldid = "#10_score";
     	var score = 10;
@@ -77,8 +90,7 @@
     	
     	function putforword(){
     		//${userappmodel.zhifubao}
-    		var userScore  = "${HUserAppModel.score}";
-    		var usernum = "${HUserAppModel.userNum}";
+    		
     		if(userScore > score){
     			 $.ajax({
 	 	             type: "GET",

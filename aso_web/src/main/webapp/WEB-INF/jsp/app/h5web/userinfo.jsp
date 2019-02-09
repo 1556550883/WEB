@@ -13,17 +13,17 @@
 	</style>
 </head>
 
-<body style="background:#F0F0F0; margin:0px" onpageshow = "">
-	 <div class="title">
-	 <span onclick="go()" style="line-height:0.8rem;color:Blue;font-size:0.6rem;float:left;margin-left:15px;margin-bottom:10px"><</span>
-            <span style=".flex1; line-height:0.8rem; font-weight: bold;text-align: center; color: #4a4a4a;width:100%; font-size: 0.4rem;">个人中心</span>
+<body style="background:#F0F0F0; margin:0px">
+	 <div onclick="go()" class="title">
+	 		<img  style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;z-index:200;" src="../img/h5web/back-icon.png"></img>
+            <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">个人中心</span>
     </div>
     <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
     		<div style="background:#fff; margin-top:5px;height:600px">
 	    		<img id="user_img" style="width:40px;height:40px;margin-top:20px;margin-right:60px;border-radius:50px;float:right" src="../img/h5web/happy_logo.png"/>
 	    		<span style="margin-left:10px;margin-top:20px;position:absolute;font-size:20px;color:#AAAAAA">我的资产 </span>
 	    		<span id= "score" style="margin-left:10px;margin-top:70px;position:absolute;padding-left:5px;padding-right:5px;font-size:40px;border-radius:5px;"></span>
-	    		<span id= "user_id" style="margin-right:-100px;margin-top:70px;font-size:15px;float:right;color:#F08080;width:160px;color:#AAAAAA;text-align: center;"></span>
+	    		<span id= "user_id" style="margin-right:-100px;margin-top:70px;font-size:15px;float:right;color:#F08080;width:160px;color:#AAAAAA;text-align: center;">11</span>
 	    		<span id= "phonenum" style="margin-right:-160px;margin-top:100px;font-size:10px;float:right;width:160px;text-align: center;">绑定手机</span>
 		    	<div style = "width:96%;margin-left:2%; height:1px; background:#F08080;margin-top:130px;position:absolute"></div>
 		    	<div style = "width:96%;margin-left:2%;margin-top:135px;position:absolute">
@@ -31,19 +31,29 @@
 		    		<span onclick="putforword()" style="margin-top:20px;margin-right:20px;font-size:20px;color:#AAAAAA;padding: 2px 8px;float:right;border:1px solid #AAAAAA;border-radius:10px;">立即提现</span>
 		    	</div>
 		    	
-		    	<div>
-		    		<img onclick= "phonebinding()" id="user_phonenum" style="width:40px;height:40px;margin-top:330px;margin-left:50px;border-radius:50px;position:absolute;" src="../img/h5web/frown.png"/>
-		    		<img onclick= "payforbinding()" id="user_payfor" style="width:40px;height:40px;margin-top:330px;margin-left:130px;border-radius:50px;position:absolute;" src="../img/h5web/frown.png"/>
-		    		<img onclick= "wechatbinding()" id="user_wechat" style="width:40px;height:40px;margin-top:330px;margin-left:210px;border-radius:50px;position:absolute;" src="../img/h5web/frown.png"/>
-		    		<img onclick= "userhelp()" id="user_help" style="width:40px;height:40px;margin-top:330px;margin-left:290px;border-radius:50px;position:absolute;" src="../img/h5web/smile.png"/>
+		    	<div  onclick= "phonebinding()"  style="line-height:25px;margin-top:250px;position:absolute;text-align: left;margin-left:30px;width:80%">
+		    		<span style="height:25px;font-size:20px;">手机绑定</span>
+		    		<img id="user_phonenum" style="height:25px;float:right;" src="../img/h5web/right.png"/>
 		    	</div>
+		    	<div style = "width:96%;margin-left:2%; height:1px; background:#CDC9C9;margin-top:285px;position:absolute"></div>
 		    	
-		    	<div>
-		    		<span  style="width:80px;height:40px;margin-top:380px;font-size:15px;margin-left:30px;position:absolute;text-align: center;">手机绑定</span>
-		    		<span style="width:80px;height:40px;margin-top:380px;font-size:15px;margin-left:110px;position:absolute;text-align: center;">支付宝绑定</span>
-		    		<span  style="width:80px;height:40px;margin-top:380px;font-size:15px;margin-left:190px;position:absolute;text-align: center;">微信绑定</span>
-		    		<span  style="width:80px;height:40px;margin-top:380px;font-size:15px;margin-left:270px;position:absolute;text-align: center;">帮助中心</span>
+		    	<div onclick= "payforbinding()"  style="line-height:25px;margin-top:300px;position:absolute;text-align: left;margin-left:30px;width:80%">
+		    		<span style="height:25px;font-size:20px;">支付宝绑定</span>
+		    		<img  id="user_payfor" style="height:25px;float:right;" src="../img/h5web/right.png"/>
 		    	</div>
+		    	<div style = "width:96%;margin-left:2%; height:1px; background:#CDC9C9;margin-top:335px;position:absolute"></div>
+		    		
+		    	<div onclick= "wechatbinding()" style="line-height:25px;margin-top:350px;position:absolute;text-align: left;margin-left:30px;width:80%">
+		    		<span style="height:25px;font-size:20px;">微信绑定</span>
+		    		<img id="user_wechat" style="height:25px;float:right;" src="../img/h5web/right.png"/>
+		    	</div>
+		    	<div style = "width:96%;margin-left:2%; height:1px; background:#CDC9C9;margin-top:385px;position:absolute"></div>
+		    	
+		    	<div onclick= "userhelp()"  style="line-height:25px;margin-top:400px;position:absolute;text-align: left;margin-left:30px;width:80%">
+		    		<span style="height:25px;font-size:20px;">帮助中心</span>
+		    		<img   id="user_help" style="height:25px;float:right;" src="../img/h5web/right.png"/>
+		    	</div>
+		    	<div style = "width:96%;margin-left:2%; height:1px; background:#CDC9C9;margin-top:435px;position:absolute"></div>
 	    	</div>
     </div>
 	<script>
@@ -62,7 +72,6 @@
 			
 		function showdata(){
 			//如果udid被手动清理，需要 去 重新注册设备
- 		
 	 		if(udid == null || udid == ""){
 	 			url = "qisu://com.qisu?udid=none";
 	 	 		window.location.href = url;
@@ -94,25 +103,25 @@
 	 	            	if(weixin != "" && weChatHeadUrl != "")
 	 	            	{
 	 	           	    	$("#user_img").attr("src",  weChatHeadUrl);
-	 	           	   		 $("#user_wechat").attr("src",  "../img/h5web/smile.png");
+	 	           	   		 $("#user_wechat").attr("src",  "../img/h5web/check.png");
 	 	            	}
 	 	            	
 	 	            	if(phonenum !=  ""){
 	 	            		//显示手机号码
 	 	            		var str2 = phonenum.substr(0,3) + "****" + phonenum.substr(7);
 	 	            		$("#phonenum").text(str2);
-	 	            		$("#user_phonenum").attr("src",  "../img/h5web/smile.png");
+	 	            		$("#user_phonenum").attr("src",  "../img/h5web/check.png");
 	 	            	}
 	 	            	
 	 	            	if(payfor != ""){
-	 	            		$("#user_payfor").attr("src",  "../img/h5web/smile.png");
+	 	            		$("#user_payfor").attr("src",  "../img/h5web/check.png");
 	 	            	}
 	 	            }
 	 	        });
 	 		}
 		}
  	 	
- 	 	window.onpageshow=	function refresh(e){
+ 	 	window.onpageshow =	function refresh(e){
 		     showdata();
 	 	};
  	 		

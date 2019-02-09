@@ -16,19 +16,19 @@
 	 	 	
 	 	<div>
 	 		<img id="head_img" style="width:50px;height:50px;margin-top:5px;margin-left:15px;border-radius:50px;float:left" src="../img/h5web/happy_logo.png"/>
-			<button onclick= "putforword()" style="color:#FFFFFF;width:50px;float:right;margin-top:20px;margin-right:10px;border-radius:5px;background: rgba(255, 255, 255, 0.2)">提现</button>
-	 		<div><span id="user_id" style="margin-left:20px;width:200px;"></span></div>
-	 		<div><span style="margin-left:20px">今日收入</span>
-	 		<span id="day_score"></span></div>
+			<button onclick= "putforword()" style="color:#FFFFFF;width:80px;float:right;padding:3px;margin-top:20px;margin-right:10px;border-radius:5px;background: rgba(255, 255, 255, 0.2)">提现</button>
+	 		<div><span id="user_id" style="margin-left:20px;width:200px;color:#FFFFFF;"></span></div>
+	 		<div><span style="margin-left:20px;color:#FFFFFF;">今日收入:</span>
+	 		<span id="day_score" style="color:#FFFFFF;"></span></div>
 	 	</div>
 	 	
 		<div style="width=50%;margin-top:15px;float:left;text-align:center;">
-			<span style="margin-left:30px">余额</span>
-			<span id="score"></span>
+			<span style="margin-left:30px;color:#FFFFFF;">余额:</span>
+			<span id="score"  style="color:#FFFFFF;"></span>
 		</div>
 		<div style="width=50%;margin-top:15px;text-align:center;">
-			<span style="margin-left:30px">总收入</span>
-			<span id="sum_score"></span>
+			<span style="margin-left:30px;color:#FFFFFF;">总收入:</span>
+			<span id="sum_score"  style="color:#FFFFFF;"></span>
 		</div>
  	</div>
  	
@@ -68,6 +68,10 @@
 		var phonenum  = "";
 		var payfor  = "";
 		var userAppId  = "";
+		
+
+		
+		
 		function showdata(){
 			//如果udid被手动清理，需要 去 重新注册设备
  			var udid = localStorage.getItem("happyzhuan_user_udid");
@@ -137,6 +141,7 @@
  	 			window.location.href = base_url + "score?id=" + userAppId;  
  	 		}else{
  	 			alert("请先绑定个人信息！");
+ 	 			window.location.href = base_url +  "user"
  	 		}
  	 	}
 	</script>

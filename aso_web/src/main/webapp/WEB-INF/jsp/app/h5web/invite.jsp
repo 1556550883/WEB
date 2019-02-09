@@ -16,9 +16,9 @@
 </head>
 
 <body style="background:#F0F0F0; margin:0px;font-size:15px;">
-	 <div class="title">
-           <span onclick="go()" style="line-height:0.8rem;color:Blue;font-size:0.6rem;float:left;margin-left:15px;margin-bottom:10px"><</span>
-           <span style=" line-height:0.8rem; font-weight: bold;text-align: center; color: #4a4a4a;width:100%; font-size: 0.4rem;">收徒赚钱</span>
+     <div onclick="go()" class="title">
+	 		<img  style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
+            <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">收徒赚钱</span>
     </div>
       <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
     	<div style="background:#fff; margin-top:5px;height:700px">
@@ -49,7 +49,7 @@
    				 data-clipboard-action="copy" data-clipboard-target="#invitelink">https://moneyzhuan.com/invite/guest?id=544606
 			</div>
 			<div style = "width:70%;margin-left:15%;margin-top:400px;position:absolute;color:#AAAAAA;text-align: center; ">
-					<span style="font-size:15px">您的专属邀请链接，点击复制，发送给朋友即可得分！说</span></div>
+					<span style="font-size:15px">您的专属邀请链接，点击复制，发送给朋友即可得分!</span></div>
 					
 			<div id="qrcode" style = "margin-top:460px;position:absolute;text-align: center;width:100%">
 			</div>

@@ -10,26 +10,15 @@
        <title>Happy赚官方助手</title>
 	<style>
 		 body { 
-		       	font-size:15px; 
-		       	padding:0;
-		      		margin:0;
-		      		width:100%; 
+	       		font-size:15px; 
+	       		padding:0;
+	      		margin:0;
+	      		width:100%; 
 				height:100%;
-				position: fixed;
 				background:url('../img/invite/shangbu.png') no-repeat;
 				background-size:cover;
-				
-		      		}
+		      }
         		
-         	.footer{
-					height: 200px;
-					width: 100%;
-					background:url('../img/invite/dibu.png') no-repeat;
-					background-size:cover;
-					position: fixed;
-					bottom: 0;
-				}
-			 
 			 .button_style{
 			 	margin-top:100px;
 				background:url('../img/invite/button.png') no-repeat;
@@ -62,17 +51,15 @@
     </head>
     
     <body style="font-size:15px">
-	  <div class="footer">
-		  <div style="width:100%;height:40px;margin-top:80px;font-size:20px;color:#FFFFFF; ">
-			  	<span id="install_button" onclick="hrefs(1)" style="background:#436EEE;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
-			  	position: absolute;text-align:center;">安装助手</span>
-		  		
-		  		<span id="trust_button" onclick="hrefs(2)" style="display:none;background:#436EEE;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
-		  		position: absolute;text-align:center;">前往信任</span>
-		  		
-		  		<span id="open_button" onclick="hrefs(3)" style="display:none;background:#436EEE;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
-		  		position: absolute;text-align:center;">打开助手</span>
-		  </div>
+	  <div style="width:100%;height:40px;margin-top:120%;font-size:20px;color:#FFFFFF; ">
+		  	<span id="install_button" onclick="hrefs(1)" style="background:#1E90FF;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
+		  	position: absolute;text-align:center;">安装助手</span>
+	  		
+	  		<span id="trust_button" onclick="hrefs(2)" style="display:none;background:#1E90FF;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
+	  		position: absolute;text-align:center;">前往信任</span>
+	  		
+	  		<span id="open_button" onclick="hrefs(3)" style="display:none;background:#1E90FF;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
+	  		position: absolute;text-align:center;">打开助手</span>
 	  </div>
 	  
 	  <div id="fade" class="black_overlay"></div>
@@ -100,7 +87,7 @@
             $("#safariTip").css({ "display": "none" });
             $("#fade").css({ "display": "none" });
 		}
-		
+        
 		function hrefs(v)
 		{
 			var url = "" ;

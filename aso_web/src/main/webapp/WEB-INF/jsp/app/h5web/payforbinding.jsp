@@ -14,9 +14,9 @@
 </head>
 
 <body style="background:#F0F0F0; margin:0px;font-size:15px;">
-	 <div class="title">
-	 		<span onclick="go()" style="line-height:0.8rem;color:Blue;font-size:0.6rem;float:left;margin-left:15px;margin-bottom:10px"><</span>
-            <span style=".flex1; line-height:0.8rem; font-weight: bold;text-align: center; color: #4a4a4a;width:100%; font-size: 0.4rem;">支付宝绑定</span>
+        <div  onclick="go()" class="title">
+	 		<img  style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
+            <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">支付宝绑定</span>
     </div>
     
     <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
@@ -28,12 +28,12 @@
     			
     			<div style="margin-top:95px;margin-left:20px;position:absolute;"><span>支付宝账户</span></div>
     			<input type="text" id="payfornum" style="margin-top:120px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
-    			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')" placeholder="请输入需绑定支付宝账户"/>
+    			position:absolute;" oninput = "value=value.replace(/[\u4e00-\u9fa5]/ig,'')" placeholder="请输入需绑定支付宝账户"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:153px;position:absolute"></div>
     			
     			<div style="margin-top:170px;margin-left:20px;position:absolute;"><span>确认支付宝账户</span></div>
     			<input type="text" id="payfornum_t" style="margin-top:195px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
-    			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')"  placeholder="请再次确认支付宝账户"/>
+    			position:absolute;" oninput = "value=value.replace(/[\u4e00-\u9fa5]/ig,'')"  placeholder="请再次确认支付宝账户"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:228px;position:absolute"></div>
     			
     			<div onclick= "payforbinding()" style="position:absolute;background:#FFA500; text-align: center;margin-left:2%;width:96%;margin-top:270px;color:#FFFFFF; font-size: 0.5rem;border:1px dashed #CDCDC1;border-radius:10px;"><span>绑定支付宝</span></div>

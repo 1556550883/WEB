@@ -15,12 +15,13 @@
 </head>
 
 <body style="background:#F0F0F0; margin:0px">
-	 <div class="title">
-	 		<span onclick="go()" style="line-height:0.8rem;color:Blue;font-size:0.6rem;float:left;margin-left:15px;margin-bottom:10px"><</span>
-            <span style=".flex1; line-height:0.8rem; font-weight: bold;text-align: center; color: #4a4a4a;width:100%; font-size: 0.4rem;">试玩任务</span>
+    <div onclick="go()" class="title">
+	 		<img style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
+            <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">试玩任务</span>
+    		<div style="padding-top:0.8rem;font-size: 0.3rem;padding-left:20px;background:#fff;color:red;text-align: left">①:下载安装  ②:打开试玩  ③:奖励到账</div>
     </div>
-    
-   	<div id="container_01" style="padding-top:0.9rem;position:relative;margin-left:2%;width:96%;"></div>
+  
+   	<div id="container_01" style="padding-top:1.2rem;position:relative;margin-left:2%;width:96%;"></div>
    	
 	<div style="text-align: center;margin-left:2%;width:96%;margin-top:10px;color: #9C9C9C; font-size: 0.4rem;border:1px dashed #CDCDC1;border-radius:5px">
 		即将开始的任务

@@ -742,7 +742,7 @@ public class DuiJieController extends BaseController
 		else if(task.getStatus().compareTo("1.5") < 0)
 		{
 			model.setResult(-1);
-			model.setMsg("未完成。原因：自由任务需要先下载并打开app！");
+			model.setMsg("未完成。原因：需要先下载并打开app！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
