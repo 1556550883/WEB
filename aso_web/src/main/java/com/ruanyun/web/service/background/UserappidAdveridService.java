@@ -46,9 +46,25 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.updateStatus2OpenApp(info);
 	}
 	
+	public int deleteOverTimeAdver(TUserappidAdverid info)
+	{
+		String[] propertyNames = new String[2];
+		propertyNames[0] = "idfa";
+		propertyNames[1] = "adverId";
+		Object[] values = new Object[2];
+		values[0] = info.getIdfa();
+		values[1] = info.getAdverId();
+		return super.delete(TUserappidAdverid.class, propertyNames, values);
+	}
+	
 	public int updateStatus2Complete(TUserappidAdverid info) 
 	{
 		return userappidAdveridDao.updateStatus2Complete(info);
+	}
+	
+	public int updateReceiveTime(TUserappidAdverid info) 
+	{
+		return userappidAdveridDao.updateReceiveTime(info);
 	}
 	
 	public int updateTaskStatus(TUserappidAdverid info) 

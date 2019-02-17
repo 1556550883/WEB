@@ -62,7 +62,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String flag2;
      private String flag3;
      private String flag4;
-     private Integer openTime;
+     private Integer openTime;//app需要打开的时间
      private Integer level; 
      private Integer isAuth;
      private String adverRemand;

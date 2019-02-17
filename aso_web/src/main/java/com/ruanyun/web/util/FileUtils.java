@@ -228,7 +228,7 @@ public class FileUtils {
 		 response.setContentType(conType);
 		 response.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 		 // 循环取出流中的数据
-		 byte[] b = new byte[100];
+		 byte[] b = new byte[1024];
 		 ByteBuffer byteBuf = ByteBuffer.allocate(2048);   //临时存放总共读取的字节,大小自己估计
 		 int len;
 		 int sum = 0;

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script type="text/javascript" charset="utf-8" src="../js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/px2rem.js"></script>
+		<script type="text/javascript" charset="utf-8" src="../js/showText.js"></script>
 	<style>
 	.title{
    	 		.flex; width:100%; height: 0.8rem; background:#fff; box-shadow: 0 3px 5px #e0e0e0;text-align: center;position:fixed;z-index:100
@@ -13,13 +14,13 @@
 	</style>
 </head>
 
-<body style="background:#F0F0F0; margin:0px;font-size:15px;">
+<body style="background:#F0F0F0; margin:0px;font-size:20px; font-family:微软雅黑;">
     <div onclick="go()" class="title">
 	 		<img style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
             <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">手机绑定</span>
     </div>
     
-      <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
+      <div id="container" style="padding-top:0.9rem;position:relative;width:100%;font-size:15px;">
     	<div style="background:#fff; margin-top:5px;height:600px">
     			<div style="margin-top:20px;margin-left:20px;position:absolute;"><span>手机号码</span></div>
     			<input type="text" id="userphone" style="margin-top:45px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
@@ -37,8 +38,39 @@
     	</div>
     </div>
     <script>
-    	var udid = localStorage.getItem("happyzhuan_user_udid");
-		//udid = "d6638e6de42f029649654ad4b17badf532bb9bcc";
+    var udid = "";
+	(function(){
+		$.ajax({
+             type: "GET",
+             async:true,
+             url: "http://localhost/getDeviceudid",
+             //dataType: "json",
+            success:function(data){
+            	udid =  data;
+            },
+          	error: function(XMLHttpRequest, textStatus, errorThrown){
+             //通常情况下textStatus和errorThrown只有其中一个包含信息
+	 	           showConfirm({
+	 	        	 title:'警告',
+	 	   	 	    text: 'Happy赚助手未打开', //【必填】，否则不能正常显示
+	 	   	 	    rightText: '下载安装', //右边按钮的文本
+	 	   	 	    rightBgColor: '#1b79f8', //右边按钮的背景颜色，【不能设置为白色背景】
+	 	   	 	    rightColor: '#FFC125', //右边按钮的文本颜色，默认白色
+	 	   	 	    leftText: '打开助手', //左边按钮的文本
+	 	   	 	    top: '34%', //弹出框距离页面顶部的距离
+	 	   	 	    zindex: 5, //为了防止被其他控件遮盖，默认为2，背景的黑色遮盖层为1,修改后黑色遮盖层的z-index是这个数值的-1
+	 	   	 	    success: function() { //右边按钮的回调函数
+	 	   	 	  		url = "itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist";
+ 	   	 	   			window.location.href = url;
+	 	   	 	    },
+	 	   	 	    cancel: function() { //左边按钮的回调函数
+		 	   	 	   url = "qisu://com.qisu";
+	 	   	 	  		window.location.href = url;
+	 	   	 	    }
+	 	   	 	});
+          	}
+          });
+	})();
 		var test = sessionStorage.getItem('count_time'); 
     	function phonebinding(){
     		

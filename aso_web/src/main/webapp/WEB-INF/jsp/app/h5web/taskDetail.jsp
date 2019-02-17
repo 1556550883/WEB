@@ -7,6 +7,7 @@
 	<script type="text/javascript" charset="utf-8" src="../js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/px2rem.js"></script>
 	
+	<script type="text/javascript" charset="utf-8" src="../js/showText.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/clipboard.min.js"></script>
 	<style>
 	.title{
@@ -69,9 +70,46 @@
     </div>
     
    	<script>
-			var base_url  = "https://moneyzhuan.com/";
-   			var udid = localStorage.getItem("happyzhuan_user_udid");
+			var base_url  = "http://moneyzhuan.com/";
+   			var udid = "";
    			var taskid =  "${adverInfo.adverId}";
+   			
+   			function getUdid(){
+   				$.ajax({
+   		             type: "GET",
+   		             async:true,
+   		             url: "http://localhost/getDeviceudid",
+   		            success:function(data){
+   		            	udid = data;
+   		            },
+   		          	error: function(XMLHttpRequest, textStatus, errorThrown){
+   		             //通常情况下textStatus和errorThrown只有其中一个包含信息
+   			 	          alertDialog();
+   		          	}
+   		          });
+   			}
+   			
+   			function alertDialog(){
+   			 showConfirm({
+	 	        	 title:'警告',
+	 	   	 	    text: 'Happy赚助手未打开', //【必填】，否则不能正常显示
+	 	   	 	    rightText: '下载安装', //右边按钮的文本
+	 	   	 	    rightBgColor: '#1b79f8', //右边按钮的背景颜色，【不能设置为白色背景】
+	 	   	 	    rightColor: '#FFC125', //右边按钮的文本颜色，默认白色
+	 	   	 	    leftText: '打开助手', //左边按钮的文本
+	 	   	 	    top: '34%', //弹出框距离页面顶部的距离
+	 	   	 	    zindex: 5, //为了防止被其他控件遮盖，默认为2，背景的黑色遮盖层为1,修改后黑色遮盖层的z-index是这个数值的-1
+	 	   	 	    success: function() { //右边按钮的回调函数
+	 	   	 	  		url = "itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist";
+	   	 	   			window.location.href = url;
+	 	   	 	    },
+	 	   	 	    cancel: function() { //左边按钮的回调函数
+		 	   	 	   url = "qisu://com.qisu";
+	 	   	 	  		window.location.href = url;
+	 	   	 	    }
+	 	   	 	});
+   			}
+   			
    			function giveUpTask(){
    				//setTaskTimeout
    				if(confirm("您确定放弃吗？")){
@@ -85,7 +123,8 @@
    		            	var result  = json["result"];
    		            	var msg  = json["msg"];
    		            	if(result == 1){
-   		            		window.location.href = base_url + "task";
+   		            		go();
+   		            		//window.location.href = base_url + "task";
    		            	}else{
    		            		alert("请求错误，请重新尝试！");
    		            	}
@@ -105,16 +144,43 @@
 		            	var result  = json["result"];
 		            	var msg  = json["msg"];
 		            	if(result == 1){
-		            		window.location.href = base_url + "task";
+		            		showAlert({
+							    text: msg, //【必填】，否则不能正常显示
+							    btnText: '确定', //按钮的文本
+							    top: '34%', //alert弹出框距离页面顶部的距离
+							    zindex: 5, //为了防止被其他控件遮盖，默认为2，背景的黑色遮盖层为1，修改后黑色遮盖层的z-index是这个数值的-1
+							    color: '#fff', //按钮的文本颜色，默认白色
+							    bgColor: '#1b79f8', //按钮的背景颜色，默认为#1b79f8
+							    success: function() { //点击按钮后的回调函数
+							    	go();
+							    }
+							});
+		            	}else{
+		            		alert(msg);
 		            	}
-		            	alert(msg);
 		            }
 	             })
 		   	}
 	   	
 	   		function openApp(){
 	   			//qisu://com.qisu?udid=" + "${udid}"
-	   		 	window.location.href = "qisu://com.qisu?bundle=" + "${adverInfo.bundleId}" + "&" +  "${adverInfo.adverId}";
+	   		 	//window.location.href = "qisu://com.qisu?bundle=" + "${adverInfo.bundleId}" + "&" +  "${adverInfo.adverId}";
+	   			$.ajax({
+  		             type: "GET",
+  		             async:true,
+  		             url: "http://localhost/openTaskApp",
+  		           	 data: {bundleId:"${adverInfo.bundleId}",adverId:"${adverInfo.adverId}"},
+  		             success:function(data){
+  		            	var result = data;
+  		            	if(result == 0){
+  		            		alert("打开app失败,请先下载app！");
+  		            	}
+  		            },
+  		          	error: function(XMLHttpRequest, textStatus, errorThrown){
+  		             //通常情况下textStatus和errorThrown只有其中一个包含信息
+  			 	          alertDialog();
+  		          	}
+  		          });
 	   		}
    		
    		 function clickAdverName(){
@@ -156,6 +222,8 @@
 	   	        		go()
 	   	        	}
 	   	    },1000)
+	   	    
+	   	    getUdid();
 	   	})()
 	   	
 	   	

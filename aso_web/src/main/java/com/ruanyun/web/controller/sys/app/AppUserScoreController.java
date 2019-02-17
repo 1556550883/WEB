@@ -88,7 +88,7 @@ public class AppUserScoreController extends BaseController
 		TUserScore userScore = userScoreService.getScore(userNum);
 		if(userScore.getScore() >= forward)
 		{
-			model.setResult(userScoreService.addPutForward(userNum, forward));
+			//model.setResult(userScoreService.addPutForward(userNum, forward));
 			
 			//减去提现的金额
 			if(model.getResult() == 1)

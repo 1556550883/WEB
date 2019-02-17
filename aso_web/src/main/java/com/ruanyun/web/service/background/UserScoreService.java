@@ -59,6 +59,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	private UserappidAdveridService userappidAdveridService;
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
+//	@Autowired
+//	private UserScoreService userScoreService;
 	@Override
 	public Page<TUserScore> queryPage(Page<TUserScore> page, TUserScore t) {
 		return userScoreDao.queryPage(page, t);
@@ -234,12 +236,15 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	 * @param userScore 用户分数对象
 	 * @param score 分数
 	 */
-	public int updateScore(TUserScore userScore, Float score, int type, int adverid, String idfa)
+	public int updateScore(TUserScore userScore, TUserScore userScoreq)
 	{
 		if(userScore != null) 
 		{
+			int type = userScoreq.getType();
 			//任务计分
 			if(type <= 0) {
+				int adverid = userScoreq.getUserScoreId();
+				String idfa = userScoreq.getUserNick();
 				TUserappidAdverid userappidAdver = getTask(adverid + "", idfa); 
 				//如果任务不是在1.5状态下就不再次积分
 				if(!userappidAdver.getStatus().equals("1.5") && type == 0) {
@@ -271,6 +276,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 			}
 			
 			//(float)ArithUtil.add(userScore.getScore(), score)
+			Float score = userScoreq.getScore();
 			userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
 			userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));
 			if(type != 2) //提现的时候type为2
@@ -301,6 +307,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 				}
 			}else if(type == 2) {
 				//存入提现 记录
+				//userScoreService.addPutForward(userScore.getUserNum(), score);
+				//和红包放在一起的记录
 				appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), "", score, type);
 			}
 			

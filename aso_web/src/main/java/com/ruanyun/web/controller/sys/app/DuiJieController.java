@@ -328,20 +328,23 @@ public class DuiJieController extends BaseController
 		
 		if (taskList != null && !taskList.getResult().isEmpty())
 		{
-			//判断idfa是否重复
-			AppCommonModel checkIdfaModel = checkIDFADuplicated(adid, taskList, idfa, adverId);
+			//判断idfa是否重复 判断是否有任务在进行
+			AppCommonModel checkIdfaModel = checkIDFADuplicated(userApp, adid, taskList, idfa, adverId);
 			if(checkIdfaModel.getResult() != 2) 
 			{
 				super.writeJsonDataApp(response, checkIdfaModel);
 				return;
 			}
 			
-			//判断数据库里IP是否重复
-			AppCommonModel checkIpModel = checkIPDuplicated(adid, taskList, ip);
-			if(checkIpModel.getResult() != 2) 
-			{
-				super.writeJsonDataApp(response, checkIpModel);
-				return;
+			//散户不需要查重ip
+			if(userApp.getUserApppType() != 2) {
+				//判断数据库里IP是否重复
+				AppCommonModel checkIpModel = checkIPDuplicated(adid, taskList, ip);
+				if(checkIpModel.getResult() != 2) 
+				{
+					super.writeJsonDataApp(response, checkIpModel);
+					return;
+				}
 			}
 		}
 		
@@ -350,14 +353,6 @@ public class DuiJieController extends BaseController
 		if(checkAppleIDModel.getResult() != 2)
 		{
 			super.writeJsonDataApp(response, checkAppleIDModel);
-			return;
-		}
-		
-		//判断是否有任务在进行中
-		AppCommonModel checkAdverInProcessModel = checkAdverInProcess(taskList, userApp);
-		if(checkAdverInProcessModel.getResult() != 2)
-		{
-			super.writeJsonDataApp(response, checkAdverInProcessModel);
 			return;
 		}
 		
@@ -396,6 +391,7 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		//排重
 		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion);
 		
 		if(checkChannelInfoModel.getResult() == -1)
@@ -436,27 +432,6 @@ public class DuiJieController extends BaseController
 		return;
 	}
 	
-	private AppCommonModel checkAdverInProcess(Page<TUserappidAdverid> taskList, TUserApp userApp) 
-	{
-		AppCommonModel model = new AppCommonModel(2, "通过！");
-		
-		for (TUserappidAdverid item : taskList.getResult()) 
-		{
-			if(item.getStatus().compareTo("1.6") < 0) 
-			{
-				//model.setResult(-1);
-				//model.setMsg("此类广告已经领取过，请勿重复领取！");
-				if(userApp != null && userApp.getUserApppType() == 2) {
-					//散户等于2 todo
-					model.setResult(-1);
-					model.setMsg("此类广告已经领取过，请勿重复领取！");
-				}
-			}
-		}
-		
-		return model;
-	}
-	
 	private AppCommonModel checkAppleIDDuplicated(TUserApp tUserApp, String appleId, String adid) 
 	{
 		AppCommonModel model = new AppCommonModel(2, "通过！");
@@ -479,7 +454,7 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
-	private AppCommonModel checkIDFADuplicated(String adid, Page<TUserappidAdverid> taskList, String idfa, String adverId) 
+	private AppCommonModel checkIDFADuplicated(TUserApp userApp, String adid, Page<TUserappidAdverid> taskList, String idfa, String adverId) 
 	{
 		AppCommonModel model = new AppCommonModel(2, "没有符合条件！");
 		
@@ -488,38 +463,66 @@ public class DuiJieController extends BaseController
 			//model.setObj(item);
 			if(item.getIdfa().equals(idfa))
 			{
-				if (item.getStatus().compareTo("2") >= 0 && adid.equals(item.getAdid())) 
+				if(userApp.getUserApppType() == 2)
 				{
-					model.setResult(-1);
-					model.setMsg("领取任务失败。原因：任务已完成，不能重复领取！");
-					break;
-				} 
-				else if (item.getStatus().compareTo("1.6") == 0 && adid.equals(item.getAdid())) 
-				{
-					model.setResult(-1);
-					model.setMsg("领取任务失败。原因：任务没有在规定时间内完成，导致任务已失效！");
-					break;
+					//真实用户
+					if (item.getStatus().compareTo("2") >= 0 && adid.equals(item.getAdid())) 
+					{
+						model.setResult(-1);
+						model.setMsg("领取任务失败。原因：任务已完成，不能重复领取！");
+						break;
+					}
+					else if(item.getStatus().compareTo("1.6") < 0)
+					{
+						//更新 未完成 的 任务开始时间，真实用户需要更新
+						item.setReceiveTime(new Date());
+						userappidAdveridService.updateReceiveTime(item);
+						model.setResult(1);
+						model.setObj(item);
+						model.setMsg("请先完成正在进行的任务...");
+						break;
+					}else {
+						//删除超时的任务 真实用户不需要超时
+						userappidAdveridService.deleteOverTimeAdver(item);
+					}
 				}
-				else if (!item.getAdverId().equals(Integer.valueOf(adverId)) && adid.equals(item.getAdid()))  
+				else
 				{
-					model.setResult(-1);
-					model.setMsg("领取任务失败。原因：已领取过此类任务，不能重复领取！");
-					break;
+					//工作室准备
+					if (item.getStatus().compareTo("2") >= 0 && adid.equals(item.getAdid())) 
+					{
+						model.setResult(-1);
+						model.setMsg("领取任务失败。原因：任务已完成，不能重复领取！");
+						break;
+					} 
+					else if (item.getStatus().compareTo("1.6") == 0 && adid.equals(item.getAdid())) 
+					{
+						model.setResult(-1);
+						model.setMsg("领取任务失败。原因：任务没有在规定时间内完成，导致任务已失效！");
+						break;
+					}
+					else if (!item.getAdverId().equals(Integer.valueOf(adverId)) && adid.equals(item.getAdid()))  
+					{
+						model.setResult(-1);
+						model.setMsg("领取任务失败。原因：已领取过此类任务，不能重复领取！");
+						break;
+					}
+					else if (item.getStatus().compareTo("1.6") < 0  && adid.equals(item.getAdid()))  
+					{
+						model.setResult(1);
+						//model.setObj(item);
+						model.setMsg("你已成功领取任务，不需重复领取！");
+						break;
+					}
+					else if (item.getStatus().compareTo("1.6") < 0  && !adid.equals(item.getAdid()))  
+					{
+						//撤除检测是否已经存在任务
+						model.setResult(2);
+						//model.setResult(-1);
+						model.setMsg("你已存在未完成的任务，请先去完成！");
+					}
 				}
-				else if (item.getStatus().compareTo("1.6") < 0  && adid.equals(item.getAdid()))  
-				{
-					model.setResult(1);
-					//model.setObj(item);
-					model.setMsg("你已成功领取任务，不需重复领取！");
-					break;
-				}
-				else if (item.getStatus().compareTo("1.6") < 0  && !adid.equals(item.getAdid()))  
-				{
-					//撤除检测是否已经存在任务
-					model.setResult(2);
-					//model.setResult(-1);
-					model.setMsg("你已存在未完成的任务，请先去完成！");
-				}
+				
 			}
 		}
 		
@@ -530,12 +533,8 @@ public class DuiJieController extends BaseController
 	private AppCommonModel checkIPDuplicated(String adid, Page<TUserappidAdverid> taskList, String ip)
 	{
 		AppCommonModel model = new AppCommonModel(2, "通过！");
-		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 		for (TUserappidAdverid item : taskList.getResult())
 		{
-//			if (simpleDateFormat.format(item.getReceiveTime()).equals(simpleDateFormat.format(new Date())) 
-//					&& !idfa.equals(item.getIdfa()) 
-//					&& adid.equals(item.getAdid())) 
 			if (ip.equals(item.getIp()) && adid.equals(item.getAdid())) 
 			{
 				model.setResult(-1);
@@ -760,6 +759,15 @@ public class DuiJieController extends BaseController
 		if("0".equals(adverInfo.getTaskType()))
 		{	//快速任务
 			//分渠道调用激活上报接口
+			Integer leastTaskTime = adverInfo.getOpenTime();
+			if(new Date().getTime() - task.getOpenAppTime().getTime() <= leastTaskTime * 1000)
+			{
+				model.setResult(-1);
+				model.setMsg("未完成。原因：打开app必须达到" + leastTaskTime + "秒！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
 			TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
 			if(channelInfo == null)
 			{
@@ -864,11 +872,11 @@ public class DuiJieController extends BaseController
 		else if("1".equals(adverInfo.getTaskType()))
 		{
 			//回调任务
-			Integer leastTaskTime = dictionaryService.getLeastTaskTime();
+			Integer leastTaskTime = adverInfo.getOpenTime();
 			if(new Date().getTime() - task.getOpenAppTime().getTime() <= leastTaskTime * 1000)
 			{
 				model.setResult(-1);
-				model.setMsg("未完成。原因：自由任务打开app必须达到" + leastTaskTime + "秒！");
+				model.setMsg("未完成。原因：打开app必须达到" + leastTaskTime + "秒！");
 				super.writeJsonDataApp(response, model);
 				return;
 			}
@@ -883,15 +891,17 @@ public class DuiJieController extends BaseController
 		else if("2".equals(adverInfo.getTaskType())) //自由任务
 		{
 			//判断打开app的时间是否足够
-			Integer leastTaskTime = dictionaryService.getLeastTaskTime();
-			if(new Date().getTime() - task.getOpenAppTime().getTime() <= leastTaskTime*1000)
+			//Integer leastTaskTime = dictionaryService.getLeastTaskTime();
+			Integer leastTaskTime = adverInfo.getOpenTime();
+			if(new Date().getTime() - task.getOpenAppTime().getTime() <= leastTaskTime * 1000)
 			{
 				model.setResult(-1);
-				model.setMsg("未完成。原因：自由任务打开app必须达到" + leastTaskTime + "秒！");
+				model.setMsg("未完成。原因：打开app必须达到" + leastTaskTime + "秒！");
 				super.writeJsonDataApp(response, model);
 				return;
 			}
-			
+			System.out.println("leastTaskTime===================" + leastTaskTime);
+			System.out.println("leastTaskTime-------------------" + (new Date().getTime() - task.getOpenAppTime().getTime()));
 			//更改金额
 			TUserScore score = new TUserScore();
 			score.setUserNick(idfa);//标记任务的idfa

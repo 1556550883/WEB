@@ -58,12 +58,14 @@ public class ScoreQueueConsumer extends EndPoint implements Runnable
 				TUserScore score = (TUserScore)SerializationUtils.deserialize(delivery.getBody());
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 				TUserScore sss = userScoreService.getScore(score.getUserNum());
-				if(score.getType() == 1) 
+				if(score.getType() == 1) //徒弟分红
 				{
 					sss.setRankingNum(score.getRankingNum());	
 				}
 				
-				userScoreService.updateScore(sss, score.getScore(), score.getType(), score.getUserScoreId(), score.getUserNick());
+				//sss 是数据库里面的数据  score是message传来的数据
+				//userScoreService.updateScore(sss, c, score.getType(), score.getUserScoreId(), score.getUserNick());
+				userScoreService.updateScore(sss, score);
 				
 			}
 			catch (Exception e) 

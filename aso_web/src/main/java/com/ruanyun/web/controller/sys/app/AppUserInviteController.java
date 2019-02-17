@@ -102,7 +102,7 @@ public class AppUserInviteController extends BaseController
   			tUserApp.setLevel(dictionaryService.getVestorLevel());
   			tUserApp.setLimitTime(30);
   			tUserApp.setCreateDate(new Date());
-  			
+  			System.err.println("level==========================" +  dictionaryService.getVestorLevel() ) ;
   			userAppService.saveOrUpdate(tUserApp, request, null);
   			
   			//师傅 

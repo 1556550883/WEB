@@ -108,6 +108,22 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.update(params, sql.toString());
 	}
 	
+	public int updateReceiveTime(TUserappidAdverid info) 
+	{
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set receive_time=?  WHERE ");
+		if(EmptyUtils.isNotEmpty(info))
+		{
+			if (EmptyUtils.isNotEmpty(info.getAdverId()))
+				sql.append(" adver_id="+info.getAdverId());
+			if (EmptyUtils.isNotEmpty(info.getIdfa()))
+				sql.append(" and idfa='"+info.getIdfa()+"'");
+		}
+		
+		Object[] params = new Object[1];
+		params[0] = info.getReceiveTime();
+		return sqlDao.update(params, sql.toString());
+	}
+	
 	public int updateTaskStatus(TUserappidAdverid info) 
 	{
 		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE status<='1.5' ");

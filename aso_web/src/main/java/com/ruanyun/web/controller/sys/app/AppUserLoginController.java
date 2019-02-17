@@ -178,11 +178,12 @@ public class AppUserLoginController extends BaseController
 	}
 	
 	@RequestMapping("updateUserByUdid")
-	public void updateUserByUdid(HttpServletResponse response, String udid, String idfa, String phoneModel, String phoneVersion) 
+	public void updateUserByUdid(HttpServletRequest request , HttpServletResponse response, String udid, String idfa, String phoneModel, String phoneVersion) 
 	{
 		AppCommonModel acm = new AppCommonModel();
 		try 
 		{
+			//创建用户登录session
 			acm = appUserLoginService.updateUserByUdid(udid, idfa, phoneModel, phoneVersion);
 		} 
 		catch (Exception e)

@@ -14,7 +14,7 @@
 	</style>
 </head>
 
-<body style="background:#F0F0F0; margin:0px;font-size:15px;">
+<body style="background:#F0F0F0; margin:0px;font-size:20px; font-family:微软雅黑;">
        <div onclick="go()"  class="title">
 	 		<img  style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
             <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">收入明细</span>
@@ -29,7 +29,6 @@
 				var data = result[position];
 				var name =  data.adverName;
 				var price = "+" + data.adverPrice + "元"
-				alert(data.status + "sssss")
 				if(data.status != ""){
 					if(data.status < 1.6){
 						price = "正在进行..."

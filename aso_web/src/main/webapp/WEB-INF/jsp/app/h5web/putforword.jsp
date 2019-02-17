@@ -14,7 +14,7 @@
 	</style>
 </head>
 
-<body style="background:#F0F0F0; margin:0px;font-size:15px;text-align: center;">
+<body style="background:#F0F0F0; margin:0px;font-size:20px; font-family:微软雅黑;text-align: center;">
    <div onclick="go()" class="title">
 	 		<img style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
             <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">个人提现</span>
@@ -53,7 +53,7 @@
 		 		<span  id="100_score"  style="width:40%;padding-top:7px;padding-bottom:7px;margin-right:30px;float:right;border-radius:4px;margin-top:20px;border:1px solid">提现100元</span>
 		 	</div>
 		 	
-		 	<div style="float:left;width:100%;text-align:left;margin-left:30px;margin-top:25px">
+		 	<div style="float:left;width:100%;text-align:left;margin-left:30px;margin-top:25px;font-size:10px">
 		 		<span>注：每次提现少于50元收取5%的手续费</span>
 		 	</div>
 		 	
@@ -68,7 +68,7 @@
 		var usernum = "${HUserAppModel.userNum}";
 		var appid = "${HUserAppModel.userAppId}";
 		$("#user_app_id").text(appid)
-		$("#user_score").text(userScore)
+		$("#user_score").text(userScore + "元")
     	$("#payfornum").text("${HUserAppModel.zhifubao}")
     	var oldid = "#10_score";
     	var score = 10;
@@ -91,7 +91,7 @@
     	function putforword(){
     		//${userappmodel.zhifubao}
     		
-    		if(userScore > score){
+    		if(userScore >= score){
     			 $.ajax({
 	 	             type: "GET",
 	 	             url: "/app/userScore/putForward",

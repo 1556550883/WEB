@@ -8,6 +8,7 @@ package com.ruanyun.web.service.app;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -206,10 +207,11 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	
 	public AppCommonModel sendMsg(String loginName) 
 	{
-		int random = (int) (1000 + Math.random() * 9000);
-		SendSms.sendMessage(loginName, random);
+		//int random = (int) (1000 + Math.random() * 9000);
+		String verifyCode = String.valueOf(new Random().nextInt(899999) + 100000);
+		SendSms.sendMessage(loginName, verifyCode);
 		
-		return new AppCommonModel(1, "", random);
+		return new AppCommonModel(1, "", verifyCode);
 	}
 
 	/**
@@ -218,7 +220,6 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	 * 
 	 * @param tUserApp
 	 * @return
-	 * @author feiyang
 	 * @date 2016-1-14
 	 */
 	public AppCommonModel getUser(TUserApp tUserApp) {
@@ -466,6 +467,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			model.setObj(appModel);
 			return model;
 		}
+		
 		TUserApp parentUserApp = updateUserApprentice(parentUserId);
 		tUserApp.setCreateDate(new Date());
 		tUserApp.setUserApppType(Constants.USER_APPP_TYPE_1);// 普通用户
@@ -583,8 +585,9 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	public AppCommonModel updateUserByUdid(String udid,String idfa,String phoneModel,String phoneVersion) 
 	{
 		AppCommonModel model = new AppCommonModel();
-		int result = appUserService.updateUserByUdid(udid, idfa, phoneModel, phoneVersion);
-		model.setResult(result);
+		int appid = appUserService.updateUserByUdid(udid, idfa, phoneModel, phoneVersion);
+		model.setResult(1);
+		model.setObj(appid);
 		return model;
 	}
 	

@@ -89,11 +89,18 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 			return -1;
 		}
 	
+		if(userApp.getIdfa()  != null && !userApp.getIdfa().isEmpty()) {
+			if(!userApp.getIdfa().equals(idfa)) {
+				//如果 idfa改变就 需要 帮用户禁止登录
+				userApp.setLoginControl("0");
+			}
+		}
+		
 		userApp.setIdfa(idfa);
 		userApp.setPhoneModel(phoneModel);
 		userApp.setPhoneVersion(phoneVersion);
 		update(userApp);
-		return 1;
+		return userApp.getUserAppId();
 	}
 	
 	public int updateUserWeiXin(String udid,String weiXinName,String headImgUrl, String openID)
