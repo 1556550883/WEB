@@ -25,7 +25,7 @@ public class SendSms
 		String pw = "kixZv2UW5Jd279";// 密码
 		//phone = "18762672247";// 手机号码，多个号码使用","分割  "【253 云通讯】您的验证码是：253
 		//Happy赚
-		String msg = "【253云通讯】您的验证码是" + verifyCode;// 短信内容
+		String msg = "【Happy赚】您的验证码是" + verifyCode;// 短信内容
 		//String rd = "1";// 是否需要状态报告，需要1，不需要0
 		//String ex = null;// 扩展码
 		try 

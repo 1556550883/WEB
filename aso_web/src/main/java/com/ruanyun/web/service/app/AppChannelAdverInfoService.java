@@ -80,7 +80,7 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		AppCommonModel model = new AppCommonModel(1, "查询成功");
 		
 		TUserApp tUserApp = userAppDao.get(TUserApp.class, "userAppId", userAppId);
-		Page<TChannelAdverInfo> page2 = channelAdverInfoDao.PageSql2(page, channelType, systemType, phoneType, tUserApp.getLevel(), osversion);
+		Page<TChannelAdverInfo> page2 = channelAdverInfoDao.PageSql2(page, channelType, systemType, phoneType, tUserApp.getLevel(), osversion, tUserApp.getUserApppType());
 		
 		if(page2 != null && page2.getResult() != null)
 		{

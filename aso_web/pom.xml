@@ -8,6 +8,12 @@
   <name>sjjz</name>
   <dependencies>
 			<!-- 测试用的 --> 
+	<!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-sdk-java -->
+<dependency>
+    <groupId>com.alipay.sdk</groupId>
+    <artifactId>alipay-sdk-java</artifactId>
+    <version>3.6.0.ALL</version>
+</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

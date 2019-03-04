@@ -76,6 +76,7 @@ public class BaseDaoImpl<T> extends SessionBase  {
 		return hqlDao.queryPage(queryString,page, map);
 	}
 	
+	
 	/**
 	 * 功能描述: 查询分页的 sql语句  如果有条件 可以重写该方法
 	 *

@@ -21,21 +21,25 @@
     </div>
     
     
-    <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
-    	<div style="background:#fff; margin-top:5px;height:600px; position: relative">
-    			<div style="margin-top:10px;margin-left:20px;position:absolute;"><span>提现账户id：</span>
-    			<span id="user_app_id"></span>
+    <div id="container" style="padding-top:0.9rem;position:relative;width:100%;font-size:15px;">
+    	<div style="background:#fff; margin-top:5px;height:600px; position: relative;">
+    			<div style="margin-top:10px;margin-left:20px;position:absolute;">
+    				<span>提现账户id：</span>
+    				<span id="user_app_id"></span>
     			</div>
     			
-    			<div style="margin-top:40px;margin-left:20px;position:absolute;"><span>可用余额：</span>
-    			<span id="user_score"></span>
+    			<div style="margin-top:40px;margin-left:20px;position:absolute;">
+    				<span>可用余额：</span>
+    				<span id="user_score"></span>
+    				<span  onclick="putforwordDetail()" style="background:#FFC125;width:100px;padding-top:5px;font-size:15px;padding-bottom:5px;margin-left:95px;float:right;border-radius:4px;color:white">提现明细</span>
     			</div>
+		 		
     			<div style="margin-top:70px;margin-left:20px;position:absolute;"><span>支付宝账户</span></div>
-    			<div style="margin-top:105px;position:absolute;">
+    			<div style="margin-top:105px;position:absolute;font-size:20px;">
     				<span id="payfornum" style="margin-left:20px;color:#AAAAAA;"></span>
     			</div>
     			
-    			<div style = "width:70%;margin-left:20px; height:1px; background:#AAAAAA;margin-top:128px;position:absolute"></div>
+    			<div style = "width:70%;margin-left:20px; height:1px; background:#AAAAAA;margin-top:132px;position:absolute"></div>
     		
     		<div onclick="selectscore(10)">
 		 		<span  id="10_score" style="width:40%;padding-top:7px;padding-bottom:7px;margin-left:30px;float:left;border-radius:4px;margin-top:170px;border:1px solid">提现10元</span>
@@ -60,6 +64,7 @@
 		 	<div onclick="putforword()">
 		 		<span  style="background:#FFC125;width:55%;padding-top:10px;padding-bottom:10px;margin-left:30px;float:left;border-radius:4px;margin-top:50px;color:white">提现</span>
 		 	</div>
+
     	</div>
     </div>
     
@@ -88,6 +93,11 @@
     		oldid = tempid;
     	}
     	
+    	var base_url  = "http://moneyzhuan.com/";
+ 		function putforwordDetail(){
+	         window.location.href = base_url + "cashDetail?id=" + appid;
+ 		}
+ 		
     	function putforword(){
     		//${userappmodel.zhifubao}
     		
@@ -102,8 +112,10 @@
 	 	           		var result  = json["result"];
 	 	           		if(result == -1){
 	 	           			alert("抱歉，您的余额不足！");
+	 	           		}else if(result == 2){
+	 	           			alert("您已有一个提现，请等待审核！");
 	 	           		}else{
-	 	           			alert("提现成功个，请等待后台管理审核！");
+	 	           			alert("提现成功，请等待后台管理审核！");
 	 	           		}
 	 	            }});
     		}else{

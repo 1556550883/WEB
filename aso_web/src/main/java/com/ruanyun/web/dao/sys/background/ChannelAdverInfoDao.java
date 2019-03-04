@@ -69,7 +69,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	/**
 	 * 查询广告列表（手机端显示）
 	 */
-	public Page<TChannelAdverInfo> PageSql2(Page<TChannelAdverInfo> page, String channelType, String systemType, String phoneType, int level, String osversion)
+	public Page<TChannelAdverInfo> PageSql2(Page<TChannelAdverInfo> page, String channelType, String systemType, String phoneType, int level, String osversion, int userType)
 	{
 		StringBuffer sql = new StringBuffer("SELECT * from t_channel_adver_info WHERE 1=1 ");
 		//sql.append(" and channel_num in (select b.channel_num from t_channel_info b where b.channel_type='").append(channelType).append("' and b.system_type='").append(systemType).append("')");
@@ -78,8 +78,9 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		//sql.append(SQLUtils.popuHqlMax2("adver_day_start", new Date()));
 		sql.append(SQLUtils.popuHqlMin2("adver_day_end", new Date()));
 		sql.append(SQLUtils.popuHqlMax("level", level));
+		sql.append(" and (is_open = 0 or is_open =" + userType);
 		//sql.append(" and adver_status=1");
-		sql.append(" ORDER BY adver_createtime desc");
+		sql.append(") ORDER BY adver_createtime desc");
 		return sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 	}
 	
@@ -210,7 +211,8 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	
 	public int updateAdverActivationRemainMinus1(TChannelAdverInfo adverInfo)
 	{
-		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_activation_count=adver_activation_count-1 WHERE 1=1 ");
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_activation_count=adver_activation_count- ");
+		sql.append(adverInfo.getAdverActivationCount() + " WHERE 1=1");
 		if(EmptyUtils.isNotEmpty(adverInfo))
 		{
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverId()))
@@ -269,7 +271,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		
 		String oYear = year + "-";
 		String oMonth = month + "-";
-		String oDay = day- 1 + "";
+		String oDay = day + "";
 		String yesterdayString = oYear + oMonth + oDay;//昨天 yyyy-MM-d
 		StringBuilder sql1 = new StringBuilder("CREATE TABLE " + adverInfoName + " SELECT * FROM t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
 		StringBuilder sql2 = new StringBuilder("CREATE TABLE " + adverInfoDetailName + " SELECT * FROM t_userappid_adverid where receive_time <'" + yesterdayString + "'");
@@ -278,6 +280,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		
 		if(result1 != -1 && result2 != -1) 
 		{
+			//DELETE `t_userappid_adverid` FROM `t_userappid_adverid`  LEFT JOIN `t_user_app` ON `t_userappid_adverid`.user_app_id= t_user_app.user_app_id WHERE t_user_app.`user_appp_type` = 1
 			StringBuilder sql3 = new StringBuilder("Delete from t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
 			StringBuilder sql4 = new StringBuilder("Delete from t_userappid_adverid where receive_time < '" + yesterdayString + "'");
 			sqlDao.execute(sql3.toString());

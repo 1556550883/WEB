@@ -5,6 +5,8 @@
  */
 package com.ruanyun.web.controller.sys.background;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,14 +24,21 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverStepUser;
 import com.ruanyun.web.model.TUserApp;
+import com.ruanyun.web.model.TUserApprentice;
 import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.model.sys.TUser;
+import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.service.background.ChannelAdverStepUserService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserScoreInfoService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpSessionUtils;
+import com.ruanyun.web.util.JsonDateValueProcessor;
+import com.ruanyun.web.util.NumUtils;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JsonConfig;
 
 @Controller
 @RequestMapping("/userApp")
@@ -43,7 +52,10 @@ public class UserAppController extends BaseController
 	
 	@Autowired
 	private ChannelAdverStepUserService channelAdverStepUserService;
+	@Autowired	
+	private AppUserApprenticeService appUserApprenticeService;
 	/**
+	 * 
 	 * 
 	 * 功能描述:手机用户列表
 	 * @param page
@@ -53,16 +65,47 @@ public class UserAppController extends BaseController
 	@RequestMapping("list")
 	public String getUserAppList(Page<TUserApp> page,TUserApp info,Model model)
 	{
-		if(info.getUserApppType() == null)
-		{
-			info.setUserApppType(1);
-		}
-		
+		info.setUserApppType(1);
 		page.setNumPerPage(20);
 		addModel(model, "pageList", userAppService.queryPage(page, info));
 		addModel(model, "bean", info);
 		
 		return "pc/userApp/list";
+	}
+	
+	@RequestMapping("effUserList")
+	public String getEffUserAppList(Page<TUserApp> page,TUserApp info,Model model)
+	{
+		info.setUserApppType(2);
+		page.setNumPerPage(20);
+		addModel(model, "pageList", userAppService.queryPage(page, info));
+		addModel(model, "bean", info);
+		
+		return "pc/userApp/effUserList";
+	}
+	
+	@RequestMapping("exportScore")
+	public void exportScore(HttpServletResponse response, Page<TUserApp> page,TUserApp info)
+	{
+		page.setNumPerPage(Integer.MAX_VALUE);
+		page = userAppService.queryPage(page, info);
+		userAppService.exportScore(response, page.getResult(), false);
+	}
+	
+	@RequestMapping("clearWorkScore")
+	public void clearScore(HttpServletResponse response, Page<TUserApp> page,TUserApp info)
+	{
+		page.setNumPerPage(Integer.MAX_VALUE);
+		page = userAppService.queryPage(page, info);
+		userAppService.exportScore(response, page.getResult(), true);
+		userAppService.clearScore();
+	}
+	
+	
+	@RequestMapping("removeMaster")
+	public void removeMaster(HttpServletResponse response, String userAppId, String masterID)
+	{
+		userAppService.removeMaster(userAppId, masterID);
 	}
 	
 	/**
@@ -173,7 +216,7 @@ public class UserAppController extends BaseController
 	 * 功能描述:进入修改页面
 	 */
 	@RequestMapping("/toEdit")
-	public String userAppEdit(TUserApp userApp,Model model)
+	public String userAppEdit(TUserApp userApp, Model model)
 	{
 		if (EmptyUtils.isNotEmpty(userApp.getUserNum()))
 		{
@@ -187,8 +230,61 @@ public class UserAppController extends BaseController
 	}
 	
 	/**
+	 * 功能描述:进入修改页面
+	 */
+	@RequestMapping("/apprenticeList")
+	public String apprenticeList(Page<TUserApp> page, TUserApp userApp, Model model)
+	{
+		if (EmptyUtils.isNotEmpty(userApp.getUserAppId()))
+		{
+			page.setNumPerPage(Integer.MAX_VALUE);
+			page = userAppService.queryUserAppByMasterID(page, userApp.getUserAppId() + "");
+		}
+		
+		addModel(model, "pageList", page);
+		
+		return "pc/userApp/apprenticeList";
+	}
+	
+	@RequestMapping("/apprenticeScoreList")
+	public String apprenticeScoreList(Page<TUserApprentice> page, TUserApp userApp, Model model)
+	{
+		if (EmptyUtils.isNotEmpty(userApp.getUserAppId()))
+		{
+			page.setNumPerPage(Integer.MAX_VALUE);
+			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, userApp.getUserAppId());
+			page = appUserApprenticeService.getMyApprentices(page, userNum);
+		}
+		
+		addModel(model, "pageList", page);
+		
+		return "pc/userApp/apprenticeScoreList";
+	}
+	
+	
+	@RequestMapping("/putwardList")
+	public String putwardList(Page<TUserScoreInfo> page, TUserApp userApp, Model model)
+	{
+		if (EmptyUtils.isNotEmpty(userApp.getUserAppId()))
+		{
+			TUserScoreInfo info  = new TUserScoreInfo();
+			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, userApp.getUserAppId());
+			info.setUserAppNum(userNum);
+			page.setNumPerPage(Integer.MAX_VALUE);
+			Page<TUserScoreInfo> userScoreInfos = userScoreInfoService.getforwardList(page, info);
+			
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+			JSONArray jsonObject = JSONArray.fromObject(userScoreInfos.getResult(), jsonConfig); 
+			addModel(model, "userScoreInfos", jsonObject);
+			addModel(model, "pageList", userScoreInfos);
+		}
+		
+		return "pc/userApp/forwardList";
+	}
+	
+	/**
 	 * 功能描述:批量删除
-	 * @author wsp  2017-1-16 下午01:51:02
 	 * @param response
 	 * @param request
 	 * @param ids

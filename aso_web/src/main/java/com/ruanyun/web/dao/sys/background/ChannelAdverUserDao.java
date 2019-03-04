@@ -26,7 +26,5 @@ public class ChannelAdverUserDao extends BaseDaoImpl<TChannelAdverUser> {
 		sql.append(" order by adver_user_id desc limit 0,1");
 		return sqlDao.get(TChannelAdverUser.class, sql.toString());
 	}
-	
-	
 
 }

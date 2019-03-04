@@ -28,19 +28,7 @@
 	                   </c:forEach>
 	                </select>
 				</td>
-				<td>登陆名：<input type="text" name="loginName" value="${bean.loginName}"/></td>
-				<!-- <td>最近登录ip：<input type="text" name="flag2" value="${bean.flag2}"/></td> -->
-				<!--<td>用户编号：<input type="text" name="userNum" value="${bean.userNum}"/></td>-->
-				<!--<td>手机号：<input type="text" name="phoneNum" value="${bean.phoneNum}"/></td>-->
-				<!--<td>					
-					用户类型：<select  name="userApppType">
-	                   <option value="">请选择</option>
-	                   <c:forEach items="${userAppType}" var="item">
-	                          <option value="${item.itemCode}" <c:if test="${bean.userApppType == item.itemCode}">selected</c:if> >${item.itemName}</option>
-	                   </c:forEach>
-	                </select>
-				</td>-->
-				
+				<td>用户id：<input type="text" name="userAppId" value="${bean.userAppId}"/></td>
 			</tr>
 		</table>
 		<div class="subBar">
@@ -56,6 +44,8 @@
 		<ul class="toolBar">
 				<li><a class="add" onclick="add('userApp/toEdit','添加信息',900,500,'main_')"><span>添加</span></a></li>
 				<li><a class="delete" title="确定要删除该信息吗？" href="userApp/del"  target="selectedTodo" postType="string" rel="ids"><span>删除</span></a></li>
+				<li><span style="" onclick= "show()">导出</span></li>
+				<li><span style="" onclick= "clearScore()">清除余额</span></li>
 				<!--<li><a class="edit" title="确定设为普通用户吗？" href="userApp/updateUserApp"  target="selectedTodo" postType="string" rel="ids"><span>设为普通用户</span></a></li>-->
 			<li class="line">line</li>
 		</ul>
@@ -66,48 +56,35 @@
 				<th width="30">
 				<input type="checkbox" group="ids" class="checkboxCtrl" >
 				</th>
-				<!--<th align="center">用户编号</th>
-				<th align="center">用户昵称</th>
-				<th align="center">出生日期</th>
-				<th align="center">性别</th>-->
 				<th align="center">用户ID</th>
 				<th align="center">登陆名</th>
 				<th align="center">真实姓名</th>
 				<th align="center">余额</th>
-				<th align="center">支付宝账号</th>
-				<th align="center">微信账号</th>
+				<th align="center">总收益</th>
 				<th align="center">用户等级</th>
-				<th align="center">邀请人ID</th>
-				
+				<th align="center">任务明细</th>
 				<th align="center">操作</th>			
 			</tr>
 		</thead>
 		<tbody>
 		     <c:forEach var="item" items="${pageList.result}">
-				<tr >
+				<tr style="height:50px">
 				  <td align="center">
        			 <input type="checkbox"  id="orderCheckBox" name="ids" value="${item.userNum}"></td>
-					<!--<td>${item.userNum}</td>	               
-	                <td>${item.userNick}</td>
-	                <td>${item.birthday}</td>
+					<!--<td>${item.userNum}</td>
+					
 	              	<td><ry:show parentCode="USERSEX" itemCode="${item.sex}"></ry:show></td>-->
 	                <td>${item.userAppId}</td>
-	                <td>${item.loginName}</td>
+					<td><c:if test="${item.userApppType == 1}">${item.loginName}</c:if>
+					<c:if test="${item.userApppType == 2}">散户</c:if></td>	 
 	                <td>${item.userNick}</td>
-	                <td>${item.userScore.score}</td>
-	                <td>${item.zhifubao}</td>
-	                <td>${item.weixin}</td>
+	             	<td>${item.userScore.score}</td>
+					<td>${item.userScore.scoreSum}</td>  
 	                <td>${item.level }</td>
-	                <td>${item.masterID }</td>
-	                
-	                <!--<td><ry:show parentCode="USER_APP_TYPE" itemCode="${item.userApppType}"></ry:show></td>-->
-	                <!--<td>${item.phoneNum}</td>
-	                <td>${item.taskNewStatus ==2? '已完成' : '未完成'}</td>-->
-	                 
+					<td>
+						<a style="cursor: pointer;" onclick="openNav('channelInfo/employeeIdfaStatistics?userAppId=${item.userAppId}','任务明细','main_index2')"><span style="color:blue">任务明细</span></a>     	
+					</td>
 	                <td>
-	                	<!-- <a style="cursor: pointer;" onclick="openNav('userApp/getScoreInfoList?userAppNum=${item.userNum}','积分明细','main_index2')">积分明细</a>                      
-						<a style="cursor: pointer;" onclick="openNav('adverEffectiveInfo/list?userNum=${item.userNum}','有效下载任务','main_index2')">有效下载任务</a> -->
-						<a style="cursor: pointer;" onclick="openNav('channelInfo/employeeIdfaStatistics?userAppId=${item.userAppId}','任务明细','main_index2')">任务明细</a>     	
 						<a title="修改手机用户信息"   onclick="add('userApp/toEdit?userNum=${item.userNum}','修改手机用户信息',1100,550,'main_')"  rel="users_saveedit" class="btnEdit">手机用户</a>	
 					</td>
 				</tr>
@@ -116,3 +93,52 @@
 	</table>
 
 	<%@include file="/WEB-INF/jsp/inc/page.jsp" %>
+
+<script type="text/javascript">
+	(function(){
+　		$("body").css("background-image","url(s)");
+	})();	
+	
+
+function show(){
+			  window.location.href = "userApp/exportScore";
+	}
+
+function clearScore(){
+		var msg = confirm("确认操作吗？");
+		if(msg){
+			$.ajax({
+	             type: "GET",
+	             async:true,
+	             url: "/userApp/clearWorkScore",
+	             //dataType: "json",
+	            success:function(data){
+					alert("成功")
+	            },
+	          	error: function(XMLHttpRequest, textStatus, errorThrown){
+					alert("失败")
+	          	}
+	          });
+		}
+}
+
+function removeMaster(id){
+		var msg = confirm("确认移除吗？");
+		if(msg){
+			$.ajax({
+	             type: "GET",
+	             url: "/userApp/removeMaster",
+  				data: {userAppId:id},
+	            dataType: "json",
+	            success:function(data){
+					alert("成功")
+					id = "#" + id;
+					$(id).text("-1");
+	            },
+	          	error: function(XMLHttpRequest, textStatus, errorThrown){
+					alert("失败")
+	          	}
+	          });
+		}
+}
+</script>

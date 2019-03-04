@@ -8,10 +8,18 @@
 	<script type="text/javascript" charset="utf-8" src="../js/px2rem.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/c3listview.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/showText.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../js/jquery.lazyload.js"></script>
 	<style>
 	.title{
    	 		.flex; width:100%; height: 0.8rem; background:#fff; box-shadow: 0 3px 5px #e0e0e0;text-align: center;position:fixed;z-index:100
 		}
+		
+		.blur {
+		   filter: blur(3px);
+		  -webkit-filter: blur(3px);  /* chrome, opera */
+		  -ms-filter: blur(3px);
+		  -moz-filter: blur(3px);
+		｝
 	</style>
 </head>
 
@@ -52,7 +60,12 @@
 		            	var json = eval(data);
 		            	var result  = json["result"];
 		            	var msg  = json["msg"];
-		            	if(result == -1){
+		            	
+		            	if(result == 0){
+		            		alert(msg);
+		            		window.location.href = base_url + "phone";
+		            	}
+		            	else if(result == -1){
 		            		alert(msg);
 		            	}else{
 		            		var id  = json["obj"].adverId;
@@ -135,6 +148,7 @@
 	 	}
 	 	
 		function showdata(){
+			
 			$.ajax({
 	             type: "GET",
 	             async:true,
@@ -149,6 +163,8 @@
 	          		alertDialog();
 	          	}
 	          });
+			  
+			$("img.lazy").lazyload({effect: "fadeIn"});
 		}
 	 	
 	 	function getTasks(udid){
@@ -168,6 +184,7 @@
 	           	 	    var data = result[position];
 	           			var adverstartTime = data.adverDayStart;
 	           			
+	           			//已经开始
 	           			if(curentTime > adverstartTime){
 	 	           			 var count = "";
 	 							if(data.adverCountRemain > 100){
@@ -177,6 +194,10 @@
 		 	            		}else{
 		 	            			count = "少量";
 		 	            		}
+	 							
+	 							if(data.adverStatus == 2){
+	 								count = "已抢光";
+	 							}
 	 							
 	 							var typeTask = "限时";
 	 							
@@ -188,9 +209,10 @@
 	 								typeTask =  "注册";
 	 							}
 	 							
+	 							var name = data.adverName.substring(0,1) + "***";
 	 							 return "<div onclick=\"taskdetail("+position+")\" style=\"font-size:25px;color:#444;background:#fff;border-radius:10px;margin-top:8px;height:60px\" data-position=\""+position+"\">"
-	 	 	           	 	    +"<img style=\"width:50px;height:50px;border-radius:10px;margin:5px;float:left\" src=\"https://moneyzhuan.com/file/adver/img/"+data.adverImg+"\"/>"
-	 	 	           	 	    +"<span style=\"position:absolute;margin-left:10px;margin-top:10px;font-size:13px;width:200px\">"+data.adverName+"</span>"
+	 	 	           	 	    +"<img class=\"blur lazy\" style=\"width:50px;height:50px;border-radius:10px;margin:5px;float:left\" src=\"../file/adver/img/"+data.adverImg+"\"/>"
+	 	 	           	 	    +"<span style=\"position:absolute;margin-left:10px;margin-top:10px;font-size:13px;width:200px\">"+name+"</span>"
 	 	 	           	 	 	+"<span style=\"position:absolute;margin-left:10px;margin-top:32px;font-size:10px;width:45px;color:#CDCDC1;border:1px solid #CDCDC1;border-radius:5px;text-align:center;\">"+count+"</span>"
 	 	 	           	 		+"<span style=\"position:absolute;margin-left:65px;margin-top:32px;font-size:10px;width:45px;color:#CDCDC1;border:1px solid #CDCDC1;border-radius:5px;text-align:center;\">"+typeTask+"</span>"
 	 	 	           	 	    +"<span style=\"float:right;margin-top:20px;margin-right:20px;color:#FF0000;font-size:23px;\">+"+data.adverPrice+"元</span>"
@@ -217,7 +239,7 @@
 							var typeTask = data.adverTimeStart;
 							var name = data.adverName.substring(0,1) + "***";
 							 return "<div onclick=\"taskdetail()\" style=\"display:block;font-size:25px;color:#444;background:#fff;border-radius:10px;margin-top:5px;height:60px\" data-position=\""+position+"\">"
-	 	           	 	    +"<img style=\"width:50px;height:50px;border-radius:10px;margin:5px;float:left\" src=\"../img/h5web/happy_logo.png\"/>"
+	 	           	 	    +"<img class=\"blur lazy\" style=\"width:50px;height:50px;border-radius:10px;margin:5px;float:left\" src=\"../img/h5web/happy_logo.png\"/>"
 	 	           	 	    +"<span style=\"position:absolute;margin-left:10px;margin-top:10px;font-size:13px;width:200px\">"+name+"</span>"
 	 	           	 	 	+"<span style=\"position:absolute;margin-left:10px;margin-top:32px;font-size:10px;width:45px;color:#CDCDC1;border:1px solid #CDCDC1;border-radius:5px;text-align:center;\">"+count+"</span>"
 	 	           	 		+"<span style=\"position:absolute;margin-left:65px;margin-top:32px;font-size:10px;width:120px;color:#CDCDC1;border:1px solid #CDCDC1;border-radius:5px;text-align:center;\">"+typeTask+"</span>"

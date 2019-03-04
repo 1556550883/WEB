@@ -53,12 +53,9 @@
 			</th>
 			<th align="center">渠道名称</th>
 			<th align="center">渠道编号</th>
-			<th align="center">渠道描述</th>
-			<th align="center">渠道推荐等级</th>
-			<th align="center">渠道类型</th>
-			<th align="center">系统类型</th>
 			<th align="center">创建时间</th>				
 			<th align="center">是否启用</th>
+		
 			<th align="center">管理</th>
 		</tr>
 	</thead>
@@ -69,15 +66,12 @@
 			  	<td align="center"><input type="checkbox"  id="orderCheckBox" name="ids" value="${item.channelId}"></td>
 				<td>${item.channelName}</td>
                 <td>${item.channelNum}</td>
-                <td>${item.channelDesc}</td>
-                <td><ry:show parentCode="CHANNEL_LEVEL" itemCode="${item.channelLevel}"></ry:show></td>
-             	<td><ry:show parentCode="CHANNEL_TYPE" itemCode="${item.channelType}"></ry:show></td>
-             	<td><ry:show parentCode="SYSTEM_TYPE" itemCode="${item.systemType}"></ry:show></td>	  	               
 				<td><ry:formatDate date="${item.createDate}" toFmt="yyyy-MM-dd"></ry:formatDate> </td>
                 <td>
 	                <c:if test="${item.isEnable==1}"><div style="color:green">启用</div></c:if>
 	                <c:if test="${item.isEnable==0}"><div style="color:red">停用</div></c:if>
                  </td>
+                 
 				<td><c:if test="${item.channelType!=3}"><a style="cursor:pointer;" onclick="openNav('channelAdverInfo/list?channelNum=${item.channelNum}','广告管理','main_index2')"><div style="color: blue">广告管理</div></a></c:if>
 					<c:if test="${item.channelType==3}">
 						<!-- <a style="cursor: pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=2&inferfaceRequestType=2&adverNum=${item.channelNum}','参数配置','main_index2')"><span style="color: blue">调用服务端</span> </a> -->

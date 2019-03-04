@@ -1,5 +1,6 @@
 package com.ruanyun.web.util;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -86,6 +87,47 @@ public class ExcelUtils {
 		}
 	}
 
+	public static void exportExcelTolocal(String fileName, List<?> list, String[] colums, String[] headers){
+		int rowIndex = 0;
+		Workbook workbook = new HSSFWorkbook(); // 创建一个工作簿
+		Sheet sheet = workbook.createSheet(); // 创建一个Sheet页
+		sheet.autoSizeColumn((short) 0); // 单元格宽度自适应
+		Row row = sheet.createRow(rowIndex++); // 创建第一行(头部)
+		//CreationHelper helper = workbook.getCreationHelper();
+		CellStyle style = workbook.createCellStyle(); // 设置单元格样式
+		Font font = workbook.createFont();
+		//font.setColor(IndexedColors.RED.getIndex());
+		font.setFontHeightInPoints((short) 11);
+		font.setFontName("Calibri");
+		style.setFont(font);
+		//style.setDataFormat(helper.createDataFormat().getFormat(dateFormat)); // 格式化日期类型
+		for (int i = 0; i < headers.length; i++) { // 输出头部
+			 Cell cell = row.createCell(i);
+			 cell.setCellStyle(style);
+			 cell.setCellValue(headers[i]);
+		}
+		
+		for (Object obj : list) {
+			List<Object> values = ReflectUtils.getFieldValuesByNames(colums,obj);
+			row = sheet.createRow(rowIndex++);
+			for (int j = 0; j < values.size(); j++) {
+				 Cell cell = row.createCell(j);
+				 cell.setCellStyle(style);
+				 cell.setCellValue(getValue(values.get(j)));
+			}
+		}
+		
+		String ddate = new SimpleDateFormat("yyyyMMddhhmmss").format(Calendar.getInstance().getTime());
+		try {
+			OutputStream output = new FileOutputStream("C:/export/" + fileName + "-" + ddate + ".xlsx");
+			workbook.write(output);
+			output.flush();
+			output.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static String getValue(Object obj){
 		if(EmptyUtils.isNotEmpty(obj)){
 			return obj.toString();

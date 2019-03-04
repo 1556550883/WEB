@@ -29,6 +29,11 @@ public class UserScoreDao extends BaseDaoImpl<TUserScore>{
 		StringBuffer sql=new StringBuffer(" from TUserScore where 1=1 ");
 		return sql.toString();
 	}
+	
+//	public List  getScores() {
+//		String sql  = "SELECT A.user_app_id as id,A.`user_nick` as nickname,A.`login_name` as name,B.`score` as score FROM `t_user_app` AS A LEFT JOIN `t_user_score` AS B ON A.`user_num` = B.`user_num`";
+//		return sqlDao.createQuery(sql);
+//	}
 	/**
 	 * 
 	* 手机端接口:获取排行榜

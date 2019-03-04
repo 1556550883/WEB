@@ -47,6 +47,11 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 		return channelInfoDao.queryPage(page, t);
 	}
 	
+	public void calculate(TChannelInfo t) 
+	{
+		channelInfoDao.calculate(t);
+	}
+	
 	/**
 	 * idfa统计
 	 */

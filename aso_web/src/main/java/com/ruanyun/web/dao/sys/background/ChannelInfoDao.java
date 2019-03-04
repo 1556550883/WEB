@@ -8,6 +8,8 @@ package com.ruanyun.web.dao.sys.background;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TUserappidAdverid;
@@ -237,4 +240,12 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo>
 		return page;
 	}
 	
+	public void calculate(TChannelInfo t) {
+//		String sql1 = "SELECT SUM(download_count) FROM t_channel_adver_info WHERE channel_num = 11  AND adver_day_start < '2018-12-01 09:54:00' ";
+//		String sql2 = "SELECT SUM(download_count) FROM t_channel_adver_info WHERE channel_num = 11  AND adver_day_start < '2018-12-01 09:54:00' ";
+//		String sql3 = "SELECT SUM(download_count) FROM t_channel_adver_info WHERE channel_num = 11  AND adver_day_start < '2018-12-01 09:54:00' ";
+//	
+//		Date date = new Date();
+//		String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM-dd HH:mm");
+	}
 }

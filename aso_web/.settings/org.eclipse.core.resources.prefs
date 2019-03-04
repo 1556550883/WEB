@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/main/java=utf-8
 encoding//src/main/resources=UTF-8
+encoding//src/main/resources/Alipay-Config.properties=UTF-8
 encoding//src/main/resources/webdefault.xml=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/app/invite/errorPage.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/app/invite/homePage.jsp=UTF-8

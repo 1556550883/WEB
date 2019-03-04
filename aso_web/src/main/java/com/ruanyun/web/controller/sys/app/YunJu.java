@@ -24,7 +24,7 @@ public class YunJu extends BaseChannel
 	/**
 	 * 排重
 	 */
-	public static AppCommonModel paiChong(String domain, String adid, String idfa)
+	public static AppCommonModel paiChong(String domain, String adid, String idfa, String sysver, String phonemodel,String adverName, String ip)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -58,7 +58,7 @@ public class YunJu extends BaseChannel
 			else if(status == 1)
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：已领取过任务，不能重复领取！");
+				model.setMsg("抱歉重复任务，请选择其他任务！");
 			}
 			else
 			{
@@ -74,7 +74,7 @@ public class YunJu extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String sysver, String phonemodel) throws UnsupportedEncodingException {
+			Integer userAppId, Integer adverId, String userNum, String sysver, String phonemodel,String adverName) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url = new StringBuilder(domain)
@@ -83,6 +83,7 @@ public class YunJu extends BaseChannel
 				.append("&idfa=").append(idfa)
 				.append("&sysver=").append(sysver)
 				.append("&model=").append(phonemodel)
+				.append("&kid=").append(URLEncoder.encode(adverName, "utf-8"))
 				.append("&ip=").append(ip)
 				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);

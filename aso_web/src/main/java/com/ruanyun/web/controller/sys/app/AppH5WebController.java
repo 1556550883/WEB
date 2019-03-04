@@ -21,6 +21,7 @@ import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserApprentice;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreDetail;
+import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.service.background.UserAppService;
@@ -61,8 +62,10 @@ public class AppH5WebController extends BaseController
 	@RequestMapping(value = "/taskDetail")
 	public String taskPage(HttpServletRequest request, String taskID, Model model)
 	{
-		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(taskID));
-		addModel(model, "adverInfo", adverInfo);
+		if(taskID != null || taskID != "") {
+			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(taskID));
+			addModel(model, "adverInfo", adverInfo);
+		}
 		return "app/h5web/taskDetail";
 	}
 	
@@ -75,8 +78,11 @@ public class AppH5WebController extends BaseController
 	@RequestMapping(value = "/score")
 	public String score(HttpServletRequest request, String id, Model model)
 	{
-		HUserAppModel userApp = userAppService.getHUserAppModelbyid(id);
-		addModel(model, "HUserAppModel", userApp);
+		if(id != null || id != "") 
+		{
+			HUserAppModel userApp = userAppService.getHUserAppModelbyid(id);
+			addModel(model, "HUserAppModel", userApp);
+		}
 		return "app/h5web/putforword";
 	}
 	
@@ -92,22 +98,107 @@ public class AppH5WebController extends BaseController
 		return "app/h5web/payforbinding";
 	}
 	
+	
+	@RequestMapping(value = "/cashDetail")
+	public String cashDetail(HttpServletRequest request, String id, Model model)
+	{
+		if(id != null || id != "") 
+		{
+			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(id));
+			List<TUserScoreInfo> cashDetails = userScoreService.getScoreInfoListByUserNums(userNum);
+			
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+			JSONArray jsonObject = JSONArray.fromObject(cashDetails, jsonConfig); 
+			
+			addModel(model, "cashDetails", jsonObject);
+		}
+		
+		return "app/h5web/putforwordDetail";
+	}
+	
 	@RequestMapping(value = "/help")
 	public String help(HttpServletRequest request)
 	{
 		return "app/h5web/userhelp";
 	}
 	
+	@RequestMapping(value = "/contact")
+	public String contact(HttpServletRequest request)
+	{
+		return "app/h5web/contactMe";
+	}
+	
 	@RequestMapping(value = "/invite")
 	public String invite(HttpServletRequest request, String id, Model model)
 	{
-		addModel(model, "appuserid", id);
-		String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(id));
-		TUserScore userScore = userScoreService.getScore(userNum);
-		addModel(model, "appuserscore", userScore);
+		if(id != null || id != "") {
+			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(id));
+			TUserScore userScore = userScoreService.getScore(userNum);
+			addModel(model, "appuserscore", userScore);
+			addModel(model, "appuserid", id);
+		}
 		
 		return "app/h5web/invite";
 	}
+	
+	@RequestMapping(value = "/inviteUserDetail")
+	public String inviteUserDetail(HttpServletRequest request, Page<TUserApp> page,  Model model){
+		page.setNumPerPage(Integer.MAX_VALUE);
+		String appid = request.getParameter("id");
+		if(appid != null || appid != "") {
+			page = userAppService.queryUserAppByMasterID(page, appid);
+			
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+			JSONArray jsonObject = JSONArray.fromObject(page.getResult(), jsonConfig); 
+			
+			addModel(model, "userAppList", jsonObject);
+		}
+		
+		return "app/h5web/inviteUserList";
+	}
+	
+	
+	@RequestMapping(value = "/inviteEffUserDetail")
+	public String inviteEffUserDetail(HttpServletRequest request, Page<TUserApp> page,  Model model){
+		page.setNumPerPage(Integer.MAX_VALUE);
+		String appid = request.getParameter("id");
+		
+		if(appid != null || appid != "") {
+			page = userAppService.queryEffUserAppByMasterID(page, appid);
+			
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+			JSONArray jsonObject = JSONArray.fromObject(page.getResult(), jsonConfig); 
+			
+			addModel(model, "userEffAppList", jsonObject);
+		}
+		
+		return "app/h5web/inviteEffUserList";
+	}
+	
+	//徒弟收入明细
+	@RequestMapping(value = "/apprenticeScore")
+	public String apprenticeScore(HttpServletRequest request, Page<TUserApprentice> page, Model model){
+		page.setNumPerPage(Integer.MAX_VALUE);
+		String appid = request.getParameter("id");
+		if(appid != null || appid != "") {
+			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(appid));
+			page = appUserApprenticeService.getMyApprentices(page, userNum);
+			List<TUserApprentice>  tUserApprentices = page.getResult();
+			
+			
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+			JSONArray jsonObject = JSONArray.fromObject(tUserApprentices, jsonConfig); 
+			
+			addModel(model, "tUserApprentices", jsonObject);
+		}
+		
+		return "app/h5web/apprenticeScore";
+	}
+	
 	
 	@RequestMapping(value = "/scoredetail")
 	public String scoredetail(HttpServletRequest request, Page<TUserScoreDetail> page, Page<TUserApprentice> pages, Model model)
@@ -115,36 +206,37 @@ public class AppH5WebController extends BaseController
 		page.setNumPerPage(Integer.MAX_VALUE);
 		pages.setNumPerPage(Integer.MAX_VALUE);
 		String appid = request.getParameter("id");
-		String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(appid));
-		page = userappidAdveridService.queryUserScoreDetail(page, appid);
-		//任务明细
-		List<TUserScoreDetail>  userScoreDetail = page.getResult();
-		//收徒 提现 的明细
-		pages = appUserApprenticeService.getMyApprentices(pages, userNum);
-		
-		List<TUserApprentice>  tUserApprentices = pages.getResult();
-		//type 0正常做任务得分  1邀请徒弟分红 2代表提现操作
-		for(TUserApprentice userApprentice : tUserApprentices) {
-			TUserScoreDetail userScoreDetail2 = new TUserScoreDetail();
-			userScoreDetail2.setReceiveTime(userApprentice.getApprenticeTime());
-			userScoreDetail2.setAdverPrice(userApprentice.getScore());
-			userScoreDetail2.setTaskType(userApprentice.getUserApprenticeType() + "");
-			if(userApprentice.getUserApprenticeType() == 1 || userApprentice.getUserApprenticeType() == 3) {
-				userScoreDetail2.setAdverName(userApprentice.getApprenticeUserNum());//徒弟的usernum
+		if(appid != null || appid != "") {
+			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(appid));
+			page = userappidAdveridService.queryUserScoreDetail(page, appid);
+			//任务明细
+			List<TUserScoreDetail>  userScoreDetail = page.getResult();
+			//收徒 提现 的明细
+			pages = appUserApprenticeService.getMyApprentices(pages, userNum);
+			
+			List<TUserApprentice>  tUserApprentices = pages.getResult();
+			//type 0正常做任务得分  1邀请徒弟分红 2代表提现操作
+			for(TUserApprentice userApprentice : tUserApprentices) {
+				TUserScoreDetail userScoreDetail2 = new TUserScoreDetail();
+				userScoreDetail2.setReceiveTime(userApprentice.getApprenticeTime());
+				userScoreDetail2.setAdverPrice(userApprentice.getScore());
+				userScoreDetail2.setTaskType(userApprentice.getUserApprenticeType() + "");
+				if(userApprentice.getUserApprenticeType() == 1 || userApprentice.getUserApprenticeType() == 3) {
+					userScoreDetail2.setAdverName(userApprentice.getApprenticeUserNum());//徒弟的usernum
+				}
+				
+				userScoreDetail.add(userScoreDetail2);
 			}
 			
-			userScoreDetail.add(userScoreDetail2);
+			Collections.sort(userScoreDetail); // 按receivetime 排序
+	
+			//JSONArray listArray = JSONArray.fromObject(userScoreDetail);
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+			JSONArray jsonObject = JSONArray.fromObject(userScoreDetail, jsonConfig); 
+			
+			addModel(model, "appuserscoredetails", jsonObject);
 		}
-		
-		Collections.sort(userScoreDetail); // 按receivetime 排序
-
-		//JSONArray listArray = JSONArray.fromObject(userScoreDetail);
-		JsonConfig jsonConfig = new JsonConfig();
-		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
-		JSONArray jsonObject = JSONArray.fromObject(userScoreDetail, jsonConfig); 
-		
-		addModel(model, "appuserscoredetails", jsonObject);
-		
 		return "app/h5web/scoredetail";
 	}
 	
@@ -167,7 +259,7 @@ public class AppH5WebController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 		
-	private String  phoneModelChange(String phoneModel) 
+	private String phoneModelChange(String phoneModel) 
 	{
 		switch (phoneModel)
 		{

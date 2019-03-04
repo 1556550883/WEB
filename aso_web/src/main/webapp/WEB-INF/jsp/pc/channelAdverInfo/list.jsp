@@ -49,6 +49,7 @@
 				<th align="center">广告等级</th>
 				<th align="center">广告开始时间——广告结束时间</th>
 				<th align="center">状态</th>
+				<th align="center">外放状态</th>
 				<!--<th align="center">权限</th>-->
 				<th align="center">创建时间</th>
 				<th align="center">操作</th>
@@ -71,7 +72,7 @@
 	                <td>${item.adverDayStart}--${item.adverDayEnd}</td>
 	               <!-- <td>${item.adverTimeStart}--${item.adverTimeEnd}</td> -->
 	                <td><c:if test="${item.adverStatus==0}">未审核</c:if><c:if test="${item.adverStatus==1}">启用</c:if><c:if test="${item.adverStatus==2}">停用</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>
-	              	<!--<td><ry:show parentCode="IS_AUTH" itemCode="${item.isAuth}"></ry:show></td>-->
+	              	<td><c:if test="${item.isOpen==0}">默认</c:if><c:if test="${item.isOpen==1}">工作室</c:if><c:if test="${item.isOpen==2}">散户</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>
 	                <td><ry:formatDate date="${item.adverCreatetime}" toFmt="yyyy-MM-dd"></ry:formatDate> </td> 
 					<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="openNav('channelAdverInfo/toedit?id=${item.adverId}','修改广告信息','main_index3')"><span>修改</span></a></td>
 					<td>

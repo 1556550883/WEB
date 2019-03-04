@@ -60,6 +60,13 @@
 		    		<img   id="user_help" style="height:25px;float:right;" src="../img/h5web/right.png"/>
 		    	</div>
 		    	<div style = "width:96%;margin-left:2%; height:1px; background:#CDC9C9;margin-top:435px;position:absolute"></div>
+		    	<div onclick= "contact()"  style="line-height:25px;margin-top:450px;position:absolute;text-align: left;margin-left:30px;width:80%">
+		    		<img   style="height:25px;" src="../img/h5web/icon_file.png"/>
+		    		<span style="height:25px;font-size:20px;">联系官方</span>
+		    		<img   id="contact" style="height:25px;float:right;" src="../img/h5web/right.png"/>
+		    	</div>
+		    	<div style = "width:96%;margin-left:2%; height:1px; background:#CDC9C9;margin-top:485px;position:absolute"></div>
+		    
 	    	</div>
     </div>
 	<script>
@@ -197,6 +204,10 @@
  	 	
  	 	function userhelp(){
  	 		window.location.href = base_url +  "help";
+ 	 	}
+ 	 	
+ 	 	function contact(){
+ 	 		window.location.href = base_url +  "contact";
  	 	}
  	 	
  		function go()

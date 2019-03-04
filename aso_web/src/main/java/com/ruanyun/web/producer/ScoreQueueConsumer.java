@@ -64,7 +64,6 @@ public class ScoreQueueConsumer extends EndPoint implements Runnable
 				}
 				
 				//sss 是数据库里面的数据  score是message传来的数据
-				//userScoreService.updateScore(sss, c, score.getType(), score.getUserScoreId(), score.getUserNick());
 				userScoreService.updateScore(sss, score);
 				
 			}

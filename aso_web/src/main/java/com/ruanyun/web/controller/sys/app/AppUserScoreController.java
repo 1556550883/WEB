@@ -25,6 +25,7 @@ import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppUserService;
+import com.ruanyun.web.service.background.UserScoreInfoService;
 import com.ruanyun.web.service.background.UserScoreService;
 
 @Controller
@@ -35,6 +36,8 @@ public class AppUserScoreController extends BaseController
 	private UserScoreService userScoreService;
 	@Autowired
 	private AppUserService appUserService;
+	@Autowired
+	private UserScoreInfoService userScoreInfoService;
 	/**
 	 * 
 	 * 手机端接口:判断当前用户是否可以兑换该商品
@@ -75,6 +78,14 @@ public class AppUserScoreController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+		TUserScoreInfo sTUserScoreInfo = userScoreInfoService.getScoreInfoputfowardByUserNums(userNum);
+		if(sTUserScoreInfo  != null) 
+		{
+			model.setResult(2);
+			model.setMsg("已有提现正在审核中！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
 		
 		TUserApp userApp = appUserService.getUserByUserNum(userNum);
 		if ("0".equals(userApp.getLoginControl())) 
@@ -91,15 +102,12 @@ public class AppUserScoreController extends BaseController
 			//model.setResult(userScoreService.addPutForward(userNum, forward));
 			
 			//减去提现的金额
-			if(model.getResult() == 1)
-			{
-				TUserScore score = new TUserScore();
-				score.setType(2);
-				score.setUserNum(userNum);
-				score.setScore(-forward);
-				
-				QueueProducer.getQueueProducer().sendMessage(score, "socre");
-			}
+			TUserScore score = new TUserScore();
+			score.setType(2);
+			score.setUserNum(userNum);
+			score.setScore(forward);
+			model.setResult(1);
+			QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		}else 
 		{
 			model.setResult(-1);

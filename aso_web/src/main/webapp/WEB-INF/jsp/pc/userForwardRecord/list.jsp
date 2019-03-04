@@ -24,6 +24,8 @@
 				<th align="center">提现金额</th>
 				<th align="center">提现时间</th>
 				<th align="center">提现状态</th>
+				<th align="center">提现信息</th>
+				<th align="center">操作</th>
 				<th align="center">操作</th>
 			</tr>
 		</thead>
@@ -31,16 +33,72 @@
 		     <c:forEach var="item" items="${pageList.result}">
 				<tr >
 				  <td align="center">
-        <input type="checkbox"  id="orderCheckBox" name="ids" value="${item.userScoreInfoId}"></td>
+       							 <input type="checkbox"  id="orderCheckBox" name="ids" value="${item.userScoreInfoId}"></td>
 					<td>${item.userAppNum}</td>	               
 	                <td>${item.userType}</td>
 	                <td>${item.score}</td>
 	                <td>${item.scoreTime}</td>
-	                <td>${item.status == 1?'审核通过' : '未审核'}</td>
-	                <td><a style="cursor: pointer;" href="userAppForwardRecord/verify?userScoreInfoId=${item.userScoreInfoId}"><div style="color: blue">审核</div></a></td>
+	                <td id="${item.userScoreInfoId}" >未审核</td>
+	                <td id="${item.userScoreInfoNum}">${item.subMsg}</td>
+	                <td onclick="statusChange(${item.userScoreInfoId},1)"><div style="color: blue">通过</div></td>
+	                <td onclick="statusChange(${item.userScoreInfoId},-1)"><div style="color: blue">驳回</div></td>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
 
 	<%@include file="/WEB-INF/jsp/inc/page.jsp" %>
+	
+	<script>
+		(function(){
+			var userscores = ${userScoreInfos};
+			for(let index in userscores) {  
+		        var id = "#" + userscores[index].userScoreInfoId;
+		        var status = userscores[index].status;
+		        if(status == 1){
+		        	 $(id).text("通过");
+		        }else if(status == -1){
+		        	 $(id).text("驳回");
+		        	 $(id).css("color","red");
+		        }
+		    };  
+			
+		})();
+		
+		function statusChange(id, status){
+			var msg = confirm("确认操作吗？");
+			if(msg){
+				$.ajax({
+		             type: "GET",
+		             url: "/userAppForwardRecord/verify",
+		             data: {userScoreInfoId:id,status:status},
+		             dataType: "json",
+		             success:function(data){
+		            	var json = eval(data);
+		            	console.log(json);
+		            	var obj = json.obj;
+		            	id = "#" + id;
+		            	if(json.result  == 1){
+		            		alert("操作成功！");
+		            		if(status  == 1){
+		            			 $(id).text("通过");
+		            		}
+		            	}
+		            	else if(json.result  == -2)
+		            	{
+		            		alert("驳回成功！");
+		            		 $(id).text("驳回");
+	            			 $(id).css("color","red");
+		            	}
+		            	
+		            	if(obj){
+		            		var name = "#" + obj.userScoreInfoNum;
+			            	$(name).text(obj.subMsg);
+		            	}
+		             }
+		          });
+			}else{
+			}
+		}
+	
+	</script>

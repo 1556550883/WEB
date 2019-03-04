@@ -28,10 +28,10 @@ public class TUserScoreInfo  implements java.io.Serializable
 	 private String userAppNum;
 	 private Integer userType;
 	 private Date scoreTime;
-	 private String flag1;
-	 private String flag2;
-	 private String flag3;
-	 private String flag4;
+	 private String subCode;
+	 private String subMsg;
+	 private String orderId;
+	 private String outBizNo;
 	 private Integer status;
 
     public TUserScoreInfo() 
@@ -42,7 +42,8 @@ public class TUserScoreInfo  implements java.io.Serializable
         this.userScoreInfoNum = userScoreInfoNum;
     }
     
-    public TUserScoreInfo(String userScoreInfoNum, Float score, Integer scoreType, String scoreName, String userAppNum, Integer userType, Date scoreTime, String flag1, String flag2, String flag3, String flag4, Integer status) 
+    public TUserScoreInfo(String userScoreInfoNum, Float score, Integer scoreType, String scoreName,
+    		String userAppNum, Integer userType, Date scoreTime, String subCode, String subMsg, String orderId, String outBizNo, Integer status) 
     {
        this.userScoreInfoNum = userScoreInfoNum;
        this.score = score;
@@ -51,11 +52,11 @@ public class TUserScoreInfo  implements java.io.Serializable
        this.userAppNum = userAppNum;
        this.userType = userType;
        this.scoreTime = scoreTime;
-       this.flag1 = flag1;
-       this.flag2 = flag2;
-       this.flag3 = flag3;
-       this.flag4 = flag4;
        this.status = status;
+       this.subCode = subCode;
+       this. subMsg = subMsg;
+       this. orderId = orderId;
+       this. outBizNo = outBizNo;
     }
    
      @Id @GeneratedValue(strategy=IDENTITY)
@@ -141,50 +142,42 @@ public class TUserScoreInfo  implements java.io.Serializable
         this.scoreTime = scoreTime;
     }
     
-    @Column(name="flag1", length=100)
-    public String getFlag1() 
-    {
-        return this.flag1;
-    }
-    
-    public void setFlag1(String flag1)
-    {
-        this.flag1 = flag1;
-    }
-    
-    @Column(name="flag2", length=100)
-    public String getFlag2() {
-        return this.flag2;
-    }
-    
-    public void setFlag2(String flag2) 
-    {
-        this.flag2 = flag2;
-    }
-    
-    @Column(name="flag3", length=100)
-    public String getFlag3() 
-    {
-        return this.flag3;
-    }
-    
-    public void setFlag3(String flag3) 
-    {
-        this.flag3 = flag3;
-    }
-    
-    @Column(name="flag4", length=100)
-    public String getFlag4() 
-    {
-        return this.flag4;
-    }
-    
-    public void setFlag4(String flag4) 
-    {
-        this.flag4 = flag4;
-    }
-    
-    @Column(name="status")
+    @Column(name="sub_code")
+    public String getSubCode() {
+		return subCode;
+	}
+
+	public void setSubCode(String subCode) {
+		this.subCode = subCode;
+	}
+	 @Column(name="sub_msg")
+	public String getSubMsg() {
+		return subMsg;
+	}
+
+	public void setSubMsg(String subMsg) {
+		this.subMsg = subMsg;
+	}
+
+	 @Column(name="order_id")
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	 @Column(name="out_biz_no")
+	public String getOutBizNo() {
+		return outBizNo;
+	}
+
+	public void setOutBizNo(String outBizNo) {
+		this.outBizNo = outBizNo;
+	}
+
+	@Column(name="status")
 	public Integer getStatus() {
 		return status;
 	}

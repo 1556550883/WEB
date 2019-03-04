@@ -79,16 +79,26 @@
 				<dt>是否为注册任务：</dt>
 				<dd>
 				    是：<input type="radio" name="isRegister"  value="1"/>
-				   否 ：<input type="radio" name="isRegister"  value="0"/>
+				   否 ：<input type="radio" name="isRegister"  value="0" checked/>
 				</dd>
 		    </dl>
 	       <dl class="nowrap" style="width: 100%">
 			<dt>是否为模拟 任务：</dt>
 			<dd>
 			    是：<input type="radio" name="isMock"  value="1"/>
-			   否 ：<input type="radio" name="isMock"  value="0"/>
+			   否 ：<input type="radio" name="isMock"  value="0" checked/>
 			</dd>
 		    </dl>
+		     
+		     <dl class="nowrap" style="width: 100%">
+				<dt>外放设置：</dt>
+				<dd style="width: 300px">
+					   工作室 ：<input type="radio" name="isOpen"  value="1"/>
+					    外放：<input type="radio" name="isOpen"  value="2"/>
+					    默认 ：<input type="radio" name="isOpen"  value="0" checked/>
+				</dd>
+		    </dl>
+		    
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告storeID：</dt>
 				<dd>

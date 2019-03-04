@@ -51,6 +51,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String adverTimeEnd;
      private Integer adverStepCount;
      private Date adverCreatetime;
+     //加量或者超时记录
      private int adverActivationCount;
      private String fileType;
      private Float fileSize;
@@ -77,6 +78,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String adverAdid;
      private Integer isRegister;//is_register 
      private Integer isMock;//is_register 
+     private Integer isOpen;//is_register 
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -535,5 +537,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setIsMock(Integer isMock) {
 		this.isMock = isMock;
+	}
+	
+	@Column(name="is_open")
+	public Integer getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(Integer isOpen) {
+		this.isOpen = isOpen;
 	}
 }

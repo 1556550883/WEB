@@ -1,7 +1,6 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +49,7 @@ public class GourdChannel extends BaseChannel
 			else if(status == 1)
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：已领取过任务，不能重复领取！");
+				model.setMsg("抱歉重复任务，请选择其他任务！");
 			}
 			else
 			{
@@ -77,7 +76,7 @@ public class GourdChannel extends BaseChannel
 				.append("&model=").append(phoneModel)
 				.append("&version=").append(phoneVersion)
 				.append("&ip=").append(ip)
-				.append("&keyword=").append(URLEncoder.encode(adverInfo.getAdverName(), "utf-8"))
+				.append("&keyword=").append(adverInfo.getAdverName())
 				.append("&channel=").append(channel)
 				.append("&callback=").append(getCallbackUrl(adverInfo.getAdid(), idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
@@ -95,6 +94,40 @@ public class GourdChannel extends BaseChannel
 			}else{
 				model.setResult(-1);
 				model.setMsg("领取任务失败！");
+			}
+		}
+		
+		return model;
+	}
+	
+	public static AppCommonModel activate(TChannelAdverInfo adverInfo, String idfa, String ip, 
+			String deviceType, String osVersion)
+	{
+		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		StringBuilder url = new StringBuilder(adverInfo.getFlag4())
+				.append("?adid=").append(adverInfo.getAdid())
+				.append("&appid=").append(adverInfo.getAdverAdid())
+				.append("&idfa=").append(idfa)
+				.append("&model=").append(deviceType)
+				.append("&version=").append(osVersion)
+				.append("&ip=").append(ip)
+				.append("&keyword=").append(adverInfo.getAdverName())
+				.append("&channel=").append(channel);
+		JSONObject jsonObject = httpGet(url.toString(), false);
+		
+		if(jsonObject == null){
+			log.error("request url：" + url + "。response：null");
+			model.setResult(-1);
+			model.setMsg("领取任务失败。原因：系统出错！");
+		}else{
+			log.error("request url：" + url + "。response：" + jsonObject.toString());
+			Boolean result = (Boolean)jsonObject.get("success");
+			if(result){
+				model.setResult(1);
+				model.setMsg("任务成功！");
+			}else{
+				model.setResult(-1);
+				model.setMsg("任务失败！");
 			}
 		}
 		

@@ -89,6 +89,16 @@
 			   否 ：<input type="radio" id="isMock_0" name="isMock"  value="0"/>
 			</dd>  </dl>
 			
+			  <dl class="nowrap" style="width: 100%">
+			<dt>外放设置：</dt>
+			<dd style="width: 300px">
+			    工作室：<input type="radio" id="isOpen_1"  name="isOpen"  value="1"/>
+			   散户：<input type="radio" id="isOpen_2" name="isOpen"  value="2"/>
+			   默认：<input type="radio" id="isOpen_0" name="isOpen"  value="0"/>
+			</dd>  
+			</dl>
+			
+			
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告storeID：</dt>
 				<dd>
@@ -228,6 +238,20 @@
 			else
 			{
 				$("#isMock_0").attr("checked", true);
+			}
+			
+			
+			var val3 = '${bean.isOpen}';
+			if(val3 == 0)
+			{
+				$("#isOpen_0").attr("checked", true);
+			}
+			else if(val3 == 1)
+			{
+				$("#isOpen_1").attr("checked", true);
+			}else
+			{
+				$("#isOpen_2").attr("checked", true);
 			}
 		})
 		

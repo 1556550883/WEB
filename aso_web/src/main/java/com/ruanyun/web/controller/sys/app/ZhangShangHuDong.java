@@ -43,7 +43,7 @@ public class ZhangShangHuDong extends BaseChannel
 				model.setMsg("没有重复，可以领取任务！");
 			}else if("1".equals(status)){
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：已领取过任务，不能重复领取！");
+				model.setMsg("抱歉重复任务，请选择其他任务！");
 			}else{
 				model.setResult(-1);
 				model.setMsg("领取任务失败！");

@@ -51,10 +51,12 @@ public class TUserApp implements java.io.Serializable {
 	private String loginControl;//登录控制
 	private String excludeAdverId;//不允许做任务的广告ID
 	private String idfa;
-	
+	private Integer isEffective;
 	private String appStore;
 	private Date createDate;
 	private TUserScore userScore;
+	private Float score;
+	private boolean isPutward;
 	
 	public TUserApp() {
 	}
@@ -340,6 +342,33 @@ public class TUserApp implements java.io.Serializable {
 
 	public void setOpenID(String openID) {
 		this.openID = openID;
+	}
+
+	@Column(name = "is_effective")
+	public Integer getIsEffective() {
+		return isEffective;
+	}
+
+	public void setIsEffective(Integer isEffective) {
+		this.isEffective = isEffective;
+	}
+	
+	@Transient
+	public Float getScore() {
+		return score;
+	}
+
+	public void setScore(Float score) {
+		this.score = score;
+	}
+
+	@Transient
+	public boolean isPutward() {
+		return isPutward;
+	}
+
+	public void setPutward(boolean isPutward) {
+		this.isPutward = isPutward;
 	}
 	
 }

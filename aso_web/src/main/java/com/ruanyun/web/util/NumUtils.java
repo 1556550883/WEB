@@ -157,8 +157,6 @@ public class NumUtils {
 		return String.format("%06d", id);
 	}
 	
-
-
 	public static String getLotteryNum() {
 		  Calendar   cal   =   Calendar.getInstance();	
 		  String lotteryNum = new SimpleDateFormat( "yyyyMMdd").format(cal.getTime());

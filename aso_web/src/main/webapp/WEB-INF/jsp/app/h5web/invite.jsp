@@ -22,39 +22,48 @@
     </div>
       <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
     	<div style="background:#fff; margin-top:5px;height:700px">
-    		<div style="background:#F0F0F0;width:40%;float:right;margin-right:30px;margin-top:30px;height:100px;text-align: center;">
-    			<div style="margin-top:30px;font-size:10px;">累积收益</div>
-    			<div id="invite_score" style="margin-top:5px">0.0元</div>
+    		<div style= "width:86%;height:10px;margin-left:7%;padding-top:30px;text-align: center">
+    		
+    			<div style="background:#F0F0F0;width:147px;float:right;">
+    				<div style="margin-top:5px;font-size:10px;">累积收益</div>
+    				<div id="invite_score" style="margin-top:5px">0.0元</div>
+    			</div>
+    		
+    			<div id="invite_user"  onclick="inviteUserDetail()" style="background:#F0F0F0;width:147px;position:absolute;">
+    				<div style="margin-top:5px;font-size:10px;">邀请人数</div> 
+    				<div id="invite_num" style="margin-top:5px">0人</div>
+    			</div>
+    			
+    			<div onclick="inviteEffUserDetail()" style="background:#F0F0F0;width:86%;margin-top:60px;position:absolute;height:35px;text-align: center;">
+    				<div id="invite_eff_user" style="margin-top:5px;font-size:20px;">0人</div> 
+    			</div>
     		</div>
     		
-    		<div style="background:#F0F0F0;width:40%;margin-left:30px;margin-top:30px;position:absolute;height:100px;text-align: center;">
-    			<div style="margin-top:30px;font-size:10px;">徒弟人数</div> 
-    			<div id="invite_num" style="margin-top:5px">0人</div>
-    		</div>
-    		
-    		<div style = "width:96%;margin-left:2%;margin-top:141px;position:absolute;color:#8B8682">
+    		<div style = "width:96%;margin-left:2%;margin-top:100px;position:absolute;color:#8B8682">
 			    <ul style="font-size:15px;">
 				  <li>徒弟做满5个任务，一次性奖励师傅5元</li>
 				  <li>徒弟每次完成任务，奖励师傅0.5元</li>
-				  <li>累计15元封顶</li>
-				  <li>有效收徒满10人，一次性奖励10元，上不封顶</li>
+				  <li>累计15元封顶(不包含一次性奖励5元)</li>
+				  <li>有效收徒满20人，一次性奖励20元，上不封顶</li>
+				  <li>徒弟必须完善个人信息</li>
+				  <li>羊毛党恶意收徒将不参与此活动</li>
 				</ul>
 	    	</div>
-	    	<div style="position:absolute;color:#8B8682;margin-top:290px;font-size:20px;margin-left:30px;">
+	    	<div style="position:absolute;color:#8B8682;margin-top:260px;font-size:20px;margin-left:30px;">
 	    		邀请方式:
 	    	</div>
 	    	
 	    	<div  onclick="invitelink()" id="invitelink" 
-   				style="position:absolute; -webkit-user-select:initial;text-align: center;margin-left:5%;width:90%;margin-top:340px;color:#0000EE; font-size: 15px;border:1px dashed #CDCDC1;border-radius:10px;"
+   				style="position:absolute; -webkit-user-select:initial;text-align: center;margin-left:5%;width:90%;margin-top:310px;color:#0000EE; font-size: 15px;border:1px dashed #CDCDC1;border-radius:10px;"
    				 data-clipboard-action="copy" data-clipboard-target="#invitelink">https://moneyzhuan.com/invite/guest?id=544606
 			</div>
-			<div style = "width:70%;margin-left:15%;margin-top:400px;position:absolute;color:#AAAAAA;text-align: center; ">
+			<div style = "width:70%;margin-left:15%;margin-top:360px;position:absolute;color:#AAAAAA;text-align: center; ">
 					<span style="font-size:15px">您的专属邀请链接，点击复制，发送给朋友即可得分!</span></div>
 					
-			<div id="qrcode" style = "margin-top:460px;position:absolute;text-align: center;width:100%">
+			<div id="qrcode" style = "margin-top:430px;position:absolute;text-align: center;width:100%">
 			</div>
 			
-				<div style = "width:70%;margin-left:15%;margin-top:620px;position:absolute;color:#AAAAAA;text-align: center; ">
+				<div style = "width:70%;margin-left:15%;margin-top:590px;position:absolute;color:#AAAAAA;text-align: center; ">
 					<span style="font-size:15px">此二维码给朋友扫，即可成为您的徒弟</span></div>
     	</div>
     	
@@ -63,8 +72,9 @@
 		var link = "https://moneyzhuan.com/invite/guest?id=" + "${appuserid}";
 		$("#invitelink").text(link);
 		$('#qrcode').qrcode({width: 140,height: 140,text: link});
-		$("#invite_score").text("${appuserscore.apprenticeScore}" + "元");
-		$("#invite_num").text("${appuserscore.apprenticeCount}" + "人");
+		$("#invite_score").text(${appuserscore.apprenticeScore} + "元");
+		$("#invite_num").text(${appuserscore.apprenticeCount} + "人");
+		$("#invite_eff_user").text( "有效徒弟人数 "+ ${appuserscore.effectiveUserCount} + "人");
 		function invitelink(){
 			
   			var clipboard = new ClipboardJS('#invitelink');
@@ -74,6 +84,15 @@
   			});
 		}
 		
+		var base_url  = "http://moneyzhuan.com/";
+ 		function inviteEffUserDetail(){
+	         window.location.href = base_url + "inviteEffUserDetail?id=" + "${appuserid}";
+ 		}
+		
+ 		function inviteUserDetail(){
+	         window.location.href = base_url + "inviteUserDetail?id=" + "${appuserid}";
+		}
+ 		
 	   	function go()
 		{
 			window.history.go(-1);

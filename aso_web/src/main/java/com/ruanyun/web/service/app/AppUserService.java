@@ -16,6 +16,8 @@ import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
 import com.ruanyun.web.model.TUserApp;
+import com.ruanyun.web.model.TUserScore;
+import com.ruanyun.web.producer.QueueProducer;
 
 @Service
 public class AppUserService extends BaseServiceImpl<TUserApp>{
@@ -131,7 +133,7 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 		update(userApp);
 		return 1;
 	}
-	
+		
 	//updateUserName
 	public int updateUserName(String userNum,String userName) 
 	{

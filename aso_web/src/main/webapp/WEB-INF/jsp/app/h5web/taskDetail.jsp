@@ -19,7 +19,7 @@
 
 <body style="background:#F0F0F0; margin:0px;box-shadow: 0 3px 5px #e0e0e0;font-size:20px; font-family:微软雅黑;color:#444;">
  	 <textarea id="input"></textarea>
-      <div onclick="go()" class="title">
+      <div onclick="giveUpTask()" class="title">
 	 		<img style="height:0.4rem;float:left;margin-left:10px;margin-top:10px;" src="../img/h5web/back-icon.png"/>
             <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">任务详情</span>
     </div>
@@ -83,8 +83,8 @@
    		            	udid = data;
    		            },
    		          	error: function(XMLHttpRequest, textStatus, errorThrown){
-   		             //通常情况下textStatus和errorThrown只有其中一个包含信息
-   			 	          alertDialog();
+   		             	//通常情况下textStatus和errorThrown只有其中一个包含信息
+   			 	     	alertDialog();
    		          	}
    		          });
    			}
@@ -111,9 +111,14 @@
    			}
    			
    			function giveUpTask(){
+				if(confirm("您确定放弃吗？")){
+					giveUp();
+   				}
+   			}
+   			
+   			function giveUp(){
    				//setTaskTimeout
-   				if(confirm("您确定放弃吗？")){
-   					$.ajax({
+   				$.ajax({
    		             type: "post",
    		             url: "/app/duijie/setTaskTimeout",
    		             data: {udid:udid,adverId:taskid},
@@ -129,8 +134,7 @@
    		            		alert("请求错误，请重新尝试！");
    		            	}
    		            }
-   	             })
-   				}
+   	             });
    			}
    			
 		   	function commitTask(){
@@ -201,34 +205,49 @@
 	   			$("#adesc").text("${adverInfo.adverDesc}");
 	   			$("#adverName").text("${adverInfo.adverName}");
 	   			var timeLimit = ("${adverInfo.timeLimit}");
-	   		
-	   			var str = timeLimit.substring(0,timeLimit.indexOf("."));
-	   		  	var m = str;
-	   	    	var s = 0;
+	   			//var startTime = ("${adverInfo.timeLimit}");
+	   	    	
 	   	    	var interval = setInterval(function(){
+	   	    		var now = new Date();
+		   			var nowTime = now.getTime();
+					var startTime = sessionStorage.getItem('startTime'); 
+					if(!startTime){
+						sessionStorage.setItem('startTime', nowTime);
+						startTime = nowTime;
+					}
+					var leftTime = nowTime-startTime;
+					var mm = parseInt(leftTime/1000/60%60, 10); //跑的分钟数
+					var ss = parseInt(leftTime/1000%60, 10); //跑的秒数
+		   			var str = timeLimit.substring(0,timeLimit.indexOf("."));
+		   		  	var m = 0;
+		   	    	var s = 0;
+		   	    	if(ss > 0){
+		   	    		m = str - mm - 1;
+		   	    		s = 60 - ss;
+		   	    	}else{
+		   	    		m = str - mm;
+		   	    		s = 0;
+		   	    	}
+	   	    		
 	   	        	if(s<10){
 	   	           	 	$('#time').html('剩余 ' + m+'分 0'+s + '秒');
 	   	        	}else{
 	   	            	$('#time').html('剩余 ' + m+'分 '+s + '秒');
 	   	        	}
-	   	       	 	s--;
-	   	        	if(s<0){
-	   	           		s=59;
-	   	            	m--;
-	   	        	}
 	   	        	
-	   	        	if(m==0 && s == -1){
-	   	        		clearInterval(interval)
-	   	        		go()
+	   	        	if(m<0 || (m==0 && s == 0)){
+	   	        		clearInterval(interval);
+	   	        		//任务超时自动放弃
+	   	        		giveUp();
 	   	        	}
 	   	    },1000)
 	   	    
 	   	    getUdid();
 	   	})()
 	   	
-	   	
 	   	function go()
 		{
+	   	 	sessionStorage.clear();
 			window.history.go(-1);
 		}
 

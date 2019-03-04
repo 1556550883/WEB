@@ -9,15 +9,6 @@
 		<script type="text/javascript" charset="utf-8" src="../js/mobile-detect.js"></script>
        <title>Happy赚官方助手</title>
 	<style>
-		 body { 
-	       		font-size:15px; 
-	       		padding:0;
-	      		margin:0;
-	      		width:100%; 
-				height:100%;
-				background:url('../img/invite/shangbu.png') no-repeat;
-				background-size:cover;
-		      }
         		
 			 .button_style{
 			 	margin-top:100px;
@@ -47,22 +38,65 @@
 				opacity:.50;
 				filter: alpha(opacity=50);
 			}
+			
+			.title{
+   	 			.flex; width:100%; height: 0.8rem; background:#fff; box-shadow: 0 3px 5px #e0e0e0;text-align: center;position:fixed;z-index:100
+			}
 		</style>
     </head>
     
-    <body style="font-size:15px">
-	  <div style="width:100%;height:40px;margin-top:120%;font-size:20px;color:#FFFFFF; ">
-		  	<span id="install_button" onclick="hrefs(1)" style="background:#1E90FF;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
-		  	position: absolute;text-align:center;">安装助手</span>
-	  		
-	  		<span id="trust_button" onclick="hrefs(2)" style="display:none;background:#1E90FF;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
-	  		position: absolute;text-align:center;">前往信任</span>
-	  		
-	  		<span id="open_button" onclick="hrefs(3)" style="display:none;background:#1E90FF;border-radius:15px;width:60%;margin-left:20%;padding-top:5px;padding-bottom:5px;
-	  		position: absolute;text-align:center;">打开助手</span>
-	  </div>
+<body style="background:#F0F0F0; margin:0px">
+     <div  class="title">
+           <span style=".flex1; line-height:0.8rem;   background-color:#8968CD;font-weight: bold; color: #FFFFFF; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">Happy赚下载</span>
+   	</div>
 	  
-	  <div id="fade" class="black_overlay"></div>
+  <div id="container" style="padding-top:0.9rem;position:relative;width:100%;font-size:20px;">
+   	<div style="background:#fff; margin-top:5px;height:300px;text-align:center;">
+  		<div style="padding-top:15px">
+   			<span>下载安装</span>
+   		</div>
+   		<div style="font-size:15px;color:#AAAAAA;">
+   			<span>让您更加便捷的使用happy赚</span>
+   		</div>
+   		<img style="width:80px;height:80px;border-radius:10px; margin-top:15px" src="../img/h5web/happy_logo.png"/>
+   		<div style="font-size:15pxss">
+   			<span>happy赚</span>
+   		</div>
+	 	<div onclick="hrefs(1)" style="position:absolute;background:#8968CD;
+	 	 text-align: center;margin-left:20%;width:60%;margin-top:30px;color:#FFFFFF;padding-top:5px;padding-bottom:5px;
+	 	  font-size: 15px;border-radius:10px;"><span>立即安装</span></div>
+   	</div>
+   	
+  	 <div style="background:#fff; margin-top:10px;height:790px;text-align:center;">
+   		<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
+   			<span>如果出现以下情况</span>
+   		</div>
+   		<img style="width:240px;height:160px;border-radius:10px; margin-top:15px" src="../img/h5web/qisu_tip.jpg"/>
+   		<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
+   			<span>设置-通用-设备管理-信任</span>
+   		</div>
+   		<img style="width:240px;height:400px;border-radius:10px; margin-top:15px" src="../img/h5web/qiu_tip_2.png"/>
+   			<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
+   			<span>如果点击未跳转，请手动前往信任</span>
+   		</div>
+   		<div onclick="hrefs(2)" style="position:absolute;background:#8968CD;
+	 	 text-align: center;margin-left:20%;width:60%;margin-top:20px;color:#FFFFFF;padding-top:5px;padding-bottom:5px;
+	 	  font-size: 15px;border-radius:10px;"><span>前往信任</span></div>
+  	</div>
+
+
+ <div  onclick="hrefs(3)" style="background:#fff; margin-top:10px;height:130px;text-align:center;">
+   		<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
+   			<span>完成后即可点击打开</span>
+   		</div>
+   		<div style="position:absolute;background:#8968CD;
+	 	 text-align: center;margin-left:20%;width:60%;margin-top:20px;color:#FFFFFF;padding-top:5px;padding-bottom:5px;
+	 	  font-size: 15px;border-radius:10px;"><span>打开Happy赚</span></div>
+  	</div>
+	  
+   </div> 
+   
+	 <div id="fade" class="black_overlay"></div>
 	<div id="safariTip" class="tip_content">
 		<div style="text-align: center; cursor: default; margin-top:10px;margin-bottom:10px;">
 			<span style="font-size: 16px; color: white; font-weight: 600;">点击右上角，请选择"Safari"打开</span>
@@ -95,25 +129,10 @@
 			{
 				localStorage.setItem("happyzhuan_master_id","${master}");
 				url = "itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist";
-			   
-				var count = 10;
-				var resend = setInterval(function(){
-                   count--;
-                   if (count > 0){
-                   		$("#install_button").text(count+"s等待时间");
-                   		sessionStorage.setItem('count_time',count); 
-                   }else {
-                       clearInterval(resend);
-                       $("#install_button").css({ "display": "none" });
-                       $("#trust_button").css({ "display": "inline" });
-                   }
-               }, 1000);
 			}
 			else if(v == 2)
 			{
 				url = "https://moneyzhuan.com/download/install.mobileprovision";
-				 $("#trust_button").css({ "display": "none" });
-                 $("#open_button").css({ "display": "inline" });
 			}
 			else if(v == 3)
 			{

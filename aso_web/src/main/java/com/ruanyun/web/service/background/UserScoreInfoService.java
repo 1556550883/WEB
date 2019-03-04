@@ -17,7 +17,6 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.orm.ICommonSqlDao;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.web.dao.sys.background.UserScoreInfoDao;
-import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
 
 /**
@@ -30,8 +29,6 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 	@Autowired
 	@Qualifier("userScoreInfoDao")
 	private UserScoreInfoDao userScoreInfoDao;
-	@Autowired
-	private UserScoreService userScoreService;
 	@Autowired
 	@Qualifier("commonSqlExpandDao")
 	protected ICommonSqlDao sqlDao;
@@ -61,18 +58,18 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 		userScoreInfo.setUserScoreInfoNum(getNewScoreInfoNum(userScoreInfo.getUserScoreInfoId()));
 	}
 	
-	public int updateScoreInfoStatus(String userScoreInfoId)
+	public int updateScoreInfoStatus(String userScoreInfoId, String status)
 	{
 		StringBuffer sql = new StringBuffer(" UPDATE t_user_score_info set status = ? WHERE user_score_info_id='"+userScoreInfoId+"'");
 		Object[] params = new Object[1];
-		params[0] = 1;
+		params[0] = status;
 		return sqlDao.update(params, sql.toString());
 	}
 	
 	@Transactional
 	public void deleteScoreInfo(String userScoreInfoNum,String userAppNum){
 		TUserScoreInfo userScoreInfo=get(TUserScoreInfo.class,"userScoreInfoNum", userScoreInfoNum);
-		TUserScore usreScore=userScoreService.getScore(userAppNum);
+		//TUserScore usreScore=userScoreService.getScore(userAppNum);
 		//userScoreService.updateScore(usreScore, -userScoreInfo.getScore(), usreScore.getType());
 		super.delete(userScoreInfo);
 	}
@@ -88,6 +85,12 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 		StringBuffer sql=new StringBuffer(" SELECT * FROM t_user_score_info WHERE user_app_num='"+userNums+"'");
 		return sqlDao.getAll(TUserScoreInfo.class, sql.toString());
 	}
+	
+	public TUserScoreInfo getScoreInfoputfowardByUserNums(String userNums)
+	{
+		StringBuffer sql=new StringBuffer("SELECT * FROM t_user_score_info WHERE user_app_num='"+userNums+"' and status = 0");
+		return sqlDao.get(TUserScoreInfo.class, sql.toString());
+	}
 	/**
 	 * 
 	 * 功能描述:后台手机用户获取用户的积分明细
@@ -97,8 +100,13 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 	 *@author feiyang
 	 *@date 2016-1-27
 	 */
-			public Page<TUserScoreInfo> pageSql(Page<TUserScoreInfo>page,TUserScoreInfo info){
-				Integer type=0;
-				return userScoreInfoDao.pageSql(page, info, type);
-			}
+	public Page<TUserScoreInfo> pageSql(Page<TUserScoreInfo>page,TUserScoreInfo info){
+		Integer type=0;
+		return userScoreInfoDao.pageSql(page, info, type);
+	}
+	
+	
+	public Page<TUserScoreInfo> getforwardList(Page<TUserScoreInfo>page,TUserScoreInfo info){
+		return userScoreInfoDao.getforwardList(page, info);
+	}
 }

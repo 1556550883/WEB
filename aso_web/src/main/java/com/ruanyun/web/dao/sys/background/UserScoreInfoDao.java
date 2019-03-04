@@ -46,4 +46,14 @@ public class UserScoreInfoDao extends BaseDaoImpl<TUserScoreInfo> {
 		sql.append(" ORDER BY score_time DESC");
 		return sqlDao.queryPage(page, TUserScoreInfo.class, sql.toString());
 	}
+	
+	public Page<TUserScoreInfo> getforwardList(Page<TUserScoreInfo> page,TUserScoreInfo info) {
+		StringBuffer sql = new StringBuffer(" SELECT * from t_user_score_info WHERE 1=1 ");
+		if (EmptyUtils.isNotEmpty(info)) {
+			sql.append(" AND user_app_num='" + info.getUserAppNum() + "'");
+		}
+		
+		sql.append(" ORDER BY score_time DESC");
+		return sqlDao.queryPage(page, TUserScoreInfo.class, sql.toString());
+	}
 }

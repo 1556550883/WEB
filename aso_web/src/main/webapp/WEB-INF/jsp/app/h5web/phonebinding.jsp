@@ -23,18 +23,17 @@
       <div id="container" style="padding-top:0.9rem;position:relative;width:100%;font-size:15px;">
     	<div style="background:#fff; margin-top:5px;height:600px">
     			<div style="margin-top:20px;margin-left:20px;position:absolute;"><span>手机号码</span></div>
-    			<input type="text" id="userphone" style="margin-top:45px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
+    			<input type="text" id="userphone" style="margin-top:50px;margin-left:15px;width:85%;  border: 0px;font-size:15px;
     			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')" placeholder="请输入真实手机号码">
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:78px;position:absolute"></div>
     			
     			<div style="margin-top:95px;margin-left:20px;position:absolute;"><span>验证码</span></div>
-    			<input type="text" id="phonecode" style="margin-top:120px;margin-left:20px;width:40%;  border: 0px;font-size:20px;
+    			<input type="text" id="phonecode" style="margin-top:125px;margin-left:15px;width:40%;  border: 0px;font-size:15px;
     			position:absolute;" oninput = "value=value.replace(/[^\d]/g,'')"  placeholder="请输入验证码">
     			<span onclick="sendsms()" id="send_sms" type="button" style= "margin-top:120px; font-size:20px; float:right;width:140px;margin-right:30px;border:1px solid #AAAAAA;border-radius:10px;color:#AAAAAA;text-align: center; ">获取验证码</span>
     			<div style = "width:40%;margin-left:20px; height:1px; background:#aab2bd;margin-top:153px;position:absolute"></div>
     			
-    			
-    			<div onclick= "phonebinding()" style="position:absolute;background:#FFA500; text-align: center;margin-left:2%;width:96%;margin-top:270px;color:#FFFFFF; font-size: 0.5rem;border:1px dashed #CDCDC1;border-radius:10px;"><span>绑定手机</span></div>
+    			<div onclick= "phonebinding()" style="position:absolute;background:#FFA500; text-align: center;margin-left:2%;width:96%;margin-top:250px;color:#FFFFFF; font-size: 0.5rem;border:1px dashed #CDCDC1;border-radius:10px;"><span>绑定手机</span></div>
     	</div>
     </div>
     <script>
@@ -96,7 +95,7 @@
    		            		//返回上一页
    		            		window.history.go(-1);
    		            	}else{
-   		            		alert("此账号已被使用，请使用其他账号！");
+   		            		alert("请求出错，请重新尝试！");
    		            	}
 		            }
 	             })

@@ -133,6 +133,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		score.setRedPackageCountDay(0);
 		score.setRedPackageScoreCount(0f);
 		score.setRedPackageScoreDay(0f);
+		score.setEffectiveUserCount(0);
 		TUserLevel userLevel=userLevelService.getUserLevelByProportionCount(0);
 		score.setUserLevelNum(userLevel.getLevelNum());	
 		save(score);
@@ -241,6 +242,12 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		if(userScore != null) 
 		{
 			int type = userScoreq.getType();
+			//驳回操作
+			if(type == 5) {
+				userScore.setScore(ArithUtil.addf(userScore.getScore(), userScoreq.getScore()));
+				update(userScore);
+				return 1;
+			}
 			//任务计分
 			if(type <= 0) {
 				int adverid = userScoreq.getUserScoreId();
@@ -277,10 +284,11 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 			
 			//(float)ArithUtil.add(userScore.getScore(), score)
 			Float score = userScoreq.getScore();
-			userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
-			userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));
-			if(type != 2) //提现的时候type为2
+			
+			if(type != 2 && type != 1) //提现的时候type为2
 			{
+				userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
+				userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));
 				userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), score));
 			}
 			
@@ -288,17 +296,24 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 			if(type == 1)
 			{
 				//记录徒弟分红
-				TUserApp tUserApp = userAppService.getUserAppByNum(userScore.getRankingNum());//获取徒弟
-				if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0) {
+				TUserApp tUserApp = userAppService.getUserAppByNum(userScoreq.getRankingNum());//获取徒弟
+				if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0 && tUserApp.getIsEffective() != 1) {
+					userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
+					userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));
+					userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), score));
+					
+					//师傅的userScore
 					userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), score));
-					appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), userScore.getRankingNum(), score, type);
+					appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), score, type);
 					//updateLimitTime
 					if(tUserApp.getLimitTime() == 26) {
 						//徒弟第五次完成任务，师傅直接得到5元 
 						userScore.setScore(ArithUtil.addf(userScore.getScore(), 5.0f));
+						userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), 5.0f));
+						userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), 5.0f));
 						userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), 5.0f));
 						
-						appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), userScore.getRankingNum(), 5.0f, 3);
+						appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), 5.0f, 3);
 					}
 					Integer ltime = tUserApp.getLimitTime() - 1;
 					userAppService.updateLimitTime(tUserApp, ltime);
@@ -307,9 +322,25 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 				}
 			}else if(type == 2) {
 				//存入提现 记录
-				//userScoreService.addPutForward(userScore.getUserNum(), score);
+				userScore.setScore(ArithUtil.subf(userScore.getScore(), score));
+				addPutForward(userScore.getUserNum(), score);
+				
 				//和红包放在一起的记录
-				appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), "", score, type);
+				//appUserApprenticeService.addMyApprenticeScore(userScore.getUserNum(), "", score, type);
+			}else if(type == 4) {
+				//有效收徒发来的message
+				//师傅userapp
+				TUserApp tUserApp = userAppService.getUserAppByNum(userScoreq.getUserNum());
+				int count = userAppService.geteffApprenticeNum(tUserApp.getUserAppId() + "");
+				userScore.setEffectiveUserCount(count);
+				//邀请满足20的倍数就加20元
+				if(count != 0 && count%20 == 0) {
+					userScore.setScore(ArithUtil.addf(userScore.getScore(), 20.0f));
+					userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), 20.0f));
+					userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), 20.0f));
+					userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), 20.0f));
+					appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), 20.0f, 4);
+				}
 			}
 			
 			update(userScore);

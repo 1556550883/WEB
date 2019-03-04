@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.web.model.TUserApp;
-import com.ruanyun.web.model.TUserScore;
-import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserScoreService;
@@ -110,22 +108,22 @@ public class AppUserInviteController extends BaseController
 	    	int count = userAppService.getApprenticeNum(masterID);
 	    	if(masterUser != null && count > 0) 
 	    	{
-	    		//更新师傅徒弟数量
+	    		//更新邀请人数
 	    		userScoreService.updateApprentice(masterUser.getUserNum(), count);
 	    		
-	    		if(count != 0 && count%10 == 0) {
-	    			
-	    			TUserScore score = new TUserScore();
-					score.setType(4);
-					score.setUserNum(masterUser.getUserNum());//师傅num
-					score.setRankingNum(tUserApp.getUserNum());//用来表示第十个徒弟num。如果不为空
-					score.setScore((float) 10);
-					try {
-						QueueProducer.getQueueProducer().sendMessage(score, "socre");
-					} catch (Exception e) {
-						e.printStackTrace();
-						}
-	  	    	}
+//	    		if(count != 0 && count%10 == 0) {
+//	    			
+//	    			TUserScore score = new TUserScore();
+//					score.setType(4);
+//					score.setUserNum(masterUser.getUserNum());//师傅num
+//					score.setRankingNum(tUserApp.getUserNum());//用来表示第十个徒弟num。如果不为空
+//					score.setScore((float) 10);
+//					try {
+//						QueueProducer.getQueueProducer().sendMessage(score, "socre");
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//						}
+//	  	    	}
 	    	}
   		}
   	    

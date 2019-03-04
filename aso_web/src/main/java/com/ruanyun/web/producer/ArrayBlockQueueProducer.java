@@ -132,11 +132,12 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 						for(int i = 1; i <= info.getAdverActivationCount(); i++) 
 						{
 							//更新剩余有效产品数量
-							mAppChannelAdverInfoService.updateAdverActivationRemainMinus1(info);
 							String data = UUID.randomUUID().toString();
 							System.out.println("Put:" + data);
 							ap.sendMessage(data, endPointName);
 						}
+						
+						mAppChannelAdverInfoService.updateAdverActivationRemainMinus1(info);
 					}
 					else 
 					{	

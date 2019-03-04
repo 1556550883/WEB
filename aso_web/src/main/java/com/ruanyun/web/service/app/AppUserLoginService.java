@@ -5,7 +5,12 @@
  */
 package com.ruanyun.web.service.app;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -37,6 +42,8 @@ import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.NumUtils;
 import com.ruanyun.web.util.SendSms;
 import com.ruanyun.web.util.UploadCommon;
+
+import net.sf.json.JSONObject;
 
 @Service
 public class AppUserLoginService extends BaseServiceImpl<TUserLogin> 
@@ -594,7 +601,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	public AppCommonModel updateUserWeiXin(String udid,String weiXinName,String headImgUrl,String openID) 
 	{
 		AppCommonModel model = new AppCommonModel();
-		int result = appUserService.updateUserWeiXin(udid,weiXinName,headImgUrl, openID);
+		int result = userAppService.updateUserWeiXin(udid,weiXinName,headImgUrl, openID);
 		if(result == 1) 
 		{
 			model.setMsg("修改成功");
@@ -604,6 +611,38 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 			model.setMsg("此微信已经被绑定！");
 		}
 		model.setResult(result);
+		return model;
+	}
+	
+	public AppCommonModel getWeChatApi(String udid, String accessToken,String openID) throws Exception 
+	{
+		System.err.println(accessToken + "::" + openID);
+		AppCommonModel model = new AppCommonModel();
+		StringBuilder url = new StringBuilder("https://api.weixin.qq.com/sns/userinfo")
+				.append("?access_token=").append(accessToken)
+				.append("&openid=").append(openID);
+		
+		
+		URL url1 = new URL(url.toString()); 
+		HttpURLConnection urlConnection = (HttpURLConnection)url1.openConnection(); 
+
+		// 将返回的输入流转换成字符串 
+		InputStream inputStream = urlConnection.getInputStream(); 
+		InputStreamReader inputStreamReader = new InputStreamReader(inputStream,"UTF-8"); 
+		BufferedReader in = new BufferedReader(inputStreamReader); 
+
+		String jsonUserStr =in.readLine().toString(); 
+		JSONObject sJsonObject = JSONObject.fromObject(jsonUserStr);
+		System.err.println("jsonUserStr = "+ sJsonObject.toString()); 
+		String name = (String)sJsonObject.get("nickname");
+		String headimgurl = (String)sJsonObject.get("headimgurl");
+		updateUserWeiXin(udid,name,headimgurl, openID) ;
+		// 释放资源 
+		inputStream.close(); 
+		inputStream = null; 
+		urlConnection.disconnect(); 
+
+		//model.setResult(jsonObject);
 		return model;
 	}
 	
@@ -621,7 +660,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 	public AppCommonModel updateUserAlipay(String alipay,  String udid, String usernick) 
 	{
 		AppCommonModel model = new AppCommonModel();
-		int result = appUserService.updateUserAlipay(alipay, udid, usernick);
+		int result = userAppService.updateUserAlipay(alipay, udid, usernick);
 		model.setMsg("修改成功");
 		model.setResult(result);
 		return model;

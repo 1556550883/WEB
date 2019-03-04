@@ -22,19 +22,19 @@
     </div>
     
     <div id="container" style="padding-top:0.9rem;position:relative;width:100%;">
-    	<div style="background:#fff; margin-top:5px;height:600px">
+    	<div style="background:#fff; margin-top:5px;height:600px;font-size:15px">
     			<div style="margin-top:20px;margin-left:20px;position:absolute;"><span>支付宝账户实名</span></div>
-    			<input type="text" id="usernick" style="margin-top:45px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
-    			position:absolute;"onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5]/g,'')" placeholder="请输入绑定支付宝账户实名"/>
+    			<input type="text" id="usernick" style="margin-top:45px;margin-left:15px;width:85%;  border: 0px;font-size:15px;
+    			position:absolute;" placeholder="请输入绑定支付宝账户实名"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:78px;position:absolute"></div>
     			
     			<div style="margin-top:95px;margin-left:20px;position:absolute;"><span>支付宝账户</span></div>
-    			<input type="text" id="payfornum" style="margin-top:120px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
+    			<input type="text" id="payfornum" style="margin-top:120px;margin-left:15px;width:85%;  border: 0px;font-size:15px;
     			position:absolute;" oninput = "value=value.replace(/[\u4e00-\u9fa5]/ig,'')" placeholder="请输入需绑定支付宝账户"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:153px;position:absolute"></div>
     			
     			<div style="margin-top:170px;margin-left:20px;position:absolute;"><span>确认支付宝账户</span></div>
-    			<input type="text" id="payfornum_t" style="margin-top:195px;margin-left:20px;width:85%;  border: 0px;font-size:20px;
+    			<input type="text" id="payfornum_t" style="margin-top:195px;margin-left:15px;width:85%;  border: 0px;font-size:15px;
     			position:absolute;" oninput = "value=value.replace(/[\u4e00-\u9fa5]/ig,'')"  placeholder="请再次确认支付宝账户"/>
     			<div style = "width:90%;margin-left:20px; height:1px; background:#aab2bd;margin-top:228px;position:absolute"></div>
     			
@@ -99,7 +99,7 @@
    		            		//返回上一页
    		            		window.history.go(-1);
    		            	}else{
-   		            		alert("此账号已被使用，请使用其他账号！");
+   		            		alert("请求出错，请重新尝试！");
    		            	}
    		            }
    	             })

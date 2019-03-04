@@ -15,10 +15,6 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.service.background.UserScoreService;
 
-/**
- *@author feiyang
- *@date 2016-1-7
- */
 @Controller
 @RequestMapping("userScore")
 public class UserScoreController extends BaseController
@@ -32,8 +28,6 @@ public class UserScoreController extends BaseController
 	 * @param info
 	 * @param model
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-6
 	 */
 	@RequestMapping("list")
 	public String getUserScoreList(Page<TUserScore> page,TUserScore info,Model model){

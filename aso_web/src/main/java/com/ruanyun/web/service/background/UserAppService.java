@@ -6,6 +6,8 @@
 package com.ruanyun.web.service.background;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.CommonUtils;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
 import com.ruanyun.web.model.HUserAppModel;
@@ -36,10 +40,16 @@ import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserStudentCart;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.model.sys.UploadVo;
+import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.sys.UserRoleService;
 import com.ruanyun.web.util.Constants;
+import com.ruanyun.web.util.ExcelUtils;
+import com.ruanyun.web.util.HttpRequestUtil;
 import com.ruanyun.web.util.NumUtils;
+import com.ruanyun.web.util.SLEmojiFilter;
 import com.ruanyun.web.util.UploadCommon;
+
+import net.sf.json.JSONObject;
 
 @Service
 public class UserAppService extends BaseServiceImpl<TUserApp>
@@ -76,6 +86,37 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		}
 		
 		return _page;
+	}
+	
+	public void clearScore() {
+		userAppDao.clearScore();
+	}
+	
+	public void removeMaster(String appid, String masterID) {
+		userAppDao.removeMaster(appid);
+		int count = getApprenticeNum(masterID);
+		String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(masterID));
+		userScoreService.updateApprentice(userNum, count);
+	}
+	
+	public void exportScore(HttpServletResponse response, List<TUserApp> list, Boolean islocal) {
+		String fileName = "score";
+		String[] columns = {"userAppId","userNick","loginName","score"};
+		String[] headers = {"id","姓名","登陆名","得分"};
+		try {
+			for(TUserApp sApp : list) {
+				sApp.setScore(sApp.getUserScore().getScore());
+			}
+			
+			if(islocal) {
+				ExcelUtils.exportExcelTolocal(fileName, list, columns, headers);
+			}else {
+				ExcelUtils.exportExcel(response, fileName, list, columns, headers, SysCode.DATE_FORMAT_STR_L);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -118,6 +159,10 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		return userAppDao.getApprenticeNum(id);
 	}
 
+	public int geteffApprenticeNum(String id) 
+	{
+		return userAppDao.geteffApprenticeNum(id);
+	}
 	/**
 	 * 功能描述:修改手机用户
 	 * @author wsp  2017-1-16 上午10:36:45
@@ -160,7 +205,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 			BeanUtils.copyProperties(userApp, olUuser, new String[] {"userAppId", "userNum", "headImg","phoneSerialNumber",
 					"createDate"
 					,"invitationCode","phoneVersion","phoneModel","idfa","taskNewStatus","zhifubao","weixin","flag5","phoneNum",
-					"zhifubaoName","userApppType","appStore", "masterID"});
+					"zhifubaoName","userApppType","appStore", "masterID","isEffective","limitTime","isEffective","openID"});
 			olUuser.setLevel(userApp.getLevel());
 			if (EmptyUtils.isNotEmpty(vo) && vo.getResult()==1) 
 			{
@@ -282,10 +327,158 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		super.update(userApp);
 	}
 
-	public void updatePhoneNum(HttpServletRequest request, TUserApp userApp,String phoneNum) 
+	public int userPhoneEffective(String phonenum) throws Exception {
+		int code = -1;
+		Map<String, String> params = new HashMap<String, String>();
+        params.put("appId", "o470S630");
+        params.put("appKey", "K5wsHKEp");
+        //手机号码
+        params.put("mobile", phonenum);
+		String result = HttpRequestUtil.doPost("https://api.253.com/open/wool/wcheck", params);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		if (jsonObject != null) {
+            //响应code码。200000：成功，其他失败
+            String ecode = (String)jsonObject.get("code");
+            if ("200000".equals(ecode)) {
+                // 调用羊毛党检测成功
+                // 解析结果数据，进行业务处理
+                // 检测结果  W1：白名单 B1 ：黑名单  B2 ：可信用度低  N：未找到
+            	JSONObject data = (JSONObject)jsonObject.get("data");
+                String status = (String)data.get("status");
+                System.out.println("调用羊毛党检测成功,status:" + status);
+                if(status.equalsIgnoreCase("W1")) {
+                	code = 0; //白名单
+                }
+                if(status.equalsIgnoreCase("B1")) {
+                	code = 1; //黑名单
+                }
+                if(status.equalsIgnoreCase("B2")) {
+                	code = 2; //可疑名单
+                }
+                if(status.equalsIgnoreCase("N")) {
+                	code = 3; //库无
+                }
+            } else {
+                // 记录错误日志，正式项目中请换成log打印
+                System.out.println("调用羊毛党检测失败,code:" + code + ",msg:" + jsonObject.get("message"));
+            }
+        }
+		
+		return code;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		//System.err.println(userPhoneEffective("18762672247"));
+		//JSONString
+	}
+	
+	public int updatePhoneNum(HttpServletRequest request, TUserApp userApp, String phoneNum) throws Exception 
 	{
-		userApp.setPhoneNum(phoneNum);;
-		super.update(userApp);
+		if(userApp.getPhoneNum() != null) {
+			return -1;
+		}
+		
+		//0 白名单 1 黑名单 2 可疑名单 3 库无
+		int code = userPhoneEffective(phoneNum);
+		if(code == -1) {
+			return -1;
+		}
+		
+		userApp.setPhoneNum(phoneNum);
+		userApp.setIsEffective(code);
+		update(userApp);
+		
+		//不属于黑名单
+		if(code == 0) {
+			//不是黑名单就可以算有效
+			masterUserAppAward(userApp);
+		}
+		
+		return 1;
+	}
+	
+	public TUserApp getUserByUdid(String udid)
+	{		
+		return userAppDao.getUserByUdid(udid);
+	}
+	
+	public TUserApp getUserByOpenID(String openID)
+	{		
+		return userAppDao.getUserByOpenID(openID);
+	}
+	
+	public int updateUserWeiXin(String udid,String weiXinName,String headImgUrl, String openID)
+	{
+		TUserApp userApp = getUserByUdid(udid);
+		if(userApp == null || userApp.getOpenID() !=null) {
+			return -1;
+		}
+		
+		if(EmptyUtils.isEmpty(userApp))
+		{
+			return 2;
+		}
+		
+		try
+		{
+			weiXinName = SLEmojiFilter.filterEmoji(weiXinName);
+			userApp.setWeixin(URLDecoder.decode(weiXinName, "UTF-8"));
+			userApp.setFlag5(URLDecoder.decode(headImgUrl, "UTF-8"));
+			userApp.setOpenID(URLDecoder.decode(openID, "UTF-8"));
+			//update(userApp);
+			userAppDao.updateWechat(udid, URLDecoder.decode(weiXinName, "UTF-8"), URLDecoder.decode(headImgUrl, "UTF-8"), URLDecoder.decode(openID, "UTF-8"));
+			masterUserAppAward(userApp);
+		} 
+		catch (UnsupportedEncodingException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return 1;
+	}
+	
+	//updateUserAlipay
+	public int updateUserAlipay(String alipay, String udid, String usernick) 
+	{
+		TUserApp userApp = getUserByUdid(udid);
+		if(userApp== null || userApp.getZhifubao() != null){
+			return -1;
+		}
+		
+		try
+		{
+			userApp.setUserNick(URLDecoder.decode(usernick, "UTF-8"));
+			userApp.setZhifubao(URLDecoder.decode(alipay, "UTF-8"));
+		} 
+		catch (UnsupportedEncodingException e) 
+		{
+			e.printStackTrace();
+		}
+
+		update(userApp);
+		masterUserAppAward(userApp);
+		return 1;
+	}
+	
+	public void masterUserAppAward(TUserApp tUserApp) {
+		//只有正常用户才给于奖励
+		try {
+			if(tUserApp.getZhifubao() == null || tUserApp.getOpenID() == null || tUserApp.getPhoneNum() == null
+					|| tUserApp.getIsEffective()== null || tUserApp.getIsEffective() != 0) {
+				return;
+			}
+			String masterNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(tUserApp.getMasterID()));
+			TUserScore score = new TUserScore();
+			score.setType(4);
+			score.setUserNum(masterNum);//师傅num
+			score.setRankingNum(tUserApp.getUserNum());//用来表示第十个徒弟num。如果不为空
+			score.setScore((float) 0);
+			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void updateSmsCode(HttpServletRequest request, TUserApp userApp,String smsCode) 
@@ -349,5 +542,16 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 	
 	public HUserAppModel getHUserAppModelbyid(String appid) {
 		return userAppDao.getHUserModelByappid(appid);
+	}
+	
+	public Page<TUserApp> queryEffUserAppByMasterID(Page<TUserApp> page, String masterid)
+	{
+		return userAppDao.queryEffUserAppByMasterID(page, masterid);
+	}
+	
+	
+	public Page<TUserApp> queryUserAppByMasterID(Page<TUserApp> page, String masterid)
+	{
+		return userAppDao.queryUserAppByMasterID(page, masterid);
 	}
 }

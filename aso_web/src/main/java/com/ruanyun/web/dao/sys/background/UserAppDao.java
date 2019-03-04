@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
+import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SQLUtils;
 import com.ruanyun.web.model.HUserAppModel;
@@ -27,6 +28,11 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	protected String queryPageSql(TUserApp t, Map<String, Object> params) {
 		StringBuffer sql=new StringBuffer(" from TUserApp where 1=1 ");
 		if(t != null){
+			
+			if(t.getUserAppId() != null) {
+				sql.append(SQLUtils.popuHqlLike("userAppId", t.getUserAppId() +""));
+			}
+			
 			sql.append(SQLUtils.popuHqlLike("userNum", t.getUserNum()));
 			sql.append(SQLUtils.popuHqlLike("phoneNum", t.getPhoneNum()));
 			sql.append(SQLUtils.popuHqlLike("userNick", t.getUserNick()));
@@ -38,6 +44,16 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	}
 	
 	
+	public Page<TUserApp> queryUserAppByMasterID(Page<TUserApp> page, String appid){
+		StringBuffer sql=new StringBuffer("SELECT * from t_user_app WHERE master_id ='"+appid+"' ORDER BY create_date DESC");
+		return sqlDao.queryPage(page, TUserApp.class, sql.toString());
+	}
+	
+	public Page<TUserApp> queryEffUserAppByMasterID(Page<TUserApp> page, String appid){
+		//iseffective = 1 代表黑名单
+		StringBuffer sql = new StringBuffer("SELECT * from t_user_app WHERE master_id ='"+appid+"' and !ISNULL(open_id) and !ISNULL(zhifubao) and !ISNULL(phone_num) and is_effective = 0 ORDER BY create_date DESC");
+		return sqlDao.queryPage(page, TUserApp.class, sql.toString());
+	}
 	/**
 	 * 
 	 * 功能描述:根据NUM获取用户
@@ -50,6 +66,22 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	{
 		StringBuffer sql=new StringBuffer(" SELECT * from t_user_app WHERE user_num ='"+userNum+"'");
 		return sqlDao.get(TUserApp.class, sql.toString());
+	}
+	
+	public void clearScore() {
+		StringBuffer sql = new StringBuffer("Update t_user_score set score=0,score_sum=0 WHERE type=1");
+		sqlDao.execute(sql.toString());
+	}
+	
+	public void removeMaster(String appid) {
+		StringBuffer sql = new StringBuffer("Update t_user_app set master_id=-1,limit_time=0 WHERE user_app_id ='"+appid+"'");
+		sqlDao.execute(sql.toString());
+	}
+	
+	public void updateWechat(String udid,String weiXinName,String headImgUrl, String openID) {
+		String sql = String.format("Update t_user_app set weixin='%s',flag5='%s',open_id='%s' WHERE login_name=", weiXinName,headImgUrl,openID) + "'"+udid+"'";      
+		//StringBuffer sql = new StringBuffer("Update t_user_app set master_id=-1,limit_time=0 WHERE login_name ='"+udid+"'");
+		sqlDao.execute(sql);
 	}
 	
 	public TUserApp getUserByUdid(String loginName){
@@ -84,8 +116,14 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	
 	public int getApprenticeNum(String id) 
 	{
+		StringBuffer sql = new StringBuffer(" SELECT count(*) from t_user_app WHERE master_id='"+id+"'");
+		return sqlDao.getCount(sql.toString());
+	}
+	
+	public int geteffApprenticeNum(String id) 
+	{
 		//StringBuffer sql = new StringBuffer(" SELECT count(*) from t_user_app WHERE master_id='"+id+"'");
-		String sql = "SELECT count(*) from t_user_app WHERE master_id= '"+id+"'";
+		String sql = "SELECT count(*) from t_user_app WHERE master_id= '"+id+"' and !ISNULL(open_id) and !ISNULL(zhifubao) and !ISNULL(phone_num) and is_Effective = 0";
 		return sqlDao.getCount(sql);
 	}
 	
@@ -93,8 +131,6 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	 * 
 	 * 功能描述:获取手机的所有用户数量
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-4
 	 */
 	public int getUserNum(Integer type ,Date createTime){
 		StringBuffer sql = new StringBuffer(" SELECT COUNT(*) from t_user_app where 1=1");

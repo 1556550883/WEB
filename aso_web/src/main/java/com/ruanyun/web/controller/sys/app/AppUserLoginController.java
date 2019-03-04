@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -121,15 +122,21 @@ public class AppUserLoginController extends BaseController
 		{
 			try 
 			{
-				userAppService.updatePhoneNum(request, tUserApp, phoneNumber);
-				model.setResult(1);
-				model.setMsg("绑定成功！");
-				model.setObj("{}");
+				int code = userAppService.updatePhoneNum(request, tUserApp, phoneNumber);
+				if(code == -1) {
+					model.setResult(-1);
+					model.setMsg("查询反羊毛服务失败，请稍后再试！");
+					model.setObj("{}");
+				}else {
+					model.setResult(1);
+					model.setMsg("绑定成功！");
+					model.setObj("{}");
+				}
 			}
 			catch (Exception e) 
 			{
 				model.setResult(-1);
-				model.setMsg("号码已经被使用！");
+				model.setMsg("请求失败，请重新尝试！");
 				model.setObj("{}");
 			}
 		}
@@ -239,7 +246,26 @@ public class AppUserLoginController extends BaseController
 		}
 		catch (Exception e) 
 		{
-			acm.setMsg("微信账号已被使用！");
+			acm.setMsg("请求失败，请重新尝试！");
+			acm.setResult(-1);
+		}
+		
+		super.writeJsonDataApp(response, acm);
+	}
+	
+	
+	@RequestMapping("getWeChatApi")
+	public void getWeChatApi(HttpServletResponse response,String udid, String accessToken,String openID) 
+	{
+		AppCommonModel acm = new AppCommonModel();
+		
+		try
+		{
+			acm = appUserLoginService.getWeChatApi(udid, accessToken,openID);
+		}
+		catch (Exception e) 
+		{
+			acm.setMsg("请求失败，请重新尝试！");
 			acm.setResult(-1);
 		}
 		
@@ -258,6 +284,7 @@ public class AppUserLoginController extends BaseController
 		{
 			acm = new AppCommonModel(e.getMessage(), "{}");
 		}
+		
 		super.writeJsonDataApp(response, acm);
 	}
 	
@@ -271,7 +298,7 @@ public class AppUserLoginController extends BaseController
 		} 
 		catch (Exception e)
 		{
-			acm.setMsg("支付宝账号已被绑定！");
+			acm.setMsg("请求失败，请重新尝试！");
 			acm.setResult(-1);
 		}
 		

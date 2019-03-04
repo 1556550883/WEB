@@ -258,6 +258,20 @@ public class DuiJieController extends BaseController
 		if(udid != null && !udid.isEmpty()) 
 		{
 			userApp = userAppService.getUserAppByUserName(udid);
+			if(!userApp.getLoginControl().equals("1")) {
+				model.setResult(-1);
+				model.setMsg("领取任务失败。原因：账号已被禁止登录！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
+			if(userApp.getPhoneNum() == null || userApp.getPhoneNum() == "") {
+				model.setResult(0);
+				model.setMsg("请先完善个人信息！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
 			idfa = userApp.getIdfa();
 			userAppId = userApp.getUserAppId() + "";
 			userNum = userApp.getUserNum();
@@ -454,7 +468,8 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
-	private AppCommonModel checkIDFADuplicated(TUserApp userApp, String adid, Page<TUserappidAdverid> taskList, String idfa, String adverId) 
+	private AppCommonModel checkIDFADuplicated(TUserApp userApp, 
+			String adid, Page<TUserappidAdverid> taskList, String idfa, String adverId) 
 	{
 		AppCommonModel model = new AppCommonModel(2, "没有符合条件！");
 		
@@ -481,9 +496,12 @@ public class DuiJieController extends BaseController
 						model.setObj(item);
 						model.setMsg("请先完成正在进行的任务...");
 						break;
-					}else {
-						//删除超时的任务 真实用户不需要超时
-						userappidAdveridService.deleteOverTimeAdver(item);
+					}
+					else if(item.getStatus().compareTo("1.6") == 0 && item.getAdverId().equals(Integer.valueOf(adverId)))
+					{
+						model.setResult(-1);
+						model.setMsg("抱歉，此任务今日已超时，请明日在来！");
+						break;
 					}
 				}
 				else
@@ -694,6 +712,12 @@ public class DuiJieController extends BaseController
 		if(udid != null && !udid.isEmpty()) {
 			TUserApp userApp = userAppService.getUserAppByUserName(udid);
 			idfa = userApp.getIdfa();
+			if(!userApp.getLoginControl().equals("1")) {
+				model.setResult(-1);
+				model.setMsg("查询失败。原因：账号已被禁止登录！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
 		}
 		//String userNum = request.getParameter("userNum");
 		
@@ -818,7 +842,7 @@ public class DuiJieController extends BaseController
 					model = Huizhuan.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr1[1], arr2[1]);
 					break;
 				case 12:
-					model = BeeChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
+					model = BeeChannel.activate(adverInfo, idfa, ip,arr1[1], arr2[1]);
 					break;
 				case 13:
 					model = FrogsChannel.activate();
@@ -828,6 +852,9 @@ public class DuiJieController extends BaseController
 					break;
 				case 15:
 					model = FrogsTTChannel.activate(adverInfo.getFlag4(), adid, idfa, ip, adverInfo.getAdverName(),arr1[1], arr2[1]);
+					break;
+				case 16:
+					model = GourdChannel.activate(adverInfo, idfa, ip,arr1[1], arr2[1]);
 					break;
 				default:
 					model.setResult(-1);
@@ -945,7 +972,7 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 
-	//计算师傅获取到的利润
+	//计算师傅获取到的利润 这个应该放在计算之后有时间更改
 	private void masterWork(TUserApp tUserApp)
 	{
 		if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0)
@@ -1124,7 +1151,7 @@ public class DuiJieController extends BaseController
 			model =  isHZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
 		case 12:
-			model =  isBeeChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			model =  isBeeChannel(adverInfo, idfa, ip, userAppId, adverId, userNum, phoneModel, phoneVersion);
 			break;
 		case 13:
 			model =  isFrogsChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
@@ -1170,12 +1197,12 @@ public class DuiJieController extends BaseController
 	{
 		//云聚
 		//调用第三方排重接口
-		AppCommonModel model = YunJu.paiChong(adverInfo.getFlag2(), adid, idfa);
+		AppCommonModel model = YunJu.paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = YunJu.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel);
+			model = YunJu.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel,adverInfo.getAdverName());
 		}
 		
 		return model;
@@ -1281,17 +1308,17 @@ public class DuiJieController extends BaseController
 		return model;
 	}
 	
-	private AppCommonModel isBeeChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	private AppCommonModel isBeeChannel(TChannelAdverInfo adverInfo, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		//会赚
 		//调用第三方排重接口
-		AppCommonModel model = BeeChannel.paiChong(adverInfo.getFlag2(), adid, idfa, ip);
+		AppCommonModel model = BeeChannel.paiChong(adverInfo, idfa, ip,phoneModel, phoneVersion);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = BeeChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName ,phoneModel, phoneVersion);
+			model = BeeChannel.dianJi(adverInfo, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum,phoneModel, phoneVersion);
 		}
 		
 		return model;
@@ -1395,7 +1422,8 @@ public class DuiJieController extends BaseController
 			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 			tUserappidAdverid.setIdfa(idfa);
 			tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-			tUserappidAdverid.setStatus("1.6");
+			//1.7代表放弃的状态
+			tUserappidAdverid.setStatus("1.7");
 			userappidAdveridService.updateTaskStatus(tUserappidAdverid);
 		}
 		

@@ -41,8 +41,68 @@ public class TChannelInfo  implements java.io.Serializable
 	private String channelTypeName;  //渠道类型名称
 	private String systemType;//系统类型
 	private Integer isEnable;//是否启用
+	private float ydayNum;
+	private float todayNum;
+	private float monNum;
+	private float ydayScore;
+	private float todayScore;
+	private float monScore;
 
-    public TChannelInfo() 
+	 @Transient
+    public float getYdayNum() {
+		return ydayNum;
+	}
+
+	public void setYdayNum(float ydayNum) {
+		this.ydayNum = ydayNum;
+	}
+
+	 @Transient
+	public float getTodayNum() {
+		return todayNum;
+	}
+
+	public void setTodayNum(float todayNum) {
+		this.todayNum = todayNum;
+	}
+
+	 @Transient
+	public float getMonNum() {
+		return monNum;
+	}
+
+	public void setMonNum(float monNum) {
+		this.monNum = monNum;
+	}
+
+	 @Transient
+	public float getYdayScore() {
+		return ydayScore;
+	}
+
+	public void setYdayScore(float ydayScore) {
+		this.ydayScore = ydayScore;
+	}
+
+	 @Transient
+	public float getTodayScore() {
+		return todayScore;
+	}
+
+	public void setTodayScore(float todayScore) {
+		this.todayScore = todayScore;
+	}
+
+	 @Transient
+	public float getMonScore() {
+		return monScore;
+	}
+
+	public void setMonScore(float monScore) {
+		this.monScore = monScore;
+	}
+
+	public TChannelInfo() 
     {
     }
 

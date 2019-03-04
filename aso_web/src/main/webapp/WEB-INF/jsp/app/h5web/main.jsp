@@ -17,25 +17,25 @@
 	 	 	
 	 	<div>
 	 		<img id="head_img" style="width:50px;height:50px;margin-top:5px;margin-left:15px;border-radius:50px;float:left" src="../img/h5web/happy_logo.png"/>
-			<button onclick= "putforword()" style="color:#FFFFFF;width:80px;float:right;padding:3px;margin-top:20px;margin-right:10px;border-radius:5px;background: rgba(255, 255, 255, 0.2)">提现</button>
-	 		<div><span id="user_id" style="margin-left:20px;width:200px;color:#FFFFFF;"></span></div>
-	 		<div><span style="margin-left:20px;color:#FFFFFF;">今日收入:</span>
-	 		<span id="day_score" style="color:#FFFFFF;"></span></div>
+			<button onclick= "putforword()" style="color:#FFFFFF;width:80px;float:right;padding:3px;margin-top:20px;margin-right:10px;border-radius:5px;background: rgba(255, 255, 255, 0.2);;border:1px solid #AAAAAA;">提现</button>
+	 		<div style="padding-top:7px"><span id="user_id" style="margin-left:20px;width:200px;color:#FFFFFF;font-size:15px"></span></div>
+	 		<div><span style="margin-left:20px;color:#FFFFFF;font-size:15px;">今日收入:</span>
+	 		<span id="day_score" style="color:#FFFFFF;font-size:15px;"></span></div>
 	 	</div>
 	 	
-		<div style="width=50%;margin-top:15px;float:left;text-align:center;">
-			<span style="margin-left:30px;color:#FFFFFF;">余额:</span>
-			<span id="score"  style="color:#FFFFFF;"></span>
+		<div style="width:50%;margin-top:18px;float:left;text-align:center;position:absolute;">
+			<span style="color:#FFFFFF;font-size:15px;">余额:</span>
+			<span id="score"  style="color:#FFFFFF;font-size:15px;"></span>
 		</div>
-		<div style="width=50%;margin-top:15px;text-align:center;">
-			<span style="margin-left:30px;color:#FFFFFF;">总收入:</span>
-			<span id="sum_score"  style="color:#FFFFFF;"></span>
+		<div style="width:50%;margin-top:18px;text-align:center;;float:right;margin-right:25px">
+			<span style="color:#FFFFFF;font-size:15px;">总收入:</span>
+			<span id="sum_score"  style="color:#FFFFFF;font-size:15px;"></span>
 		</div>
  	</div>
  	
  	<div style="background:#FFAEB9;width:100%;border-radius:5px;">
  		<marquee width=100% scrollamount=4>
- 		<a href="itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist">
+ 		<a href="https://moneyzhuan.com/download/happywebclip.mobileconfig">
  		<FONT face=楷体_GB2312 color=#FFFFFF size=3><STRONG>用户交流群4群：496011441。申请进群请正确输入happy赚ID，官方唯一客服QQ：2126572197</STRONG></FONT></a></marquee>
  	</div>
  	
@@ -154,7 +154,7 @@
 	 	
  	 	var base_url  = "http://moneyzhuan.com/";
  		function taskDetail(){
-	         window.location.href = base_url + "task"
+	         window.location.href = base_url + "task";
  		}
  	 	
  	 	function userInfo(){

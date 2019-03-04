@@ -32,7 +32,7 @@
 				if(data.status != ""){
 					if(data.status < 1.6){
 						price = "正在进行..."
-					}else if(data.status == 1.6){
+					}else if(data.status == 1.6 || data.status == 1.7){
 						price = "任务超时"
 					}
 				}else{
@@ -40,18 +40,18 @@
 						name = "个人提现"
 						price = data.adverPrice + "元";
 					}else if(data.taskType == 1){
-						name = "徒弟分红"
+						name = "徒弟分红" + data.adverName;
 					}else if(data.taskType == 3){
 						name = "徒弟" + data.adverName + "完成五次任务奖励"
 					}else if(data.taskType == 4){
-						name = "新收徒10人奖励"
+						name = "新收徒20人奖励"
 					}
 				}
 				
 				return "<div style=\"font-size:25px;color:#444;background:#fff;border-radius:10px;margin-top:8px;height:60px\" data-position=\""+position+"\">"
      	 	    +"<span style=\"position:absolute;margin-left:10px;margin-top:10px;font-size:13px;width:260px\">"+name+"</span>"
      	 	 	+"<span style=\"position:absolute;margin-left:10px;margin-top:32px;font-size:10px;width:120px;color:#CDCDC1;border:1px solid #CDCDC1;border-radius:5px;text-align:center;\">"+data.receiveTime+"</span>"
-     	 	    +"<span style=\"float:right;margin-top:20px;margin-right:20px;color:#FF0000;font-size:23px;\">"+price+"</span>"
+     	 	    +"<span style=\"float:right;margin-top:20px;margin-right:20px;color:#FF0000;font-size:15px;\">"+price+"</span>"
      	 	    +"</div>";
 			}
 			
