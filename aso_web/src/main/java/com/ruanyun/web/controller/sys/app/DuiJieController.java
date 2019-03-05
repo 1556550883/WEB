@@ -669,7 +669,7 @@ public class DuiJieController extends BaseController
 		
 		QueueProducer.getQueueProducer().sendMessage(score, "socre");
 		
-		if(tUserApp.getUserApppType() == 1) {
+		if(tUserApp.getUserApppType() == 2) {
 			masterWork(tUserApp);
 		}
 		
@@ -836,7 +836,8 @@ public class DuiJieController extends BaseController
 					model = AiyinliChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
 					break;
 				case 10:
-					model = HappyChannel.activate(adverInfo.getFlag4(), adid, idfa);
+					//(String domain, String adid, String adverName, String idfa, String ip, String sysver, String phonemodel) {
+					model = HappyChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr2[1], arr1[1]);
 					break;
 				case 11:
 					model = Huizhuan.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr1[1], arr2[1]);
@@ -1145,7 +1146,7 @@ public class DuiJieController extends BaseController
 			model = isAiYLChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName,  phoneModel, phoneVersion);
 			break;
 		case 10:
-			model =  isHappyChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
+			model =  isHappyChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
 		case 11:
 			model =  isHZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
@@ -1279,16 +1280,15 @@ public class DuiJieController extends BaseController
 	}
 	
 	private AppCommonModel isHappyChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
+			String adverId, String userNum, String adverName,String phoneModel,String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
 	{
-		AppCommonModel model = HappyChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		AppCommonModel model = HappyChannel.paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = HappyChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
+			model = HappyChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel,adverInfo.getAdverName());
 		}
-		
 		return model;
 	}
 	

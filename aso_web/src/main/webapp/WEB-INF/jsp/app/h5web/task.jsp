@@ -238,7 +238,7 @@
 							
 							var typeTask = data.adverTimeStart;
 							var name = data.adverName.substring(0,1) + "***";
-							 return "<div onclick=\"taskdetail()\" style=\"display:block;font-size:25px;color:#444;background:#fff;border-radius:10px;margin-top:5px;height:60px\" data-position=\""+position+"\">"
+							 return "<div style=\"display:block;font-size:25px;color:#444;background:#fff;border-radius:10px;margin-top:5px;height:60px\" data-position=\""+position+"\">"
 	 	           	 	    +"<img class=\"blur lazy\" style=\"width:50px;height:50px;border-radius:10px;margin:5px;float:left\" src=\"../img/h5web/happy_logo.png\"/>"
 	 	           	 	    +"<span style=\"position:absolute;margin-left:10px;margin-top:10px;font-size:13px;width:200px\">"+name+"</span>"
 	 	           	 	 	+"<span style=\"position:absolute;margin-left:10px;margin-top:32px;font-size:10px;width:45px;color:#CDCDC1;border:1px solid #CDCDC1;border-radius:5px;text-align:center;\">"+count+"</span>"

@@ -77,7 +77,7 @@
     		var phonecode = $("#phonecode").val();
     		
     		//判断手机 号码是否正确
-   			 if(!(/^1[34578]\d{9}$/.test(userphone))){ 
+   			 if(!(/^1[345789]\d{9}$/.test(userphone))){ 
     	        alert("手机号码有误，请重填");  
     	        return false; 
     	    } 
@@ -107,7 +107,7 @@
 			if(count != 60) {return}
     		var userphone = $("#userphone").val();
     		//判断手机 号码是否正确
-    		 if(!(/^1[34578]\d{9}$/.test(userphone))){ 
+    		 if(!(/^1[345789]\d{9}$/.test(userphone))){ 
      	        alert("手机号码有误，请重填");  
      	        return false; 
      	    } 

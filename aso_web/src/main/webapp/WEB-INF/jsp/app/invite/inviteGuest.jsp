@@ -67,7 +67,7 @@
 	 	  font-size: 15px;border-radius:10px;"><span>立即安装</span></div>
    	</div>
    	
-  	 <div style="background:#fff; margin-top:10px;height:790px;text-align:center;">
+  	 <div style="background:#fff; margin-top:10px;height:730px;text-align:center;">
    		<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
    			<span>如果出现以下情况</span>
    		</div>
@@ -75,13 +75,9 @@
    		<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
    			<span>设置-通用-设备管理-信任</span>
    		</div>
-   		<img style="width:240px;height:400px;border-radius:10px; margin-top:15px" src="../img/h5web/qiu_tip_2.png"/>
-   			<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
-   			<span>如果点击未跳转，请手动前往信任</span>
+	  		<img style="width:240px;height:400px;border-radius:10px; margin-top:15px" src="../img/h5web/qiu_tip_2.png"/>
+	  			<div style="padding-top:15px;font-size:15px;color:#AAAAAA;">
    		</div>
-   		<div onclick="hrefs(2)" style="position:absolute;background:#8968CD;
-	 	 text-align: center;margin-left:20%;width:60%;margin-top:20px;color:#FFFFFF;padding-top:5px;padding-bottom:5px;
-	 	  font-size: 15px;border-radius:10px;"><span>前往信任</span></div>
   	</div>
 
 

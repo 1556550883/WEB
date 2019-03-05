@@ -88,9 +88,9 @@
 	                <td>${item.userAppId}</td>
 	             	<td>${item.phoneNum}</td>
 	             	<td><c:if test="${item.isEffective == 0}">正常</c:if>
-	             	<c:if test="${item.isEffective == 1}"><span style="red">黑名单</span></c:if>
-	             	<c:if test="${item.isEffective == 2}"><span style="red">可疑</span></c:if>
-	             	<c:if test="${item.isEffective == 3}"><span style="red">未检测</span></c:if></td>
+	             	<c:if test="${item.isEffective == 1}"><span style="color:red">黑名单</span></c:if>
+	             	<c:if test="${item.isEffective == 2}"><span style="color:red">可疑</span></c:if>
+	             	<c:if test="${item.isEffective == 3}"><span style="color:red">未检测</span></c:if></td>
 					<td>${item.phoneModel}</td>	
 					<td><c:if test="${item.userApppType == 1}">${item.loginName}</c:if>
 					<c:if test="${item.userApppType == 2}">散户</c:if></td>	 

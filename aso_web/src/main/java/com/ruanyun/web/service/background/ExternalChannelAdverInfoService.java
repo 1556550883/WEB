@@ -33,6 +33,10 @@ public class ExternalChannelAdverInfoService extends BaseServiceImpl<TExternalCh
 		return info;
 	}
 	
+	public TExternalChannelAdverInfo getInfoByAdidAndKey(String cpChannelKey, String adid) 
+	{
+		return externalChannelAdverInfoDao.getTExternalChannelAdverInfo(cpChannelKey, adid);
+	}
 	
 	/**
 	 * 功能描述：增加或者修改类型

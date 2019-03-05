@@ -17,9 +17,10 @@ public class HappyChannel extends BaseChannel
 	private static final Log log = LogFactory.getLog(HappyChannel.class);
 	
 	/**
-	 * 排重
+	 * 排重 String adid, String key,
+			String idfa,String sysver, String phonemodel,String keyword,String ip)
 	 */
-	public static AppCommonModel paiChong(String domain, String adid, String idfa)
+	public static AppCommonModel paiChong(String domain, String adid, String idfa, String sysver, String phonemodel,String adverName, String ip)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -27,7 +28,10 @@ public class HappyChannel extends BaseChannel
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&key=").append(key)
-				.append("&idfa=").append(idfa);
+				.append("&idfa=").append(idfa)	
+				.append("&sysver=").append(sysver)
+				.append("&model=").append(phonemodel)
+				.append("&keyword=").append(adverName)	.append("&ip=").append(ip);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)
@@ -66,19 +70,22 @@ public class HappyChannel extends BaseChannel
 	}
 	
 	/**
-	 * 点击
+	 * 点击String adid, String key, String idfa, String keywords, String ip, 
+			String model, String sysver, String callbackurl
 	 */
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String adverName) throws UnsupportedEncodingException {
+			Integer userAppId, Integer adverId, String userNum,  String sysver, String phonemodel, String adverName) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		String keywords =  URLEncoder.encode(adverName, "utf-8");
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&key=").append(key)
 				.append("&idfa=").append(idfa)
-				.append("&keywords=").append(keywords)
+				.append("&keyword=").append(keywords)
 				.append("&ip=").append(ip)
-				.append("&callback=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
+				.append("&model=").append(phonemodel)
+				.append("&sysver=").append(sysver)
+				.append("&callbackurl=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){
@@ -104,15 +111,20 @@ public class HappyChannel extends BaseChannel
 	}
 	
 	/**
-	 * 激活上报
+	 * 激活上报 String adid, String key, String idfa,
+			String ip,String sysver,String model,String keyword)
 	 */
-	public static AppCommonModel activate(String domain, String adid, String idfa) {
+	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip, String sysver, String phonemodel) {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&key=").append(key)
-				.append("&idfa=").append(idfa);
+				.append("&idfa=").append(idfa)
+				.append("&ip=").append(ip)
+				.append("&sysver=").append(sysver)
+				.append("&model=").append(phonemodel)
+				.append("&keyword=").append(adverName);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){

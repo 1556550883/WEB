@@ -110,6 +110,42 @@ public class YunJu extends BaseChannel
 		return model;
 	}
 	
+	public static AppCommonModel externalDianJi(String domain, String adid, String idfa, String ip,
+			 String sysver, String phonemodel,String adverName, String key) throws UnsupportedEncodingException {
+		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		
+		StringBuilder url = new StringBuilder(domain)
+				.append("?adid=").append(adid)
+				.append("&ch=").append(CH)
+				.append("&idfa=").append(idfa)
+				.append("&sysver=").append(sysver)
+				.append("&model=").append(phonemodel)
+				.append("&kid=").append(URLEncoder.encode(adverName, "utf-8"))
+				.append("&ip=").append(ip)
+				.append("&callback=").append(externalCallbackUrl(adid, idfa,key));
+		JSONObject jsonObject = httpGet(url.toString(), false);
+		
+		if(jsonObject == null){
+			log.error("request url：" + url + "。response：null");
+			model.setResult(-1);
+			model.setMsg("领取任务失败。原因：系统出错！");
+		}else{
+			log.error("request url：" + url + "。response：" + jsonObject.toString());
+			Integer code = (Integer)jsonObject.get("code");
+			if(code == null){
+				model.setResult(-1);
+				model.setMsg("领取任务失败！");
+			}else if(code == 0){
+				model.setResult(1);
+				model.setMsg("领取任务成功！");
+			}else{
+				model.setResult(-1);
+				model.setMsg("领取任务失败！");
+			}
+		}
+		
+		return model;
+	}
 	/**
 	 * 激活上报
 	 */

@@ -20,10 +20,10 @@
   		    <dl class="nowrap" style="width: 100%">
 				<dt>任务类型：</dt>
 				<dd>
-				   <select name="taskType" class="mustFill" title="任务类型">
+				   <select name="externalTaskType" class="mustFill" title="任务类型">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${taskType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.taskType}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.externalTaskType}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -73,6 +73,30 @@
 				<dd>
 					<input type="text" name="externalAdverTimeEnd" title="广告结束日期" class="mustFill date" id="externalAdverTimeEnd" value="<ry:formatDate date='${bean.externalAdverTimeEnd}' toFmt='yyyy-MM-dd HH:mm' />" readonly="readonly" dateFmt="yyyy-MM-dd HH:mm" >
 					<input name="externalAdverTimeEnd" id="externalAdverTimeEnd" type="hidden" value="<c:out value="${bean.externalAdverTimeEnd}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
+		    <dl style="width: 100%">
+				<dt>cp渠道标识：</dt>
+				<dd>
+					<input name="cpChannelKey" value="${bean.cpChannelKey}" size="30" maxlength="100"  title="cp渠道标识" />
+				</dd>
+			</dl>
+		     <dl class="nowrap" style="width: 100%;">
+				<dt>排重地址：</dt>
+				<dd>
+				    <input name="cpchannelDistinct" id="cpchannelDistinct" style="width: 467px" class="" title="上传数据地址" type="text" value="<c:out value="${bean.cpchannelDistinct}"></c:out>" maxlength="1000" size="60"/>
+				</dd>
+		    </dl>
+		    <dl class="nowrap" style="width: 100%;">
+				<dt>点击地址：</dt>
+				<dd>
+				    <input name="cpchannelClick" id="cpchannelClick" style="width: 467px" class="" title="上传数据地址" type="text" value="<c:out value="${bean.cpchannelClick}"></c:out>" maxlength="1000"/>
+				</dd>
+		    </dl>
+		    <dl class="nowrap" style="width: 100%;">
+				<dt>激活地址：</dt>
+				<dd>
+				    <input name="cpchannelActive" id="cpchannelActive" style="width: 467px" class="" title="上传数据地址" type="text" value="<c:out value="${bean.cpchannelActive}"></c:out>" maxlength="1000"/>
 				</dd>
 		    </dl>
 		    <input type="hidden" name="externalChannelNum" value="${externalChannelNum}"/>

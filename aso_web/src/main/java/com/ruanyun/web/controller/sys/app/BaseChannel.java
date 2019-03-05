@@ -27,6 +27,16 @@ public abstract class BaseChannel
 	}
 	
 	/**
+	 * 获取回调地址
+	 */
+	public static String externalCallbackUrl(String adid, String idfa, String key) throws UnsupportedEncodingException{
+		StringBuilder callback = new StringBuilder("https://moneyzhuan.com/interface/callback")
+				.append("?adid=").append(adid)
+				.append("&idfa=").append(idfa)
+				.append("&key=").append(key);
+		return URLEncoder.encode(callback.toString(), "utf-8");
+	}
+	/**
 	 * httpGet
 	 */
     public static JSONObject httpGet(String url, boolean noNeedResponse)

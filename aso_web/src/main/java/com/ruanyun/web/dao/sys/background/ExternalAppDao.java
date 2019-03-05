@@ -14,12 +14,12 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 
 	public void save(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{
-		String tablename = table_prefix+ adid;
+		String tablename = table_prefix+ adid + key;
 			
 		StringBuilder sql = new StringBuilder("INSERT INTO  ");
 		sql.append(tablename);
-		sql.append(" (idfa,status,channel_key,receive_time) values ");
-		sql.append("('"+tExternalChannelTask.getIdfa()+"','"+tExternalChannelTask.getStatus()+"','"+key+"',NOW())");
+		sql.append(" (ip,model,sysver,keywords,idfa,status,channel_key,receive_time) values ");
+		sql.append("('"+tExternalChannelTask.getIp()+"','"+tExternalChannelTask.getModel()+"','"+tExternalChannelTask.getSysver()+"','"+tExternalChannelTask.getKeywords()+"','"+tExternalChannelTask.getIdfa()+"','"+tExternalChannelTask.getStatus()+"','"+key+"',NOW())");
 		
 		sqlDao.execute(sql.toString());
 	}
@@ -42,7 +42,7 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 	
 	public int update(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{
-		String tablename = table_prefix+ adid;
+		String tablename = table_prefix+ adid + key;
 			
 		StringBuilder sql = new StringBuilder("UPDATE "+tablename+" SET");
 		sql.append(" status=");
@@ -64,7 +64,7 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 	
 	public int updateStatus(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{
-		String tablename = table_prefix+ adid;
+		String tablename = table_prefix+ adid + key;
 			
 		StringBuilder sql = new StringBuilder("UPDATE "+tablename+" SET");
 		sql.append(" status=");
@@ -75,9 +75,9 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 		return sqlDao.execute(sql.toString());
 	}
 	
-	public TExternalChannelTask getExternalTaskInfo(TExternalChannelTask tExternalChannelTask, String adid) 
+	public TExternalChannelTask getExternalTaskInfo(TExternalChannelTask tExternalChannelTask, String adid, String key) 
 	{
-		String tablename = table_prefix+ adid;
+		String tablename = table_prefix+ adid + key;
 		
 		StringBuilder sql = new StringBuilder("SELECT * FROM ");
 		sql.append(tablename);

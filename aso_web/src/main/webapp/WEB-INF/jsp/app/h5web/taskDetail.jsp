@@ -52,17 +52,17 @@
     	</div>
     	
     	<div style="background:#fff; margin-top:15px;height:300px">
-    	 	<div onclick="openApp()" style="position:absolute;background:#0000EE; text-align: center;margin-left:2%;width:96%;margin-top:10px;color:#FFFFFF; font-size: 0.5rem;border:1px dashed #CDCDC1;border-radius:10px;"><span>打开应用</span></div>
-    		<div style = "width:70%;margin-left:15%;margin-top:60px;position:absolute;color:#AAAAAA;text-align: center; ">
+    	 	<div onclick="openApp()" style="position:absolute;background:#0000EE; text-align: center;margin-left:2%;width:96%;margin-top:30px;color:#FFFFFF; font-size: 0.5rem;border:0px dashed #CDCDC1;border-radius:10px;"><span>打开应用</span></div>
+    		<div style = "width:70%;margin-left:15%;margin-top:80px;position:absolute;color:#AAAAAA;text-align: center; ">
 					<span style="font-size:15px">下载成功后在此打开应用试玩</span></div>
 					
-			<div onclick="commitTask()" style="position:absolute;background:#F08080; text-align: center;margin-left:2%;width:96%;margin-top:100px;color:#FFFFFF; font-size: 0.5rem;border:1px dashed #CDCDC1;border-radius:10px;"><span>提交任务</span></div>
-    		<div style = "width:70%;margin-left:15%;margin-top:150px;position:absolute;color:#AAAAAA;text-align: center; ">
+			<div onclick="commitTask()" style="position:absolute;background:#F08080; text-align: center;margin-left:2%;width:96%;margin-top:120px;color:#FFFFFF; font-size: 0.5rem;border:0px dashed #CDCDC1;border-radius:10px;"><span>提交任务</span></div>
+    		<div style = "width:70%;margin-left:15%;margin-top:170px;position:absolute;color:#AAAAAA;text-align: center; ">
 					<span style="font-size:15px">下载成功后在此提交任务</span>
 			</div>
 			
-			<div onclick="giveUpTask()" style="position:absolute;background:#AAAAAA; text-align: center;margin-left:2%;width:96%;margin-top:190px;color:#FFFFFF; font-size: 0.5rem;border:1px dashed #CDCDC1;border-radius:10px;"><span>放弃任务</span></div>
-    		<div style = "width:70%;margin-left:15%;margin-top:240px;position:absolute;color:#AAAAAA;text-align: center; ">
+			<div onclick="giveUpTask()" style="position:absolute;background:#AAAAAA; text-align: center;margin-left:2%;width:96%;margin-top:210px;color:#FFFFFF; font-size: 0.5rem;border:0px dashed #CDCDC1;border-radius:10px;"><span>放弃任务</span></div>
+    		<div style = "width:70%;margin-left:15%;margin-top:260px;position:absolute;color:#AAAAAA;text-align: center; ">
 					<span style="font-size:15px">放弃此任务，选择其他任务</span>
 			</div>
 					

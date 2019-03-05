@@ -1,6 +1,5 @@
 package com.ruanyun.web.dao.sys.background;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +40,19 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 		return page2;
 	}
 	
+	//todo
+	public TExternalChannelAdverInfo getTExternalChannelAdverInfo(String cpChannelKey, String adid) {
+		StringBuilder sql = new StringBuilder("SELECT B.* FROM `t_external_channel_info` AS A LEFT JOIN `t_external_channel_adver_info` AS  B ON A.`external_channel_num` = B.`external_channel_num` WHERE 1=1 ");
+		sql.append(" and A.external_channel_key='").append(cpChannelKey);
+		sql.append("' and B.adid='").append(adid);
+		sql.append("'");
+		return sqlDao.get(TExternalChannelAdverInfo.class, sql.toString());
+	}
+	
 	//创建对应的广告表：adid+key
 	public int createAdverTable(String adid, String key) 
 	{
-		String tableName = "t_external_channel" + adid;
+		String tableName = "t_external_channel" + adid + key;
 		String sql = "CREATE TABLE "+ tableName +" (" + 
 				"  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID'," + 
 				"  `ip` VARCHAR(20) NULL COMMENT '用户IP'," + 
@@ -69,7 +77,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	@SuppressWarnings("unchecked")
 	public Page<TExternalChannelAdverTaskInfo> completeListInfo(Page<TExternalChannelAdverTaskInfo> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
 	{
-		String tableName = "t_external_channel" + t.getAdid();
+		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
 		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' GROUP BY keywords";
 		Query query  = sqlDao.createQuery(sql);
 		List<Object[]> result = query.list();
@@ -93,7 +101,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	@SuppressWarnings("unchecked")
 	public Page<TExternalChannelTask> adverCompleteInfo(Page<TExternalChannelTask> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
 	{
-		String tableName = "t_external_channel" + t.getAdid();
+		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
 		String sql = "SELECT * FROM " + tableName + " WHERE status = 3 and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' and receive_time >= DATE_SUB(CURDATE(),INTERVAL 1 DAY)";
 		Query query  = sqlDao.createQuery(sql);
 		List<Object[]> result = query.list();
@@ -112,7 +120,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 				info.setReceiveTime(formatter.parse(objs[8] + ""));
 				info.setCompleteTime(formatter.parse(objs[9] + ""));
 			} 
-            catch (ParseException e)
+            catch (Exception e)
             {
 				e.printStackTrace();
 			}
