@@ -148,7 +148,6 @@
 	 	}
 	 	
 		function showdata(){
-			
 			$.ajax({
 	             type: "GET",
 	             async:true,

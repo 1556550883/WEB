@@ -5,11 +5,21 @@ import java.io.UnsupportedEncodingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 
 public class DYDChannel extends BaseChannel
 {
 	private static final String CLICK_ID = "qisu";
 	private static final Log log = LogFactory.getLog(DYDChannel.class);
+	
+	public static AppCommonModel isDYDChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum) 
+			throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = clickDYD(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+		
+		return model;
+	}
 	
 	public static AppCommonModel clickDYD(String domain, String adid, String idfa, String ip,
 			Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException 

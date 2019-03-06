@@ -81,8 +81,13 @@ public class AppH5WebController extends BaseController
 		if(id != null || id != "") 
 		{
 			HUserAppModel userApp = userAppService.getHUserAppModelbyid(id);
-			addModel(model, "HUserAppModel", userApp);
+			
+			if (!"0".equals(userApp.getLoginControl())) 
+			{
+				addModel(model, "HUserAppModel", userApp);
+			}
 		}
+		
 		return "app/h5web/putforword";
 	}
 	

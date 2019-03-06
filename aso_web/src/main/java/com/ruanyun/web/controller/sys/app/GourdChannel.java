@@ -14,6 +14,22 @@ public class GourdChannel extends BaseChannel
 {
 	private static final Log log = LogFactory.getLog(GourdChannel.class);
 	private static final String channel = "rfqjdwl2019";
+
+	//TT 葫芦渠道 - 16
+	public static AppCommonModel isGourdChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//调用第三方排重接口 
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adverInfo.getAdverAdid(), adid, idfa);
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adverInfo, idfa, phoneModel,phoneVersion, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
+					userNum);
+		}
+		
+		return model;
+	}
 	
 	public static AppCommonModel paiChong(String domain, String appid, String adid, String idfa)
 	{

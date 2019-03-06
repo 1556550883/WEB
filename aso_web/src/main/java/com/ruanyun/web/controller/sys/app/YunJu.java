@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 
 import net.sf.json.JSONObject;
 
@@ -20,6 +21,25 @@ public class YunJu extends BaseChannel
 	
 	//我们的渠道号
 	private static final String CH = "happyzhuan";
+	
+	
+	//排重+点击+云聚
+	public static AppCommonModel isYunJvChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
+			String userAppId, String adverId, String userNum, String  phoneVersion, String  phoneModel) 
+					throws NumberFormatException, UnsupportedEncodingException
+	{
+		//云聚
+		//调用第三方排重接口
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel,adverInfo.getAdverName());
+		}
+		
+		return model;
+	}
 	
 	/**
 	 * 排重

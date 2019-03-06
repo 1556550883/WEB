@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.util.MD5;
 
 import net.sf.json.JSONObject;
@@ -22,6 +23,21 @@ public class FrogsTTChannel  extends BaseChannel
 	private static final String source = "zuanshi";
 	private static final String source_key = "345fcb48f33e6a7dcf5ab8b64c4886b6";
 	
+	//TT frogs - 15
+	public static AppCommonModel isFrogsTTChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+				String adverId, String userNum, String adverName, String deviceType, String osVersion) throws NumberFormatException, UnsupportedEncodingException 
+		{
+			//调用第三方排重接口 
+			AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa, ip, adverName,deviceType, osVersion);
+			if(model.getResult() != -1)
+			{
+				//调用第三方点击接口
+				model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
+						userNum, deviceType, osVersion, adverName);
+			}
+			
+			return model;
+		}
 	
 	private static String getFormatedDateString()
 	 {  

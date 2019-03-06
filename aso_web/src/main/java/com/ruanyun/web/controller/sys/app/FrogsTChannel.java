@@ -1,9 +1,12 @@
 package com.ruanyun.web.controller.sys.app;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 
 import net.sf.json.JSONObject;
 
@@ -13,6 +16,16 @@ public class FrogsTChannel extends BaseChannel
 	
 	//我们的渠道号
 	private static final String channel = "04fbf67352dfa19a34c4e28952a4c824";
+	
+	
+	public static AppCommonModel isFrogsTChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//调用第三方排重接口
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa, ip);
+		
+		return model;
+	}
 	
 	/**
 	 * 排重

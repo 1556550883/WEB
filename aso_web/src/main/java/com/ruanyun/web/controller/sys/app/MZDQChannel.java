@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.util.MD5;
 
 import net.sf.json.JSONObject;
@@ -16,6 +17,21 @@ public class MZDQChannel extends BaseChannel
 	private static final Log log = LogFactory.getLog(MZDQChannel.class);
 	private static final String ChannelNum = "48737";
 	private static final String ChannelKey = "d4ed5ab834164b97665c158e0e81eedf";
+	
+	public static AppCommonModel isMZDQChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName) 
+			throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = MZDQChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
+		}
+		
+		return model;
+	}
 	
 	public static AppCommonModel paiChong(String domain, String adid, String idfa)
 	{

@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
+
 import net.sf.json.JSONObject;
 
 public class JvZhangChannel extends BaseChannel 
@@ -11,6 +13,20 @@ public class JvZhangChannel extends BaseChannel
 	private static final Log log = LogFactory.getLog(JvZhangChannel.class);
 	private static  String mac = "02:00:00:00:00:00";
 	private static  String sourceid = "11029";
+	
+	public static AppCommonModel isJZChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = JvZhangChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
+		}
+		
+		return model;
+	}
 	
 	public static AppCommonModel paiChong(String domain, String adid, String idfa) 
 	{

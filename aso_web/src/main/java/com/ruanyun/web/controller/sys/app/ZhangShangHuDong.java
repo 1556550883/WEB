@@ -2,6 +2,7 @@ package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 
 import net.sf.json.JSONObject;
 
@@ -13,6 +14,25 @@ public class ZhangShangHuDong extends BaseChannel
 {
 	//我们的渠道号
 	private static final String CH = "3163";
+	
+	
+	public static AppCommonModel zhangshanghudong(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
+			String userAppId, String adverId, String userNum) 
+					throws NumberFormatException, UnsupportedEncodingException
+	{
+		//云聚
+		//调用第三方排重接口
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa, ip);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+		}
+		
+		return model;
+	}
+	
 	
 	/**
 	 * 排重

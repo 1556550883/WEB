@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 
 import net.sf.json.JSONObject;
 
@@ -15,6 +16,24 @@ public class FrogsChannel extends BaseChannel
 	
 	//我们的渠道号
 	private static final String channel = "frog";
+	
+	
+
+	public static AppCommonModel isFrogsChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//会赚
+		//调用第三方排重接口
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+		}
+		
+		return model;
+	}
 	
 	/**
 	 * 排重

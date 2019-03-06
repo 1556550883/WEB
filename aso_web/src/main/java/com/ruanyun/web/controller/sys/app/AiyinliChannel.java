@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
-import com.ruanyun.web.model.TUserApp;
+import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.util.MD5;
 
 import net.sf.json.JSONObject;
@@ -19,6 +19,20 @@ public class AiyinliChannel extends BaseChannel
 {
 	private static final Log log = LogFactory.getLog(AiyinliChannel.class);
 	private static final String key = "8086e6975b91962d514435167b2184c5";
+	
+	public static AppCommonModel isAiYLChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = AiyinliChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName, phoneModel, phoneVersion);
+		}
+		
+		return model;
+	}
 	
 	public static AppCommonModel paiChong(String domain, String adid, String idfa)
 	{

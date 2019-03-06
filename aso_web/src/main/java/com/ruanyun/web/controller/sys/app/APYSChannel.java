@@ -1,9 +1,12 @@
 package com.ruanyun.web.controller.sys.app;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.util.MD5;
 
 import net.sf.json.JSONObject;
@@ -13,6 +16,15 @@ public class APYSChannel extends BaseChannel
 	private static final Log log = LogFactory.getLog(APYSChannel.class);
 	private static final String ChannelSource = "zszs";
 	private static final String ChannelKey = "ua7227oetq6rr5p1pa4wlew4bduuvlae";
+	
+	
+	public static AppCommonModel isAPYSChannel(TChannelAdverInfo adverInfo, String adid, String idfa) 
+			throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa);
+		
+		return model;
+	}
 	
 	public static AppCommonModel paiChong(String domain, String adid, String idfa)
 	{

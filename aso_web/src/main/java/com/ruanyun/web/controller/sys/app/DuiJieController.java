@@ -1,7 +1,6 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,7 +53,6 @@ public class DuiJieController extends BaseController
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
 	
-	private static java.util.Random random = new java.util.Random();
 	/**
 	 * 查询系统参数
 	 */
@@ -86,149 +84,6 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
-	
-	public String getPhoneModel() 
-	{	
-		String phonemodel_sim = "iPhone7,1";
-		int result = random.nextInt(18);
-		switch (result)
-		{
-		case 0:
-			phonemodel_sim = "iPhone10,6";
-			break;
-		case 1:
-			phonemodel_sim = "iPhone8,1";
-			break;
-		case 2:
-			phonemodel_sim = "iPhone8,2";
-			break;
-		case 3:
-			phonemodel_sim = "iPhone8,4";
-			break;
-		case 4:
-			phonemodel_sim = "iPhone9,1";
-			break;
-		case 5:
-			phonemodel_sim = "iPhone9,2";
-			break;
-		case 6:
-			phonemodel_sim = "iPhone9,3";
-			break;
-		case 7:
-			phonemodel_sim = "iPhone9,4";
-			break;
-		case 8:
-			phonemodel_sim = "iPhone9,5";
-			break;
-		case 9:
-			phonemodel_sim = "iPhone9,6";
-			break;
-		case 10:
-			phonemodel_sim = "iPhone10,1";
-			break;
-		case 11:
-			phonemodel_sim = "iPhone10,4";
-			break;	
-		case 12:
-			phonemodel_sim = "iPhone10,2";
-			break;
-		case 13:
-			phonemodel_sim = "iPhone10,5";
-			break;
-		case 14:
-			phonemodel_sim = "iPhone11,2";
-			break;
-		case 15:
-			phonemodel_sim = "iPhone11,4";
-			break;
-		case 16:
-			phonemodel_sim = "iPhone11,6";
-			break;
-		case 17:
-			phonemodel_sim = "iPhone11,8";
-			break;
-		default:
-			phonemodel_sim = "iPhone8,1";
-			break;
-		}
-		
-		return phonemodel_sim;
-	}
-	
-	public String  getPhoneVersion()
-	{
-		String phoneVersion = "12.1.2";
-		int result = random.nextInt(4);
-		switch (result)
-		{
-			case 0:
-				phoneVersion = "12.0";
-				break;
-			case 1:
-				phoneVersion = "12.1";
-				break;
-			case 2:
-				phoneVersion = "12.1.1";
-				break;	
-			case 3:
-				phoneVersion = "12.1.2";
-				break;	
-			default:
-				phoneVersion = "12.1.2";
-				break;
-		}
-				
-		return phoneVersion;
-	}
-	
-//	public String getPhoneName() throws UnsupportedEncodingException 
-//	{	
-//		String phonemodel_sim = "iPhone6Plus";
-//		int result = random.nextInt(11);
-//		switch (result)
-//		{
-//		case 0:
-//			phonemodel_sim = "iPhone6";
-//			break;
-//		case 1:
-//			phonemodel_sim = "iPhone6s";
-//			break;
-//		case 2:
-//			phonemodel_sim = "iPhone6sPlus";
-//			break;
-//		case 3:
-//			phonemodel_sim = "iPhoneSE";
-//			break;
-//		case 4:
-//			phonemodel_sim = "iPhone7";
-//			break;
-//		case 5:
-//			phonemodel_sim = "iPhone7";
-//			break;
-//		case 6:
-//			phonemodel_sim = "iPhone7";
-//			break;
-//		case 7:
-//			phonemodel_sim = "iPhone7Plus";
-//			break;
-//		case 8:
-//			phonemodel_sim = "iPhone8";
-//			break;
-//		case 9:
-//			phonemodel_sim = "iPhone8Plus";
-//			break;	
-//		case 10:
-//			phonemodel_sim = "iPhone6Plus";
-//			break;
-//		default:
-//			phonemodel_sim = "iPhone6Plus";
-//			break;
-//		}
-//		
-////		phonemodel_sim =  URLEncoder.encode(phonemodel_sim,"UTF-8");
-////		phonemodel_sim = phonemodel_sim.replaceAll("\\+","%20");
-//		return phonemodel_sim;
-//	}
 	/**
 	 * 领取任务
 	 * @throws InterruptedException 
@@ -282,18 +137,17 @@ public class DuiJieController extends BaseController
 		}
 		else 
 		{
-			 //adid = request.getParameter("adid");//广告id（第三方提供）
 			 idfa = request.getParameter("idfa");//手机广告标识符
 			 userAppId = request.getParameter("userAppId");//用户Id
 			 appleId = request.getParameter("appleId");//苹果账号
 			 userNum = request.getParameter("userNum");
 			 phoneModel_real = request.getParameter("phoneModel") + "-";
 			 phoneVersion_real = request.getParameter("phoneVersion") + "-";
-			 phoneModel = getPhoneModel();
+			 phoneModel = ChannelClassification.getPhoneModel();
 			 phoneVersion = request.getParameter("phoneVersion");
 			if(phoneModel.compareTo("iPhone10,1") >= 0) 
 			{
-				phoneVersion = getPhoneVersion();
+				phoneVersion = ChannelClassification.getPhoneVersion();
 			}
 			
 			userApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
@@ -406,7 +260,8 @@ public class DuiJieController extends BaseController
 		}
 		
 		//排重
-		AppCommonModel checkChannelInfoModel = checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion);
+		TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
+		AppCommonModel checkChannelInfoModel = ChannelClassification.checkChannelInfo(channelInfo, adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion);
 		
 		if(checkChannelInfoModel.getResult() == -1)
 		{
@@ -719,7 +574,6 @@ public class DuiJieController extends BaseController
 				return;
 			}
 		}
-		//String userNum = request.getParameter("userNum");
 		
 		if(!StringUtils.hasText(idfa)
 				|| !StringUtils.hasText(adverId))
@@ -740,7 +594,6 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		String adid = task.getAdid();
 		String ip = task.getIp();
 		TUserApp tUserApp  = userAppService.getUserAppById(Integer.valueOf(task.getUserAppId()));
 		String userNum = tUserApp.getUserNum();
@@ -806,63 +659,7 @@ public class DuiJieController extends BaseController
 			String phoneOs = task.getPhoneVersion();
 			String [] arr1=phoneModel.split("-");
 			String [] arr2=phoneOs.split("-");
-			switch (num)
-			{
-				case 1:
-					//云聚
-					//调用第三方激活上报接口
-					model = YunJu.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr2[1], arr1[1]);
-					break;
-				case 2:
-					//掌上互动
-					//调用第三方激活上报接口
-					model = ZhangShangHuDong.activate(adverInfo.getFlag4(), adid, idfa, ip);
-					break;
-				case 4:
-					//云聚
-					//调用第三方激活上报接口
-					model = LiDeJiJin.activate(adverInfo.getFlag4(), adid, idfa, ip);
-					break;
-				case 6:
-					model = MZDQChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
-					break;
-				case 7:
-					model = APYSChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
-					break;
-				case 8:
-					model = JvZhangChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
-					break;
-				case 9:
-					model = AiyinliChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip);
-					break;
-				case 10:
-					//(String domain, String adid, String adverName, String idfa, String ip, String sysver, String phonemodel) {
-					model = HappyChannel.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr2[1], arr1[1]);
-					break;
-				case 11:
-					model = Huizhuan.activate(adverInfo.getFlag4(), adid, adverInfo.getAdverName(), idfa, ip, arr1[1], arr2[1]);
-					break;
-				case 12:
-					model = BeeChannel.activate(adverInfo, idfa, ip,arr1[1], arr2[1]);
-					break;
-				case 13:
-					model = FrogsChannel.activate();
-					break;
-				case 14:
-					model = FrogsTChannel.activate(adverInfo.getFlag4(), adid, idfa, ip);
-					break;
-				case 15:
-					model = FrogsTTChannel.activate(adverInfo.getFlag4(), adid, idfa, ip, adverInfo.getAdverName(),arr1[1], arr2[1]);
-					break;
-				case 16:
-					model = GourdChannel.activate(adverInfo, idfa, ip,arr1[1], arr2[1]);
-					break;
-				default:
-					model.setResult(-1);
-					model.setMsg("未完成。原因：渠道未在后台配置！");
-					break;
-			}
-			
+			model = ChannelClassification.channelActive(model,adverInfo,num, idfa, ip, arr1, arr2);
 			if(model.getResult() == -1)
 			{
 				super.writeJsonDataApp(response, model);
@@ -928,8 +725,6 @@ public class DuiJieController extends BaseController
 				super.writeJsonDataApp(response, model);
 				return;
 			}
-			System.out.println("leastTaskTime===================" + leastTaskTime);
-			System.out.println("leastTaskTime-------------------" + (new Date().getTime() - task.getOpenAppTime().getTime()));
 			//更改金额
 			TUserScore score = new TUserScore();
 			score.setUserNick(idfa);//标记任务的idfa
@@ -1035,7 +830,6 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
-	
 	/**
 	 * 任务是否完成
 	 */
@@ -1098,290 +892,6 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
     
-	//检测任务信息
-	private AppCommonModel checkChannelInfo(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
-			String userAppId, String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = new AppCommonModel(1, "任务领取成功！");
-		
-		//分渠道调用排重接口、点击接口
-		TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
-		if(channelInfo == null)
-		{
-			model.setResult(-1);
-			model.setMsg("领取任务失败。原因：渠道不存在！");
-		}
-		
-		int num = Integer.parseInt(channelInfo.getChannelNum());
-		switch (num) {
-		case 1:
-			//云聚
-			model = isYunJvChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel);
-			break;
-		case 2:
-			//云聚
-			model = zhangshanghudong(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
-			break;
-		case 3:
-			//自由渠道
-			model.setResult(1);
-			break;
-		case 4:
-			//利得基金
-			model = isLDJJChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
-			break;
-		case 5:
-			model = isDYDChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
-			break;
-		case 6:
-			model = isMZDQChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
-			break;
-		case 7:
-			model = isAPYSChannel(adverInfo, adid, idfa);
-			break;
-		case 8:
-			model = isJZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
-			break;
-		case 9:
-			model = isAiYLChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName,  phoneModel, phoneVersion);
-			break;
-		case 10:
-			model =  isHappyChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
-			break;
-		case 11:
-			model =  isHZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
-			break;
-		case 12:
-			model =  isBeeChannel(adverInfo, idfa, ip, userAppId, adverId, userNum, phoneModel, phoneVersion);
-			break;
-		case 13:
-			model =  isFrogsChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
-			break;
-		case 14:
-			model =  isFrogsTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
-			break;
-		case 15:
-			model =  isFrogsTTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
-			break;
-		case 16:
-			model =  isGourdChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
-			break;
-		default:
-			model.setResult(-1);
-			model.setMsg("领取任务失败。原因：渠道未在后台配置！");
-			break;
-		}
-		return model;
-	}
-	
-	private AppCommonModel zhangshanghudong(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
-			String userAppId, String adverId, String userNum) 
-					throws NumberFormatException, UnsupportedEncodingException
-	{
-		//云聚
-		//调用第三方排重接口
-		AppCommonModel model = ZhangShangHuDong.paiChong(adverInfo.getFlag2(), adid, idfa, ip);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = ZhangShangHuDong.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
-		}
-		
-		return model;
-	}
-	
-	//排重+点击+云聚
-	private AppCommonModel isYunJvChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
-			String userAppId, String adverId, String userNum, String  phoneVersion, String  phoneModel) 
-					throws NumberFormatException, UnsupportedEncodingException
-	{
-		//云聚
-		//调用第三方排重接口
-		AppCommonModel model = YunJu.paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = YunJu.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel,adverInfo.getAdverName());
-		}
-		
-		return model;
-	}
-	
-	//利德基金渠道+排重+点击
-	private AppCommonModel isLDJJChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum) 
-			throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = LiDeJiJin.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
-		
-		return model;
-	}
-	
-	private AppCommonModel isDYDChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum) 
-			throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = DYDChannel.clickDYD(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
-		
-		return model;
-	}
-	
-	private AppCommonModel isMZDQChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName) 
-			throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = MZDQChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = MZDQChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
-		}
-		
-		return model;
-	}
-	
-	private AppCommonModel isAPYSChannel(TChannelAdverInfo adverInfo, String adid, String idfa) 
-			throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = APYSChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
-		
-		return model;
-	}
-	
-	private AppCommonModel isJZChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = JvZhangChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = JvZhangChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
-		}
-		
-		return model;
-	}
-	
-	private AppCommonModel isAiYLChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = AiyinliChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = AiyinliChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName, phoneModel, phoneVersion);
-		}
-		
-		return model;
-	}
-	
-	private AppCommonModel isHappyChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName,String phoneModel,String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		AppCommonModel model = HappyChannel.paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = HappyChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel,adverInfo.getAdverName());
-		}
-		return model;
-	}
-	
-	private AppCommonModel isHZChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		//会赚
-		//调用第三方排重接口
-		AppCommonModel model = Huizhuan.paiChong(adverInfo.getFlag2(), adid, idfa, phoneModel, phoneVersion, adverName, ip);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = Huizhuan.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneModel, phoneVersion, adverName);
-		}
-		
-		return model;
-	}
-	
-	private AppCommonModel isBeeChannel(TChannelAdverInfo adverInfo, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		//会赚
-		//调用第三方排重接口
-		AppCommonModel model = BeeChannel.paiChong(adverInfo, idfa, ip,phoneModel, phoneVersion);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = BeeChannel.dianJi(adverInfo, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum,phoneModel, phoneVersion);
-		}
-		
-		return model;
-	}
-	
-	
-	private AppCommonModel isFrogsChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		//会赚
-		//调用第三方排重接口
-		AppCommonModel model = FrogsChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
-		
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = FrogsChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
-		}
-		
-		return model;
-	}
-	
-	private AppCommonModel isFrogsTChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		//调用第三方排重接口
-		AppCommonModel model = FrogsTChannel.paiChong(adverInfo.getFlag2(), adid, idfa, ip);
-		
-		return model;
-	}
-	
-	//TT frogs - 15
-	private AppCommonModel isFrogsTTChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String deviceType, String osVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		//调用第三方排重接口 
-		AppCommonModel model = FrogsTTChannel.paiChong(adverInfo.getFlag2(), adid, idfa, ip, adverName,deviceType, osVersion);
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = FrogsTTChannel.dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
-					userNum, deviceType, osVersion, adverName);
-		}
-		
-		return model;
-	}
-	
-	//TT 葫芦渠道 - 16
-	private AppCommonModel isGourdChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
-	{
-		//调用第三方排重接口 
-		AppCommonModel model = GourdChannel.paiChong(adverInfo.getFlag2(), adverInfo.getAdverAdid(), adid, idfa);
-		if(model.getResult() != -1)
-		{
-			//调用第三方点击接口
-			model = GourdChannel.dianJi(adverInfo.getFlag3(),adverInfo, idfa, phoneModel,phoneVersion, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
-					userNum);
-		}
-		
-		return model;
-	}
-	
 	//设置任务时间超时
 	@RequestMapping("setTaskTimeout")
 	public void setTaskTimeout(HttpServletResponse response,HttpServletRequest request) 

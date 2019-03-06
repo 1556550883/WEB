@@ -17,6 +17,24 @@ public class BeeChannel extends BaseChannel
 	private static final String ChannelSource = "zszs";
 	private static final String ChannelKey = "ua7227oetq6rr5p1pa4wlew4bduuvlae";
 	
+	
+
+	public static AppCommonModel isBeeChannel(TChannelAdverInfo adverInfo, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		//会赚
+		//调用第三方排重接口
+		AppCommonModel model = paiChong(adverInfo, idfa, ip,phoneModel, phoneVersion);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum,phoneModel, phoneVersion);
+		}
+		
+		return model;
+	}
+	
 	/**
 	 * 排重
 	 */

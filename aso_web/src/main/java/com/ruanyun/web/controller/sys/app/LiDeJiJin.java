@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 
 import net.sf.json.JSONObject;
 
@@ -22,6 +23,18 @@ public class LiDeJiJin extends BaseChannel
 	
 	//mac
 	private static final String MAC = "02:00:00:00:00:00";
+	
+	
+	//利德基金渠道+排重+点击
+	public static  AppCommonModel isLDJJChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum) 
+			throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum);
+		
+		return model;
+	}
+	
 	
 	/**
 	 * 点击

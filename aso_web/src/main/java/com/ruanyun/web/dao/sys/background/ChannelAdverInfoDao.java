@@ -264,8 +264,6 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		String iYear = year + "_";
 		String iMonth = month + "_";
 		String iDay   = day + "";
-//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-d");
-//		String dateString = df.format(new Date());
 		String adverInfoName = "t_channel_adver_info_" + iYear + iMonth + iDay;
 		String adverInfoDetailName = "t_userappid_adverid_" + iYear + iMonth + iDay;
 		
@@ -273,17 +271,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		String oMonth = month + "-";
 		String oDay = day + "";
 		String yesterdayString = oYear + oMonth + oDay;//昨天 yyyy-MM-d
-		StringBuilder sql1 = new StringBuilder("CREATE TABLE " + adverInfoName + " SELECT * FROM t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
-		StringBuilder sql2 = new StringBuilder("CREATE TABLE " + adverInfoDetailName + " SELECT * FROM t_userappid_adverid where receive_time <'" + yesterdayString + "'");
-		result1 = sqlDao.execute(sql1.toString());
+		//去掉任务备份功能
+		//StringBuilder sql1 = new StringBuilder("CREATE TABLE " + adverInfoName + " SELECT * FROM t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
+		StringBuilder sql2 = new StringBuilder("CREATE TABLE " + adverInfoDetailName + " SELECT * FROM t_userappid_adverid");
+		//result1 = sqlDao.execute(sql1.toString());
 		result2 = sqlDao.execute(sql2.toString());
 		
 		if(result1 != -1 && result2 != -1) 
 		{
 			//DELETE `t_userappid_adverid` FROM `t_userappid_adverid`  LEFT JOIN `t_user_app` ON `t_userappid_adverid`.user_app_id= t_user_app.user_app_id WHERE t_user_app.`user_appp_type` = 1
-			StringBuilder sql3 = new StringBuilder("Delete from t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
-			StringBuilder sql4 = new StringBuilder("Delete from t_userappid_adverid where receive_time < '" + yesterdayString + "'");
-			sqlDao.execute(sql3.toString());
+			//StringBuilder sql3 = new StringBuilder("Delete from t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
+			StringBuilder sql4 = new StringBuilder("DELETE `t_userappid_adverid` FROM `t_userappid_adverid`  LEFT JOIN `t_user_app` ON `t_userappid_adverid`.user_app_id= t_user_app.user_app_id WHERE t_user_app.`user_appp_type` = 1");
+			//sqlDao.execute(sql3.toString());
 			sqlDao.execute(sql4.toString());
 		}
 	}

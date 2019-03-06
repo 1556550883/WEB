@@ -1,12 +1,12 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ruanyun.web.model.AppCommonModel;
+import com.ruanyun.web.model.TChannelAdverInfo;
 
 import net.sf.json.JSONObject;
 
@@ -15,6 +15,20 @@ public class HappyChannel extends BaseChannel
 	//我们的渠道号
 	private static final String key = "jk3jwoaylhh91qr";
 	private static final Log log = LogFactory.getLog(HappyChannel.class);
+	
+	
+	public static AppCommonModel isHappyChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
+			String adverId, String userNum, String adverName,String phoneModel,String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+	{
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip);
+		
+		if(model.getResult() != -1)
+		{
+			//调用第三方点击接口
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, phoneVersion, phoneModel,adverInfo.getAdverName());
+		}
+		return model;
+	}
 	
 	/**
 	 * 排重 String adid, String key,
@@ -76,12 +90,11 @@ public class HappyChannel extends BaseChannel
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
 			Integer userAppId, Integer adverId, String userNum,  String sysver, String phonemodel, String adverName) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		String keywords =  URLEncoder.encode(adverName, "utf-8");
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&key=").append(key)
 				.append("&idfa=").append(idfa)
-				.append("&keyword=").append(keywords)
+				.append("&keyword=").append(adverName)
 				.append("&ip=").append(ip)
 				.append("&model=").append(phonemodel)
 				.append("&sysver=").append(sysver)

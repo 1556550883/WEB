@@ -20,7 +20,6 @@
             <span style=".flex1; line-height:0.8rem; font-weight: bold; color: #4a4a4a; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">个人提现</span>
     </div>
     
-    
     <div id="container" style="padding-top:0.9rem;position:relative;width:100%;font-size:15px;">
     	<div style="background:#fff; margin-top:5px;height:600px; position: relative;">
     			<div style="margin-top:10px;margin-left:20px;position:absolute;">
