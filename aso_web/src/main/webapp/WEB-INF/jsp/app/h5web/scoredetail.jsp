@@ -45,6 +45,9 @@
 						name = "徒弟" + data.adverName + "完成五次任务奖励"
 					}else if(data.taskType == 4){
 						name = "新收徒20人奖励"
+					}else if(data.taskType == 6){
+						name = data.typeDesc;
+						price = "-" + data.adverPrice + "元";
 					}
 				}
 				

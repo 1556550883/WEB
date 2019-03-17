@@ -63,7 +63,7 @@
 		            	
 		            	if(result == 0){
 		            		alert(msg);
-		            		window.location.href = base_url + "phone";
+		            		window.location.href = base_url + "user";
 		            	}
 		            	else if(result == -1){
 		            		alert(msg);

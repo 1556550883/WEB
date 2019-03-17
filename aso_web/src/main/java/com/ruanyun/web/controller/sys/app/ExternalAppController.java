@@ -39,7 +39,7 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}
-		
+		System.out.println("keyword===============================" + keyword);
 		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
 		tExternalChannelTask.setIdfa(idfa);
 		tExternalChannelTask.setSysver(sysver);

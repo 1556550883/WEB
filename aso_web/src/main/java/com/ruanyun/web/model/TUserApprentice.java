@@ -27,7 +27,7 @@ public class TUserApprentice  implements java.io.Serializable
      private String userNum;
      private String apprenticeUserNum;
      private Float score;
-     private String flag1;
+     private String typeDesc;
      private String flag2;
      private String flag3;
      private String flag4;
@@ -38,12 +38,11 @@ public class TUserApprentice  implements java.io.Serializable
      private String userNick;//用户昵称
     public TUserApprentice(){}
 
-    public TUserApprentice(String userApprenticeNum, String userNum, String apprenticeUserNum, Float score, String flag1, String flag2, String flag3, String flag4, String flag5, Date apprenticeTime) {
+    public TUserApprentice(String userApprenticeNum, String userNum, String apprenticeUserNum, Float score,  String flag2, String flag3, String flag4, String flag5, Date apprenticeTime) {
        this.userApprenticeNum = userApprenticeNum;
        this.userNum = userNum;
        this.apprenticeUserNum = apprenticeUserNum;
        this.score = score;
-       this.flag1 = flag1;
        this.flag2 = flag2;
        this.flag3 = flag3;
        this.flag4 = flag4;
@@ -95,15 +94,6 @@ public class TUserApprentice  implements java.io.Serializable
     
     public void setScore(Float score) {
         this.score = score;
-    }
-    
-    @Column(name="flag1", length=100)
-    public String getFlag1() {
-        return this.flag1;
-    }
-    
-    public void setFlag1(String flag1) {
-        this.flag1 = flag1;
     }
     
     @Column(name="flag2", length=100)
@@ -175,6 +165,15 @@ public class TUserApprentice  implements java.io.Serializable
 
 	public void setUserNick(String userNick) {
 		this.userNick = userNick;
+	}
+
+	 @Column(name="type_desc", length=100)
+	public String getTypeDesc() {
+		return typeDesc;
+	}
+
+	public void setTypeDesc(String typeDesc) {
+		this.typeDesc = typeDesc;
 	}
 
 }

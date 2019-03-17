@@ -25,12 +25,15 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverStepUser;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserApprentice;
+import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.model.sys.TUser;
+import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.service.background.ChannelAdverStepUserService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserScoreInfoService;
+import com.ruanyun.web.service.background.UserScoreService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpSessionUtils;
@@ -54,6 +57,8 @@ public class UserAppController extends BaseController
 	private ChannelAdverStepUserService channelAdverStepUserService;
 	@Autowired	
 	private AppUserApprenticeService appUserApprenticeService;
+	@Autowired
+	private UserScoreService userScoreService;
 	/**
 	 * 
 	 * 
@@ -67,18 +72,113 @@ public class UserAppController extends BaseController
 	{
 		info.setUserApppType(1);
 		page.setNumPerPage(20);
-		addModel(model, "pageList", userAppService.queryPage(page, info));
+		page = userAppService.queryPage(page, info);
+		
+		addModel(model, "pageList", page);
 		addModel(model, "bean", info);
 		
 		return "pc/userApp/list";
 	}
+	
+	@RequestMapping("changeUserScore")
+	public String changeUserScore(TUserApp info,Model model){
+		String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, info.getUserAppId());
+		TUserScore ss = new TUserScore();
+		ss.setUserNum(userNum);
+		addModel(model, "userScore", ss);
+		
+		return "pc/userApp/changeScore";
+	}
+	
+	@RequestMapping("saveChangeUserScore")
+	public void saveChangeUserScore(TUserScore userScore, Model model){
+		userScore.setType(6);
+		try {
+			QueueProducer.getQueueProducer().sendMessage(userScore, "socre");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	String phoneModelChange(String phoneModel) 
+	{
+		if(phoneModel == null) {
+			return "";
+		}
+		
+		switch (phoneModel)
+		{
+		  case "iPhone5,1":    
+		  case "iPhone5,2":   
+		  phoneModel= "iPhone5";
+			  break;
+		   case "iPhone5,3":
+		   case"iPhone5,4":                
+		   phoneModel = "iPhone5c";
+			   break;
+		   case "iPhone6,1":
+		   case "iPhone6,2":                  
+			   phoneModel = "iPhone5s";
+			   break;
+		   case "iPhone7,2":                           
+			   phoneModel =  "iPhone6";
+			   break;
+		   case "iPhone7,1":                             
+			   phoneModel =  "iPhone6" ; 
+			   break;
+		   case "iPhone8,1":                               
+			   phoneModel =  "iPhone6s" ;
+			   break;
+		   case "iPhone8,2":                            
+			   phoneModel =  "iPhone6s" ; 
+			   break;
+		   case "iPhone8,4":                             
+			   phoneModel =  "iPhone6s" ; 
+			   break;
+			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  
+				phoneModel =  "iPhone7";
+				break;
+			case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    
+				phoneModel =  "iPhone8";
+				break;
+			case "iPhone10,3":case  "iPhone10,6":   
+				phoneModel = "iPhoneX"; 
+				break;
+			case "iPhone11,2": case "iPhone11,4": case "iPhone11,6":    
+				phoneModel =  "iPhoneXs"; 
+				break;
+			case "iPhone11,8":   
+				phoneModel =  "iPhoneXr";
+				break;
+			default:
+				if(phoneModel.compareTo("iPhone11,8") > 0) 
+				{
+					phoneModel =  "iPhoneXr";
+				}
+				else if(phoneModel.compareTo("iPhone5,1") < 0) 
+				{
+					phoneModel =  "iPhone4";
+				}else {
+					phoneModel =  "iPhone6";
+				}
+				
+				break;
+			}
+		
+			return phoneModel;
+		}
 	
 	@RequestMapping("effUserList")
 	public String getEffUserAppList(Page<TUserApp> page,TUserApp info,Model model)
 	{
 		info.setUserApppType(2);
 		page.setNumPerPage(20);
-		addModel(model, "pageList", userAppService.queryPage(page, info));
+		page = userAppService.queryPage(page, info);
+		
+		for(TUserApp userApp : page.getResult()) {
+			userApp.setPhoneModel(phoneModelChange(userApp.getPhoneModel()));
+		}
+		addModel(model, "pageList", page);
 		addModel(model, "bean", info);
 		
 		return "pc/userApp/effUserList";
@@ -230,7 +330,7 @@ public class UserAppController extends BaseController
 	}
 	
 	/**
-	 * 功能描述:进入修改页面
+	 * 徒弟
 	 */
 	@RequestMapping("/apprenticeList")
 	public String apprenticeList(Page<TUserApp> page, TUserApp userApp, Model model)
@@ -239,6 +339,45 @@ public class UserAppController extends BaseController
 		{
 			page.setNumPerPage(Integer.MAX_VALUE);
 			page = userAppService.queryUserAppByMasterID(page, userApp.getUserAppId() + "");
+			
+			for(TUserApp user : page.getResult()) {
+				userApp.setPhoneModel(phoneModelChange(user.getPhoneModel()));
+			}
+		}
+		
+		addModel(model, "pageList", page);
+		
+		return "pc/userApp/apprenticeList";
+	}
+	
+	//师傅根据id
+	@RequestMapping("/getmaster")
+	public String getmaster(Page<TUserApp> page, TUserApp userApp, Model model)
+	{
+		if (EmptyUtils.isNotEmpty(userApp.getUserAppId()))
+		{
+			page.setNumPerPage(Integer.MAX_VALUE);
+			page = userAppService.queryMasterUserAppByID(page, userApp.getUserAppId() + "");
+			for(TUserApp user : page.getResult()) {
+				userApp.setPhoneModel(phoneModelChange(user.getPhoneModel()));
+			}
+		}
+		
+		addModel(model, "pageList", page);
+		
+		return "pc/userApp/apprenticeList";
+	}
+	
+	@RequestMapping("/getUserByUserNum")
+	public String getUserByUserNum(Page<TUserApp> page, TUserApp userApp, Model model)
+	{
+		if (EmptyUtils.isNotEmpty(userApp.getUserNum()))
+		{
+			page.setNumPerPage(Integer.MAX_VALUE);
+			page = userAppService.getUserByUserNum(page, userApp.getUserNum());
+			for(TUserApp user : page.getResult()) {
+				userApp.setPhoneModel(phoneModelChange(user.getPhoneModel()));
+			}
 		}
 		
 		addModel(model, "pageList", page);

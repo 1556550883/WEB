@@ -38,7 +38,7 @@ public class TUserScore  implements java.io.Serializable
      private Integer redPackageCountDay;//今日可以抢红包数量
      private Float redPackageScoreDay;//今日红包奖励
      private Float redPackageScoreCount;//红包总奖励
-     private float forward;
+     private Integer putForward;
      private Integer effectiveUserCount;
      
     public TUserScore() {
@@ -215,17 +215,6 @@ public class TUserScore  implements java.io.Serializable
 	public void setLevelName(String levelName) {
 		this.levelName = levelName;
 	}
-	
-	@Column(name="put_forward")
-	public float getForward() 
-	{
-		return forward;
-	}
-
-	public void setForward(float forward) 
-	{
-		this.forward = forward;
-	}
 
 	@Column(name="effective_user_count")
 	public Integer getEffectiveUserCount() {
@@ -236,6 +225,14 @@ public class TUserScore  implements java.io.Serializable
 		this.effectiveUserCount = effectiveUserCount;
 	}
 
+	@Column(name="put_forward")
+	public Integer getPutForward() {
+		return putForward;
+	}
+
+	public void setPutForward(Integer putForward) {
+		this.putForward = putForward;
+	}
 }
 
 

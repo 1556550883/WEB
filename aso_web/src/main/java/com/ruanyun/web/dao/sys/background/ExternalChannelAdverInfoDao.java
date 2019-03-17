@@ -2,6 +2,9 @@ package com.ruanyun.web.dao.sys.background;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -78,7 +81,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	public Page<TExternalChannelAdverTaskInfo> completeListInfo(Page<TExternalChannelAdverTaskInfo> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
 	{
 		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
-		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' GROUP BY keywords";
+		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 and complete_time >= '"+getDate()+"' and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' GROUP BY keywords";
 		Query query  = sqlDao.createQuery(sql);
 		List<Object[]> result = query.list();
 		List<TExternalChannelAdverTaskInfo> list = new ArrayList<TExternalChannelAdverTaskInfo>();
@@ -97,6 +100,14 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 		return page;
 	}
 	
+	//获取昨天的日期
+		public String getDate() {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String date = simpleDateFormat.format(new Date());
+			return date;
+		}
+		
+		
 	//查询任务详情
 	@SuppressWarnings("unchecked")
 	public Page<TExternalChannelTask> adverCompleteInfo(Page<TExternalChannelTask> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)

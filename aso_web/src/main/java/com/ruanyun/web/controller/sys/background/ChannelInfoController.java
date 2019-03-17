@@ -22,10 +22,13 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
+import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.model.sys.TDictionary;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.service.background.ChannelInfoService;
+import com.ruanyun.web.service.background.UserAppService;
+import com.ruanyun.web.util.AddressUtils;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.EncrypDES;
@@ -40,7 +43,8 @@ public class ChannelInfoController extends BaseController
 	
 	@Autowired
 	private PublicCache publicCache;
-	
+	@Autowired
+	private UserAppService userAppService;
 	/**
 	 * 
 	 * 功能描述:渠道列表
@@ -89,7 +93,15 @@ public class ChannelInfoController extends BaseController
 	public String employeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime, Model model) throws ParseException
 	{
 		completeTime = StringUtils.hasText(completeTime)?completeTime.replaceAll("-", ""):new SimpleDateFormat("yyyyMMdd").format(new Date());
-		addModel(model, "pageList", channelInfoService.queryEmployeeIdfaStatistics(page, userAppId, completeTime));
+		page = channelInfoService.queryEmployeeIdfaStatistics(page, userAppId, completeTime);
+		TUserApp userApp = userAppService.getUserAppById(userAppId);
+		if(userApp.getUserApppType() == 2) {
+			for(TUserappidAdverid task : page.getResult()) {
+				task.setLocaltion(AddressUtils.getAddressByIP(task.getIp()));
+			}
+		}
+		
+		addModel(model, "pageList",page);
 		try 
 		{
 			addModel(model, "userAppId", userAppId);

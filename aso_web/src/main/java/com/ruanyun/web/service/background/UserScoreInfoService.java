@@ -5,6 +5,8 @@
  */
 package com.ruanyun.web.service.background;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -82,7 +84,7 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 	
 	public List<TUserScoreInfo> getScoreInfoListByUserNums(String userNums)
 	{
-		StringBuffer sql=new StringBuffer(" SELECT * FROM t_user_score_info WHERE user_app_num='"+userNums+"'");
+		StringBuffer sql=new StringBuffer(" SELECT * FROM t_user_score_info WHERE user_app_num='"+userNums+"' order by score_time desc");
 		return sqlDao.getAll(TUserScoreInfo.class, sql.toString());
 	}
 	
@@ -91,6 +93,34 @@ public class UserScoreInfoService extends BaseServiceImpl<TUserScoreInfo>{
 		StringBuffer sql=new StringBuffer("SELECT * FROM t_user_score_info WHERE user_app_num='"+userNums+"' and status = 0");
 		return sqlDao.get(TUserScoreInfo.class, sql.toString());
 	}
+	
+	
+	public static void datecc() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+		Date now = new Date();
+		String date  = "2019-03-11 10:55:53";
+		try {
+			Date dd = simpleDateFormat.parse(date);
+			
+			long nd = 1000 * 24 * 60 * 60;
+		    long nh = 1000 * 60 * 60;
+		    long nm = 1000 * 60;
+			long diff = now.getTime() - dd.getTime();
+			long hour = diff % nd / nh;
+			long day = diff / nd;   // 计算差多少天
+			long min = diff % nd % nh / nm;  // 计算差多少分钟
+			System.err.println("小时差" + hour);
+			System.err.println("小差" + min);
+			System.err.println("差" + hour);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		datecc();
+	}
+	
 	/**
 	 * 
 	 * 功能描述:后台手机用户获取用户的积分明细

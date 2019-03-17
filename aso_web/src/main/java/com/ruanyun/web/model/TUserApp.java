@@ -56,7 +56,7 @@ public class TUserApp implements java.io.Serializable {
 	private Date createDate;
 	private TUserScore userScore;
 	private Float score;
-	private boolean isPutward;
+	private String loginDesc;
 	
 	public TUserApp() {
 	}
@@ -362,13 +362,12 @@ public class TUserApp implements java.io.Serializable {
 		this.score = score;
 	}
 
-	@Transient
-	public boolean isPutward() {
-		return isPutward;
+	@Column(name = "login_desc")
+	public String getLoginDesc() {
+		return loginDesc;
 	}
 
-	public void setPutward(boolean isPutward) {
-		this.isPutward = isPutward;
+	public void setLoginDesc(String loginDesc) {
+		this.loginDesc = loginDesc;
 	}
-	
 }

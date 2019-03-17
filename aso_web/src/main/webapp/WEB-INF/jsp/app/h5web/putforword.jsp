@@ -109,10 +109,11 @@
 	 	            success:function(data){
 	 	            	var json = eval(data);
 	 	           		var result  = json["result"];
+	 	           		var msg  = json["msg"];
 	 	           		if(result == -1){
 	 	           			alert("抱歉，您的余额不足！");
 	 	           		}else if(result == 2){
-	 	           			alert("您已有一个提现，请等待审核！");
+	 	           			alert(msg);
 	 	           		}else{
 	 	           			alert("提现成功，请等待后台管理审核！");
 	 	           		}

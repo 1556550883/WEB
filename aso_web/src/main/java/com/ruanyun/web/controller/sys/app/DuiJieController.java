@@ -120,7 +120,7 @@ public class DuiJieController extends BaseController
 				return;
 			}
 			
-			if(userApp.getPhoneNum() == null || userApp.getPhoneNum() == "") {
+			if(userApp.getPhoneNum() == null || userApp.getZhifubao() == null || userApp.getOpenID() == null ) {
 				model.setResult(0);
 				model.setMsg("请先完善个人信息！");
 				super.writeJsonDataApp(response, model);
@@ -143,7 +143,7 @@ public class DuiJieController extends BaseController
 			 userNum = request.getParameter("userNum");
 			 phoneModel_real = request.getParameter("phoneModel") + "-";
 			 phoneVersion_real = request.getParameter("phoneVersion") + "-";
-			 phoneModel = ChannelClassification.getPhoneModel();
+			 phoneModel = ChannelClassification.getPhoneModel(userAppId);
 			 phoneVersion = request.getParameter("phoneVersion");
 			if(phoneModel.compareTo("iPhone10,1") >= 0) 
 			{
@@ -192,26 +192,48 @@ public class DuiJieController extends BaseController
 		//判断当天领取到的任务
 		//Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
 		String adid = adverInfo.getAdid();
-		Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfaOrIP(idfa, ip);
-		
-		if (taskList != null && !taskList.getResult().isEmpty())
-		{
-			//判断idfa是否重复 判断是否有任务在进行
-			AppCommonModel checkIdfaModel = checkIDFADuplicated(userApp, adid, taskList, idfa, adverId);
-			if(checkIdfaModel.getResult() != 2) 
-			{
-				super.writeJsonDataApp(response, checkIdfaModel);
-				return;
-			}
+		if(userApp.getUserApppType() == 1) {
+			Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfaOrIP(idfa, ip);
 			
-			//散户不需要查重ip
-			if(userApp.getUserApppType() != 2) {
-				//判断数据库里IP是否重复
+			if (taskList != null && !taskList.getResult().isEmpty())
+			{
+				//判断idfa是否重复 判断是否有任务在进行
+				AppCommonModel checkIdfaModel = checkIDFADuplicated(userApp, adid, taskList, idfa, adverId);
+				if(checkIdfaModel.getResult() != 2) 
+				{
+					super.writeJsonDataApp(response, checkIdfaModel);
+					return;
+				}
+				
 				AppCommonModel checkIpModel = checkIPDuplicated(adid, taskList, ip);
 				if(checkIpModel.getResult() != 2) 
 				{
 					super.writeJsonDataApp(response, checkIpModel);
 					return;
+				}
+			}
+		}else {
+			//散户验证是否存在任务
+			Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfa(idfa);
+			if (taskList != null && !taskList.getResult().isEmpty()) {
+				for (TUserappidAdverid item : taskList.getResult()) {
+					if(item.getStatus().compareTo("1.5") < 0) {
+						item.setReceiveTime(new Date());
+						userappidAdveridService.updateReceiveTime(item);
+						model.setResult(1);
+						model.setObj(item);
+						model.setMsg("请先完成正在进行的任务...");
+						break;
+					}else if(item.getStatus().compareTo("1.6") == 0 && item.getAdverId().equals(Integer.valueOf(adverId))){
+						model.setResult(-1);
+						model.setMsg("抱歉，此任务今日已超时，请明日在来！");
+						break;
+					}else if((item.getStatus().compareTo("1.5") == 0 && item.getAdverId().equals(Integer.valueOf(adverId)))) 
+					{
+						model.setResult(1);
+						model.setObj(item);
+						break;
+					}
 				}
 			}
 		}

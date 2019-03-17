@@ -102,6 +102,12 @@ public class UserScoreDao extends BaseDaoImpl<TUserScore>{
 		String sql="UPDATE t_user_score SET apprentice_count= "+count+" where user_num = '"+usernum+ "'";
 		return sqlDao.execute(sql);
 	}
+	
+	public int updatePutforwardStatus(String usernum, int forward)
+	{
+		String sql="UPDATE t_user_score SET put_forward= "+forward+" where user_num = '"+usernum+ "'";
+		return sqlDao.execute(sql);
+	}
 	/**
 	 * 功能描述: 清楚红包数量
 	 *

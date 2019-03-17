@@ -53,8 +53,6 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	/**
 	 * 
 	 * 功能描述：增加或者修改
-	 * @author: xqzhang
-	 * @date:2016-1-6
 	 * @param info
 	 * @param stepMinCount 
 	 * @param stepType 

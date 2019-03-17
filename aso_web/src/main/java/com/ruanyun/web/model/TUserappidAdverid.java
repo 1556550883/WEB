@@ -19,6 +19,7 @@ public class TUserappidAdverid implements Serializable
 	
 	private Integer userAppId;
 	private String ip;
+	private String localtion;
 	private String idfa;
 	private String appleId;
 	private String adid;
@@ -271,5 +272,14 @@ public class TUserappidAdverid implements Serializable
 
 	public void setPhoneVersion(String phoneVersion) {
 		this.phoneVersion = phoneVersion;
+	}
+
+	@Transient
+	public String getLocaltion() {
+		return localtion;
+	}
+
+	public void setLocaltion(String localtion) {
+		this.localtion = localtion;
 	}
 }

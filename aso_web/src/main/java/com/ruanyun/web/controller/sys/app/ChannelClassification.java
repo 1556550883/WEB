@@ -79,6 +79,12 @@ public class ChannelClassification
 		case 17:
 			model =  limazuanChannel.isLimazuanChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
+		case 18:
+			model =  XinzhuanChannel.isXinzhuanChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			break;
+		case 19:
+			model =  HuizhuanSanhuChannel.isHuizhuanSanhuChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			break;
 		default:
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：渠道未在后台配置！");
@@ -142,6 +148,12 @@ public class ChannelClassification
 			case 17:
 				model = limazuanChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1]);
 				break;
+			case 18:
+				model = XinzhuanChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1]);
+				break;
+			case 19:
+				model = HuizhuanSanhuChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneModel[1], phoneos[1]);
+				break;
 			default:
 				model.setResult(-1);
 				model.setMsg("未完成。原因：渠道未在后台配置！");
@@ -152,10 +164,15 @@ public class ChannelClassification
 	}
 	
 	
-	public static String getPhoneModel() 
+	public static String getPhoneModel(String id) 
 	{	
 		String phonemodel_sim = "iPhone7,1";
 		int result = random.nextInt(18);
+		//账号77设定为4以上  iphone7
+		if(id.equals("77") && result <= 4){
+			result = 4;
+		} 
+		
 		switch (result)
 		{
 		case 0:

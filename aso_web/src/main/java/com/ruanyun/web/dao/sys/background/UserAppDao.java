@@ -39,6 +39,7 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 			sql.append(SQLUtils.popuHqlEq("userApppType", t.getUserApppType()));
 			sql.append(SQLUtils.popuHqlLike("flag2", t.getFlag2()));
 			sql.append(SQLUtils.popuHqlLike("loginName", t.getLoginName()));
+			sql.append(" ORDER BY create_date desc");
 		}
 		return sql.toString();
 	}
@@ -49,9 +50,20 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 		return sqlDao.queryPage(page, TUserApp.class, sql.toString());
 	}
 	
+	
+	public Page<TUserApp> queryMasterUserAppByID(Page<TUserApp> page, String appid){
+		StringBuffer sql=new StringBuffer("SELECT * from t_user_app WHERE user_app_id ='"+appid+"'");
+		return sqlDao.queryPage(page, TUserApp.class, sql.toString());
+	}
+	
+	public Page<TUserApp> getUserByUserNum(Page<TUserApp> page, String appid){
+		StringBuffer sql=new StringBuffer("SELECT * from t_user_app WHERE user_num ='"+appid+"'");
+		return sqlDao.queryPage(page, TUserApp.class, sql.toString());
+	}
+	
 	public Page<TUserApp> queryEffUserAppByMasterID(Page<TUserApp> page, String appid){
 		//iseffective = 1 代表黑名单
-		StringBuffer sql = new StringBuffer("SELECT * from t_user_app WHERE master_id ='"+appid+"' and !ISNULL(open_id) and !ISNULL(zhifubao) and !ISNULL(phone_num) and is_effective = 0 ORDER BY create_date DESC");
+		StringBuffer sql = new StringBuffer("SELECT * from t_user_app WHERE master_id ='"+appid+"' and !ISNULL(open_id) and !ISNULL(zhifubao) and !ISNULL(phone_num) and is_effective = 0 and limit_time < 30 ORDER BY create_date DESC");
 		return sqlDao.queryPage(page, TUserApp.class, sql.toString());
 	}
 	/**
@@ -123,7 +135,7 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 	public int geteffApprenticeNum(String id) 
 	{
 		//StringBuffer sql = new StringBuffer(" SELECT count(*) from t_user_app WHERE master_id='"+id+"'");
-		String sql = "SELECT count(*) from t_user_app WHERE master_id= '"+id+"' and !ISNULL(open_id) and !ISNULL(zhifubao) and !ISNULL(phone_num) and is_Effective = 0";
+		String sql = "SELECT count(*) from t_user_app WHERE master_id= '"+id+"' and !ISNULL(open_id) and !ISNULL(zhifubao) and !ISNULL(phone_num) and is_Effective = 0 and limit_time < 30";
 		return sqlDao.getCount(sql);
 	}
 	

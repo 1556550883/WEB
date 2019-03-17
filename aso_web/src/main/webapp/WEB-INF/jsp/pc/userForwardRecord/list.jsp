@@ -33,8 +33,8 @@
 		     <c:forEach var="item" items="${pageList.result}">
 				<tr >
 				  <td align="center">
-       							 <input type="checkbox"  id="orderCheckBox" name="ids" value="${item.userScoreInfoId}"></td>
-					<td>${item.userAppNum}</td>	               
+       				<input type="checkbox"  id="orderCheckBox" name="ids" value="${item.userScoreInfoId}"></td>
+					 <td id="${item.userAppNum}"><a style="cursor: pointer;" onclick="add('userApp/getUserByUserNum?userNum=${item.userAppNum}','用户详情',1500,1000,'main_')"><span style="color:blue">${item.userAppNum}</span></a></td>            
 	                <td>${item.userType}</td>
 	                <td>${item.score}</td>
 	                <td>${item.scoreTime}</td>

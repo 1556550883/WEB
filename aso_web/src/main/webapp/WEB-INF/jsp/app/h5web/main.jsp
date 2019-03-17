@@ -5,12 +5,11 @@
 <head>
   	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<script type="text/javascript" charset="utf-8" src="../js/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" charset="utf-8" src="../js/px2rem.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/showText.js"></script>
 </head>
 
-<body style="font-size:20px; font-family:微软雅黑;color:#444; background:#fff;margin-left:5%;width:90%;">
- 	<div style="background:#A020F0;width:100%; height:150px;margin-top:5px; border-radius:5px">
+<body style="margin-left:5%;width:90%;">
+ 	<div style="background:#A020F0;width:100%; height:410px;margin-top:5px; border-radius:5px">
 	 	<div style="text-align:center; ">
 	 		<FONT face=楷体_GB2312 color=#FFFFFF size=5><STRONG>HAPPY 赚</STRONG></FONT>
 	 	</div>
@@ -66,6 +65,7 @@
 
 
  	<script>
+		var base_url  = "http://moneyzhuan.com/";
    		var weixin  = "";
 		var phonenum  = "";
 		var payfor  = "";
@@ -152,7 +152,7 @@
 		     showdata();
 	 	};
 	 	
- 	 	var base_url  = "http://moneyzhuan.com/";
+ 	 
  		function taskDetail(){
 	         window.location.href = base_url + "task";
  		}

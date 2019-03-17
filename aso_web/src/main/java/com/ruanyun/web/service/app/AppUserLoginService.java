@@ -254,7 +254,7 @@ public class AppUserLoginService extends BaseServiceImpl<TUserLogin>
 		AppCommonModel model = new AppCommonModel(-1, "");
 		if (udid == null) 
 		{
-			model.setMsg("failed");
+			model.setMsg("未获取到用户的udid，请先安装描述文件！");
 			return model;
 		}
 		HUserAppModel userModel = userLoginDao.getHUserModel(udid);

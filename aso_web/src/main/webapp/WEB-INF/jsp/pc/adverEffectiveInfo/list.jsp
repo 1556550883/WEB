@@ -42,6 +42,7 @@
 				<th align="center">idfa</th>
 				<th align="center">apple id</th>
 				<th align="center">领取时间</th>
+				<th align="center">打开时间</th>
 				<th align="center">完成时间</th>
 				<th align="center">支付时间</th>
 			</tr>
@@ -57,6 +58,7 @@
 	                <td>${item.idfa}</td> 
 	                <td>${item.appleId}</td> 
 	                <td>${item.receiveTime}</td>  
+	                <td>${item.openAppTime}</td>  
 	                <td>${item.completeTime}</td>
 	                <td>${item.payTime}</td>
 				</tr>

@@ -230,6 +230,10 @@ public class AppH5WebController extends BaseController
 					userScoreDetail2.setAdverName(userApprentice.getApprenticeUserNum());//徒弟的usernum
 				}
 				
+				if(userApprentice.getUserApprenticeType() == 6) {
+					userScoreDetail2.setTypeDesc(userApprentice.getTypeDesc());//徒弟的usernum
+				}
+				
 				userScoreDetail.add(userScoreDetail2);
 			}
 			

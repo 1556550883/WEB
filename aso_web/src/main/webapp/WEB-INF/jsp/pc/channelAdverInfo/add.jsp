@@ -100,16 +100,16 @@
 		    </dl>
 		    
 			<dl class="nowrap" style="width: 100%;">
-				<dt>广告storeID：</dt>
+				<dt>广告appleStore-ID：</dt>
 				<dd>
 					<input name="adverAdid" value="${bean.adverAdid}" size="30" maxlength="100" class='' title="广告storeID" />
 				</dd>
 			</dl>
 			
 			<dl class="nowrap" style="width: 100%;">
-				<dt>广告ID：</dt>
+				<dt>广告ADID：</dt>
 				<dd>
-					<input name="adid" value="${bean.adid}" size="30" maxlength="100" class='mustFill' title="广告ID" />
+					<input id="adver_adid" name="adid" value="${bean.adid}" size="30" maxlength="100" class='mustFill' title="广告ID" />
 				</dd>
 			</dl>
 			

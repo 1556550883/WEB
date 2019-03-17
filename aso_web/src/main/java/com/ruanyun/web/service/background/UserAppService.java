@@ -40,7 +40,6 @@ import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserStudentCart;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.model.sys.UploadVo;
-import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.sys.UserRoleService;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.ExcelUtils;
@@ -163,6 +162,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 	{
 		return userAppDao.geteffApprenticeNum(id);
 	}
+	
 	/**
 	 * 功能描述:修改手机用户
 	 * @author wsp  2017-1-16 上午10:36:45
@@ -205,8 +205,13 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 			BeanUtils.copyProperties(userApp, olUuser, new String[] {"userAppId", "userNum", "headImg","phoneSerialNumber",
 					"createDate"
 					,"invitationCode","phoneVersion","phoneModel","idfa","taskNewStatus","zhifubao","weixin","flag5","phoneNum",
-					"zhifubaoName","userApppType","appStore", "masterID","isEffective","limitTime","isEffective","openID"});
+					"zhifubaoName","userApppType","appStore", "masterID","isEffective","limitTime","isEffective","openID","loginDesc"});
 			olUuser.setLevel(userApp.getLevel());
+			
+			//用户被禁止添加描述
+			if(userApp.getLoginControl().equals("0")) {
+				olUuser.setLoginDesc("管理员禁止");
+			}
 			if (EmptyUtils.isNotEmpty(vo) && vo.getResult()==1) 
 			{
 				olUuser.setHeadImg(vo.getFilename());
@@ -388,12 +393,6 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		userApp.setIsEffective(code);
 		update(userApp);
 		
-		//不属于黑名单
-		if(code == 0) {
-			//不是黑名单就可以算有效
-			masterUserAppAward(userApp);
-		}
-		
 		return 1;
 	}
 	
@@ -427,7 +426,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 			userApp.setOpenID(URLDecoder.decode(openID, "UTF-8"));
 			//update(userApp);
 			userAppDao.updateWechat(udid, URLDecoder.decode(weiXinName, "UTF-8"), URLDecoder.decode(headImgUrl, "UTF-8"), URLDecoder.decode(openID, "UTF-8"));
-			masterUserAppAward(userApp);
+			//masterUserAppAward(userApp);
 		} 
 		catch (UnsupportedEncodingException e) 
 		{
@@ -456,29 +455,8 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		}
 
 		update(userApp);
-		masterUserAppAward(userApp);
+		//masterUserAppAward(userApp);
 		return 1;
-	}
-	
-	public void masterUserAppAward(TUserApp tUserApp) {
-		//只有正常用户才给于奖励
-		try {
-			if(tUserApp.getZhifubao() == null || tUserApp.getOpenID() == null || tUserApp.getPhoneNum() == null
-					|| tUserApp.getIsEffective()== null || tUserApp.getIsEffective() != 0) {
-				return;
-			}
-			String masterNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(tUserApp.getMasterID()));
-			TUserScore score = new TUserScore();
-			score.setType(4);
-			score.setUserNum(masterNum);//师傅num
-			score.setRankingNum(tUserApp.getUserNum());//用来表示第十个徒弟num。如果不为空
-			score.setScore((float) 0);
-			QueueProducer.getQueueProducer().sendMessage(score, "socre");
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
 	}
 	
 	public void updateSmsCode(HttpServletRequest request, TUserApp userApp,String smsCode) 
@@ -552,6 +530,41 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 	
 	public Page<TUserApp> queryUserAppByMasterID(Page<TUserApp> page, String masterid)
 	{
-		return userAppDao.queryUserAppByMasterID(page, masterid);
+		Page<TUserApp> _page = userAppDao.queryUserAppByMasterID(page, masterid);
+		String userNums = CommonUtils.getAttributeValue(TUserApp.class, _page.getResult(), "userNum");
+		if(EmptyUtils.isNotEmpty(userNums))
+		{
+			Map<Integer,TUserScore> userMap = userScoreService.getUserScoreByUserNums(userNums);
+			CommonUtils.setAttributeValue(TUserApp.class,  _page.getResult(), userMap, "userAppId", "userScore");
+		}
+		
+		return _page;
+	}
+	
+	
+	public Page<TUserApp> queryMasterUserAppByID(Page<TUserApp> page, String id)
+	{
+		Page<TUserApp> _page = userAppDao.queryMasterUserAppByID(page, id);
+		String userNums = CommonUtils.getAttributeValue(TUserApp.class, _page.getResult(), "userNum");
+		if(EmptyUtils.isNotEmpty(userNums))
+		{
+			Map<Integer,TUserScore> userMap = userScoreService.getUserScoreByUserNums(userNums);
+			CommonUtils.setAttributeValue(TUserApp.class,  _page.getResult(), userMap, "userAppId", "userScore");
+		}
+		
+		return _page;
+	}
+	
+	public Page<TUserApp> getUserByUserNum(Page<TUserApp> page, String userNum)
+	{
+		Page<TUserApp> _page = userAppDao.getUserByUserNum(page, userNum);
+		String userNums = CommonUtils.getAttributeValue(TUserApp.class, _page.getResult(), "userNum");
+		if(EmptyUtils.isNotEmpty(userNums))
+		{
+			Map<Integer,TUserScore> userMap = userScoreService.getUserScoreByUserNums(userNums);
+			CommonUtils.setAttributeValue(TUserApp.class,  _page.getResult(), userMap, "userAppId", "userScore");
+		}
+		
+		return _page;
 	}
 }

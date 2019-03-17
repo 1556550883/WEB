@@ -5,8 +5,10 @@
  */
 package com.ruanyun.web.dao.sys.background;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +82,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append(SQLUtils.popuHqlMax("level", level));
 		sql.append(" and (is_open = 0 or is_open =" + userType);
 		//sql.append(" and adver_status=1");
-		sql.append(") ORDER BY adver_createtime desc");
+		sql.append(") ORDER BY adver_status asc,adver_createtime desc");
 		return sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 	}
 	
@@ -91,6 +93,8 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	{
 		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE 1=1 ");
 		sql.append(" and channel_num='").append(channelNum);
+		sql.append("' and adver_createtime>'").append(GetYestdayDate());
+		//sql.append(SQLUtils.popuHqlMin2("create_date", new Date()));
 		sql.append("' and adver_status in('0','1','2')");
 		sql.append(" ORDER BY DATE_FORMAT(adver_createtime,'%Y%m%d') asc,adid asc");
 		Page<TChannelAdverInfo> page2 = sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
@@ -103,6 +107,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		}
 		
 		return page2;
+	}
+	
+	//获取昨天的日期
+	@SuppressWarnings("static-access")
+	public String GetYestdayDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		calendar.add(calendar.DATE,-1);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
 	}
 	
 	public int getCountComplete(String adverId) 
@@ -281,7 +297,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		{
 			//DELETE `t_userappid_adverid` FROM `t_userappid_adverid`  LEFT JOIN `t_user_app` ON `t_userappid_adverid`.user_app_id= t_user_app.user_app_id WHERE t_user_app.`user_appp_type` = 1
 			//StringBuilder sql3 = new StringBuilder("Delete from t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
-			StringBuilder sql4 = new StringBuilder("DELETE `t_userappid_adverid` FROM `t_userappid_adverid`  LEFT JOIN `t_user_app` ON `t_userappid_adverid`.user_app_id= t_user_app.user_app_id WHERE t_user_app.`user_appp_type` = 1");
+			StringBuilder sql4 = new StringBuilder("DELETE t_userappid_adverid FROM t_userappid_adverid  LEFT JOIN t_user_app ON t_userappid_adverid.user_app_id = t_user_app.user_app_id WHERE t_user_app.user_appp_type = 1");
 			//sqlDao.execute(sql3.toString());
 			sqlDao.execute(sql4.toString());
 		}

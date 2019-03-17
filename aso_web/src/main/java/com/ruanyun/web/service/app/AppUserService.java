@@ -95,6 +95,7 @@ public class AppUserService extends BaseServiceImpl<TUserApp>{
 			if(!userApp.getIdfa().equals(idfa)) {
 				//如果 idfa改变就 需要 帮用户禁止登录
 				userApp.setLoginControl("0");
+				userApp.setLoginDesc("用户更改idfa，已被封禁！");
 			}
 		}
 		

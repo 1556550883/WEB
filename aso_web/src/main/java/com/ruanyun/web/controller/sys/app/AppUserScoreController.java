@@ -6,6 +6,7 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -78,13 +79,48 @@ public class AppUserScoreController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-		TUserScoreInfo sTUserScoreInfo = userScoreInfoService.getScoreInfoputfowardByUserNums(userNum);
-		if(sTUserScoreInfo  != null) 
+		
+		//List<TUserScoreInfo> getScoreInfoListByUserNums(String userNums)
+		List<TUserScoreInfo> sTUserScoreInfos = userScoreInfoService.getScoreInfoListByUserNums(userNum);
+		if(sTUserScoreInfos  != null && sTUserScoreInfos.size() > 0) 
 		{
-			model.setResult(2);
-			model.setMsg("已有提现正在审核中！");
-			super.writeJsonDataApp(response, model);
-			return;
+			//获取最新的提现记录
+			TUserScoreInfo info = sTUserScoreInfos.get(0);
+			if(info.getStatus() == 0) {
+				model.setResult(2);
+				model.setMsg("已有提现正在审核中！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
+			//如果最新的一条是被驳回的记录，那么在48小时之后才允许继续提现
+			if(info.getStatus() == -1) {
+				long nd = 1000 * 24 * 60 * 60;
+			    long nh = 1000 * 60 * 60;
+			    long nm = 1000 * 60;
+				Date date = info.getScoreTime();
+				Date now = new Date();
+				long diff = now.getTime() - date.getTime();
+				long day = diff / nd;   // 计算差多少天
+				long hour = diff % nd / nh;
+				long min = diff % nd % nh / nm;  // 计算差多少分钟
+				//小时差
+				hour = 48 - (day*24 + hour);
+				String timeStr = "";
+				if(hour >= 1) {
+					timeStr = "由于上次被驳回，请在" + hour + "小时后重新申请";
+					model.setResult(2);
+					model.setMsg(timeStr);
+					super.writeJsonDataApp(response, model);
+					return;
+				}else if(hour == 0){
+					timeStr = "由于上次被驳回，请在" + min + "分钟后重新申请";
+					model.setResult(2);
+					model.setMsg(timeStr);
+					super.writeJsonDataApp(response, model);
+					return;
+				}
+			}
 		}
 		
 		TUserApp userApp = appUserService.getUserByUserNum(userNum);

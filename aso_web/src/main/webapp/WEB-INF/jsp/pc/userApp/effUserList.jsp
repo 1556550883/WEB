@@ -61,6 +61,7 @@
 				<th align="center">手机号码等级</th>
 				<th align="center">机型版本</th>
 				<th align="center">登陆名</th>
+				<th align="center">登陆描述</th>
 				<th align="center">微信账号</th>
 				<th align="center">微信头像</th>
 				<th align="center">真实姓名</th>
@@ -68,6 +69,7 @@
 				<th align="center">余额</th>
 				<th align="center">总收益</th>
 				<th align="center">用户等级</th>
+				<th align="center">注册时间</th>
 				<th align="center">邀请人ID</th>
 				<th align="center">关系解除</th>	
 				<th align="center">是否提现</th>
@@ -93,18 +95,24 @@
 	             	<c:if test="${item.isEffective == 3}"><span style="color:red">未检测</span></c:if></td>
 					<td>${item.phoneModel}</td>	
 					<td><c:if test="${item.userApppType == 1}">${item.loginName}</c:if>
-					<c:if test="${item.userApppType == 2}">散户</c:if></td>	 
+					<c:if test="${item.userApppType == 2}">散户</c:if></td>
+					<td><c:if test="${item.loginControl == 1}">正常</c:if>
+					<c:if test="${item.loginControl == 0}"><span style="color:red">${item.loginDesc}</span></c:if></td>	 	 
 					<td>${item.weixin}</td>
 					<td style="background:url(${item.flag5});background-repeat:no-repeat; background-size:100% 100%;-moz-background-size:100% 100%;}"></td> 
 	                <td>${item.userNick}</td>
 	                <td>${item.zhifubao}</td>
-	             	<td>${item.userScore.score}</td>
+	             	<td>
+	             		<a style="cursor: pointer;" onclick="add('userApp/changeUserScore?userAppId=${item.userAppId}','金额',1500,1000,'main_')"><span style="color:blue">${item.userScore.score}</span></a>
+	             	</td>
 					<td>${item.userScore.scoreSum}</td>  
 	                <td>${item.level }</td>
-	                <td id="${item.userAppId}">${item.masterID }</td>
+	                 <td>${item.createDate }</td>
+	                <td id="${item.userAppId}"><a style="cursor: pointer;" onclick="add('userApp/getmaster?userAppId=${item.masterID}','师傅详情',1500,1000,'main_')"><span style="color:blue">${item.masterID}</span></a></td>
 	                <td  onclick="removeMaster(${item.userAppId},${item.masterID})"><span style="color:blue">解除</span></td>
 	                <td>
-						<a style="cursor: pointer;" onclick="add('userApp/putwardList?userAppId=${item.userAppId}','提现记录',1500,1000,'main_')"><span style="color:blue">否</span></a>     	
+	                	<c:if test="${item.userScore.putForward == 1}"><a style="cursor: pointer;" onclick="add('userApp/putwardList?userAppId=${item.userAppId}','提现记录',1500,1000,'main_')"><span style="color:red">是</span></a></c:if>
+						<c:if test="${item.userScore.putForward == 0}"><a style="cursor: pointer;" onclick="add('userApp/putwardList?userAppId=${item.userAppId}','提现记录',1500,1000,'main_')"><span style="color:blue">否</span></a></c:if> 	
 					</td>
 	                <td>
 						<a style="cursor: pointer;" onclick="add('userApp/apprenticeList?userAppId=${item.userAppId}','徒弟列表',1500,1000,'main_')"><span style="color:blue">徒弟列表</span></a>     	

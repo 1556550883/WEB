@@ -96,7 +96,7 @@ public class ExternalChannelAdverInfoController extends BaseController
 	@RequestMapping("completeList")
 	public String completeList(Page<TExternalChannelAdverTaskInfo> page,TExternalChannelTask task,Model model)
 	{
-		page.setNumPerPage(10);
+		page.setNumPerPage(20);
 		TExternalChannelAdverInfo externalChannelAdverInfo = externalChannelAdverInfoService.getExternalChannelAdverInfo(Integer.parseInt(task.getAdverId()));
 		TExternalChannelInfo externalChannelInfo = externalChannelInfoService.getInfoByChannelNum(externalChannelAdverInfo.getExternalChannelNum());
 		Page<TExternalChannelAdverTaskInfo> page1 = externalChannelInfoService.completeListInfo(page, externalChannelInfo, externalChannelAdverInfo);

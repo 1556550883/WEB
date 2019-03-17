@@ -7,6 +7,7 @@ public class TUserScoreDetail implements Comparable<TUserScoreDetail>{
 	private Float adverPrice;
 	private Float priceDiff;
 	private String taskType;
+	private String typeDesc;
  	private String status;
  	private Date receiveTime;
  	private Date completeTime;
@@ -59,5 +60,11 @@ public class TUserScoreDetail implements Comparable<TUserScoreDetail>{
 	@Override
 	public int compareTo(TUserScoreDetail o) {
 		return o.getReceiveTime().compareTo(this.getReceiveTime());
+	}
+	public String getTypeDesc() {
+		return typeDesc;
+	}
+	public void setTypeDesc(String typeDesc) {
+		this.typeDesc = typeDesc;
 	}
 }

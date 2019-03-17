@@ -175,16 +175,20 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	
 	public Page<TUserappidAdverid> getTasksByIdfaOrIP(String idfa, String ip)
 	{
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		calendar.set(Calendar.DATE, calendar.get(Calendar.DATE)-2);
-		
-//		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
-//				.append(" where receive_time>'").append(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime())).append("'")
-//				.append(" and (idfa='").append(idfa).append("' or ip='").append(ip).append("')");
-		
 		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
 				.append(" where idfa='").append(idfa).append("' or ip='").append(ip).append("'");
+		
+		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
+		page.setNumPerPage(Integer.MAX_VALUE);
+		
+		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
+	}
+	
+	
+	public Page<TUserappidAdverid> getTasksByIdfa(String idfa)
+	{
+		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+				.append(" where idfa='").append(idfa).append("' and status<=1.6");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		page.setNumPerPage(Integer.MAX_VALUE);

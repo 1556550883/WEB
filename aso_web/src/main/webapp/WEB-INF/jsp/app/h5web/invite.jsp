@@ -47,23 +47,24 @@
 				  <li>有效收徒满20人，一次性奖励20元，上不封顶</li>
 				  <li>徒弟必须完善个人信息</li>
 				  <li>羊毛党恶意收徒将不参与此活动</li>
+				   <li>注：徒弟必须完成一个任务才计算为有效徒弟</li>
 				</ul>
 	    	</div>
-	    	<div style="position:absolute;color:#8B8682;margin-top:260px;font-size:20px;margin-left:30px;">
+	    	<div style="position:absolute;color:#8B8682;margin-top:275px;font-size:20px;margin-left:30px;">
 	    		邀请方式:
 	    	</div>
 	    	
 	    	<div  onclick="invitelink()" id="invitelink" 
-   				style="position:absolute; -webkit-user-select:initial;text-align: center;margin-left:5%;width:90%;margin-top:310px;color:#0000EE; font-size: 15px;border:1px dashed #CDCDC1;border-radius:10px;"
+   				style="position:absolute; -webkit-user-select:initial;text-align: center;margin-left:5%;width:90%;margin-top:325px;color:#0000EE; font-size: 15px;border:1px dashed #CDCDC1;border-radius:10px;"
    				 data-clipboard-action="copy" data-clipboard-target="#invitelink">https://moneyzhuan.com/invite/guest?id=544606
 			</div>
-			<div style = "width:70%;margin-left:15%;margin-top:360px;position:absolute;color:#AAAAAA;text-align: center; ">
+			<div style = "width:70%;margin-left:15%;margin-top:380px;position:absolute;color:#AAAAAA;text-align: center; ">
 					<span style="font-size:15px">您的专属邀请链接，点击复制，发送给朋友即可得分!</span></div>
 					
-			<div id="qrcode" style = "margin-top:430px;position:absolute;text-align: center;width:100%">
+			<div id="qrcode" style = "margin-top:445px;position:absolute;text-align: center;width:100%">
 			</div>
 			
-				<div style = "width:70%;margin-left:15%;margin-top:590px;position:absolute;color:#AAAAAA;text-align: center; ">
+				<div style = "width:70%;margin-left:15%;margin-top:605px;position:absolute;color:#AAAAAA;text-align: center; ">
 					<span style="font-size:15px">此二维码给朋友扫，即可成为您的徒弟</span></div>
     	</div>
     	

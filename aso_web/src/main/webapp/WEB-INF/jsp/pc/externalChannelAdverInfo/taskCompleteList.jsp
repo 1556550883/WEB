@@ -18,7 +18,7 @@
 		<thead>
 			<tr>
 				<th align="center">广告名称</th>
-				<th align="center">完成数量</th>
+				<th align="center">今日完成数量</th>
 				<th align="center">完成详情</th>
 			</tr>
 		</thead>

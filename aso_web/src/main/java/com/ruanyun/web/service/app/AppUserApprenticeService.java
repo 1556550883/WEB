@@ -55,11 +55,12 @@ public class AppUserApprenticeService extends BaseServiceImpl<TUserApprentice>
 		 return userApprenticeDao.pageSql(page, masterNum);
 	}
 	
-	public void addMyApprenticeScore(String masterNum, String ApprenticeNum, Float score, int type) 
+	public void addMyApprenticeScore(String masterNum, String ApprenticeNum, Float score,String typeDesc, int type) 
 	{
 		TUserApprentice userApprentice = new TUserApprentice();
 		userApprentice.setUserNum(masterNum);
 		userApprentice.setApprenticeUserNum(ApprenticeNum);
+		userApprentice.setTypeDesc(typeDesc);
 		userApprentice.setScore(score);
 		userApprentice.setUserApprenticeType(type);
 		userApprentice.setApprenticeTime(new Date());

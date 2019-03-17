@@ -25,6 +25,7 @@ import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserScoreInfoService;
+import com.ruanyun.web.service.background.UserScoreService;
 import com.ruanyun.web.util.JsonDateValueProcessor;
 
 import net.sf.json.JSONArray;
@@ -38,11 +39,14 @@ public class AppUserForwardRecordController extends BaseController
 	private UserScoreInfoService userScoreInfoService;
 	@Autowired
 	private UserAppService userAppService;
+	@Autowired
+	private UserScoreService userScoreService;
 	
 	@RequestMapping("list")
 	public String getUserForwardList(Page<TUserScoreInfo> page,TUserScoreInfo info,Model model)
 	{
 		page.setNumPerPage(20);
+		//page.setOrder("scoreTime esc");
 		Page<TUserScoreInfo> userScoreInfos = userScoreInfoService.queryPage(page, info);
 		
 		JsonConfig jsonConfig = new JsonConfig();
@@ -64,6 +68,7 @@ public class AppUserForwardRecordController extends BaseController
 		TUserScoreInfo userScoreinfo = userScoreInfoService.get(TUserScoreInfo.class, Integer.parseInt(userScoreInfoId));
 		
 		TUserApp userApp = userAppService.getUserAppByNum(userScoreinfo.getUserAppNum());
+		//如果 已经审核通过就不需要第二次打款
 		if(userApp == null ||( userScoreinfo.getStatus() != null && userScoreinfo.getStatus() == 1)) {
 			super.writeJsonDataApp(response, model);
 			return;
@@ -74,7 +79,8 @@ public class AppUserForwardRecordController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-		
+		//移除体现状态
+		userScoreService.updatePutforwardStatus(userApp.getUserNum(), 0);
 		if(status.equals("-1") && userScoreinfo.getStatus() == 0) {
 			//驳回操作
 			TUserScore score = new TUserScore();
