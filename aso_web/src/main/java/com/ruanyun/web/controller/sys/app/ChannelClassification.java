@@ -85,6 +85,9 @@ public class ChannelClassification
 		case 19:
 			model =  HuizhuanSanhuChannel.isHuizhuanSanhuChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
+		case 20:
+			model =  WanZhuanChannel.isWanZhuanChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel);
+			break;
 		default:
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：渠道未在后台配置！");
@@ -153,6 +156,8 @@ public class ChannelClassification
 				break;
 			case 19:
 				model = HuizhuanSanhuChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneModel[1], phoneos[1]);
+				break;
+			case 20:
 				break;
 			default:
 				model.setResult(-1);

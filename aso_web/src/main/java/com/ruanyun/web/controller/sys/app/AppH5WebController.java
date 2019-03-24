@@ -3,6 +3,7 @@ package com.ruanyun.web.controller.sys.app;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,16 +47,38 @@ public class AppH5WebController extends BaseController
 	private AppUserApprenticeService appUserApprenticeService;
 	@Autowired
 	private UserappidAdveridService userappidAdveridService;
-	
+
 	@RequestMapping(value = "/main")
 	public String mainPage(HttpServletRequest request)
 	{
 		return "app/h5web/main";
 	}
 	
-	@RequestMapping(value = "/task")
-	public String taskPage(HttpServletRequest request)
+	@RequestMapping(value = "/share")
+	public String share(HttpServletRequest request)
 	{
+		return "app/h5web/share";
+	}
+	
+	@RequestMapping(value = "/task")
+	public String taskPage(HttpServletRequest request, Page<TChannelAdverInfo>page, String id, Model model)
+	{
+		//获取数据
+		AppCommonModel models = new AppCommonModel();
+		TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(id));
+		
+		page.setNumPerPage(Integer.MAX_VALUE);
+		
+		if(tUserApp != null)
+		{
+			String[] isv = tUserApp.getPhoneVersion().split("\\.");
+			String phonemodel = phoneModelChange(tUserApp.getPhoneModel());
+			models = appChannelAdverInfoService.getAdverInfoByChannelNum2(page, "1", "2", phonemodel, tUserApp.getUserAppId(), isv[0]);
+		}
+		
+		addModel(model, "pageList", models.getObj());
+		addModel(model, "userid", id);
+		
 		return "app/h5web/task";
 	}
 	
@@ -144,7 +167,18 @@ public class AppH5WebController extends BaseController
 			addModel(model, "appuserid", id);
 		}
 		
+		//String noncestr="Wm3WZYTPz0wzccnW";
+		//String  access_token = "19_oqPwkJHdeaVKg4L_BinLyP2z7GDkV59YsOWi10IzmEEIEUluAyLmhGiZF3zKwycjdmt7uIb6KnHjyDCN4J7iUYnGE2TfFCuGErY0dKgv8MIsLpssBQ_IywF_t5ffwTej9SgA1CLuWU2VlXfZNDTaAHAFVL";
+		//String ticket = "HoagFKDcsGMVCIY2vOjf9qjAdmB1cDHszeHYplSCFVBwwWi8nwYVQzYRt17gHnA0WgfpfTOPSrE9PQtn6X_FuQ";
 		return "app/h5web/invite";
+	}
+	
+	@RequestMapping(value = "/wechatParam")
+	public void wechatParam(HttpServletResponse response, HttpServletRequest request, String url,  Model model) {
+		 Map<String, String> sMap = WechatHelper.makeWXTicket(url);
+		 addModel(model, "weChatMap", sMap);
+		 
+		 super.writeJsonDataApp(response, model);
 	}
 	
 	@RequestMapping(value = "/inviteUserDetail")

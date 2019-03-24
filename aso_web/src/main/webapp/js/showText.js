@@ -86,19 +86,22 @@ function showInit(){
 		'position' : 'fixed',
 		'left' : '0',
 		'top' : '34%',
+		'border-radius':'10px',
 		'text-align' : 'center',
 		'display' : 'none',
 		'z-index' : '2',
 	});
 	$("<div id='st_alert'></div>").appendTo("#st_alertBox").css({
 		'width' : '80%',
+		'border-radius':'10px',
 		'margin' : '0 auto',
 		'background' : '#fff',
-		'border-radius' : '2px',
+		'border-radius' : '10px',
 		'overflow' : 'hidden',
 		'padding-top' : '20px',
 		'text-align' : 'center',
 	});
+	
 	$("<span id='st_alert_text'></span>").appendTo("#st_alert").css({
 		'background' : '#fff',
 		'overflow' : 'hidden',

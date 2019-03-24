@@ -567,4 +567,8 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		
 		return _page;
 	}
+	
+	
+	
+	
 }

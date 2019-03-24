@@ -98,6 +98,11 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 					continue;
 				}
 				
+				if(adver.getAdid().equals("1450378765") && osversion.compareTo("12") >= 0) {
+					iterator.remove();
+					continue;
+				}
+				
 				if(tUserApp.getUserApppType() <= 1)
 				{
 					float s = ArithUtil.subf(adver.getAdverPrice(), adver.getPriceDiff());

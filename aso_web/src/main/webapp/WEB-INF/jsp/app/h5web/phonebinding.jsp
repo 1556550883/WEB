@@ -45,7 +45,8 @@
              url: "http://localhost/getDeviceudid",
              //dataType: "json",
             success:function(data){
-            	udid =  data;
+            	var arr=data.split("-");
+            	udid = arr[0];
             },
           	error: function(XMLHttpRequest, textStatus, errorThrown){
              //通常情况下textStatus和errorThrown只有其中一个包含信息
