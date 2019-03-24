@@ -138,17 +138,27 @@
 		<div style="text-align: center; margin-top:50px;">
 			<span onclick="saveQrcode()" style="font-size: 22px;padding:3px 50px; font-weight: 600;background-color:#8CA3E9; color:#fff; border-radius:10px;">点击保存</span>
 		</div>
+		
 	</div>
 	
 	<script type="text/javascript">
 		var link = "https://moneyzhuan.com/invite/guest?id=" + "${appuserid}";
 		$("#invitelink").text(link);
-		$("#qrcode").qrcode({width: 180,height: 180,text: link});
 		$("#invite_score").text("${appuserscore.apprenticeScore}" + "元");
 		$("#invite_num").text("${appuserscore.apprenticeCount}" + "人");
 		$("#invite_eff_user").text("${appuserscore.effectiveUserCount}" + "人");
 		
+        $("#qrcode").qrcode({
+    		render:"canvas",
+   		  	width : 180,              //二维码的宽度  
+            height : 180,   
+    		text:link
+    	});
+
+        function saveQrcode(){
+		}
 		
+        
 		var clipboard = new ClipboardJS('#invitelink');
 		
 		function linkAlert(){
@@ -184,11 +194,6 @@
 	         window.location.href = base_url + "inviteEffUserDetail?id=" + "${appuserid}";
  		}
 		
- 		function saveQrcode(){
- 			var canvas = $('#qrcode').find("canvas").get(0);
-	        var blob = canvas.msToBlob();
-	        navigator.msSaveBlob(blob, 'qrcode.jpg');
- 		}
  		
  		function inviteUserDetail(){
 	         window.location.href = base_url + "inviteUserDetail?id=" + "${appuserid}";
