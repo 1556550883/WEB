@@ -7,6 +7,10 @@ package com.ruanyun.web.controller.sys.background;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +35,7 @@ import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
+import com.ruanyun.web.util.HttpRequestUtil;
 import com.ruanyun.web.util.HttpSessionUtils;
 
 import net.sf.json.JSONArray;
@@ -76,11 +81,23 @@ public class ChannelAdverInfoController extends BaseController
 		}
 		else
 		{
+			TChannelAdverInfo bean = new TChannelAdverInfo();
+			//yyyy-MM-dd HH:mm:ss
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date now = new Date();
+			String nowtime = sdf.format(now);
+			String daytime = nowtime.substring(0,10);
+			String endtime = daytime + " 23:59:00";
+			bean.setAdverDayStart(sdf.parse(nowtime));
+			bean.setAdverDayEnd(sdf.parse(endtime));
+			addModel(model, "bean", bean);
 			addModel(model, "type", type);
 			addModel(model, "channelNum", channelNum);
 			return "pc/channelAdverInfo/add";
 		}
 	}
+	
+	
 
 	/**
 	 * 
@@ -244,6 +261,62 @@ public class ChannelAdverInfoController extends BaseController
 		}
 	}
 	
+	@RequestMapping("getKeywordRank")
+	public void getKeywordRank(String appStoreID, String keyword, HttpServletResponse response, Model model) {
+		String url = "http://backend.cqaso.com/app/"+appStoreID
+				+"/asoWord?limit=500&offset=0&word="+keyword+"&fuzzy=1&country=CN";
+		JSONObject result = HttpRequestUtil.httpGet(url, false);
+		
+		JSONArray contents = (JSONArray) result.get("contents");
+		
+		for (int i = 0; i< contents.size(); i++) {
+			 JSONObject obj = (JSONObject) JSONObject.fromObject(contents.get(i));
+			 String word = (String) obj.get("word");
+			 if(word.equalsIgnoreCase(keyword)) {
+				 
+				 Integer rank = (Integer) obj.get("rank");
+				 System.err.println("rank=======" + rank);
+				 addModel(model, "rank", rank);
+				 break;
+			 }
+		}
+		
+		super.writeJsonData(response, model);
+	}
+	
+	@RequestMapping("getAppDetail")
+	public void getAppDetail(String appStoreID, String channelNum ,HttpServletResponse response, Model model) {
+		TChannelAdverInfo adverInfo = new TChannelAdverInfo();
+		adverInfo.setAdverAdid(appStoreID);
+		adverInfo.setChannelNum(channelNum);
+		List<TChannelAdverInfo> adverInfos = appChannelAdverInfoService.getByCondition(adverInfo);
+		if(adverInfos != null && !adverInfos.isEmpty() && adverInfos.size() >= 1) {
+			adverInfo = adverInfos.get(0);
+			//已经存在任务的信息
+			addModel(model, "isexist", true);
+			addModel(model, "adverInfo", adverInfo);
+		}else {
+
+			String url = "https://itunes.apple.com/lookup";
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("id", appStoreID);
+			params.put("country", "cn");
+			String result = HttpRequestUtil.sendHttpsRequestByPost(url, params);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			//results
+			JSONArray results = (JSONArray) jsonObject.get("results");
+			JSONObject obj = (JSONObject) JSONObject.fromObject(results.get(0));
+			
+			String bundleid = (String) obj.get("bundleId");
+			String applogo = (String) obj.get("artworkUrl60");
+			addModel(model, "isexist", false);
+			addModel(model, "applogo", applogo);
+			addModel(model, "bundleid", bundleid);
+		}
+		
+		super.writeJsonData(response, model);
+	}
+	
 	@RequestMapping("export")
 	public void exportIDFA(String adverIds, HttpServletResponse response)
 	{
@@ -274,4 +347,8 @@ public class ChannelAdverInfoController extends BaseController
 	{
 
 	}
+	
+	
+	
+	
 }

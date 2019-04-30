@@ -29,12 +29,20 @@
 				</dd>
 		    </dl>
 		    
-			<dl>
-				<dt>广告ID：</dt>
+			<dl style="width: 100%">
+				<dt>自定义广告ADID：</dt>
 				<dd>
 					<input name="adid" value="${bean.adid}" size="30" maxlength="100" class='mustFill' title="广告ID" />
 				</dd>
 			</dl>
+		
+			<dl style="width: 100%">
+				<dt>渠道真实ADID：</dt>
+				<dd>
+					<input name="channelAdverAdid" value="${bean.channelAdverAdid}" size="30" maxlength="100" class='mustFill' title="广告ID" />
+				</dd>
+			</dl>
+		
 		
 			<dl style="width: 100%">
 				<dt>广告名称：</dt>
@@ -42,6 +50,7 @@
 					<input name="externalAdverName" value="${bean.externalAdverName}" size="30" maxlength="100" class='mustFill' title="广告名称" />
 				</dd>
 			</dl>
+			
 			<dl style="width: 100%;height: 100px;">
 				<dt>得分描述：</dt>
 				<dd>

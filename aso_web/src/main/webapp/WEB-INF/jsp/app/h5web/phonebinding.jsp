@@ -47,6 +47,9 @@
             success:function(data){
             	var arr=data.split("-");
             	udid = arr[0];
+            	if(arr[2]){
+            		udid =  arr[0] + "-" + arr[1];
+            	}
             },
           	error: function(XMLHttpRequest, textStatus, errorThrown){
              //通常情况下textStatus和errorThrown只有其中一个包含信息

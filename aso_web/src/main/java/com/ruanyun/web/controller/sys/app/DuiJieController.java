@@ -137,6 +137,7 @@ public class DuiJieController extends BaseController
 		}
 		else 
 		{
+			 //工作室
 			 idfa = request.getParameter("idfa");//手机广告标识符
 			 userAppId = request.getParameter("userAppId");//用户Id
 			 appleId = request.getParameter("appleId");//苹果账号
@@ -145,6 +146,8 @@ public class DuiJieController extends BaseController
 			 phoneVersion_real = request.getParameter("phoneVersion") + "-";
 			 phoneModel = ChannelClassification.getPhoneModel(userAppId);
 			 phoneVersion = request.getParameter("phoneVersion");
+			 //模拟用户的udid
+			 udid = ChannelClassification.getPhoneUdid(phoneModel);
 			if(phoneModel.compareTo("iPhone10,1") >= 0) 
 			{
 				phoneVersion = ChannelClassification.getPhoneVersion();
@@ -217,22 +220,32 @@ public class DuiJieController extends BaseController
 			Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfa(idfa);
 			if (taskList != null && !taskList.getResult().isEmpty()) {
 				for (TUserappidAdverid item : taskList.getResult()) {
+					
+					TChannelAdverInfo adverInfoss = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", item.getAdverId());
+					if(adverInfoss.getTaskType().equals("1")) 
+					{
+						continue;
+					}
+					
 					if(item.getStatus().compareTo("1.5") < 0) {
 						item.setReceiveTime(new Date());
 						userappidAdveridService.updateReceiveTime(item);
 						model.setResult(1);
 						model.setObj(item);
 						model.setMsg("请先完成正在进行的任务...");
-						break;
+						super.writeJsonDataApp(response, model);
+						return;
 					}else if(item.getStatus().compareTo("1.6") == 0 && item.getAdverId().equals(Integer.valueOf(adverId))){
 						model.setResult(-1);
 						model.setMsg("抱歉，此任务今日已超时，请明日在来！");
-						break;
+						super.writeJsonDataApp(response, model);
+						return;
 					}else if((item.getStatus().compareTo("1.5") == 0 && item.getAdverId().equals(Integer.valueOf(adverId)))) 
 					{
 						model.setResult(1);
 						model.setObj(item);
-						break;
+						super.writeJsonDataApp(response, model);
+						return;
 					}
 				}
 			}
@@ -283,7 +296,7 @@ public class DuiJieController extends BaseController
 		
 		//排重
 		TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
-		AppCommonModel checkChannelInfoModel = ChannelClassification.checkChannelInfo(channelInfo, adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion);
+		AppCommonModel checkChannelInfoModel = ChannelClassification.checkChannelInfo(channelInfo, adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion, udid);
 		
 		if(checkChannelInfoModel.getResult() == -1)
 		{
@@ -299,6 +312,7 @@ public class DuiJieController extends BaseController
 		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 		tUserappidAdverid.setUserAppId(Integer.valueOf(userAppId));
 		tUserappidAdverid.setIp(ip);
+		tUserappidAdverid.setUserUdid(udid);
 		tUserappidAdverid.setIdfa(idfa);
 		tUserappidAdverid.setAppleId(appleId);
 		tUserappidAdverid.setAdid(adid);
@@ -681,7 +695,7 @@ public class DuiJieController extends BaseController
 			String phoneOs = task.getPhoneVersion();
 			String [] arr1=phoneModel.split("-");
 			String [] arr2=phoneOs.split("-");
-			model = ChannelClassification.channelActive(model,adverInfo,num, idfa, ip, arr1, arr2);
+			model = ChannelClassification.channelActive(model,adverInfo,num, idfa, ip, arr1, arr2, task.getUserUdid());
 			if(model.getResult() == -1)
 			{
 				super.writeJsonDataApp(response, model);
@@ -949,7 +963,7 @@ public class DuiJieController extends BaseController
 		//查询个人信息
 		TUserApp tUserApp = userAppService.get(TUserApp.class, "userAppId", Integer.valueOf(task.getUserAppId()));
 		//外放人员
-		if(tUserApp.getUserApppType() == 2) 
+		if(tUserApp != null && tUserApp.getUserApppType() == 2) 
 		{
 			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 			tUserappidAdverid.setIdfa(idfa);

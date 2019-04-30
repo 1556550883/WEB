@@ -27,10 +27,10 @@ public class ExternalAppDao extends BaseDaoImpl<TExternalChannelTask>
 	{
 		StringBuilder sql = new StringBuilder("INSERT INTO  ");
 		sql.append(tableName);
-		sql.append(" (ip,idfa,keywords,status,receive_time,complete_time) values ");
+		sql.append(" (ip,idfa,keywords,status,receive_time,complete_time,model,sysver) values ");
 		for(int i = 0; i < tExternalChannelTasks.size(); i++) 
 		{
-			sql.append("('"+tExternalChannelTasks.get(i).getIp()+"','"+tExternalChannelTasks.get(i).getIdfa()+ "','"+tExternalChannelTasks.get(i).getKeywords()+"','3', NOW(), NOW()),");
+			sql.append("('"+tExternalChannelTasks.get(i).getIp()+"','"+tExternalChannelTasks.get(i).getIdfa()+ "','"+tExternalChannelTasks.get(i).getKeywords()+"','3', NOW(), NOW(),'"+tExternalChannelTasks.get(i).getModel()+ "','"+tExternalChannelTasks.get(i).getSysver()+ "'),");
 		}
 		
 		String str = sql.toString();

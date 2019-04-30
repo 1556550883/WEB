@@ -23,6 +23,7 @@ public class TExternalChannelAdverInfo  implements java.io.Serializable
     private String externalAdverDesc;
     private String externalTaskType;//任务类型
     private String adid;//广告ID
+    private String channelAdverAdid;
     private Integer externalAdverCount;
     private String externalAdverTimeStart;
     private String externalAdverTimeEnd;
@@ -219,5 +220,13 @@ public class TExternalChannelAdverInfo  implements java.io.Serializable
 	}
 	public void setExternalAdverStatus(int externalAdverStatus) {
 		this.externalAdverStatus = externalAdverStatus;
+	}
+	
+	@Column(name="channel_adver_adid")
+	public String getChannelAdverAdid() {
+		return channelAdverAdid;
+	}
+	public void setChannelAdverAdid(String channelAdverAdid) {
+		this.channelAdverAdid = channelAdverAdid;
 	}
 }

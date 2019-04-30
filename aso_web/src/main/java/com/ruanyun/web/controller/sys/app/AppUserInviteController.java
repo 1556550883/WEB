@@ -97,34 +97,21 @@ public class AppUserInviteController extends BaseController
   			tUserApp.setLoginControl("1");
   			tUserApp.setMasterID(masterID);
   			tUserApp.setPhoneSerialNumber("-1");
-  			tUserApp.setLevel(dictionaryService.getVestorLevel());
-  			tUserApp.setLimitTime(30);
+  			tUserApp.setLevel(6);
+  			tUserApp.setLimitTime(20);
   			tUserApp.setCreateDate(new Date());
   			System.err.println("level==========================" +  dictionaryService.getVestorLevel() ) ;
   			userAppService.saveOrUpdate(tUserApp, request, null);
   			
-  			//师傅 
-			TUserApp masterUser = userAppService.getUserAppById(Integer.parseInt(masterID));
-	    	int count = userAppService.getApprenticeNum(masterID);
-	    	if(masterUser != null && count > 0) 
-	    	{
-	    		//更新邀请人数
-	    		userScoreService.updateApprentice(masterUser.getUserNum(), count);
-	    		
-//	    		if(count != 0 && count%10 == 0) {
-//	    			
-//	    			TUserScore score = new TUserScore();
-//					score.setType(4);
-//					score.setUserNum(masterUser.getUserNum());//师傅num
-//					score.setRankingNum(tUserApp.getUserNum());//用来表示第十个徒弟num。如果不为空
-//					score.setScore((float) 10);
-//					try {
-//						QueueProducer.getQueueProducer().sendMessage(score, "socre");
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						}
-//	  	    	}
-	    	}
+  			if(masterID != null && !masterID.isEmpty()) {
+  				TUserApp masterUser = userAppService.getUserAppById(Integer.parseInt(masterID));
+  		    	int count = userAppService.getApprenticeNum(masterID);
+  		    	if(masterUser != null && count > 0) 
+  		    	{
+  		    		//更新邀请人数
+  		    		userScoreService.updateApprentice(masterUser.getUserNum(), count);
+  		    	}
+  			}
   		}
   	    
 		super.writeJsonDataApp(response, model);

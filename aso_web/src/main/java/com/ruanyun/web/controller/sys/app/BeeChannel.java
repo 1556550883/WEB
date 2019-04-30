@@ -20,16 +20,16 @@ public class BeeChannel extends BaseChannel
 	
 
 	public static AppCommonModel isBeeChannel(TChannelAdverInfo adverInfo, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+			String adverId, String userNum, String phoneModel, String phoneVersion, String udid) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		//会赚
 		//调用第三方排重接口
-		AppCommonModel model = paiChong(adverInfo, idfa, ip,phoneModel, phoneVersion);
+		AppCommonModel model = paiChong(adverInfo, idfa, ip,phoneModel, phoneVersion, udid);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = dianJi(adverInfo, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum,phoneModel, phoneVersion);
+			model = dianJi(adverInfo, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum,phoneModel, phoneVersion, udid);
 		}
 		
 		return model;
@@ -39,7 +39,7 @@ public class BeeChannel extends BaseChannel
 	 * 排重
 	 */
 	public static AppCommonModel paiChong(TChannelAdverInfo adverInfo, String idfa, String ip, 
-			String deviceType, String osVersion) 
+			String deviceType, String osVersion, String udid) 
 	{
 		long timestamp = System.currentTimeMillis()/1000;
 		String sign = ChannelSource+"|"+adverInfo.getAdid() +"|" + idfa +"|"+ChannelKey + "|" + timestamp;
@@ -51,6 +51,7 @@ public class BeeChannel extends BaseChannel
 				.append("?adid=").append(adverInfo.getAdid())
 				.append("&idfa=").append(idfa)
 				.append("&ip=").append(ip)
+				.append("&udid=").append(udid)
 				.append("&keyword=").append(adverInfo.getAdverName())
 				.append("&device_type=").append(deviceType)
 				.append("&os_version=").append(osVersion)
@@ -103,7 +104,7 @@ public class BeeChannel extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(TChannelAdverInfo adverInfo, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String phoneModel, String phoneVersion) throws UnsupportedEncodingException
+			Integer userAppId, Integer adverId, String userNum, String phoneModel, String phoneVersion,String udid) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -116,6 +117,7 @@ public class BeeChannel extends BaseChannel
 				.append("?adid=").append(adverInfo.getAdid())
 				.append("&idfa=").append(idfa)
 				.append("&ip=").append(ip)
+				.append("&udid=").append(udid)
 				.append("&keyword=").append(adverInfo.getAdverName())
 				.append("&os_version=").append(phoneVersion)
 				.append("&device_type=").append(phoneModel)
@@ -169,7 +171,7 @@ public class BeeChannel extends BaseChannel
 	 * 激活上报
 	 */
 	public static AppCommonModel activate(TChannelAdverInfo adverInfo, String idfa, String ip, 
-			String deviceType, String osVersion) 
+			String deviceType, String osVersion, String udid) 
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -188,6 +190,7 @@ public class BeeChannel extends BaseChannel
 				.append("?adid=").append(adverInfo.getAdid())
 				.append("&idfa=").append(idfa)
 				.append("&ip=").append(ip)
+				.append("&udid=").append(udid)
 				.append("&keyword=").append(adverInfo.getAdverName())
 				.append("&device_type=").append(deviceType)
 				.append("&os_version=").append(osVersion)

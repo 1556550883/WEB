@@ -95,6 +95,11 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.getTasksByIdfa(idfa);
 	}
 	
+	public Page<TUserappidAdverid> getTasking(String idfa) 
+	{
+		return userappidAdveridDao.getTasking(idfa);
+	}
+	
 	/**
 	 * 检查appleId是否已经使用
 	 */

@@ -112,6 +112,14 @@
 					<input name="adid" value="${bean.adid}" size="30" maxlength="100" class='mustFill' title="广告ID" />
 				</dd>
 			</dl>
+			
+			<dl style="width: 100%">
+				<dt>备注：</dt>
+				<dd>
+					<input name="remark" value="${bean.remark}" size="30" maxlength="100"  title="remark" />
+				</dd>
+			</dl>
+			
 			<dl style="width: 100%">
 				<dt>bundleId：</dt>
 				<dd>

@@ -7,7 +7,6 @@
 	<script type="text/javascript" charset="utf-8" src="../js/px2rem.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/c3listview.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../js/showText.js"></script>
-	<script type="text/javascript" src="jquery.lazyload.js"></script>
 
 	<style>
 		.blur {
@@ -24,11 +23,12 @@
 </head>
 
 <body style="background:#F0F0F0; margin:0px;font-size:20px; font-family:微软雅黑">
-    <div style="width:100%;height:230px;box-shadow:0 3px 5px #e0e0e0;text-align:center;position:relative;z-index:1;background-image:url(../img/h5web/task_1.png);background-size:100% 100%;background-repeat:no-repeat;">
-   			<div id="goback" onclick="go()" style="height:0.4rem;padding-top:10px;margin-left:10px;z-index:100">
+    <div style="width:100%;height:230px;box-shadow:0 3px 5px #e0e0e0;text-align:center;z-index: 1;background-image:url(../img/h5web/task_1.png);background-size:100% 100%;background-repeat:no-repeat;">
+   			<div onclick="go()" style="height:0.4rem;padding-top:10px;margin-left:10px;z-index: 9;position: relative;">
 					<img style="height:0.4rem;float:left;margin-top:4px;" src="../img/h5web/task_0.png"/>
 			</div>
-			<span style=".flex1; line-height:0.8rem; font-weight: bold; color: #fff; font-size: 0.4rem;margin:auto;position: absolute;top: 0;  left: 0;right: 0;bottom: 0">试玩任务</span>
+			
+			<span style=".flex1; line-height:0.8rem; font-weight: bold; color: #fff; font-size: 0.4rem;margin:auto;position: absolute;z-index: 1;top: 0;  left: 0;right: 0;bottom: 0">试玩任务</span>
    			<div style="text-align: center; padding-top:15px;font-size:17px;color:#fff;">①:下载安装    ②:打开试玩    ③:奖励到账</div>
    			
    			<div style="background-color:#fff;width:94%;margin-left:3%;height:120px;margin-top:15px;text-align: center;border-radius:8px;">
@@ -37,48 +37,59 @@
 	 			</div>
 	 			
 				<div style="float:left;margin-top:25px;margin-left:10px;font-size:15px; font-family:微软雅黑;text-align:left;">
-	 				<div><span>徒弟贡献奖励上不封顶</span></div>
-	 				<div style="color:#8B8682;">每个徒弟额外奖励<span style="color:red">0.5-30</span>现金</div>
+	 				<div><span>徒弟贡献奖励封顶20元</span></div>
+	 				<div style="color:#8B8682;">徒弟完成5个任务奖励<span style="color:red">5元</span></div>
 	 			</div>
    				
-   				<div onclick="inviteUser()" style="width:94%;margin-top:75px;color:red;position: absolute;border:0px solid red">收徒GO</div>
+   				<div onclick="inviteUser()" style="width:94%;margin-top:75px;color:red;position: absolute;z-index: 9;border:0px solid red">收徒GO</div>
    			</div>
     </div>
     
 		  	<div style="background:#fff;width:100%;font-family:微软雅黑;font-size:15px;padding-top:5px;padding-bottom:5px;"><span style="margin:15px;">进行中</span></div>
-		    <c:forEach var="item" items="${pageList.result}" varStatus="row">
+		    <c:forEach var="item" items="${startTask}" varStatus="row">
 		    	<div onclick="taskdetail(${item.adverId}, '${item.bundleId}')" style="background:#fff;width:100%;margin-top:1px;height:70px">
 			    	<div style="float:left;height:60px;margin-left:15px;display:inline-block;">
-		 				<img class="blur" alt="" style="width:50px;height:50px;border-radius:10px;padding-top:10px" src="../file/adver/img/${item.adverImg}"/>
+		 				<img class="" style="width:50px;height:50px;border-radius:8px;margin-top:10px" src="../file/adver/img/${item.adverImg}"/>
 				 	</div>
-					<div style="height:70px;margin-left:20px;font-size:13px;font-family:微软雅黑;display:inline-block;">
-				 		<div style="height:15px;width:170px;margin-top:12px">${item.adverName}</div>
+					<div style="z-index:9;position: relative;height:70px;margin-left:20px;font-size:13px;font-family:微软雅黑;display:inline-block;">
+				 		<div style="height:15px;width:200px;margin-top:12px">
+				 				<span>${item.adverName}</span>
+								
+								<c:if test="${item.remark != ''}"><span style="color:red">(${item.remark})</span></c:if>
+				 		</div>
 				 		<div style="font-size:10px;margin-top:10px;height:15px;color:#CDCDC1;width:170px;">
 				 		 
 			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;">
+			 						<c:if test="${item.adverStatus != 2}">
 			 						<c:if test="${item.adverCountRemain > 100}"><span>多量</span></c:if>
 			 						<c:if test="${item.adverCountRemain >= 1}">
-			 						<c:if test="${item.adverCountRemain <= 100}"><span>少量</span></c:if></c:if>
-			 						<c:if test="${item.adverCountRemain < 1}"><span>已抢光</span></c:if>
+			 						<c:if test="${item.adverCountRemain <= 100}"><span>多量</span></c:if></c:if>
+			 						<c:if test="${item.adverCountRemain < 1}"><span>已抢光</span></c:if></c:if>
+			 						<c:if test="${item.adverStatus == 2}">已抢光</c:if>
 			 				</div>
 			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;">
 			 						<c:if test="${item.isRegister != 1}"><c:if test="${item.taskType != 1}"><span>限时</span></c:if>
 			 						<c:if test="${item.taskType == 1}"><span>回调</span></c:if></c:if>
 			 						<c:if test="${item.isRegister == 1}"><span>注册</span></c:if>
 			 				</div>
+							
+						
+								<c:if test="${item.userStatus == 1}"><div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;"><span style="color:red">进行中...</span></div></c:if>
+				 				<c:if test="${item.userStatus == 2}"><div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;"><span style="color:red">进行中...</span></div></c:if>
+				 				<c:if test="${item.userStatus == 3}"><div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;"><span style="color:red">回调中...</span></div></c:if>
 				 		</div>
 				 	</div>
-				 	<div style="height:60px;margin-left:15px;display:inline-block;">
+				 	<div style="height:60px;margin-left:15px;display:inline-block;color:red">
 				 			+${item.adverPrice}元
 				 	</div>
 			 	</div>
 		    </c:forEach>
 		    
 			<div style="padding-top:5px;padding-bottom:5px;background:#fff;width:100%;margin-top:10px;font-family:微软雅黑;font-size:15px"><span style="margin:15px;">即将开始</span></div>
-		    <c:forEach var="item" items="${pageList.result}" varStatus="row">
+		    <c:forEach var="item" items="${willTask}" varStatus="row">
 		    	<div  style="background:#fff;width:100%;margin-top:1px;height:70px">
 			    	<div style="float:left;height:60px;margin-left:15px;display:inline-block;">
-		 				<img class="blur" style="width:50px;height:50px;border-radius:10px;padding-top:10px" src="../img/h5web/happy_logo.png"/>
+		 				<img class="" style="width:50px;height:50px;border-radius:8px;margin-top:10px" src="../img/h5web/happy_logo.png"/>
 				 	</div>
 					<div style="height:70px;margin-left:20px;font-size:13px;font-family:微软雅黑;display:inline-block;">
 				 		<div style="height:15px;width:170px;margin-top:12px">${item.adverName}</div>
@@ -86,7 +97,7 @@
 				 		 
 			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;">
 			 						<c:if test="${item.adverCountRemain > 100}"><span>多量</span></c:if>
-			 						<c:if test="${item.adverCountRemain <= 100}"><span>少量</span></c:if>
+			 						<c:if test="${item.adverCountRemain <= 100}"><span>多量</span></c:if>
 			 				</div>
 			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:100px;border-radius:5px;text-align:center;">
 			 						 ${item.adverTimeStart}
@@ -197,7 +208,7 @@
  	   	 	    rightColor: '#FFC125', //右边按钮的文本颜色，默认白色
  	   	 	    leftText: '打开助手', //左边按钮的文本
  	   	 	    top: '34%', //弹出框距离页面顶部的距离
- 	   	 	    zindex: 5, //为了防止被其他控件遮盖，默认为2，背景的黑色遮盖层为1,修改后黑色遮盖层的z-index是这个数值的-1
+ 	   	 	    zindex: 15, //为了防止被其他控件遮盖，默认为2，背景的黑色遮盖层为1,修改后黑色遮盖层的z-index是这个数值的-1
  	   	 	    success: function() { //右边按钮的回调函数
  	   	 	  		url = "itms-services://?action=download-manifest&url=https://moneyzhuan.com/download/HappyApp.plist";
 	   	 	   			window.location.href = url;
@@ -218,6 +229,9 @@
 	            success:function(data){
 	            	var arr=data.split("-");
 	            	udid = arr[0];
+	            	if(arr[2]){
+	            		udid =  arr[0] + "-" + arr[1];
+	            	}
 	            },
 	          	error: function(XMLHttpRequest, textStatus, errorThrown){
 	             //通常情况下textStatus和errorThrown只有其中一个包含信息

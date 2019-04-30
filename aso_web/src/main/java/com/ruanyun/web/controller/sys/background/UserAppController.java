@@ -188,6 +188,7 @@ public class UserAppController extends BaseController
 	public void exportScore(HttpServletResponse response, Page<TUserApp> page,TUserApp info)
 	{
 		page.setNumPerPage(Integer.MAX_VALUE);
+		info.setUserApppType(1);
 		page = userAppService.queryPage(page, info);
 		userAppService.exportScore(response, page.getResult(), false);
 	}
@@ -195,6 +196,7 @@ public class UserAppController extends BaseController
 	@RequestMapping("clearWorkScore")
 	public void clearScore(HttpServletResponse response, Page<TUserApp> page,TUserApp info)
 	{
+		info.setUserApppType(1);
 		page.setNumPerPage(Integer.MAX_VALUE);
 		page = userAppService.queryPage(page, info);
 		userAppService.exportScore(response, page.getResult(), true);

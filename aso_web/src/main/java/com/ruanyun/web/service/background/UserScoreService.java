@@ -323,20 +323,21 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 					userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), score));
 					appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), score, "",type);
 					//updateLimitTime
-					if(tUserApp.getLimitTime() == 26) {
+					//if(tUserApp.getLimitTime() == 26) {
 						//徒弟第五次完成任务，师傅直接得到5元 
-						userScore.setScore(ArithUtil.addf(userScore.getScore(), 5.0f));
-						userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), 5.0f));
-						userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), 5.0f));
-						userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), 5.0f));
+						//userScore.setScore(ArithUtil.addf(userScore.getScore(), 5.0f));
+						//userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), 5.0f));
+						//userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), 5.0f));
+						//userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), 5.0f));
 						
-						appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), 5.0f, "",3);
-					}
+						//appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), 5.0f, "",3);
+					//}
+					
 					Integer ltime = tUserApp.getLimitTime() - 1;
 					userAppService.updateLimitTime(tUserApp, ltime);
 					
 					//徒弟完成一个任务之后 算成师傅的有效徒弟
-					if(ltime == 29) {
+					if(ltime == 19 ||(ltime > 19 && ltime == 29)) {
 						if(tUserApp.getZhifubao() != null || tUserApp.getOpenID() != null || tUserApp.getPhoneNum() != null
 								|| tUserApp.getIsEffective() != null || tUserApp.getIsEffective() == 0) {
 							//师傅
@@ -344,13 +345,13 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 							int count = userAppService.geteffApprenticeNum(masterUserApp.getUserAppId() + "");
 							userScore.setEffectiveUserCount(count);
 							//邀请满足20的倍数就加20元
-							if(count != 0 && count%20 == 0) {
-								userScore.setScore(ArithUtil.addf(userScore.getScore(), 20.0f));
-								userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), 20.0f));
-								userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), 20.0f));
-								userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), 20.0f));
-								appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), 20.0f,"", 4);
-							}
+							//if(count != 0 && count%20 == 0) {
+								//userScore.setScore(ArithUtil.addf(userScore.getScore(), 20.0f));
+								//userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), 20.0f));
+								//userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), 20.0f));
+								//userScore.setApprenticeScore(ArithUtil.addf(userScore.getApprenticeScore(), 20.0f));
+								//appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), userScoreq.getRankingNum(), 20.0f,"", 4);
+							//}
 						}
 					}
 				}else {

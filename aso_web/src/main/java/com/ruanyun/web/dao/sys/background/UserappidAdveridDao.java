@@ -196,6 +196,17 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
+	public Page<TUserappidAdverid> getTasking(String idfa)
+	{
+		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+				.append(" where idfa='").append(idfa).append("' and status<1.6");
+		
+		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
+		page.setNumPerPage(Integer.MAX_VALUE);
+		
+		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
+	}
+	
 	/**
 	 * 查询已经使用的appleId
 	 */

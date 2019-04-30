@@ -208,6 +208,10 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		{
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverStatusEnd()))
 				sql.append(" and adver_status<=").append(adverInfo.getAdverStatusEnd());
+			if (EmptyUtils.isNotEmpty(adverInfo.getAdverAdid()))
+				sql.append(" and adver_adid=").append(adverInfo.getAdverAdid());
+			if (EmptyUtils.isNotEmpty(adverInfo.getChannelNum()))
+				sql.append(" and channel_num=").append(adverInfo.getChannelNum());
 		}
 		
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
@@ -293,7 +297,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		//result1 = sqlDao.execute(sql1.toString());
 		result2 = sqlDao.execute(sql2.toString());
 		
-		if(result1 != -1 && result2 != -1) 
+		if(result2 != -1) 
 		{
 			//DELETE `t_userappid_adverid` FROM `t_userappid_adverid`  LEFT JOIN `t_user_app` ON `t_userappid_adverid`.user_app_id= t_user_app.user_app_id WHERE t_user_app.`user_appp_type` = 1
 			//StringBuilder sql3 = new StringBuilder("Delete from t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");

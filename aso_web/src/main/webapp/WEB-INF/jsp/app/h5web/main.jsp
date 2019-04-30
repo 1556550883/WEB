@@ -82,6 +82,7 @@
 		var payfor  = "";
 		var userAppId  = "";
 		var version = "v1.6";
+		
 		function showdata(){
 			$.ajax({
 	             type: "GET",
@@ -91,11 +92,18 @@
 	            success:function(data){
 	            	//带有版本信息
 	            	var arr=data.split("-");
-	            	getUser(arr[0]);
+	            	var userudid = arr[0];
+	            	var appVersion =  arr[1];
+	            	if(arr[2]){
+		            	userudid = arr[0] + "-" + arr[1];
+		            	appVersion = arr[2];
+	            	}
 	            	
-	            	if(version != arr[1]){
+	            	getUser(userudid);
+	            	
+	            	if(version != appVersion){
 	            		showAlert({
-	            		    text: 'Happy赚有更新的版本啦！', //【必填】，否则不能正常显示
+	            		    text: 'Happy赚有更新的版本啦(请先删除已有的APP)！', //【必填】，否则不能正常显示
 	            		    btnText: '去更新', //按钮的文本
 	            		    top: '34%', //alert弹出框距离页面顶部的距离
 	            		    zindex: 5, //为了防止被其他控件遮盖，默认为2，背景的黑色遮盖层为1，修改后黑色遮盖层的z-index是这个数值的-1
@@ -136,7 +144,6 @@
 	 	   	 	});
 		}
 		
-		
 		function getUser(udid){
 			 $.ajax({
 	             type: "GET",
@@ -159,15 +166,14 @@
 	 	            	    weixin  = json["obj"].weixin;
 	 	            	 	phonenum  = json["obj"].phoneNum;
 	 	       				 payfor  = json["obj"].zhifubao;
-	 	            	$("#user_id").text(userAppId);
-	 	            	$("#day_score").text("今日收入(元) " + scoreDay);
+	 	            	$("#user_id").text("id:" + userAppId);
+	 	            	$("#day_score").text("今日收入" + scoreDay + "(元)");
 	 	            	$("#score").text(score);
 	 	            	$("#sum_score").text(scoreSum);
 	 	            	
 	 	            	if(weChatHeadUrl != null && weChatHeadUrl != "")
 	 	            	{
 	 	           	    	$("#head_img").attr("src",  weChatHeadUrl);
-	 	           	    	//$("#head_img").attr("src",  "../img/h5web/happy_logo.png");
 	 	            	}
 	            	}
 	            }

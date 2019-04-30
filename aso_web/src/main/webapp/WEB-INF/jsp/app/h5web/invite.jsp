@@ -16,17 +16,34 @@
    	 		.flex; width:100%; height: 0.8rem;text-align: center; background:#fff; box-shadow:0px 2px 6px 0px rgba(23, 176, 81, 0.35);text-align:text-align: center;position:fixed;z-index:100
 		}
 		
-	.tip_content {
+	.qrcode_content {
 		   position: absolute;
+		   display:none;	
 		    width: 90%;
-		   	height: 70%;
-			top: 25%;
+		   	height: 60%;
+			top: 45%;
 		    left: 5%;
-		    background: rgba(255, 255, 255, 0.6);
+		    text-align: center;
+		    -webkit-touch-callout:default;
+		    background: #fff;
 		    border-radius:10px;
+		    
 		    z-index: 1002;
 		}
 		
+		.black_overlay{
+				position: absolute;
+				top: 0%;
+				left: 0%;
+				width: 100%;
+				display:none;
+				height: 750px;
+				background-color: black;
+				z-index:1001;
+				-moz-opacity: 0.8;
+				opacity:.50;
+				filter: alpha(opacity=50);
+			}
 	</style>
 </head>
 
@@ -75,13 +92,13 @@
    	
 	<div style="background:#fff; margin-top:10px;height:300px;width:94%;margin-left:3%;border-radius:8px;">
 		<div style="display:inline-block;margin-top:10px;width:100%;margin-left:20px;line-height:30px;font-family:MicrosoftYaHei;font-weight:400">
-	   			<div style="float:left;background-image:url(../img/h5web/invite_2.png); background-size:100% 100%;; 
+	   			<div style="float:left;background-image:url(../img/h5web/invite_2.png); background-size:100% 100%;
 					background-repeat: no-repeat;width:22px;height:22px;margin-top:4px"></div>
 	   			<div style="float:left;margin-left:10px;font-size:20px;">邀请方式</div>
 	   	</div>
 	   	
 	   	<div onclick="wechatShare(0)" style="float:left;margin-top:30px;margin-left:30px; font-family:微软雅黑;width:90px;text-align: center">
-	   	 	<div style="background-image:url(../img/h5web/invite_3.png); background-size:100% 100%;; 
+	   	 	<div style="background-image:url(../img/h5web/invite_3.png); background-size:100% 100%;
 					background-repeat: no-repeat;width:50px;height:50px;margin-left:20px">
 	   		</div>
 	   		<div style="margin-top:10px">朋友圈</div>
@@ -89,55 +106,55 @@
 	   	
 	   	
 	   	<div onclick="wechatShare(1)" style="float:left;margin-top:30px;margin-left:10px; font-family:微软雅黑;width:90px;text-align: center">
-	   	 	<div style="background-image:url(../img/h5web/invite_4.png); background-size:100% 100%;; 
+	   	 	<div style="background-image:url(../img/h5web/invite_4.png); background-size:100% 100%;
 					background-repeat: no-repeat;width:50px;height:50px;margin-left:20px">
 	   		</div>
 	   		<div style="margin-top:10px">微信好友</div>
 	   	</div>
 	   	
 	   	<div onclick="call('qqFriend')"  style="float:left;margin-top:30px;margin-left:10px; font-family:微软雅黑;width:90px;text-align: center">
-	   	 	<div style="background-image:url(../img/h5web/invite_5.png); background-size:100% 100%;; 
+	   	 	<div style="background-image:url(../img/h5web/invite_5.png); background-size:100% 100%;
 					background-repeat: no-repeat;width:50px;height:50px;margin-left:20px">
 	   		</div>
 	   		<div style="margin-top:10px">QQ好友</div>
 	   	</div>
 	   	
 	   	<div onclick="call('qZone')" style="float:left;margin-top:30px;margin-left:30px; font-family:微软雅黑;width:90px;text-align: center">
-	   	 	<div style="background-image:url(../img/h5web/invite_6.png); background-size:100% 100%;; 
+	   	 	<div style="background-image:url(../img/h5web/invite_6.png); background-size:100% 100%; 
 					background-repeat: no-repeat;width:50px;height:50px;margin-left:20px">
 	   		</div>
 	   		<div style="margin-top:10px">QQ空间</div>
 	   	</div>
 	   	
-	   	 	<div onclick="linkAlert()" style="float:left;margin-top:30px;margin-left:10px; font-family:微软雅黑;width:90px;text-align: center">
+	   	<div onclick="linkAlert()" style="float:left;margin-top:30px;margin-left:10px; font-family:微软雅黑;width:90px;text-align: center">
 	   	 	<div style="background-image:url(../img/h5web/invite_7.png); background-size:100% 100%;
 					background-repeat: no-repeat;width:50px;height:50px;margin-left:20px">
 	   		</div>
 	   		<div style="margin-top:10px">链接邀请</div>
 	   	</div>
 	   	
-	   		<div style="float:left;margin-top:30px;margin-left:10px; font-family:微软雅黑;width:90px;text-align: center">
-	   	 	<div style="background-image:url(../img/h5web/invite_8.png); background-size:100% 100%;; 
+	   <div onclick="showQrcode()" style="float:left;margin-top:30px;margin-left:10px; font-family:微软雅黑;width:90px;text-align: center">
+	   	 	<div style="background-image:url(../img/h5web/invite_8.png); background-size:100% 100%;
 					background-repeat: no-repeat;width:50px;height:50px;margin-left:20px">
 	   		</div>
+	   		
 	   		<div style="margin-top:10px">二维码</div>
-	   		<textarea id="invitelink"  onclick="invitelink()" style="text-align: center;width:100px;margin-left:-90px;margin-top:-60px;position: absolute;z-index:-20" data-clipboard-action="copy" data-clipboard-target="#invitelink" rows="3" cols="20">
-				https://moneyzhuan.com/invite/guest
-			</textarea>
 	   	</div>
+	   	
+   		<textarea id="invitelink"  onclick="invitelink()" style="text-align: center;width:100px;margin-left:-80px;margin-top:-40px;position: absolute;z-index:-20" data-clipboard-action="copy" data-clipboard-target="#invitelink" rows="3" cols="20">
+				https://moneyzhuan.com/invite/guest
+		</textarea>
 	</div>
 	
-	<div id="safariTip" class="tip_content">
+	<div id="fade" class="black_overlay"></div>
+	<div  id="qrcodeContent" class="qrcode_content">
 	
-		<div style="text-align: center; cursor: default; margin-top:10px;margin-bottom:10px;">
-			<span style="font-size: 16px; font-weight: 600;">您的专属二维码</span>
-		</div>
-		
-		<div id="qrcode" style="text-align: center;margin-top:50px;"></div>
-		
-		<div style="text-align: center; margin-top:50px;">
-			<span onclick="saveQrcode()" style="font-size: 22px;padding:3px 50px; font-weight: 600;background-color:#8CA3E9; color:#fff; border-radius:10px;">点击保存</span>
-		</div>
+		<div  onclick="hideQrcode()" style="font-size: 16px; font-weight: 600; cursor: default; margin-top:10px;margin-bottom:10px;">
+				<span style="position: absolute;left: 0;right: 0;">您的专属二维码</span>
+				<img  style = "width:25px;height:25px;margin-right:10px;float:right" alt="" src="../img/h5web/close.png"></img>
+	    </div>
+		<div style = "color:red;width:100%;position: absolute;left: 0;right: 0;margin-top:30px">（长按二维码进行保存）</div>
+		<div id="qrcodeCanvas" style="text-align: center;position: absolute;left: 0;right: 0;margin-top:75px;"></div>
 		
 	</div>
 	
@@ -148,16 +165,43 @@
 		$("#invite_num").text("${appuserscore.apprenticeCount}" + "人");
 		$("#invite_eff_user").text("${appuserscore.effectiveUserCount}" + "人");
 		
-        $("#qrcode").qrcode({
-    		render:"canvas",
-   		  	width : 180,              //二维码的宽度  
-            height : 180,   
-    		text:link
-    	});
+        $('#qrcodeCanvas').qrcode({
+                    render    : "canvas",
+                    text    : link,
+                    width : "200",               //二维码的宽度
+                    height : "200",              //二维码的高度
+                    background : "#ffffff",       //二维码的后景色
+                    foreground : "#000000",        //二维码的前景色
+                    src: '../img/h5web/happy_logo.png'             //二维码中间的图片
+                });
 
-        function saveQrcode(){
+        //获取网页中的canvas对象
+        var mycanvas1=document.getElementsByTagName('canvas')[0];
+        mycanvas1.style.display = 'none'//隐藏生成的canvas
+        //将转换后的img标签插入到html中
+        var img=convertCanvasToImage(mycanvas1);
+ 
+        $('#qrcodeCanvas').append(img);//imagQrDiv表示你要插入的容器id
+ 
+        //从 canvas 提取图片 image
+        function convertCanvasToImage(canvas) {
+            //新Image对象，可以理解为DOM
+            var image = new Image();
+            // canvas.toDataURL 返回的是一串Base64编码的URL，当然,浏览器自己肯定支持
+            // 指定格式 PNG
+            image.src = canvas.toDataURL("image/png");
+            return image;
+        }
+        
+        function showQrcode(){
+        	$("#qrcodeContent").attr("style","display:block;");
+        	$("#fade").attr("style","display:block;");
 		}
 		
+        function hideQrcode(){
+        	$("#qrcodeContent").attr("style","display:none;");
+        	$("#fade").attr("style","display:none;");
+		}
         
 		var clipboard = new ClipboardJS('#invitelink');
 		

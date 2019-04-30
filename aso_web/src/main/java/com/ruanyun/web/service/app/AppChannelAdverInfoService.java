@@ -6,6 +6,7 @@
 package com.ruanyun.web.service.app;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,8 @@ import com.ruanyun.web.dao.sys.background.UserAppDao;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
+import com.ruanyun.web.model.TUserappidAdverid;
+import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.ExcelUtils;
 
@@ -44,6 +47,8 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	private ChannelAdverStepDao channelAdverStepDao;
 	@Autowired
 	private UserAppDao userAppDao;
+	@Autowired
+	private UserappidAdveridService userappidAdveridService;
 
 	/**
 	 * 
@@ -71,6 +76,7 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		return model;
 	}
 	
+
 	/**
 	 * 获取广告列表
 	 */
@@ -78,16 +84,23 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 			String channelType,String systemType,String phoneType,Integer userAppId, String osversion)
 	{
 		AppCommonModel model = new AppCommonModel(1, "查询成功");
-		
 		TUserApp tUserApp = userAppDao.get(TUserApp.class, "userAppId", userAppId);
 		Page<TChannelAdverInfo> page2 = channelAdverInfoDao.PageSql2(page, channelType, systemType, phoneType, tUserApp.getLevel(), osversion, tUserApp.getUserApppType());
-		
+		Page<TUserappidAdverid> taskList = null;
+		//保存正在进行的任务
+		List<TChannelAdverInfo> advering =  new ArrayList<>();
+		if(tUserApp.getUserApppType() == 2) {
+			//获取散户正在进行中的任务
+			taskList = userappidAdveridService.getTasking(tUserApp.getIdfa());
+		}
 		if(page2 != null && page2.getResult() != null)
 		{
 			Iterator<TChannelAdverInfo> iterator = page2.getResult().iterator();
 			while(iterator.hasNext())
 			{
 				TChannelAdverInfo adver = iterator.next();
+				adver.setUserStatus(0);
+				
 //				if(StringUtils.hasText(tUserApp.getExcludeAdverId()) && tUserApp.getExcludeAdverId().indexOf(String.valueOf(adver.getAdverId())) >= 0)
 //				{
 //					iterator.remove();
@@ -108,7 +121,34 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 					float s = ArithUtil.subf(adver.getAdverPrice(), adver.getPriceDiff());
 					adver.setAdverPrice(s);
 				}
+				
+				if (tUserApp.getUserApppType() == 2 && taskList != null && taskList.getResult() != null) {
+					for(TUserappidAdverid adverid:taskList.getResult()) 
+					{
+						if(adverid.getAdverId().equals(adver.getAdverId())) {
+							if(adverid.getStatus().equals("1")) {
+								//进行中
+								adver.setUserStatus(1);
+								//保存正在进行的任务
+								iterator.remove();
+								advering.add(adver);
+							}else if(adverid.getStatus().equals("1.5")) {
+								//进行中
+								adver.setUserStatus(2);
+								//等待回调中
+								if(adver.getTaskType().equals("1")) {
+									adver.setUserStatus(3);
+								}
+								//保存正在进行的任务
+								iterator.remove();
+								advering.add(adver);
+							}
+						}
+					}
+				}
 			}
+			
+			page2.getResult().addAll(0, advering);
 			page2.setTotalCount(page2.getResult().size());
 		}
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式

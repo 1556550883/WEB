@@ -58,7 +58,9 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String fileUrl;
      private int downloadCount;
      private Integer adverStatus;
-     private String effectiveSource;
+     private Integer userStatus;
+
+	private String effectiveSource;
      private String flag1;
      private String flag2;
      private String flag3;
@@ -79,6 +81,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer isRegister;//is_register 
      private Integer isMock;//is_register 
      private Integer isOpen;//is_register 
+     private String remark;
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -545,5 +548,21 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setIsOpen(Integer isOpen) {
 		this.isOpen = isOpen;
+	}
+	
+	@Transient
+    public Integer getUserStatus() {
+		return userStatus;
+	}
+	public void setUserStatus(Integer userStatus) {
+		this.userStatus = userStatus;
+	}
+	
+	@Column(name="remark")
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 }

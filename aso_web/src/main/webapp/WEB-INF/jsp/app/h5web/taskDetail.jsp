@@ -73,6 +73,8 @@
 			var base_url  = "http://moneyzhuan.com/";
    			var udid = "";
    			var taskid =  "${adverInfo.adverId}";
+   			//0关键词  1直接跳转
+   			var downloadType = "${adverInfo.downloadType}";
    			
    			function getUdid(){
    				$.ajax({
@@ -82,6 +84,9 @@
    		            success:function(data){
    		            	var arr=data.split("-");
    		            	udid = arr[0];
+   		            	if(arr[2]){
+   		            		udid =  arr[0] + "-" + arr[1];
+   		            	}
    		            },
    		          	error: function(XMLHttpRequest, textStatus, errorThrown){
    		             	//通常情况下textStatus和errorThrown只有其中一个包含信息
@@ -189,12 +194,19 @@
 	   		}
    		
    		 function clickAdverName(){
-   		
-   			var clipboard = new ClipboardJS('#adverName');
-   			
-   			clipboard.on('success', function(e) {
-   				window.location.href = "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/search";	    
-   			});
+			
+   			if(downloadType == 0){
+   				var clipboard = new ClipboardJS('#adverName');
+   	   			
+   	   			clipboard.on('success', function(e) {
+   	   				window.location.href = "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/search";	    
+   	   			});
+   			}else{
+   				//fileUrl
+   				var fileUrl = "${adverInfo.fileUrl}";
+   				
+   				window.location.href = fileUrl;	    
+   			}
 	   } 
    		 
 	   	(function(){
@@ -205,9 +217,8 @@
 	   	
 	   			$("#adesc").text("${adverInfo.adverDesc}");
 	   			$("#adverName").text("${adverInfo.adverName}");
-	   			var timeLimit = ("${adverInfo.timeLimit}");
-	   			//var startTime = ("${adverInfo.timeLimit}");
-	   	    	
+	   			var timeLimit = "${adverInfo.timeLimit}";
+	   			
 	   	    	var interval = setInterval(function(){
 	   	    		var now = new Date();
 		   			var nowTime = now.getTime();

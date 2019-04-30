@@ -52,6 +52,8 @@ public class YunJu extends BaseChannel
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&ch=").append(CH)
+				.append("&sysver=").append(sysver)
+				.append("&model=").append(phonemodel)
 				.append("&idfa=").append(idfa);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
@@ -130,7 +132,7 @@ public class YunJu extends BaseChannel
 		return model;
 	}
 	
-	public static AppCommonModel externalDianJi(String domain, String adid, String idfa, String ip,
+	public static AppCommonModel externalDianJi(String domain, String adid,String externaladid, String idfa, String ip,
 			 String sysver, String phonemodel,String adverName, String key) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -142,7 +144,7 @@ public class YunJu extends BaseChannel
 				.append("&model=").append(phonemodel)
 				.append("&kid=").append(URLEncoder.encode(adverName, "utf-8"))
 				.append("&ip=").append(ip)
-				.append("&callback=").append(externalCallbackUrl(adid, idfa,key));
+				.append("&callback=").append(externalCallbackUrl(externaladid, idfa,key));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){

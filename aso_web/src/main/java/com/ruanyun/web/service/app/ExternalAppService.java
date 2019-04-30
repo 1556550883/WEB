@@ -69,7 +69,7 @@ public class ExternalAppService extends BaseServiceImpl<TExternalChannelTask>
             		  if(pills.length == 2) {
             			  tableName = pills[0].trim();
             			  continue;}
-            		  TExternalChannelTask task = new TExternalChannelTask("1.1.1.1", pills[0].trim(), "其他渠道提供idfa", "3");
+            		  TExternalChannelTask task = new TExternalChannelTask("1.1.1.1", pills[0].trim(), "其他渠道提供idfa", "3","model","sysver");
             		  //去掉重复
             		  for(TExternalChannelTask task2 : dataList) 
             		  {

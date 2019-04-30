@@ -23,7 +23,7 @@
 				   <select name="taskType" class="mustFill" title="任务类型">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${taskType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.taskType}">selected</c:if>>${item.itemName}</option>
+				   			<option id='taskType' value="${item.itemCode}" <c:if test="${item.itemCode==0}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -34,7 +34,7 @@
 				   <select name="phoneType" class="mustFill" title="手机型号">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${phoneType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.phoneType}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode=='iPhone6'}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -45,7 +45,7 @@
 				   <select name="iosVersion" class="mustFill" title="手机系统">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${iosVersion}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.iosVersion}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==9}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -57,7 +57,7 @@
 				   <select name="level" class="mustFill" title="任务等级">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${userLevel}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.level}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==10}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -69,7 +69,7 @@
 				   <select name="downloadType" class="mustFill" title="下载类型">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${downloadType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==bean.downloadType}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==0}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -102,7 +102,7 @@
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告appleStore-ID：</dt>
 				<dd>
-					<input name="adverAdid" value="${bean.adverAdid}" size="30" maxlength="100" class='' title="广告storeID" />
+					<input id="adverAdid" name="adverAdid" value="${bean.adverAdid}" size="30" maxlength="100" class='' title="广告storeID" />
 				</dd>
 			</dl>
 			
@@ -112,18 +112,23 @@
 					<input id="adver_adid" name="adid" value="${bean.adid}" size="30" maxlength="100" class='mustFill' title="广告ID" />
 				</dd>
 			</dl>
-			
+			 <dl class="nowrap" style="width: 100%;">
+				<dt>任务备注(可为空)：</dt>
+				<dd>
+				    <input name="remark" id="remark" style="width: 467px" class="" title="备注" type="text" value="<c:out value="${bean.remark}"></c:out>" maxlength="1000" size="60"/>
+				</dd>
+		    </dl>
 			<dl style="width: 100%">
 				<dt>bundleId：</dt>
 				<dd>
-					<input name="bundleId" value="${bean.bundleId}" size="30" maxlength="100" class='mustFill' title="bundleId" />
+					<input id="bundleId" name="bundleId" value="${bean.bundleId}" size="30" maxlength="100" class='mustFill' title="bundleId" />
 				</dd>
 			</dl>
 			<dl class="nowrap"  style="width: 100%;">
 				<dt>广告图片：</dt>
 				<dd >
 					<input type="file" name="fileAdverImg"/>
-					<input name='adverImg' type='hidden' value='${bean.adverImg}' maxlength='100'/>
+					<input id='adverImg' name='adverImg' type='hidden' value='${bean.adverImg}' maxlength='100'/>
 				</dd>
 		    </dl>
 		    <dl class="nowrap" style="width: 100%">
@@ -197,7 +202,7 @@
 			   			<dl style="width: 100%">
 							<dt>广告名称：</dt>
 							<dd>
-								<input name="adverName" value="" size="30" maxlength="100" class='mustFill' title="广告名称" />
+								<input id='adverName' name="adverName" value="" size="30" maxlength="100" class='mustFill' title="广告名称" />
 							</dd>
 						</dl>
 						<dl style="width: 100%">
@@ -209,7 +214,7 @@
 						<dl style="width: 100%">
 							<dt>得分描述：</dt>
 							<dd>
-								<input name="adverDesc" value="" size="30" maxlength="100" class='mustFill' title="得分描述" />
+								<input id='adverDesc' name="adverDesc" value="" size="30" maxlength="100" class='mustFill' title="得分描述" />
 							</dd>
 						</dl>
 				</div>
@@ -228,7 +233,56 @@
 	</form>
 	
 	<script type="text/javascript">
-	
+		var addOneAdverIndex = 0;
+		var channelNum = ${channelNum};
+		$(function(){
+			 $("#adverAdid").change(function(){
+			 	var storeid = $("#adverAdid").val();
+		   		$.ajax({
+	             type: "GET",
+	             url: "channelAdverInfo/getAppDetail",
+	             data: {appStoreID:storeid,channelNum:channelNum},
+	             dataType: "json",
+	            success:function(data){
+	            	var json = eval(data);
+	            	if(json["isexist"]){
+	            		var adverinfo = json["adverInfo"];
+	            		$("#adver_adid").val(adverinfo["adid"]);
+	            		$("#bundleId").val(adverinfo["bundleId"]);
+	            		$("#flag2").val(adverinfo["flag2"]);
+	            		$("#flag3").val(adverinfo["flag3"]);
+	            		$("#flag4").val(adverinfo["flag4"]);
+	            		$("#openTime").val(adverinfo["openTime"]);
+	            		$("#timeLimit").val(adverinfo["timeLimit"]);
+	            		$("#adverPrice").val(adverinfo["adverPrice"]);
+	            		$("#adverImg").val(adverinfo["adverImg"]);
+	            		$("#priceDiff").val(adverinfo["priceDiff"]);
+	            		$("#remark").val(adverinfo["remark"]);
+	            	}else{
+	            		var bundleid = json["bundleid"];
+	            		$("#bundleId").val(bundleid);
+	            	}
+	            }
+		  	});
+		  });
+		  
+		  $("#adverName").change(function(){
+		  	var storeid = $("#adverAdid").val();
+		  	var keyword = $("#adverName").val();
+		   		$.ajax({
+	             type: "GET",
+	             url: "channelAdverInfo/getKeywordRank",
+	             data: {keyword:keyword,appStoreID:storeid},
+	             dataType: "json",
+	            success:function(data){
+	            		var json = eval(data);
+	            		var rank = json["rank"] + "位";
+	            		$("#adverDesc").val(rank);
+	            	}
+	            });
+		  }); 
+		});
+		
 		function checkForm(){
 			//$("#adverRemand").val(ue.getContent());
 			if(check()){
@@ -264,11 +318,15 @@
 		//添加广告
 		function addOneAdver()
 		{
+			adverNameId = 'adverName' + addOneAdverIndex; 
+			adverDescId = 'adverDesc' + addOneAdverIndex; 
+			addOneAdverIndex = addOneAdverIndex + 1;
 			var oneAdver = "<hr class='dotline' color='#111111' size='1'/>"
 				+"<dl style='width: 100%'>"
 				+"<dt>广告名称：</dt>"
 				+"<dd>"
-				+"<input name='adverName' size='30' maxlength='100' class='mustFill' title='广告名称' />"
+				+"<input id=" + adverNameId 
+				+" name='adverName' size='30' maxlength='100' class='mustFill' title='广告名称' />"
 				+"</dd>"
 				+"</dl>"
 				+"<dl style='width: 100%'>"
@@ -280,10 +338,29 @@
 				+"<dl style='width: 100%'>"
 				+"<dt>得分描述：</dt>"
 				+"<dd>"
-				+"<input name='adverDesc' size='30' maxlength='100' class='mustFill' title='得分描述' />"
+				+"<input id="+adverDescId
+				+ " name='adverDesc' size='30' maxlength='100' class='mustFill' title='得分描述' />"
 				+"</dd>"
 				+"</dl>";
 			$("#advers").append(oneAdver); 
+			
+		  var nameid = "#" + adverNameId;
+		  var descid = "#" + adverDescId;
+		  $(nameid).change(function(){
+		  	var storeid = $("#adverAdid").val();
+		  	var keyword = $(nameid).val();
+		   		$.ajax({
+	             type: "GET",
+	             url: "channelAdverInfo/getKeywordRank",
+	             data: {keyword:keyword,appStoreID:storeid},
+	             dataType: "json",
+	            success:function(data){
+	            		var json = eval(data);
+	            		var rank = json["rank"]
+	            		$(descid).val(rank);
+	            	}
+	            });
+		  }); 
 		}
 	</script>
 </div>

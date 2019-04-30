@@ -20,6 +20,7 @@ public class TExternalChannelTask
 	private String keywords;
 	private String callback;
 	private String adverId;
+	//private String udid;
 	private String status;
 	private String channelKey;
 	private String model;
@@ -29,12 +30,14 @@ public class TExternalChannelTask
 	
 	public TExternalChannelTask() {}
 	
-	public TExternalChannelTask(String ip, String idfa, String keywords, String status) 
+	public TExternalChannelTask(String ip, String idfa, String keywords, String status, String model, String sysver) 
 	{
 		this.ip = ip;
 		this.idfa = idfa;
 		this.keywords = keywords;
 		this.status = status;
+		this.model = model;
+		this.sysver = sysver;
 	}
 	
 	@Id @GeneratedValue(strategy=IDENTITY)
@@ -165,4 +168,13 @@ public class TExternalChannelTask
 	public void setSysver(String sysver) {
 		this.sysver = sysver;
 	}
+
+//	@Column(name="udid")
+//	public String getUdid() {
+//		return udid;
+//	}
+//
+//	public void setUdid(String udid) {
+//		this.udid = udid;
+//	}
 }

@@ -25,15 +25,15 @@ public class FrogsTTChannel  extends BaseChannel
 	
 	//TT frogs - 15
 	public static AppCommonModel isFrogsTTChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-				String adverId, String userNum, String adverName, String deviceType, String osVersion) throws NumberFormatException, UnsupportedEncodingException 
+				String adverId, String userNum, String adverName, String deviceType, String osVersion,String udid) throws NumberFormatException, UnsupportedEncodingException 
 		{
 			//调用第三方排重接口 
-			AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa, ip, adverName,deviceType, osVersion);
+			AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa, ip, adverName,deviceType, osVersion, udid);
 			if(model.getResult() != -1)
 			{
 				//调用第三方点击接口
 				model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
-						userNum, deviceType, osVersion, adverName);
+						userNum, deviceType, osVersion, adverName, udid);
 			}
 			
 			return model;
@@ -70,7 +70,7 @@ public class FrogsTTChannel  extends BaseChannel
 	 * @throws UnsupportedEncodingException 
 	 */
 	public static AppCommonModel paiChong(String domain, String adid, String idfa, String ip, String keyword, 
-			String deviceType, String osVersion) throws UnsupportedEncodingException
+			String deviceType, String osVersion, String udid) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		long timestamp = getTimestamp();
@@ -88,6 +88,7 @@ public class FrogsTTChannel  extends BaseChannel
 				.append("?adid=").append(adid)
 				.append("&ip=").append(ip)
 				.append("&idfa=").append(idfa)
+				.append("&udid=").append(udid)
 				.append("&keyword=").append(keyword)
 				.append("&device_type=").append(deviceType)
 				.append("&os_version=").append(osVersion)
@@ -142,7 +143,7 @@ public class FrogsTTChannel  extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String deviceType, String osVersion, String keyword) throws UnsupportedEncodingException
+			Integer userAppId, Integer adverId, String userNum, String deviceType, String osVersion, String keyword,String udid) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		long timestamp = getTimestamp();
@@ -151,6 +152,7 @@ public class FrogsTTChannel  extends BaseChannel
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&idfa=").append(idfa)
+				.append("&udid=").append(udid)
 				.append("&ip=").append(ip)
 				.append("&keyword=").append(keyword)
 				.append("&device_type=").append(deviceType)
@@ -205,7 +207,7 @@ public class FrogsTTChannel  extends BaseChannel
 	 * 激活上报
 	 */
 	public static AppCommonModel activate(String domain, String adid, String idfa, String ip, String keyword, 
-			String deviceType, String osVersion)
+			String deviceType, String osVersion, String udid)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		long timestamp = getTimestamp();
@@ -216,6 +218,7 @@ public class FrogsTTChannel  extends BaseChannel
 				.append("?adid=").append(adid)
 				.append("&ip=").append(ip)
 				.append("&idfa=").append(idfa)
+				.append("&udid=").append(udid)
 				.append("&keyword=").append(keyword)
 				.append("&device_type=").append(deviceType)
 				.append("&os_version=").append(osVersion)

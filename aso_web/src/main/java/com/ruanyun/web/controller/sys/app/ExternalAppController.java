@@ -29,7 +29,7 @@ public class ExternalAppController extends BaseController
 	
 	@RequestMapping("happy_distinct")
 	public void distinctInterface(HttpServletResponse response, HttpServletRequest request, String adid, String key,
-			String idfa,String sysver, String model,String keyword,String ip)
+			String idfa,String sysver, String model,String keyword,String ip, String udid)
 	{
 		TExternalChannelAdverInfo info = externalChannelAdverInfoService.getInfoByAdidAndKey(key, adid);
 		JSONObject obj = new JSONObject();
@@ -39,9 +39,10 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}
-		System.out.println("keyword===============================" + keyword);
+		
 		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
 		tExternalChannelTask.setIdfa(idfa);
+		//tExternalChannelTask.setUdid(udid);
 		tExternalChannelTask.setSysver(sysver);
 		tExternalChannelTask.setModel(model);
 		tExternalChannelTask.setIp(ip);
@@ -50,7 +51,7 @@ public class ExternalAppController extends BaseController
 		
 		//对接云聚
 		if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("happyzhuan")) {
-			AppCommonModel models = YunJu.paiChong(info.getCpchannelDistinct(), adid, idfa, sysver, model, keyword, ip);
+			AppCommonModel models = YunJu.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa, sysver, model, keyword, ip);
 			if(models.getResult() == 1) {
 				//设置0代表为重复
 				obj.element(idfa, 0);
@@ -66,6 +67,47 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}
+		else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("qingwa")) {
+			try {
+				
+				//(adverInfo.getFlag2(), adid, idfa, ip, adverName,deviceType, osVersion);
+				AppCommonModel models = SanhuFrogsChannel.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa,ip,keyword, model,sysver, udid);
+				if(models.getResult() == 1) {
+					//设置0代表为重复
+					obj.element(idfa, 0);
+					try {
+						//如果抛出异常重复添加了
+						externalAppService.save(tExternalChannelTask, adid, key);
+					} catch (Exception e) {
+					}
+				}else {
+					obj.element(idfa, 1);
+				}
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			//保存
+			super.writeJsonDataApp(response, obj);
+			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("youbang")) {
+				AppCommonModel models = YouZhuanChannel.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa, sysver, model, keyword, ip);
+				if(models.getResult() == 1) {
+					//设置0代表为重复
+					obj.element(idfa, 0);
+					try {
+						//如果抛出异常重复添加了
+						externalAppService.save(tExternalChannelTask, adid, key);
+					} catch (Exception e) {
+					}
+				}else {
+					obj.element(idfa, 1);
+				}
+				//保存
+				super.writeJsonDataApp(response, obj);
+				return;
+			}
 
 		try 
 		{
@@ -112,7 +154,7 @@ public class ExternalAppController extends BaseController
 	@RequestMapping("happy_click")
 	public void clickInterface(HttpServletResponse response, HttpServletRequest request, 
 			String adid, String key, String idfa, String keyword, String ip, 
-			String model, String sysver, String callbackurl) throws UnsupportedEncodingException
+			String model, String sysver, String callbackurl ,String udid) throws UnsupportedEncodingException
 	{
 		TExternalChannelAdverInfo info = externalChannelAdverInfoService.getInfoByAdidAndKey(key, adid);
 		JSONObject obj = new JSONObject();
@@ -134,7 +176,7 @@ public class ExternalAppController extends BaseController
 
 		//对接云聚 激活
 		if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("happyzhuan")) {
-			AppCommonModel appmodel = YunJu.externalDianJi(info.getCpchannelClick(),adid, idfa, ip, sysver, model,keyword,key);
+			AppCommonModel appmodel = YunJu.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key);
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("msg", "ok");
@@ -146,7 +188,34 @@ public class ExternalAppController extends BaseController
 			
 			super.writeJsonDataApp(response, obj);
 			return;
-		}
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("qingwa")) {
+			
+			AppCommonModel appmodel = SanhuFrogsChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key, udid);
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("msg", "ok");
+				externalAppService.update(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("msg", "click failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("youbang")) {
+				AppCommonModel appmodel = YouZhuanChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key);
+				if(appmodel.getResult() == 1) {
+					obj.element("code", 0);
+					obj.element("msg", "ok");
+					externalAppService.update(tExternalChannelTask, adid, key);
+				}else {
+					obj.element("code", -1);
+					obj.element("msg", "click failed");
+				}
+				
+				super.writeJsonDataApp(response, obj);
+				return;
+			}
 
 		try 
 		{
@@ -200,7 +269,7 @@ public class ExternalAppController extends BaseController
 
 	@RequestMapping("happy_active")
 	public void activeInterface(HttpServletResponse response, HttpServletRequest request, String adid, String key, String idfa,
-			String ip,String sysver,String model,String keyword)
+			String ip,String sysver,String model,String keyword, String udid)
 	{
 		
 		TExternalChannelAdverInfo info = externalChannelAdverInfoService.getInfoByAdidAndKey(key, adid);
@@ -225,8 +294,36 @@ public class ExternalAppController extends BaseController
 		
 		//对接云聚
 		if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("happyzhuan")) {
-			//public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip, String sysver, String phonemodel) {
-			AppCommonModel appmodel = YunJu.activate(info.getCpchannelActive(),adid,keyword, idfa, ip, sysver, model);
+			AppCommonModel appmodel = YunJu.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),keyword, idfa, ip, sysver, model);
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("result", "ok");
+				externalAppService.updateStatus(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("result", "active failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("qingwa")){
+			
+			//(String domain, String adid, String idfa, String ip, String keyword, 
+			//String deviceType, String osVersion)
+			AppCommonModel appmodel = SanhuFrogsChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),idfa,ip,keyword, model,sysver, udid);
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("result", "ok");
+				externalAppService.updateStatus(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("result", "active failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("youbang")) {
+			AppCommonModel appmodel = YouZhuanChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),keyword, idfa, ip, sysver, model);
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("result", "ok");

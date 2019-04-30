@@ -1,7 +1,10 @@
 package com.ruanyun.web.controller.sys.app;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -60,23 +63,42 @@ public class AppH5WebController extends BaseController
 		return "app/h5web/share";
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/task")
 	public String taskPage(HttpServletRequest request, Page<TChannelAdverInfo>page, String id, Model model)
 	{
 		//获取数据
 		AppCommonModel models = new AppCommonModel();
 		TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(id));
-		
 		page.setNumPerPage(Integer.MAX_VALUE);
+		
 		
 		if(tUserApp != null)
 		{
+			List<TChannelAdverInfo> startTask = new ArrayList<>();
+			List<TChannelAdverInfo> willTask = new ArrayList<>();
 			String[] isv = tUserApp.getPhoneVersion().split("\\.");
 			String phonemodel = phoneModelChange(tUserApp.getPhoneModel());
 			models = appChannelAdverInfoService.getAdverInfoByChannelNum2(page, "1", "2", phonemodel, tUserApp.getUserAppId(), isv[0]);
+			page = (Page<TChannelAdverInfo>)models.getObj();
+			Iterator<TChannelAdverInfo> iterator = page.getResult().iterator();
+			 Date currentTime = new Date();
+			 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			 String dateString = formatter.format(currentTime);
+			while(iterator.hasNext()) {
+				TChannelAdverInfo adver = iterator.next();
+				adver.setAdverName(adver.getAdverName().substring(0, 1) + "****");
+				if(adver.getAdverTimeStart().compareTo(dateString) > 0) {
+					willTask.add(adver);
+				}else{
+					startTask.add(adver);
+				};
+			}
+			
+			addModel(model, "startTask", startTask);
+			addModel(model, "willTask", willTask);
 		}
 		
-		addModel(model, "pageList", models.getObj());
 		addModel(model, "userid", id);
 		
 		return "app/h5web/task";
@@ -333,7 +355,7 @@ public class AppH5WebController extends BaseController
 		   case "iPhone8,4":                             
 			   phoneModel =  "iPhone6s" ; 
 			   break;
-			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  
+			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  case "iPhone9,6": case "iPhone9,5": 
 				phoneModel =  "iPhone7";
 				break;
 			case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    

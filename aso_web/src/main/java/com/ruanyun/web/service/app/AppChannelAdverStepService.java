@@ -156,8 +156,8 @@ public class AppChannelAdverStepService extends BaseServiceImpl<TChannelAdverSte
 			url=requestUrl+"?"+params.toString().trim();
 		}
 		System.out.println("url:=============="+url);
-		String result=HttpRequestUtil.sendGet(url, "");
-		System.out.println("result==============="+result);
+		//String result=HttpRequestUtil.sendGet(url, "");
+		//System.out.println("result==============="+result);
 		}catch(Exception e){
 			System.out.println("error:"+e.getMessage());
 		}
