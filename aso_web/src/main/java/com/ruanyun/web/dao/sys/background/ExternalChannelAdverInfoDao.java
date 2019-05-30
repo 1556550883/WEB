@@ -68,6 +68,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 				"  `receive_time` DATETIME DEFAULT NULL COMMENT '领取时间'," + 
 				"  `complete_time` DATETIME DEFAULT NULL COMMENT '完成时间'," + 
 				"   CONSTRAINT idfa_no_repeat UNIQUE (idfa),"+
+				"   CONSTRAINT ip_no_repeat UNIQUE (ip),"+
 				"  PRIMARY KEY (`id`)) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='外放用户任务';";
 		
 		int result = sqlDao.execute(sql);

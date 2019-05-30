@@ -149,20 +149,21 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	 */
 	public void updateAdverStatus(Integer status, String ids)
 	{
-		StringBuilder sql;
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+" where adver_id in ("+ids+")");
 		//当时启动任务的时候，默认任务最高等级
-		if(status == 1) 
-		{
-			sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+",level=10 where adver_id in ("+ids+")");
-		}
-		else
-		{
-			sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+" where adver_id in ("+ids+")");
-		}
 		
 		sqlDao.execute(sql.toString());
 	}
 	
+	public void autoAddAdverCount(TChannelAdverInfo info)
+	{
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_status=1,add_task_limit="+info.getAddTaskLimit()+",");
+		sql.append("adver_count="+info.getAdverCount()+",");
+		sql.append("adver_count_remain="+info.getAdverCountRemain()+",");
+		sql.append("adver_activation_count="+info.getAdverActivationCount()+"");
+		sql.append(" where adver_id="+info.getAdverId()+"");
+		sqlDao.execute(sql.toString());
+	}
 	
 	/**
 	 * 修改任务状态

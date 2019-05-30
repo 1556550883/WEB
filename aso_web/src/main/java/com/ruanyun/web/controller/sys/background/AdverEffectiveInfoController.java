@@ -35,7 +35,7 @@ public class AdverEffectiveInfoController extends BaseController
 	public String completeList(Page<TUserappidAdverid> page,TUserappidAdverid info,Model model)
 	{
 		page.setNumPerPage(20);
-		info.setStatusStart("2");
+		info.setStatusStart("1");
 		addModel(model, "pageList", adverEffectiveInfoService.completeList(page, info));
 		addModel(model, "bean", info);
 		return "pc/adverEffectiveInfo/list";

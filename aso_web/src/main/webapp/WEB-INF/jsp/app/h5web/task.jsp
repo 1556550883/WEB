@@ -37,8 +37,8 @@
 	 			</div>
 	 			
 				<div style="float:left;margin-top:25px;margin-left:10px;font-size:15px; font-family:微软雅黑;text-align:left;">
-	 				<div><span>徒弟贡献奖励封顶20元</span></div>
-	 				<div style="color:#8B8682;">徒弟完成5个任务奖励<span style="color:red">5元</span></div>
+	 				<div><span>徒弟贡献奖励封顶10元</span></div>
+	 			
 	 			</div>
    				
    				<div onclick="inviteUser()" style="width:94%;margin-top:75px;color:red;position: absolute;z-index: 9;border:0px solid red">收徒GO</div>

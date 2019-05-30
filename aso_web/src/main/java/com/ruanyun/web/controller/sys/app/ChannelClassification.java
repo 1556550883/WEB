@@ -97,10 +97,14 @@ public class ChannelClassification
 			model =  SanhuFrogsChannel.isFrogsTTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion, udid);
 			break;
 		case 23:
-			model =  YouZhuanChannel.isYouZhuanChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel);
+			model =  YouZhuanChannel.isYouZhuanChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
 			break;
 		case 24:
 			model =  PpHongBaoChannnel.isPpHongBaoChannnel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel);
+			break;
+		case 25:
+			//云聚
+			model = XiaoshouChannel.isXiaoshouChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
 			break;
 		default:
 			model.setResult(-1);
@@ -185,6 +189,9 @@ public class ChannelClassification
 			case 24:
 				//model =  PpHongBaoChannnel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1]);
 				break;
+			case 25:
+				model = XiaoshouChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1], udid);
+				break;
 			default:
 				model.setResult(-1);
 				model.setMsg("未完成。原因：渠道未在后台配置！");
@@ -200,8 +207,12 @@ public class ChannelClassification
 		String phonemodel_sim = "iPhone7,1";
 		int result = random.nextInt(18);
 		//账号77设定为4以上  iphone7
-		if((id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
-				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")|| id.equals("812")|| id.equals("83"))&& result <= 4){
+//		if((id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
+//				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")|| id.equals("812")|| id.equals("83"))&& result <= 4){
+//			result = 4;
+//		} 
+		
+		if(id.equals("77")){
 			result = 4;
 		} 
 		

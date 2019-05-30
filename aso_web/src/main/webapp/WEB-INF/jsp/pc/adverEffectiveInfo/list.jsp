@@ -61,7 +61,19 @@
 	                <td>${item.appleId}</td> 
 	                <td>${item.receiveTime}</td>  
 	                <td>${item.openAppTime}</td>  
-	                <td>${item.completeTime}</td>
+	                <c:if test="${item.status=='1'}">
+	                	<td>领取任务</td>
+					</c:if>
+					<c:if test="${item.status=='1.5'}">
+	                	<td>打开任务</td>
+					</c:if>
+					<c:if test="${item.status=='1.6'}">
+	                	<td>任务超时</td>
+					</c:if>
+					<c:if test="${item.status=='2'}">
+	                	<td>${item.completeTime}</td>
+					</c:if>
+					
 	                <td>${item.payTime}</td>
 				</tr>
 			</c:forEach>  

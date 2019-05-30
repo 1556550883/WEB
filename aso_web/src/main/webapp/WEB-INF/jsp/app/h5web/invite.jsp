@@ -81,9 +81,7 @@
    		<div style="margin-top:10px">
    			<ul style="font-size:15px;color:#8B8682">
 				  <li>徒弟每次完成任务,奖励师傅0.5元</li>
-				  <li>徒弟做满5个任务,一次性奖励师傅5元</li>
-				  <li>累计15元封顶(不包含一次性奖励5元)</li>
-				  <li>有效收徒满20人,一次性奖励20元,上不封顶</li>
+				  <li>累计10元封顶</li>
 				  <li style="color:red">羊毛党恶意收徒将不参与此活动</li>
 				  <li style="color:red">有效徒弟必须完成一个任务</li>
    			</ul>

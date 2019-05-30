@@ -203,7 +203,7 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("youbang")) {
-				AppCommonModel appmodel = YouZhuanChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key);
+				AppCommonModel appmodel = YouZhuanChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key, udid);
 				if(appmodel.getResult() == 1) {
 					obj.element("code", 0);
 					obj.element("msg", "ok");

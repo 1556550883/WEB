@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -142,6 +143,21 @@ public class ChannelAdverInfoController extends BaseController
 				channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc, stepRates, stepTime,
 						stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
 			}
+			
+			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
+			adverInfo.setAdverAdid(info.getAdverAdid());
+			adverInfo.setChannelNum(info.getChannelNum());
+			List<TChannelAdverInfo> adverInfos = appChannelAdverInfoService.getByCondition(adverInfo);
+			if(adverInfos != null && !adverInfos.isEmpty() && adverInfos.size() >= 1) {
+				adverInfo = adverInfos.get(0);
+				BeanUtils.copyProperties(info, adverInfo, new String[]{"adverId","adverName",
+						"adverCount","adverCountRemain","adverCountComplete","adverDayStart","adverDayEnd","adverTimeStart",
+						"adverTimeEnd","adverActivationCount","adverCreatetime","adverStatus","channelNum","adverNum","downloadCount"});
+				//adverInfo.set
+				//已经存在任务的信息
+				channelAdverInfoService.update(adverInfo);
+			}
+			
 			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		}

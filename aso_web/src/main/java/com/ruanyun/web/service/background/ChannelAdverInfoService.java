@@ -160,6 +160,12 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		channelAdverInfoDao.updateAdverStatus(status, ids);
 	}
 	
+	//自动增加任务更新任务信息
+	public void autoAddAdverCount(TChannelAdverInfo info)
+	{
+		channelAdverInfoDao.autoAddAdverCount(info);
+	}
+	
 	/**
 	 * 修改所有任务的状体
 	 * @param status

@@ -82,6 +82,10 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer isMock;//is_register 
      private Integer isOpen;//is_register 
      private String remark;
+     private Integer taskInterval;
+     private Integer addTask;
+     private Integer addTaskLimit;
+     private long taskEndTime;
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -564,5 +568,37 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	
+	@Column(name="task_interval")
+	public Integer getTaskInterval() {
+		return taskInterval;
+	}
+	public void setTaskInterval(Integer taskInterval) {
+		this.taskInterval = taskInterval;
+	}
+	
+	@Column(name="add_task")
+	public Integer getAddTask() {
+		return addTask;
+	}
+	public void setAddTask(Integer addTask) {
+		this.addTask = addTask;
+	}
+	
+	@Transient
+	public long getTaskEndTime() {
+		return taskEndTime;
+	}
+	public void setTaskEndTime(long taskEndTime) {
+		this.taskEndTime = taskEndTime;
+	}
+	
+	@Column(name="add_task_limit")
+	public Integer getAddTaskLimit() {
+		return addTaskLimit;
+	}
+	public void setAddTaskLimit(Integer addTaskLimit) {
+		this.addTaskLimit = addTaskLimit;
 	}
 }

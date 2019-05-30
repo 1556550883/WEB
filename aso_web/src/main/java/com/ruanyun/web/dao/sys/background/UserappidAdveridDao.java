@@ -196,6 +196,24 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
+	
+	//SELECT * FROM `t_userappid_adverid` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
+	//UNION 
+	//SELECT * FROM `t_userappid_adverid_2019_5_27` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
+	
+	public Page<TUserappidAdverid> getTasks()
+	{
+		//UNION SELECT * FROM `t_userappid_adverid_2019_5_27` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
+		StringBuilder sql = new StringBuilder("select * from `t_userappid_adverid_2019_5_27` where adid = '0ebd032e98aed1f40cce13abad1af4a7'  and status = 2");
+		//StringBuilder sql = new StringBuilder("select * from `t_userappid_adverid` where adid = '0ebd032e98aed1f40cce13abad1af4a7'  and status = 2 and receive_time < '2019-05-29 10:11:29'");
+		
+		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
+		page.setNumPerPage(Integer.MAX_VALUE);
+		
+		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
+	}
+	
+	
 	public Page<TUserappidAdverid> getTasking(String idfa)
 	{
 		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")

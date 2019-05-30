@@ -35,7 +35,10 @@ public class limazuanChannel extends BaseChannel
 				.append("?pid=").append(adid)
 				.append("&channel=").append(channel)
 				.append("&idfa=").append(idfa)	
-				.append("&ip=").append(ip);
+				.append("&ip=").append(ip)
+				.append("&key=").append(adverName)
+				.append("&device=").append(phonemodel)
+				.append("&os=").append(sysver);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)
@@ -87,7 +90,8 @@ public class limazuanChannel extends BaseChannel
 				.append("&key=").append(adverName)
 				.append("&ip=").append(ip)
 				.append("&device=").append(phonemodel)
-				.append("&os=").append(sysver);
+				.append("&os=").append(sysver)
+				.append("&callbackurl=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null){

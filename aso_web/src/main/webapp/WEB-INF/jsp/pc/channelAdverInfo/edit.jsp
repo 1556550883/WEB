@@ -175,6 +175,29 @@
 				    <input name="openTime" id="openTime" class="mustFill" title="应用需要打开的时间（单位：秒）" type="text" value="<c:out value="${bean.openTime}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
+		    
+		    
+		    <dl class="nowrap" style="width: 100%">
+				<dt>任务增加的时间间隔（单位：秒）：</dt>
+				<dd>
+				    <input name="taskInterval" id="taskInterval" class="mustFill" title="任务增加的时间间隔（单位：秒）" type="text" value="<c:out value="${bean.taskInterval}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    
+		       <dl class="nowrap" style="width: 100%">
+				<dt>每次增加任务的数量：</dt>
+				<dd>
+				    <input name="addTask" id="addTask" class="mustFill" title="每次增加任务的数量" type="text" value="<c:out value="${bean.addTask}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    
+		     <dl class="nowrap" style="width: 100%">
+				<dt>增加任务的总数量：</dt>
+				<dd>
+				    <input name="addTaskLimit" id="addTaskLimit" class="mustFill" title="增加任务的总数量" type="text" value="<c:out value="${bean.addTaskLimit}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    
 		    <dl class="nowrap" style="width: 100%">
 				<dt>广告开始日期：</dt>
 				<dd>

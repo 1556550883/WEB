@@ -1,6 +1,7 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,6 +85,20 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
+	
+	@RequestMapping("bulang")
+	public void bulang() throws UnsupportedEncodingException {
+		//SELECT * FROM `t_userappid_adverid` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
+		//UNION 
+		//SELECT * FROM `t_userappid_adverid_2019_5_27` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
+		Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks();
+		for(TUserappidAdverid tas :taskList.getResult() ) {
+			System.out.println("-------------------------------------------------------");
+			XiaoshouChannel.paiChong("https://www.xiaoshouzhuanqian.com/openapi/upstream/idfaQueryApi"
+					, "0ebd032e98aed1f40cce13abad1af4a7", tas.getIdfa(),tas.getPhoneVersion(),tas.getPhoneModel(),"聊天交友",tas.getIp(), "");
+		}
+	}
+	
 	/**
 	 * 领取任务
 	 * @throws InterruptedException 
@@ -148,9 +163,14 @@ public class DuiJieController extends BaseController
 			 phoneVersion = request.getParameter("phoneVersion");
 			 //模拟用户的udid
 			 udid = ChannelClassification.getPhoneUdid(phoneModel);
-			if(phoneModel.compareTo("iPhone10,1") >= 0) 
+			if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
 			{
 				phoneVersion = ChannelClassification.getPhoneVersion();
+			}
+			
+			if(userAppId.equals("197") || userAppId.equals("798")) {
+				phoneModel = request.getParameter("phoneModel");
+				phoneVersion = request.getParameter("phoneVersion");
 			}
 			
 			userApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
@@ -330,6 +350,9 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+		
+		
+		
 		//model.setObj(tUserappidAdverid);
 		model.setResult(1);
 		model.setMsg("领取任务成功，请在规定时间内完成任务，否则不计分！");
