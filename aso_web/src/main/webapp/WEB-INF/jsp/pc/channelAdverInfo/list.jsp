@@ -46,6 +46,7 @@
 				<th align="center">广告数量</th>
 				<th align="center">广告剩余数量</th>
 				<th align="center">广告完成数量</th>
+				<th align="center">广告有效完成数量</th>
 				<th align="center">广告等级</th>
 				<th align="center">广告开始时间——广告结束时间</th>
 				<th align="center">状态</th>
@@ -68,13 +69,19 @@
 	                <td>${item.adverCount}</td>
 	                <td>${item.adverCountRemain}</td>
 	                <td>${item.adverCountComplete}</td>
+	                <td>${item.downloadCount}</td>
 	                <td>${item.level}</td>
 	                <td>${item.adverDayStart}--${item.adverDayEnd}</td>
 	               <!-- <td>${item.adverTimeStart}--${item.adverTimeEnd}</td> -->
 	                <td><c:if test="${item.adverStatus==0}">未审核</c:if><c:if test="${item.adverStatus==1}">启用</c:if><c:if test="${item.adverStatus==2}">停用</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>
 	              	<td><c:if test="${item.isOpen==0}">默认</c:if><c:if test="${item.isOpen==1}">工作室</c:if><c:if test="${item.isOpen==2}">散户</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>
 	                <td><ry:formatDate date="${item.adverCreatetime}" toFmt="yyyy-MM-dd"></ry:formatDate> </td> 
-					<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="openNav('channelAdverInfo/toedit?id=${item.adverId}','修改广告信息','main_index3')"><span>修改</span></a></td>
+					<c:if test="${item.isToday==1}">
+						<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="openNav('channelAdverInfo/toedit?id=${item.adverId}','修改广告信息','main_index3')"><span>修改</span></a></td>
+					</c:if>
+					<c:if test="${item.isToday==0}">
+						<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="alert('任务已完结！')"><span>修改</span></a></td>
+					</c:if>
 					<td>
 						<a style="cursor: pointer;" onclick="openNav('adverEffectiveInfo/completeList?adverId=${item.adverId}','广告下载记录','main_index2')"><div style="color: blue">广告下载记录</div></a>
 						<c:if test="${item.effectiveSource==1}">

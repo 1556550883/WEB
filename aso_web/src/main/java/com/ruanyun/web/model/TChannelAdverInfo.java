@@ -85,6 +85,9 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer taskInterval;
      private Integer addTask;
      private Integer addTaskLimit;
+     private Integer adverInter;
+     private Integer isAdverInter;//is_register 
+     private Integer isToday;
      private long taskEndTime;
      
      @Column(name="package_name")
@@ -600,5 +603,29 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setAddTaskLimit(Integer addTaskLimit) {
 		this.addTaskLimit = addTaskLimit;
+	}
+	
+	@Column(name="adver_inter")
+	public Integer getAdverInter() {
+		return adverInter;
+	}
+	public void setAdverInter(Integer adverInter) {
+		this.adverInter = adverInter;
+	}
+	
+	@Column(name="is_adver_inter")
+	public Integer getIsAdverInter() {
+		return isAdverInter;
+	}
+	public void setIsAdverInter(Integer isAdverInter) {
+		this.isAdverInter = isAdverInter;
+	}
+	
+	 @Transient
+	public Integer getIsToday() {
+		return isToday;
+	}
+	public void setIsToday(Integer isToday) {
+		this.isToday = isToday;
 	}
 }

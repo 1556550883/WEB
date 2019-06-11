@@ -58,7 +58,18 @@ public class ChannelAdverInfoController extends BaseController
 	@RequestMapping("list")
 	public String getChannelAdverInfoList(Page<TChannelAdverInfo> page,TChannelAdverInfo info,Model model)
 	{
-		addModel(model, "pageList", channelAdverInfoService.queryAdverList(page, info));
+		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info);
+		for(TChannelAdverInfo adverInfo : queryAdver.getResult()) {
+			if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay()) {
+				//不是今天的，属于过期任务
+				adverInfo.setIsToday(0);
+			}else {
+				//当天的任务
+				adverInfo.setIsToday(1);
+			}
+		}
+		
+		addModel(model, "pageList", queryAdver);
 		addModel(model, "bean", info);
 		
 		return "pc/channelAdverInfo/list";
@@ -207,8 +218,6 @@ public class ChannelAdverInfoController extends BaseController
 	/**
 	 * 
 	 * 功能描述：删除
-	 * @author: xqzhang
-	 * @date:2016-1-6
 	 * @param ids
 	 * @param response
 	 */
@@ -231,10 +240,16 @@ public class ChannelAdverInfoController extends BaseController
 		try
 		{
 			//启动的时候产生生产者
-			channelAdverInfoService.updateAdverStatus(status, ids);
 			String[] adverIds = ids.split(",");  
 			for(String adverId : adverIds) 
 			{
+				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+				if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay()) {
+					super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, "任务已完结，不在支持操作！", "", "", ""));
+					break;
+				}
+				
+				channelAdverInfoService.updateAdverStatus(status, adverId);
 				if(status == 1)
 				{
 					ArrayBlockQueueProducer.addAdverList.add(adverId);

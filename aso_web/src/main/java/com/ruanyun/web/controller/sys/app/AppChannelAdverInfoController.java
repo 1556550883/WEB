@@ -40,15 +40,15 @@ public class AppChannelAdverInfoController extends BaseController
 		
 		//设定为iphone7 
 		String id = userAppId + "";
-//		if(id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
-//				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")|| id.equals("812")|| id.equals("83")) {
-//			phoneType = "iPhone7";
-//		}
-		
-		if(id.equals("77")) {
+		if(id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
+				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")|| id.equals("812")|| id.equals("83")) {
 			phoneType = "iPhone7";
 		}
 		
+//		if(id.equals("77") || id.equals("181") || id.equals("186")  || id.equals("187")){
+//			phoneType = "iPhone7";
+//		}
+//		
 		if(!StringUtils.hasText(channelType) || !StringUtils.hasText(systemType)
 				||!StringUtils.hasText(phoneType) || userAppId == null || userAppId <= 0)
 		{

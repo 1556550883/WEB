@@ -207,14 +207,14 @@ public class ChannelClassification
 		String phonemodel_sim = "iPhone7,1";
 		int result = random.nextInt(18);
 		//账号77设定为4以上  iphone7
-//		if((id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
-//				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")|| id.equals("812")|| id.equals("83"))&& result <= 4){
-//			result = 4;
-//		} 
-		
-		if(id.equals("77")){
+		if((id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
+				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")|| id.equals("812")|| id.equals("83"))&& result <= 4){
 			result = 4;
 		} 
+		
+//		if(id.equals("77") || id.equals("181") || id.equals("186")  || id.equals("187")){
+//			result = 4;
+//		} 
 		
 		switch (result)
 		{

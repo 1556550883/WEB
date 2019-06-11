@@ -351,8 +351,6 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		
-		
 		//model.setObj(tUserappidAdverid);
 		model.setResult(1);
 		model.setMsg("领取任务成功，请在规定时间内完成任务，否则不计分！");
