@@ -28,6 +28,7 @@
 			<li><a class="edit" title="确定要启用选择的信息吗？" href="externalChannelAdverInfo/updateAdverStatus?externalAdverStatus=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
 			<li><a class="edit" title="确定要停用选择的信息吗？" href="externalChannelAdverInfo/updateAdverStatus?externalAdverStatus=2"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
 			<li><a class="edit" title="确定要刷新选择的信息吗？" href="externalChannelAdverInfo/freshAdverNum"  target="selectedTodo" postType="string" rel="ids"><span>刷新</span></a></li>
+			<li><span style="" onclick= "show()">导出</span></li>
 			<li class="line">line</li>
 		</ul>
 	</div>
@@ -72,7 +73,27 @@
 			</c:forEach>
 		</tbody>
 	</table>
-		<%@include file="/WEB-INF/jsp/inc/page.jsp" %>
+	
+		<script type="text/javascript">
+		
+function show(){
+    var obj = document.getElementsByName("ids");
+    var check_val = "";
+    for(k in obj){
+        if(obj[k].checked){
+        	check_val = obj[k].value
+        }
+    }
+   	console.log(check_val);
+    if(check_val != ""){
+	    window.location.href = "http://moneyzhuan.com/externalChannelAdverInfo/export?adverIds="+  check_val;
+    }else{
+    	alert("请先选择一个任务！")
+    }
+}
+</script>
+
+<%@include file="/WEB-INF/jsp/inc/page.jsp" %>
 </div>
 
 

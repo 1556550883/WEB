@@ -82,7 +82,7 @@ public class TUserApp implements java.io.Serializable {
 	}
 
 	@Id
-	@GeneratedValue(strategy = IDENTITY)
+	//@GeneratedValue(strategy = IDENTITY)随机增加 1-100
 	@Column(name = "user_app_id", unique = true, nullable = false)
 	public Integer getUserAppId() {
 		return userAppId;

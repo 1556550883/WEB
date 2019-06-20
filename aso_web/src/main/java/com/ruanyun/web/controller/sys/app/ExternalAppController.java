@@ -59,6 +59,7 @@ public class ExternalAppController extends BaseController
 					//如果抛出异常重复添加了
 					externalAppService.save(tExternalChannelTask, adid, key);
 				} catch (Exception e) {
+					obj.element(idfa, 1);
 				}
 			}else {
 				obj.element(idfa, 1);
@@ -79,6 +80,7 @@ public class ExternalAppController extends BaseController
 						//如果抛出异常重复添加了
 						externalAppService.save(tExternalChannelTask, adid, key);
 					} catch (Exception e) {
+						obj.element(idfa, 1);
 					}
 				}else {
 					obj.element(idfa, 1);
@@ -100,6 +102,24 @@ public class ExternalAppController extends BaseController
 						//如果抛出异常重复添加了
 						externalAppService.save(tExternalChannelTask, adid, key);
 					} catch (Exception e) {
+						obj.element(idfa, 1);
+					}
+				}else {
+					obj.element(idfa, 1);
+				}
+				//保存
+				super.writeJsonDataApp(response, obj);
+				return;
+			}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("fenqianba")) {
+				AppCommonModel models = FenQianChannel.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa);
+				if(models.getResult() == 1) {
+					//设置0代表为重复
+					obj.element(idfa, 0);
+					try {
+						//如果抛出异常重复添加了
+						externalAppService.save(tExternalChannelTask, adid, key);
+					} catch (Exception e) {
+						obj.element(idfa, 1);
 					}
 				}else {
 					obj.element(idfa, 1);
@@ -215,7 +235,14 @@ public class ExternalAppController extends BaseController
 				
 				super.writeJsonDataApp(response, obj);
 				return;
-			}
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("fenqianba")) {
+			//不需要点击接口
+			obj.element("code", 0);
+			obj.element("msg", "ok");
+			externalAppService.update(tExternalChannelTask, adid, key);
+			super.writeJsonDataApp(response, obj);
+			return;
+		}
 
 		try 
 		{
@@ -280,6 +307,19 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}
+		
+		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
+		tExternalChannelTask.setIdfa(idfa);
+		tExternalChannelTask.setStatus("3");
+		TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+		if(taskInfo == null) 
+		{
+			obj.element("code", -1);
+			obj.element("result", "未知task！");
+			super.writeJsonDataApp(response, obj);
+			return;
+		}
+		
 		//回调任务不需要请求激活接口
 		if(info.getExternalTaskType().equals("1")) {
 			obj.element("code", 0);
@@ -288,9 +328,7 @@ public class ExternalAppController extends BaseController
 			return;
 		}
 		
-		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
-		tExternalChannelTask.setIdfa(idfa);
-		tExternalChannelTask.setStatus("3");
+		
 		
 		//对接云聚
 		if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("happyzhuan")) {
@@ -298,7 +336,10 @@ public class ExternalAppController extends BaseController
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("result", "ok");
-				externalAppService.updateStatus(tExternalChannelTask, adid, key);
+				try {
+					externalAppService.updateStatus(tExternalChannelTask, adid, key);
+				} catch (Exception e) {
+				}
 			}else {
 				obj.element("code", -1);
 				obj.element("result", "active failed");
@@ -327,6 +368,19 @@ public class ExternalAppController extends BaseController
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("result", "ok");
+				int result = externalAppService.updateStatus(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("result", "active failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("fenqianba")) {
+			AppCommonModel appmodel = FenQianChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(), idfa,keyword,sysver, model);
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("result", "ok");
 				externalAppService.updateStatus(tExternalChannelTask, adid, key);
 			}else {
 				obj.element("code", -1);
@@ -339,15 +393,6 @@ public class ExternalAppController extends BaseController
 		
 		try 
 		{
-			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
-			if(taskInfo == null) 
-			{
-				obj.element("code", -1);
-				obj.element("result", "未知task！");
-				super.writeJsonDataApp(response, obj);
-				return;
-			}
-			
 			if(taskInfo.getStatus().equals("3"))
 			{
 				obj.element("code", 0);

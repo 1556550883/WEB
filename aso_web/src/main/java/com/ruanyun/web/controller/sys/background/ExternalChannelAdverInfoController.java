@@ -16,6 +16,7 @@ import com.ruanyun.web.model.TExternalChannelAdverInfo;
 import com.ruanyun.web.model.TExternalChannelAdverTaskInfo;
 import com.ruanyun.web.model.TExternalChannelInfo;
 import com.ruanyun.web.model.TExternalChannelTask;
+import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.app.ExternalAppService;
 import com.ruanyun.web.service.background.ExternalChannelAdverInfoService;
 import com.ruanyun.web.service.background.ExternalChannelInfoService;
@@ -33,6 +34,7 @@ public class ExternalChannelAdverInfoController extends BaseController
 	
 	@Autowired
 	private ExternalAppService externalAppService;
+
 	
 	@RequestMapping("list")
 	public String getChannelAdverInfoList(Page<TExternalChannelAdverInfo> page,TExternalChannelAdverInfo info,Model model)
@@ -104,6 +106,15 @@ public class ExternalChannelAdverInfoController extends BaseController
 		addModel(model, "bean", task);
 		return "pc/externalChannelAdverInfo/taskCompleteList";
 	}
+	
+	@RequestMapping("export")
+	public void exportIDFA(String adverIds, HttpServletResponse response)
+	{
+		TExternalChannelAdverInfo externalChannelAdverInfo = externalChannelAdverInfoService.getExternalChannelAdverInfo(Integer.parseInt(adverIds));
+		TExternalChannelInfo externalChannelInfo = externalChannelInfoService.getInfoByChannelNum(externalChannelAdverInfo.getExternalChannelNum());
+		externalChannelAdverInfoService.exprotIDFA(response, adverIds, externalChannelAdverInfo, externalChannelInfo);
+	}
+	
 	
 	@RequestMapping("adverCompleteInfo")
 	public String adverCompleteInfo(Page<TExternalChannelTask> page,TExternalChannelTask task,Model model)

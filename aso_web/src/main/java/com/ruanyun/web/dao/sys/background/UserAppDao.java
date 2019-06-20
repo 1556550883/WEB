@@ -173,4 +173,10 @@ public class UserAppDao extends BaseDaoImpl<TUserApp>{
 		sql.append(" WHERE t_user_app.`user_app_id`='"+appid+"'");
 		return sqlDao.get(HUserAppModel.class, sql.toString());
 	}
+	
+	public TUserApp getLastUserApp() {
+		StringBuffer sql = new StringBuffer("SELECT * FROM `t_user_app` order by user_app_id desc LIMIT 0,1");
+		return sqlDao.get(TUserApp.class, sql.toString());
+	}
+
 }

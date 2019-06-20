@@ -20,7 +20,7 @@ public class GourdChannel extends BaseChannel
 			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		//调用第三方排重接口 
-		AppCommonModel model = paiChong(adverInfo.getFlag2(), adverInfo.getAdverAdid(), adid, idfa);
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adverInfo.getAdverAdid(), adid, idfa,adverName, phoneModel,phoneVersion,ip);
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
@@ -31,7 +31,7 @@ public class GourdChannel extends BaseChannel
 		return model;
 	}
 	
-	public static AppCommonModel paiChong(String domain, String appid, String adid, String idfa)
+	public static AppCommonModel paiChong(String domain, String appid, String adid, String idfa,String adverName,String phoneModel,String phoneVersion, String ip)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		//调用第三方排重接口
@@ -39,7 +39,11 @@ public class GourdChannel extends BaseChannel
 				.append("?appid=").append(appid)
 				.append("&idfa=").append(idfa)
 				.append("&channel=").append(channel)
-				.append("&adid=").append(adid);
+				.append("&adid=").append(adid)
+				.append("&keyword=").append(adverName)
+				.append("&model=").append(phoneModel)
+				.append("&version=").append(phoneVersion)
+				.append("&ip=").append(ip);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)

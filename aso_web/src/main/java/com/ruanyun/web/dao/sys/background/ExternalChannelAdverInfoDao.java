@@ -2,7 +2,9 @@ package com.ruanyun.web.dao.sys.background;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -100,12 +102,19 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	}
 	
 	//获取昨天的日期
-		public String getDate() {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			String date = simpleDateFormat.format(new Date());
-			return date;
-		}
+	public static String getDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		calendar.add(calendar.DATE,-1);
 		
+		String date2= simpleDateFormat.format(calendar.getTime());
+		return date2;
+	}
+		
+	public static void main(String[] args) {
+		System.err.println(getDate());
+	}
 		
 	//查询任务详情
 	@SuppressWarnings("unchecked")
@@ -140,5 +149,22 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 		
 		page.setResult(list);
 		return page;
+	}
+	
+	
+
+	//导出idfa
+	@SuppressWarnings("rawtypes")
+	public List exportExcel(String adverIds,TExternalChannelAdverInfo t, TExternalChannelInfo externalChannelInfo)
+	{
+		//SELECT ip,idfa,keywords AS 关键词 , complete_time AS 完成时间 FROM `t_external_channel2242yunjv` WHERE STATUS = 3  AND complete_time >'2019-06-17 10:01:02' ORDER BY keywords,complete_time
+		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
+		StringBuffer sql = new StringBuffer("select ip,idfa,keywords, date_format(complete_time, '%Y-%m-%d %H:%i:%s') as complete_time from ");
+		sql.append(tableName);
+		sql.append(" where status = 3 and complete_time > '");
+		sql.append(getDate());
+		sql.append("'");
+		sql.append(" ORDER BY keywords DESC,complete_time ASC");
+		return sqlDao.getAll(sql.toString());
 	}
 }

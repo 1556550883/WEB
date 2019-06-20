@@ -1,6 +1,9 @@
 package com.ruanyun.web.service.background;
 
 import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +13,11 @@ import org.springframework.stereotype.Service;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.dao.sys.background.ExternalChannelAdverInfoDao;
 import com.ruanyun.web.model.TExternalChannelAdverInfo;
 import com.ruanyun.web.model.TExternalChannelInfo;
+import com.ruanyun.web.util.ExcelUtils;
 
 @Service
 public class ExternalChannelAdverInfoService extends BaseServiceImpl<TExternalChannelAdverInfo> 
@@ -78,4 +83,24 @@ public class ExternalChannelAdverInfoService extends BaseServiceImpl<TExternalCh
 	{
 		return super.get(TExternalChannelAdverInfo.class, "externalAdverId", externalAdverId);
 	}
+	
+	
+	
+	public void exprotIDFA(HttpServletResponse response, String  adverIds, TExternalChannelAdverInfo t, TExternalChannelInfo externalChannelInfo)
+	{
+		List list = externalChannelAdverInfoDao.exportExcel(adverIds, t,externalChannelInfo);
+		String fileName = "IDFA";
+		//ip,idfa,keywords
+		String[] columns = {"ip","idfa","keywords","complete_time"};
+		String[] headers = {"IP","IDFA","关键词","完成时间"};
+		try {
+			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+			SysCode.DATE_FORMAT_STR_L);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//CSVUtils.exportCsv(fileName, headers, columns, list);
+	}
+
 }

@@ -49,7 +49,8 @@
 		    <c:forEach var="item" items="${startTask}" varStatus="row">
 		    	<div onclick="taskdetail(${item.adverId}, '${item.bundleId}')" style="background:#fff;width:100%;margin-top:1px;height:70px">
 			    	<div style="float:left;height:60px;margin-left:15px;display:inline-block;">
-		 				<img class="" style="width:50px;height:50px;border-radius:8px;margin-top:10px" src="../file/adver/img/${item.adverImg}"/>
+		 			<!--<img class="" style="width:50px;height:50px;border-radius:8px;margin-top:10px" src="../file/adver/img/${item.adverImg}"/>-->
+		 			<img class="" style="width:50px;height:50px;border-radius:8px;margin-top:10px" src="../img/h5web/happy_logo.png"/>
 				 	</div>
 					<div style="z-index:9;position: relative;height:70px;margin-left:20px;font-size:13px;font-family:微软雅黑;display:inline-block;">
 				 		<div style="height:15px;width:200px;margin-top:12px">

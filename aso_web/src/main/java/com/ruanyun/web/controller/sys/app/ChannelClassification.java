@@ -103,8 +103,10 @@ public class ChannelClassification
 			model =  PpHongBaoChannnel.isPpHongBaoChannnel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel);
 			break;
 		case 25:
-			//云聚
 			model = XiaoshouChannel.isXiaoshouChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
+			break;
+		case 26:
+			model = FenQianChannel.isFenQianChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
 			break;
 		default:
 			model.setResult(-1);
@@ -192,6 +194,9 @@ public class ChannelClassification
 			case 25:
 				model = XiaoshouChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1], udid);
 				break;
+			case 26:
+				model = FenQianChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(),idfa,adverInfo.getAdverName(), phoneos[1], phoneModel[1]);
+				break;
 			default:
 				model.setResult(-1);
 				model.setMsg("未完成。原因：渠道未在后台配置！");
@@ -207,14 +212,15 @@ public class ChannelClassification
 		String phonemodel_sim = "iPhone7,1";
 		int result = random.nextInt(18);
 		//账号77设定为4以上  iphone7
-		if((id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
-				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")|| id.equals("812")|| id.equals("83"))&& result <= 4){
-			result = 4;
-		} 
-		
-//		if(id.equals("77") || id.equals("181") || id.equals("186")  || id.equals("187")){
+//		if((id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
+//				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")
+//				|| id.equals("812")|| id.equals("83")|| id.equals("542235")|| id.equals("821")|| id.equals("802")|| id.equals("801")|| id.equals("800"))&& result <= 4){
 //			result = 4;
 //		} 
+		
+		if(id.equals("77") && result <= 4){
+			result = 4;
+		} 
 		
 		switch (result)
 		{
@@ -379,7 +385,45 @@ public class ChannelClassification
         return idd[4] + str;
     }
   
+  
+	public static String phoneModelChange(String phoneModel) 
+	{
+		switch (phoneModel)
+		{
+		   case "iPhone6":                           
+			   phoneModel =  "iPhone7,2";
+			   break;
+		   case "iPhone6S":                               
+			   phoneModel =  "iPhone8,1" ;
+			   break;
+		   case "iPhone6SPlus":                               
+			   phoneModel =  "iPhone8,2" ;
+			   break;
+			case "iPhone7":case "iPhone7S": case "iPhone7SPlus": 
+				phoneModel =  "iPhone9,1";
+				break;
+			case "iPhone8": case "iPhone8S": case "iPhone8SPlus":
+				phoneModel =  "iPhone10,1";
+				break;
+			case "iPhoneX":
+				phoneModel = "iPhone10,3"; 
+				break;
+			case "iPhoneXs":
+				phoneModel =  "iPhone11,2"; 
+				break;
+			case "iPhoneXr":   
+				phoneModel =  "iPhone11,8";
+				break;
+			default:
+				 phoneModel =  "iPhone7,2";
+				
+				break;
+			}
+		
+			return phoneModel;
+		}
+	
 	public static void main(String[] args) {
-		 System.err.println(getPhoneUdid("iPhone11,4"));
+		 System.err.println(phoneModelChange("iPhone6"));
 	}
 }

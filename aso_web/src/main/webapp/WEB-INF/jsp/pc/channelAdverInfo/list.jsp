@@ -40,6 +40,7 @@
 				<input type="checkbox" group="ids" class="checkboxCtrl" >
 				</th>
 				<th align="center">广告名称</th>
+				<th align="center">apple Store ID</th>
 				<th align="center">广告ID</th>
 				<th align="center">广告价格</th>
 				<th align="center">任务时效（单位：分钟）</th>
@@ -63,6 +64,7 @@
 				  <td align="center">
         			<input type="checkbox"  id="orderCheckBox" name="ids" value="${item.adverId}"></td>
 					<td>${item.adverName}</td>	  
+					<td>${item.adverAdid}</td>
 					<td>${item.adid}</td>	              
 	                <td>${item.adverPrice}</td>
 	                <td>${item.timeLimit}</td>

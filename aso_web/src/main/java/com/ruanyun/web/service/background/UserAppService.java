@@ -384,14 +384,13 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		}
 		
 		//0 白名单 1 黑名单 2 可疑名单 3 库无
-		int code = 0;
-//		int code = userPhoneEffective(phoneNum);
-//		if(code == -1) {
-//			return -1;
-//		}
+		int code = userPhoneEffective(phoneNum);
+		if(code == -1) {
+			return -1;
+		}
 		
 		userApp.setPhoneNum(phoneNum);
-		userApp.setIsEffective(0);
+		userApp.setIsEffective(code);
 		update(userApp);
 		
 		return 1;
@@ -570,6 +569,10 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 	}
 	
 	
+	public TUserApp getLastUserApp() {
+		TUserApp  tUserApp = userAppDao.getLastUserApp();
+		return tUserApp;
+	}
 	
 	
 }

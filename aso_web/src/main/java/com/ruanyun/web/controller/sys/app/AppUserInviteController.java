@@ -90,7 +90,12 @@ public class AppUserInviteController extends BaseController
 		TUserApp tUserApp = userAppService.getUserAppByUserName(udid);
   	    if(tUserApp == null) 
   		{
+  	  	
+  	    	java.util.Random random = new java.util.Random();
+  			int result = random.nextInt(499) + 1;
+  	    	int lastId = userAppService.getLastUserApp().getUserAppId();
   			tUserApp = new TUserApp();
+  			tUserApp.setUserAppId(lastId + result);
   			tUserApp.setUserApppType(2);
   			tUserApp.setLoginName(udid);
   			tUserApp.setLoginPwd("");
@@ -100,7 +105,7 @@ public class AppUserInviteController extends BaseController
   			tUserApp.setLevel(6);
   			tUserApp.setLimitTime(20);
   			tUserApp.setCreateDate(new Date());
-  			System.err.println("level==========================" +  dictionaryService.getVestorLevel() ) ;
+  			System.err.println("level==========================" +  tUserApp.getUserAppId()) ;
   			userAppService.saveOrUpdate(tUserApp, request, null);
   			
   			if(masterID != null && !masterID.isEmpty()) {

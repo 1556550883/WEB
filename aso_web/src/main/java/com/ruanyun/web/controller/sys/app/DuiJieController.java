@@ -168,11 +168,6 @@ public class DuiJieController extends BaseController
 				phoneVersion = ChannelClassification.getPhoneVersion();
 			}
 			
-			if(userAppId.equals("197") || userAppId.equals("798")) {
-				phoneModel = request.getParameter("phoneModel");
-				phoneVersion = request.getParameter("phoneVersion");
-			}
-			
 			userApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
 		}
 		
@@ -194,6 +189,13 @@ public class DuiJieController extends BaseController
 			model.setMsg("领取任务失败。原因：广告不存在！");
 			super.writeJsonDataApp(response, model);
 			return;
+		}
+		
+		//渠道16传递真实数据
+		if(adverInfo.getChannelNum().equals("16")) {
+			 phoneModel = request.getParameter("phoneModel");
+			 phoneModel = ChannelClassification.phoneModelChange(phoneModel);
+			 phoneVersion = request.getParameter("phoneVersion");
 		}
 		
 		if(adverInfo.getAdverStatus() != 1) 
