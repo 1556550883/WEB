@@ -186,7 +186,7 @@ public class ChannelClassification
 				model = SanhuFrogsChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), idfa, ip, adverInfo.getAdverName(),phoneModel[1], phoneos[1], udid);
 				break;
 			case 23:
-				model =  YouZhuanChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1]);
+				model =  YouZhuanChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1], udid);
 				break;
 			case 24:
 				//model =  PpHongBaoChannnel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1]);
@@ -289,7 +289,7 @@ public class ChannelClassification
 	public static String  getPhoneVersion()
 	{
 		String phoneVersion = "12.1.2";
-		int result = random.nextInt(6);
+		int result = random.nextInt(8);
 		switch (result)
 		{
 			case 0:
@@ -310,8 +310,51 @@ public class ChannelClassification
 			case 5:
 				phoneVersion = "12.1.4";
 				break;
+			case 6:
+				phoneVersion = "12.2";
+				break;
+			case 7:
+				phoneVersion = "12.3.1";
+				break;
 			default:
 				phoneVersion = "12.1.2";
+				break;
+		}
+				
+		return phoneVersion;
+	}
+	
+	
+	
+	public static String  get11PhoneVersion()
+	{
+		String phoneVersion = "11.1.1";
+		int result = random.nextInt(7);
+		switch (result)
+		{
+			case 0:
+				phoneVersion = "11.1.1";
+				break;
+			case 1:
+				phoneVersion ="11.4.1";
+				break;
+			case 2:
+				phoneVersion = "11.3.1";
+				break;	
+			case 3:
+				phoneVersion = "11.0.1";
+				break;	
+			case 4:
+				phoneVersion = "11.2.1";
+				break;
+			case 5:
+				phoneVersion = "11.0";
+				break;
+			case 6:
+				phoneVersion = "11.3";
+				break;
+			default:
+				phoneVersion = "11.1.1";
 				break;
 		}
 				
@@ -332,29 +375,31 @@ public class ChannelClassification
 		   case "iPhone6,2":                  
 		   case "iPhone7,2":                           
 		   case "iPhone7,1":                             
-		   case "iPhone8,1":                               
+		   case "iPhone8,1":         
 		   case "iPhone8,2":                            
 		   case "iPhone8,4":                             
 			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  case "iPhone9,6": case "iPhone9,5": 
 			case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    
 			case "iPhone10,3":case  "iPhone10,6":  
 				 String Str1=UUID.randomUUID().toString().replace("-", "");
+				 //String Str1=UUID.randomUUID().toString();
 				 udid = Str1 + get8UUID();
 				 break;
 			case "iPhone11,2": case "iPhone11,4": case "iPhone11,6":    
 			case "iPhone11,8":   
 				int result = random.nextInt(2);
-				String Str = "00008020000";
+				//00008020-000A09183CDA002E
+				String Str = "00008020-000";
 				switch (result)
 				{
 					case 0:
-						Str = "00008020000";
+						Str = "00008020-000";
 						break;
 					case 1:
-						Str ="00008020001";
+						Str ="00008020-001";
 						break;
 					default:
-						Str = "00008020000";
+						Str = "00008020-000";
 						break;
 				}
 				
@@ -376,6 +421,7 @@ public class ChannelClassification
 	 
   public static String get13UUID(){
 	  	//bd76efef-c208-470b-a584-907cbebcd472
+	  // 00008020-000A09183CDA002E
         UUID id=UUID.randomUUID();
         String[] idd=id.toString().split("-");
         
@@ -384,6 +430,12 @@ public class ChannelClassification
         
         return idd[4] + str;
     }
+  
+  
+  public static void main(String[] args) {
+	
+		 System.err.println(  getPhoneUdid("iPhone7,1"));
+	}
   
   
 	public static String phoneModelChange(String phoneModel) 
@@ -423,7 +475,5 @@ public class ChannelClassification
 			return phoneModel;
 		}
 	
-	public static void main(String[] args) {
-		 System.err.println(phoneModelChange("iPhone6"));
-	}
+	
 }

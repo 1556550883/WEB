@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -89,6 +90,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer isAdverInter;//is_register 
      private Integer isToday;
      private long taskEndTime;
+     private Float random;
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -627,5 +629,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setIsToday(Integer isToday) {
 		this.isToday = isToday;
+	}
+	
+	@Column(name="random")
+	public Float getRandom() {
+		return random;
+	}
+	public void setRandom(Float random) {
+		this.random = random;
 	}
 }

@@ -47,7 +47,7 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	 */
 	public Page<TChannelAdverInfo> queryAdverList(Page<TChannelAdverInfo> page, TChannelAdverInfo t) 
 	{
-		return channelAdverInfoDao.PageSql3(page, t.getChannelNum());
+		return channelAdverInfoDao.PageSql3(page, t);
 	}
 	
 	/**

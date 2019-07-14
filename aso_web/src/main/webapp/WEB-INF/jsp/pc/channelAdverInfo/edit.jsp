@@ -151,6 +151,13 @@
 				    <input name="adverCount" id="adverCount" class="mustFill" title="广告数量" type="text" value="<c:out value="${bean.adverCount}"></c:out>" maxlength="100"/>
 				</dd>
 		    </dl>
+		    
+		        <dl class="nowrap" style="width: 100%">
+				<dt>任务回调率0-1：</dt>
+				<dd>
+				    <input name="random" id="random" class="mustFill" title="任务回调率" type="text" value="<c:out value="${bean.random}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
 		    <dl class="nowrap" style="width: 100%">
 				<dt>广告价格：</dt>
 				<dd>

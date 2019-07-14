@@ -94,7 +94,7 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("youbang")) {
-				AppCommonModel models = YouZhuanChannel.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa, sysver, model, keyword, ip);
+				AppCommonModel models = YouZhuanChannel.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa, sysver, model, keyword, ip, udid);
 				if(models.getResult() == 1) {
 					//设置0代表为重复
 					obj.element(idfa, 0);
@@ -364,7 +364,7 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("youbang")) {
-			AppCommonModel appmodel = YouZhuanChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),keyword, idfa, ip, sysver, model);
+			AppCommonModel appmodel = YouZhuanChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),keyword, idfa, ip, sysver, model, udid);
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("result", "ok");

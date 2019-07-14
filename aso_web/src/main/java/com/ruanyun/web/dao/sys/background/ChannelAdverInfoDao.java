@@ -89,10 +89,22 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	/**
 	 * 查询广告列表（后台显示）
 	 */
-	public Page<TChannelAdverInfo> PageSql3(Page<TChannelAdverInfo> page, String channelNum)
+	public Page<TChannelAdverInfo> PageSql3(Page<TChannelAdverInfo> page, TChannelAdverInfo t)
 	{
 		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE 1=1 ");
-		sql.append(" and channel_num='").append(channelNum);
+		sql.append(" and channel_num='").append(t.getChannelNum());
+		if(t.getAdverName() != null && !t.getAdverName().isEmpty()) {
+			sql.append("' and adver_name='").append(t.getAdverName());
+		}
+		
+		if(t.getAdverAdid() != null && !t.getAdverAdid().isEmpty()) {
+			sql.append("' and adver_adid='").append(t.getAdverAdid());
+		}
+		
+		if(t.getAdid() != null && !t.getAdid().isEmpty()) {
+			sql.append("' and adid='").append(t.getAdid());
+		}
+		
 		sql.append("' and adver_createtime>'").append(GetYestdayDate());
 		//sql.append(SQLUtils.popuHqlMin2("create_date", new Date()));
 		sql.append("' and adver_status in('0','1','2')");

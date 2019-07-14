@@ -53,7 +53,6 @@ public class DuiJieController extends BaseController
 	private DictionaryService dictionaryService;
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
-	
 	/**
 	 * 查询系统参数
 	 */
@@ -192,10 +191,18 @@ public class DuiJieController extends BaseController
 		}
 		
 		//渠道16传递真实数据
-		if(adverInfo.getChannelNum().equals("16")) {
+		if(adverInfo.getChannelNum().equals("16") || userApp.getUserAppId() == 197 || userApp.getUserAppId() == 798
+				|| userApp.getUserAppId()== 184 || userApp.getUserAppId() == 183 || userApp.getUserAppId() == 79) {
 			 phoneModel = request.getParameter("phoneModel");
-			 phoneModel = ChannelClassification.phoneModelChange(phoneModel);
+			 if(!phoneModel.contains(",")) {
+				 phoneModel = ChannelClassification.phoneModelChange(phoneModel);
+			 }
 			 phoneVersion = request.getParameter("phoneVersion");
+			 udid = ChannelClassification.getPhoneUdid(phoneModel);
+		}
+		
+		if(userApp.getUserAppId() == 79) {
+			phoneVersion = ChannelClassification.get11PhoneVersion();
 		}
 		
 		if(adverInfo.getAdverStatus() != 1) 
@@ -259,7 +266,7 @@ public class DuiJieController extends BaseController
 						return;
 					}else if(item.getStatus().compareTo("1.6") == 0 && item.getAdverId().equals(Integer.valueOf(adverId))){
 						model.setResult(-1);
-						model.setMsg("抱歉，此任务今日已超时，请明日在来！");
+						model.setMsg("任务已重复！");
 						super.writeJsonDataApp(response, model);
 						return;
 					}else if((item.getStatus().compareTo("1.5") == 0 && item.getAdverId().equals(Integer.valueOf(adverId)))) 
@@ -330,6 +337,8 @@ public class DuiJieController extends BaseController
 			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
 		}
 		
+		double ran = Math.random();
+		
 		//保存任务
 		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 		tUserappidAdverid.setUserAppId(Integer.valueOf(userAppId));
@@ -339,11 +348,21 @@ public class DuiJieController extends BaseController
 		tUserappidAdverid.setAppleId(appleId);
 		tUserappidAdverid.setAdid(adid);
 		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
-		tUserappidAdverid.setStatus("1");
 		tUserappidAdverid.setReceiveTime(new Date());
 		tUserappidAdverid.setPhoneModel(phoneModel_real + phoneModel);
 		tUserappidAdverid.setPhoneVersion(phoneVersion_real + phoneVersion);
-		tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
+		//80% 概率
+		if(ran <= adverInfo.getRandom()) {
+			tUserappidAdverid.setStatus("1");
+			tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
+		}else {
+			tUserappidAdverid.setStatus("1.7");
+			tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
+			model.setResult(-1);
+			model.setMsg("抱歉，重复任务！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
 		
 		if(tUserappidAdverid == null)
 		{
@@ -620,7 +639,7 @@ public class DuiJieController extends BaseController
 		
 		//String adid = request.getParameter("adid");//广告id（第三方提供）
 		String idfa = request.getParameter("idfa");//手机广告标识符l
-		//String ip = request.getRemoteAddr();//手机ip
+		String remoteIp = request.getRemoteAddr();//手机ip
 		String adverId = request.getParameter("adverId");//广告id（我们系统提供）
 		String udid = request.getParameter("udid");
 		if(udid != null && !udid.isEmpty()) {
@@ -653,11 +672,22 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		String ip = task.getIp();
 		TUserApp tUserApp  = userAppService.getUserAppById(Integer.valueOf(task.getUserAppId()));
 		String userNum = tUserApp.getUserNum();
 		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		
+		String ip = task.getIp();
+		if(!remoteIp.equals(ip) 
+				&& !adverInfo.getChannelNum().equals("3")
+				&& !adverInfo.getChannelNum().equals("12")
+				&& !adverInfo.getChannelNum().equals("16")
+				&& !adverInfo.getChannelNum().equals("15")) {
+			model.setResult(-1);
+			model.setMsg("ip不统一，任务已失效！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
 		
 		//判断任务状态
 		if(task.getStatus().compareTo("2") >= 0)
@@ -984,17 +1014,17 @@ public class DuiJieController extends BaseController
 		}
 		
 		//查询个人信息
-		TUserApp tUserApp = userAppService.get(TUserApp.class, "userAppId", Integer.valueOf(task.getUserAppId()));
+		//TUserApp tUserApp = userAppService.get(TUserApp.class, "userAppId", Integer.valueOf(task.getUserAppId()));
 		//外放人员
-		if(tUserApp != null && tUserApp.getUserApppType() == 2) 
-		{
+		//if(tUserApp != null && tUserApp.getUserApppType() == 2) 
+		//{
 			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 			tUserappidAdverid.setIdfa(idfa);
 			tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
 			//1.7代表放弃的状态
 			tUserappidAdverid.setStatus("1.7");
 			userappidAdveridService.updateTaskStatus(tUserappidAdverid);
-		}
+		//}
 		
 		model.setResult(1);
 		model.setMsg("成功！");

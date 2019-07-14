@@ -34,7 +34,7 @@
 				   <select name="phoneType" class="mustFill" title="手机型号">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${phoneType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode=='iPhone6'}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode=='iPhone6s'}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -45,7 +45,7 @@
 				   <select name="iosVersion" class="mustFill" title="手机系统">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${iosVersion}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==9}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==12}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>
@@ -93,9 +93,9 @@
 		     <dl class="nowrap" style="width: 100%">
 				<dt>外放设置：</dt>
 				<dd style="width: 300px">
-					   工作室 ：<input type="radio" name="isOpen"  value="1"/>
+					   工作室 ：<input type="radio" name="isOpen"  value="1" checked/>
 					    外放：<input type="radio" name="isOpen"  value="2"/>
-					    默认 ：<input type="radio" name="isOpen"  value="0" checked/>
+					    默认 ：<input type="radio" name="isOpen"  value="0"/>
 				</dd>
 		    </dl>
 		    
@@ -131,6 +131,14 @@
 					<input id='adverImg' name='adverImg' type='hidden' value='${bean.adverImg}' maxlength='100'/>
 				</dd>
 		    </dl>
+		    
+		     <dl class="nowrap" style="width: 100%">
+				<dt>任务回调率0-1：</dt>
+				<dd>
+				    <input name="random" id="random" class="mustFill" title="任务回调率" type="text" value="<c:out value="${bean.random}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
+		    
 		    <dl class="nowrap" style="width: 100%">
 				<dt>广告价格：</dt>
 				<dd>
@@ -283,6 +291,7 @@
 	            		$("#addTask").val(adverinfo["addTask"]);
 	            		$("#addTaskLimit").val(adverinfo["addTaskLimit"]);
 	            		$("#remark").val(adverinfo["remark"]);
+	            		$("#random").val(adverinfo["random"]);
 	            	}else{
 	            		var bundleid = json["bundleid"];
 	            		$("#bundleId").val(bundleid);

@@ -11,7 +11,9 @@
   <form rel="pagerForm" onsubmit="return navTabSearch(this);"  action="channelAdverInfo/list?channelNum=${bean.channelNum}" method="post">
     <div class="searchBar">
 		<ul class="searchContent ys_wa">
-		<li><label class="new_addLabel">广告名称：</label><input type="text" name="shopName" value="${bean.adverName}" /></li>
+		<li><label class="new_addLabel">广告名称：</label><input type="text" name="adverName" value="${bean.adverName}" /></li>
+		<li><label class="new_addLabel">apps ID：</label><input type="text" name="adverAdid" value="${bean.adverAdid}" /></li>
+		<li><label class="new_addLabel">adid：</label><input type="text" name="adid" value="${bean.adid}" /></li>
 		</ul>
 		<div class="subBar">
 			<ul>
@@ -42,6 +44,7 @@
 				<th align="center">广告名称</th>
 				<th align="center">apple Store ID</th>
 				<th align="center">广告ID</th>
+				<th align="center">广告类型</th>
 				<th align="center">广告价格</th>
 				<th align="center">任务时效（单位：分钟）</th>
 				<th align="center">广告数量</th>
@@ -65,7 +68,16 @@
         			<input type="checkbox"  id="orderCheckBox" name="ids" value="${item.adverId}"></td>
 					<td>${item.adverName}</td>	  
 					<td>${item.adverAdid}</td>
-					<td>${item.adid}</td>	              
+					<td>${item.adid}</td>	
+					<c:if test="${item.taskType==0}">
+						<td>快速</td>
+					</c:if>   
+					<c:if test="${item.taskType==1}">
+						<td>回调</td>
+					</c:if> 
+					<c:if test="${item.taskType==2}">
+						<td>自由</td>
+					</c:if>            
 	                <td>${item.adverPrice}</td>
 	                <td>${item.timeLimit}</td>
 	                <td>${item.adverCount}</td>

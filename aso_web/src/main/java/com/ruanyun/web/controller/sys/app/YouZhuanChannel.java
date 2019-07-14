@@ -28,7 +28,7 @@ public class YouZhuanChannel extends BaseChannel
 	{
 		//云聚
 		//调用第三方排重接口
-		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip);
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adid, idfa,phoneVersion,phoneModel,adverInfo.getAdverName(),ip,udid);
 		
 		if(model.getResult() != -1)
 		{
@@ -39,7 +39,7 @@ public class YouZhuanChannel extends BaseChannel
 		return model;
 	}
 	
-	public static AppCommonModel paiChong(String domain, String adid, String idfa, String sysver, String phonemodel,String adverName, String ip)
+	public static AppCommonModel paiChong(String domain, String adid, String idfa, String sysver, String phonemodel,String adverName, String ip, String udid)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -48,7 +48,8 @@ public class YouZhuanChannel extends BaseChannel
 				.append("?adid=").append(adid)
 				.append("&type=").append("CheckIDFA")
 				.append("&channel=").append(channel)
-				.append("&idfa=").append(idfa);
+				.append("&idfa=").append(idfa)
+				.append("&udid=").append(udid);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
 		if(jsonObject == null)
@@ -94,7 +95,7 @@ public class YouZhuanChannel extends BaseChannel
 			Integer userAppId, Integer adverId, String userNum, String sysver, String phonemodel,String adverName, String udid) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
-		udid = MD5.MD5Encode(udid.toLowerCase());
+		//udid = MD5.MD5Encode(udid.toLowerCase());
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&type=").append("ClickSync")
@@ -136,7 +137,7 @@ public class YouZhuanChannel extends BaseChannel
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		
-		udid = MD5.MD5Encode(udid.toLowerCase());
+		//udid = MD5.MD5Encode(udid.toLowerCase());
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adid)
 				.append("&type=").append("ClickSync")
@@ -174,7 +175,7 @@ public class YouZhuanChannel extends BaseChannel
 	/**
 	 * 激活上报
 	 */
-	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip, String sysver, String phonemodel) {
+	public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip, String sysver, String phonemodel,String udid) {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url;
@@ -187,6 +188,7 @@ public class YouZhuanChannel extends BaseChannel
 					.append("&os=").append(sysver)
 					.append("&device=").append(phonemodel)
 					.append("&keyword=").append(URLEncoder.encode(adverName, "utf-8"))
+					.append("&udid=").append(udid)
 					.append("&ip=").append(ip);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

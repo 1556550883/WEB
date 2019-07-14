@@ -40,7 +40,7 @@ public class ScoreTask
 		userScoreService.clearUserScoreDay();
     }  
 	
-	@Scheduled(cron="0 00 05 ? * * ")   //每天05点00分执行清除用户当天数据  
+	@Scheduled(cron="0 00 01 ? * * ")   //每天05点00分执行清除用户当天数据  
     public void stopTask()
 	{  
 		channelAdverInfoService.updateAdverStatusAll(2);
