@@ -28,6 +28,7 @@ import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.producer.AdverQueueConsumer;
+import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
@@ -35,6 +36,7 @@ import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
+import com.ruanyun.web.util.AddressUtils;
 import com.ruanyun.web.util.ArithUtil;
 
 @Controller
@@ -190,9 +192,21 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		//限制连云港港的ip
+		if(adverInfo.getChannelNum().equals("25")) {
+			String iplocaltion = AddressUtils.getAddressByIP(ip);
+			if(iplocaltion.contains("连云港市")) {
+				model.setResult(-1);
+				model.setMsg("此ip在限制范围内，请更换ip！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+		}
+		
 		//渠道16传递真实数据
 		if(adverInfo.getChannelNum().equals("16") || userApp.getUserAppId() == 197 || userApp.getUserAppId() == 798
-				|| userApp.getUserAppId()== 184 || userApp.getUserAppId() == 183 || userApp.getUserAppId() == 79) {
+				|| userApp.getUserAppId()== 184 || userApp.getUserAppId()== 821 || userApp.getUserAppId()== 800 || userApp.getUserAppId()== 802 
+				|| userApp.getUserAppId() == 183 || userApp.getUserAppId() == 79) {
 			 phoneModel = request.getParameter("phoneModel");
 			 if(!phoneModel.contains(",")) {
 				 phoneModel = ChannelClassification.phoneModelChange(phoneModel);
@@ -201,7 +215,8 @@ public class DuiJieController extends BaseController
 			 udid = ChannelClassification.getPhoneUdid(phoneModel);
 		}
 		
-		if(userApp.getUserAppId() == 79) {
+		//phoneVersion = ChannelClassification.get11PhoneVersion();
+		if(adverInfo.getAdverAdid().contains("-11")) {
 			phoneVersion = ChannelClassification.get11PhoneVersion();
 		}
 		
@@ -216,11 +231,12 @@ public class DuiJieController extends BaseController
 		if(adverInfo.getIsMock() != 0) 
 		{
 			model.setResult(-1);
+			
 			model.setMsg("抢任务人数过多，请稍后再试！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-		
+
 		//判断当天领取到的任务
 		//Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
 		String adid = adverInfo.getAdid();
@@ -280,6 +296,27 @@ public class DuiJieController extends BaseController
 			}
 		}
 		
+		//参数＞0说明任务需要领取的间隔时间 否则不需要卡时间
+		if(adverInfo.getReceInterTime() > 0) {
+			//时间间隔
+			if(!ArrayBlockQueueProducer.specialXSAdverList.containsKey(adverInfo.getAdverId() + "")) {
+				model.setResult(-1);
+				model.setMsg("联系管理，重启任务！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
+			long inter = ChannelClassification.getTimestamp() - ArrayBlockQueueProducer.specialXSAdverList.get(adverInfo.getAdverId() + "").getReceTimeZone();
+			//间隔小于要求值得时候，返回任务繁忙
+			if(inter < adverInfo.getReceInterTime() ) {
+				model.setResult(-1);
+				String msg = String.format("请等待%s秒后,重新请求", adverInfo.getReceInterTime() - inter);
+				model.setMsg(msg);
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+		}
+		
 		//检测apple是否可以使用
 		AppCommonModel checkAppleIDModel = checkAppleIDDuplicated(userApp, appleId, adid);
 		if(checkAppleIDModel.getResult() != 2)
@@ -322,6 +359,10 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+//		else if(adverInfo.getChannelNum().equals("25"))
+//		{
+//			//抢到小手任务之后需要间隔 编号 25
+//		}
 		
 		//排重
 		TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
@@ -347,6 +388,7 @@ public class DuiJieController extends BaseController
 		tUserappidAdverid.setIdfa(idfa);
 		tUserappidAdverid.setAppleId(appleId);
 		tUserappidAdverid.setAdid(adid);
+		tUserappidAdverid.setIpLocaltion(AddressUtils.getAddressByIP(ip));
 		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
 		tUserappidAdverid.setReceiveTime(new Date());
 		tUserappidAdverid.setPhoneModel(phoneModel_real + phoneModel);
@@ -370,6 +412,11 @@ public class DuiJieController extends BaseController
 			model.setMsg("领取任务失败，请修改ip地址重新尝试！");
 			super.writeJsonDataApp(response, model);
 			return;
+		}
+		
+		//任务领取成功之后需要更新任务的间隔时间zone
+		if(adverInfo.getReceInterTime() > 0) {
+			ArrayBlockQueueProducer.specialXSAdverList.get(adverInfo.getAdverId() + "").setReceTimeZone(ChannelClassification.getTimestamp());
 		}
 		
 		//model.setObj(tUserappidAdverid);
@@ -399,6 +446,23 @@ public class DuiJieController extends BaseController
 		}
 		
 		return model;
+	}
+	
+	
+//	public void iosversion11(TChannelAdverInfo adverInfo) {
+//		if(adverInfo.getAdid().contains("-11")) {
+//			String[]  strs=adverInfo.getAdid().split("-");
+//			adverInfo.setAdid(strs[0]);
+//			phoneVersion = ChannelClassification.get11PhoneVersion();
+//		}
+//	}
+	
+	public static void main(String[] args) {
+		String iplocaltion = AddressUtils.getAddressByIP("117.92.15.139");
+		System.out.println(iplocaltion);
+		if(iplocaltion.contains("连云港市")) {
+			System.out.println(iplocaltion);
+		}
 	}
 	
 	private AppCommonModel checkIDFADuplicated(TUserApp userApp, 
@@ -744,6 +808,30 @@ public class DuiJieController extends BaseController
 			}
 			
 			int num = Integer.parseInt(channelInfo.getChannelNum());
+			//这里判断任务是否需要提交的间隔时间
+			if(adverInfo.getSubmitInterTime() > 0) {
+				//任务需要提交的时间间隔，任务就需要后台自动去判断进行提交，这里就不需要真正的提交,更改任务状态为2.1
+				TUserScore score = new TUserScore();
+				score.setUserNick(idfa);//标记任务的idfa
+				score.setUserNum(userNum);
+				score.setUserScoreId(Integer.valueOf(adverId));//标记得分的 任务
+				//特殊任务的type
+				score.setType(9);
+				try {
+					QueueProducer.getQueueProducer().sendMessage(score, "socre");
+				} catch (Exception e) {
+					e.printStackTrace();
+					model.setResult(-1);
+					model.setMsg("发送给到结算队列失败，请稍后尝试！");
+					super.writeJsonDataApp(response, model);
+				}
+
+				model.setResult(1);
+				model.setMsg("任务已达到要求！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
 			String phoneModel = task.getPhoneModel();
 			String phoneOs = task.getPhoneVersion();
 			String [] arr1=phoneModel.split("-");
@@ -1014,17 +1102,17 @@ public class DuiJieController extends BaseController
 		}
 		
 		//查询个人信息
-		//TUserApp tUserApp = userAppService.get(TUserApp.class, "userAppId", Integer.valueOf(task.getUserAppId()));
+		TUserApp tUserApp = userAppService.get(TUserApp.class, "userAppId", Integer.valueOf(task.getUserAppId()));
 		//外放人员
-		//if(tUserApp != null && tUserApp.getUserApppType() == 2) 
-		//{
+		if(tUserApp != null && tUserApp.getUserApppType() == 2) 
+		{
 			TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 			tUserappidAdverid.setIdfa(idfa);
 			tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
 			//1.7代表放弃的状态
 			tUserappidAdverid.setStatus("1.7");
 			userappidAdveridService.updateTaskStatus(tUserappidAdverid);
-		//}
+		}
 		
 		model.setResult(1);
 		model.setMsg("成功！");

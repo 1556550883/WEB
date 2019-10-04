@@ -8,10 +8,11 @@ package com.ruanyun.web.dao.sys.background;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Repository;
 
@@ -50,6 +51,14 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo>
 		sql.append(" order by createDate desc");
 		return sql.toString();
 	}
+	
+	//清零每日金额
+	public void updateDayTotal()
+	{
+		String sql = "update t_channel_info set day_total = 0";
+		sqlDao.execute(sql.toString());
+	}
+	
 	
 	/**
 	 * 
@@ -240,12 +249,36 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo>
 		return page;
 	}
 	
-	public void calculate(TChannelInfo t) {
-//		String sql1 = "SELECT SUM(download_count) FROM t_channel_adver_info WHERE channel_num = 11  AND adver_day_start < '2018-12-01 09:54:00' ";
-//		String sql2 = "SELECT SUM(download_count) FROM t_channel_adver_info WHERE channel_num = 11  AND adver_day_start < '2018-12-01 09:54:00' ";
-//		String sql3 = "SELECT SUM(download_count) FROM t_channel_adver_info WHERE channel_num = 11  AND adver_day_start < '2018-12-01 09:54:00' ";
-//	
-//		Date date = new Date();
-//		String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM-dd HH:mm");
+	public int calculate(TChannelInfo t, String dateStr) {
+//		Date date = new Date();		
+//		String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM");
+		StringBuilder sql = new StringBuilder("SELECT COALESCE(SUM(download_count),0)  FROM t_channel_adver_info WHERE channel_num = ");
+		sql.append(t.getChannelNum());
+		sql.append(" AND adver_createtime > '");
+		sql.append(	dateStr);
+		sql.append("' ");
+		
+		return sqlDao.getCount(sql.toString());
+	}
+	
+	public static void main(String[] args) {
+		Date date = new Date();		
+		//String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM-dd HH:mm");
+		String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM");
+		System.out.println(dateStr);
+	}
+	
+	public void clearData()
+	{
+		StringBuffer sql = new StringBuffer("Update t_channel_info set cumulative_total=0");
+		sqlDao.execute(sql.toString());
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List exportChannelData()
+	{
+		StringBuffer sql = new StringBuffer("select channel_num, channel_name, cumulative_total "
+				+ " from t_channel_info");
+		return sqlDao.getAll(sql.toString());
 	}
 }

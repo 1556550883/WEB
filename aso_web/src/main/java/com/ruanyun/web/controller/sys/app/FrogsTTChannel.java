@@ -65,6 +65,9 @@ public class FrogsTTChannel  extends BaseChannel
 		return t1 = t1/1000;
 	}
 	
+	public static void main(String[] args) {
+		System.out.println(getTimestamp()); //1568006724
+	}
 	/**
 	 * 排重
 	 * @throws UnsupportedEncodingException 

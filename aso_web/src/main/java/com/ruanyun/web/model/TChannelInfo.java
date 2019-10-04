@@ -34,8 +34,8 @@ public class TChannelInfo  implements java.io.Serializable
 	private String flag1;
 	private String flag2;
 	private String flag3;
-	private Integer dayTotal;
-	private Integer cumulativeTotal;
+	private Float dayTotal;
+	private Float cumulativeTotal;
 	private String loginName;
 	private String channelType;  //渠道类型编码
 	private String channelTypeName;  //渠道类型名称
@@ -109,7 +109,7 @@ public class TChannelInfo  implements java.io.Serializable
     public TChannelInfo(String channelName, String channelNum, String channelDesc, 
     		Integer channelLevel, String channelUser, Date createDate, String appKey, 
     		String appPassword, String appOther, String appCallbackKey, String channelImg, 
-    		String flag1, String flag2, String flag3, Integer dayTotal, Integer cumulativeTotal) 
+    		String flag1, String flag2, String flag3, Float dayTotal, Float cumulativeTotal) 
     {
        this.channelName = channelName;
        this.channelNum = channelNum;
@@ -298,23 +298,23 @@ public class TChannelInfo  implements java.io.Serializable
     }
     
     @Column(name="day_total")
-    public Integer getDayTotal()
+    public Float getDayTotal()
     {
         return this.dayTotal;
     }
     
-    public void setDayTotal(Integer dayTotal) 
+    public void setDayTotal(Float dayTotal) 
     {
         this.dayTotal = dayTotal;
     }
     
     @Column(name="cumulative_total")
-    public Integer getCumulativeTotal() 
+    public Float getCumulativeTotal() 
     {
         return this.cumulativeTotal;
     }
     
-    public void setCumulativeTotal(Integer cumulativeTotal)
+    public void setCumulativeTotal(Float cumulativeTotal)
     {
         this.cumulativeTotal = cumulativeTotal;
     }

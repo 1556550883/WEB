@@ -39,6 +39,7 @@
 				<th align="center">用户ID</th>
 				<th align="center">用户名</th>
 				<th align="center">ip</th>
+				<th align="center">ip地区</th>
 				<th align="center">idfa</th>
 				<th align="center">udid</th>
 				<th align="center">apple id</th>
@@ -56,6 +57,7 @@
 	                <td>${item.userAppId}</td>
 	                <td>${item.loginName}</td>  
 	                <td>${item.ip}</td>  
+	                <td>${item.ipLocaltion}</td> 
 	                <td>${item.idfa}</td> 
 	                <td>${item.userUdid}</td> 
 	                <td>${item.appleId}</td> 

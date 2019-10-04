@@ -77,6 +77,19 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 
+	public int updateAdverStatus(TUserappidAdverid info) {
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE status= '2.1' ");
+		if(EmptyUtils.isNotEmpty(info)){
+			if (EmptyUtils.isNotEmpty(info.getAdverId()))
+				sql.append(" and adver_id="+info.getAdverId());
+			if (EmptyUtils.isNotEmpty(info.getIdfa()))
+				sql.append(" and idfa='"+info.getIdfa()+"'");
+		}
+		Object[] params = new Object[1];
+		params[0] = info.getStatus();
+		return sqlDao.update(params, sql.toString());
+	}
+	
 	public int updateStatus2OpenApp(TUserappidAdverid info) {
 		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=?,open_app_time=? WHERE status='1' ");
 		if(EmptyUtils.isNotEmpty(info)){
@@ -90,6 +103,24 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		params[1] = info.getOpenAppTime();
 		return sqlDao.update(params, sql.toString());
 	}
+	
+	public int updateSpecialComplete(TUserappidAdverid info) 
+	{
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=?,complete_time=? WHERE status = '1.5' ");
+		if(EmptyUtils.isNotEmpty(info))
+		{
+			if (EmptyUtils.isNotEmpty(info.getAdverId()))
+				sql.append(" and adver_id="+info.getAdverId());
+			if (EmptyUtils.isNotEmpty(info.getIdfa()))
+				sql.append(" and idfa='"+info.getIdfa()+"'");
+		}
+		
+		Object[] params = new Object[2];
+		params[0] = info.getStatus();
+		params[1] = info.getCompleteTime();
+		return sqlDao.update(params, sql.toString());
+	}
+	
 	
 	public int updateStatus2Complete(TUserappidAdverid info) 
 	{
@@ -140,6 +171,21 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.update(params, sql.toString());
 	}
 	
+	public int updateSpecialTaskStatus(TUserappidAdverid info) 
+	{
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE status='2.1' ");
+		if(EmptyUtils.isNotEmpty(info))
+		{
+			if (EmptyUtils.isNotEmpty(info.getAdverId()))
+				sql.append(" and adver_id="+info.getAdverId());
+			if (EmptyUtils.isNotEmpty(info.getIdfa()))
+				sql.append(" and idfa='"+info.getIdfa()+"'");
+		}
+		
+		Object[] params = new Object[1];
+		params[0] = info.getStatus();
+		return sqlDao.update(params, sql.toString());
+	}
 	/**
 	 * 更新超时未完成任务的状态，并返回更新行数
 	 */
@@ -225,6 +271,20 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
+	public Page<TUserappidAdverid> getLastSpecialTask(Page<TUserappidAdverid> page , String adverId) {
+		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+				.append(" where adver_id='").append(adverId).append("' and status=2.1 order by complete_time");
+		
+		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
+	}
+	
+	
+	public static void main(String[] args) {
+		
+		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+				.append(" where adver_id='").append(111).append("' and status=2.1 order by complete_time LIMIT 1");
+		System.out.print(sql);
+	}
 	/**
 	 * 查询已经使用的appleId
 	 */

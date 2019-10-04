@@ -57,6 +57,11 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return super.delete(TUserappidAdverid.class, propertyNames, values);
 	}
 	
+	public int updateSpecialComplete(TUserappidAdverid info) 
+	{
+		return userappidAdveridDao.updateSpecialComplete(info);
+	}
+	
 	public int updateStatus2Complete(TUserappidAdverid info) 
 	{
 		return userappidAdveridDao.updateStatus2Complete(info);
@@ -67,11 +72,21 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.updateReceiveTime(info);
 	}
 	
+	public int updateAdverStatus(TUserappidAdverid info) 
+	{
+		return userappidAdveridDao.updateAdverStatus(info);
+	}
+	
+	
 	public int updateTaskStatus(TUserappidAdverid info) 
 	{
 		return userappidAdveridDao.updateTaskStatus(info);
 	}
 	
+	public int updateSpecialTaskStatus(TUserappidAdverid info) 
+	{
+		return userappidAdveridDao.updateSpecialTaskStatus(info); 
+	}
 	/**
 	 * 更新超时未完成任务的状态，并返回更新行数
 	 */
@@ -104,6 +119,11 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 	{
 		return userappidAdveridDao.getTasking(idfa);
 	}
+	
+	public Page<TUserappidAdverid> getLastSpecialTask(Page<TUserappidAdverid> page , String adverId) {
+		return userappidAdveridDao.getLastSpecialTask(page, adverId);
+	}
+
 	
 	/**
 	 * 检查appleId是否已经使用

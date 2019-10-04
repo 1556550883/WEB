@@ -4,11 +4,11 @@ package com.ruanyun.web.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,7 +48,10 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String adverImg;
      private Date adverDayStart;
      private Date adverDayEnd;
-     private String adverTimeStart;
+     private Date keywordStartTime;
+     private Date keywordCompleteTime;
+    
+	private String adverTimeStart;
      private String adverTimeEnd;
      private Integer adverStepCount;
      private Date adverCreatetime;
@@ -91,6 +94,12 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer isToday;
      private long taskEndTime;
      private Float random;
+     private Integer adverSort;
+     private Integer receInterTime;
+     private Integer submitInterTime;
+     private long submiTimeZone;
+     private long receTimeZone;
+     private Integer isTime;//0表示有作用  1忽略
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -107,7 +116,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
     		Date adverDayEnd, String adverTimeStart, String adverTimeEnd, Integer adverStepCount,
     		Date adverCreatetime, int adverActivationCount, String fileType, String fileUrl, 
     		int downloadCount, Integer adverStatus, String flag1, String flag2, String flag3, 
-    		String flag4, Integer openTime, Integer level) 
+    		String flag4, Integer openTime, Integer level,Integer adverSort) 
     {
        this.adverName = adverName;
        this.adverNum = adverNum;
@@ -132,6 +141,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
        this.flag4 = flag4;
        this.openTime = openTime;
        this.level = level;
+       this.adverSort = adverSort;
     }
    
      @Id @GeneratedValue(strategy=IDENTITY)
@@ -637,5 +647,70 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setRandom(Float random) {
 		this.random = random;
+	}
+	
+	@Column(name="adver_sort")
+	public Integer getAdverSort() {
+		return adverSort;
+	}
+	
+	public void setAdverSort(Integer adverSort) {
+		this.adverSort = adverSort;
+	}
+	
+	@Column(name="rece_inter_time")
+	public Integer getReceInterTime() {
+		return receInterTime;
+	}
+	public void setReceInterTime(Integer receInterTime) {
+		this.receInterTime = receInterTime;
+	}
+	
+	
+	@Column(name="submit_inter_time")
+	public Integer getSubmitInterTime() {
+		return submitInterTime;
+	}
+	public void setSubmitInterTime(Integer submitInterTime) {
+		this.submitInterTime = submitInterTime;
+	}
+	
+	 @Transient
+	public long getSubmiTimeZone() {
+		return submiTimeZone;
+	}
+	public void setSubmiTimeZone(long submiTimeZone) {
+		this.submiTimeZone = submiTimeZone;
+	}
+	
+	 @Transient
+	public long getReceTimeZone() {
+		return receTimeZone;
+	}
+	public void setReceTimeZone(long receTimeZone) {
+		this.receTimeZone = receTimeZone;
+	}
+	
+	 @Transient
+     public Date getKeywordStartTime() {
+		return keywordStartTime;
+	}
+	public void setKeywordStartTime(Date keywordStartTime) {
+		this.keywordStartTime = keywordStartTime;
+	}
+	@Transient
+	public Date getKeywordCompleteTime() {
+		return keywordCompleteTime;
+	}
+	public void setKeywordCompleteTime(Date keywordCompleteTime) {
+		this.keywordCompleteTime = keywordCompleteTime;
+	}
+	
+	 @Transient
+	public Integer getIsTime() {
+		return isTime;
+	}
+	public void setIsTime(Integer isTime) {
+		this.isTime = isTime;
 	}
 }

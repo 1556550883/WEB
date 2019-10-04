@@ -1,11 +1,15 @@
 package com.ruanyun.web.timer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
+import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.LoginIpService;
 import com.ruanyun.web.service.background.UserScoreService;
 
@@ -25,6 +29,8 @@ public class ScoreTask
 	private UserScoreService userScoreService;
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
+	@Autowired
+	private ChannelInfoService channelInfoService;
 //	@Autowired
 //	private AppChannelAdverInfoService appChannelAdverInfoService;
 //	@Autowired
@@ -35,20 +41,24 @@ public class ScoreTask
 	private LoginIpService loginIpService;
 	
 	@Scheduled(cron="0 00 00 ? * * ")   //每天00点00分执行清除用户当天数据  
-    public void clearUserScore()
+    public void clearData()
 	{  
 		userScoreService.clearUserScoreDay();
+		//清理渠道每日记录
+		channelInfoService.updateDayTotal();
     }  
 	
-	@Scheduled(cron="0 00 01 ? * * ")   //每天05点00分执行清除用户当天数据  
+	@Scheduled(cron="0 00 00 ? * * ")   //每天05点00分执行清除用户当天数据  
     public void stopTask()
 	{  
 		channelAdverInfoService.updateAdverStatusAll(2);
+		
+		//移除不是当天的任务
 		ArrayBlockQueueProducer.removeAdverList.addAll(ArrayBlockQueueProducer.adverList);
     }  
 	
 	//@Scheduled(cron="0 00 06 ? * FRI")   //每个星期五执行操作 6点
-	@Scheduled(cron="0 27 01 ? * MON") //每月1号九点
+	@Scheduled(cron="0 30 01 ? * MON") //每月1号九点
     public void bakAdverInfoTable()
 	{  
 		channelAdverInfoService.adverInfoTableBak();

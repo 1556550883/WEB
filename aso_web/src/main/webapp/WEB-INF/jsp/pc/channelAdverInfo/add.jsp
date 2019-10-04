@@ -115,7 +115,7 @@
 			 <dl class="nowrap" style="width: 100%;">
 				<dt>任务备注(可为空)：</dt>
 				<dd>
-				    <input name="remark" id="remark" style="width: 467px" class="" title="备注" type="text" value="<c:out value="${bean.remark}"></c:out>" maxlength="1000" size="60"/>
+				   <input name="remark" id="remark" style="width: 467px" class="" title="备注" type="text" value="<c:out value="${bean.remark}"></c:out>" maxlength="1000" size="60"/>   
 				</dd>
 		    </dl>
 			<dl style="width: 100%">
@@ -135,7 +135,14 @@
 		     <dl class="nowrap" style="width: 100%">
 				<dt>任务回调率0-1：</dt>
 				<dd>
-				    <input name="random" id="random" class="mustFill" title="任务回调率" type="text" value="<c:out value="${bean.random}"></c:out>" maxlength="100"/>
+				    <input name="random" id="random" class="mustFill" title="任务回调率" type="text" value="1" maxlength="100"/>
+				</dd>
+		    </dl>
+		    
+		      <dl class="nowrap" style="width: 100%">
+				<dt>任务排序等级：</dt>
+				<dd>
+				    <input name="adverSort" id="adverSort" class="mustFill" title="任务排序等级" type="text" value="0" maxlength="100"/>
 				</dd>
 		    </dl>
 		    
@@ -182,6 +189,21 @@
 				<dt>增加任务的总数量：</dt>
 				<dd>
 				    <input name="addTaskLimit" id="addTaskLimit" class="mustFill" title="增加任务的总数量" type="text" value="<c:out value="${bean.addTaskLimit}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    
+		     <dl class="nowrap" style="width: 100%">
+				<dt>领取任务间隔（单位：秒）：</dt>
+				<dd>
+				    <input name="receInterTime" id="receInterTime" class="mustFill" title="领取任务间隔（单位：秒）" type="text" value="<c:out value="${bean.receInterTime}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    
+		    
+		       <dl class="nowrap" style="width: 100%">
+				<dt>提交任务间隔（单位：秒）：</dt>
+				<dd>
+				    <input name="submitInterTime" id="submitInterTime" class="mustFill" title="提交任务间隔（单位：秒）" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
 		    
@@ -292,6 +314,9 @@
 	            		$("#addTaskLimit").val(adverinfo["addTaskLimit"]);
 	            		$("#remark").val(adverinfo["remark"]);
 	            		$("#random").val(adverinfo["random"]);
+	            		$("#adverSort").val(adverinfo["adverSort"]);
+	            		$("#receInterTime").val(adverinfo["receInterTime"]);
+	            		$("#submitInterTime").val(adverinfo["submitInterTime"]);
 	            	}else{
 	            		var bundleid = json["bundleid"];
 	            		$("#bundleId").val(bundleid);

@@ -61,6 +61,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 				"  `ip` VARCHAR(20) NULL COMMENT '用户IP'," + 
 				"  `idfa` VARCHAR(50) NOT NULL COMMENT '手机广告标识符'," + 
 				"  `keywords` VARCHAR(100) NULL COMMENT '关键词'," + 
+				"  `udid` VARCHAR(200) NULL COMMENT 'udid'," + 
 				"  `callback` VARCHAR(200) NULL COMMENT '回调地址'," + 
 				"  `adver_id` INT(11) NULL COMMENT '广告ID'," + 
 				"  `status` VARCHAR(3) NOT NULL COMMENT '状态（0-排重-1-点击-3-激活）'," + 
@@ -82,7 +83,7 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 	public Page<TExternalChannelAdverTaskInfo> completeListInfo(Page<TExternalChannelAdverTaskInfo> page, TExternalChannelInfo externalChannelInfo, TExternalChannelAdverInfo t)
 	{
 		String tableName = "t_external_channel" + t.getAdid() + externalChannelInfo.getExternalChannelKey();
-		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 and complete_time >= '"+getDate()+"' and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' GROUP BY keywords";
+		String sql = "SELECT keywords, COUNT(keywords) AS num FROM " + tableName + " WHERE STATUS = 3 and complete_time >= '"+getNowDate()+"' and channel_key = '"+externalChannelInfo.getExternalChannelKey()+"' GROUP BY keywords";
 		Query query  = sqlDao.createQuery(sql);
 		List<Object[]> result = query.list();
 		List<TExternalChannelAdverTaskInfo> list = new ArrayList<TExternalChannelAdverTaskInfo>();
@@ -111,9 +112,20 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
 		String date2= simpleDateFormat.format(calendar.getTime());
 		return date2;
 	}
+	
+	
+	//获取今日的日期
+	public static String getNowDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		
+		String date2= simpleDateFormat.format(calendar.getTime());
+		return date2;
+	}
 		
 	public static void main(String[] args) {
-		System.err.println(getDate());
+		System.err.println(getNowDate());
 	}
 		
 	//查询任务详情
@@ -136,8 +148,9 @@ public class ExternalChannelAdverInfoDao extends BaseDaoImpl<TExternalChannelAdv
             
             try 
             {
-				info.setReceiveTime(formatter.parse(objs[8] + ""));
-				info.setCompleteTime(formatter.parse(objs[9] + ""));
+            	//这里转换日期有错误
+				info.setReceiveTime(formatter.parse(objs[11] + ""));
+				info.setCompleteTime(formatter.parse(objs[12] + ""));
 			} 
             catch (Exception e)
             {

@@ -5,10 +5,8 @@
  */
 package com.ruanyun.web.dao.sys.background;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +16,7 @@ import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SQLUtils;
+import com.ruanyun.web.controller.sys.app.ChannelClassification;
 import com.ruanyun.web.model.TChannelAdverInfo;
 
 @Repository("channelAdverInfoDao")
@@ -82,7 +81,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append(SQLUtils.popuHqlMax("level", level));
 		sql.append(" and (is_open = 0 or is_open =" + userType);
 		//sql.append(" and adver_status=1");
-		sql.append(") ORDER BY adver_status asc,adver_createtime desc");
+		sql.append(") ORDER BY adver_status asc,adver_sort desc,adver_createtime desc");
 		return sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 	}
 	
@@ -105,10 +104,10 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 			sql.append("' and adid='").append(t.getAdid());
 		}
 		
-		sql.append("' and adver_createtime>'").append(GetYestdayDate());
+		sql.append("' and adver_createtime>'").append(ChannelClassification.GetYestdayDate());
 		//sql.append(SQLUtils.popuHqlMin2("create_date", new Date()));
 		sql.append("' and adver_status in('0','1','2')");
-		sql.append(" ORDER BY DATE_FORMAT(adver_createtime,'%Y%m%d') asc,adid asc");
+		sql.append(" ORDER BY adver_createtime desc");
 		Page<TChannelAdverInfo> page2 = sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 		
 		if(page2 != null && page2.getResult() != null){
@@ -120,19 +119,8 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		
 		return page2;
 	}
-	
-	//获取昨天的日期
-	@SuppressWarnings("static-access")
-	public String GetYestdayDate() {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(new Date());
-		calendar.add(calendar.DATE,-1);
-		String date = simpleDateFormat.format(calendar.getTime());
-		
-		return date;
-	}
-	
+
+			
 	public int getCountComplete(String adverId) 
 	{
 		StringBuilder sql = new StringBuilder("select count(1) from t_userappid_adverid where adver_id=").append(adverId).append(" and status='2'");;
@@ -147,6 +135,14 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 							.append(SQLUtils.popuHqlMin2("adver_day_end", new Date()));
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
+	
+	public List<TChannelAdverInfo> queryAdversByIds(String ids) {
+		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_id in (")
+							.append(ids)
+							.append(")");
+		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
+	}
+	
 	
 	/**
 	 * 功能描述：删除
@@ -184,8 +180,9 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	{
 		StringBuilder sql;
 		//当时启动任务的时候，默认任务最高等级
-		sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+"");
-		
+		sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+" where adver_createtime < '");
+		sql.append(ChannelClassification.GetdayDate());
+		sql.append("'");
 		sqlDao.execute(sql.toString());
 	}
 	/**
@@ -331,4 +328,48 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append(") ORDER BY B.adver_name DESC, A.complete_time ASC");
 		return sqlDao.getAll(sql.toString());
 	}
+	
+	//导出idfa
+	@SuppressWarnings("rawtypes")
+	public List exportAdverInfoExcel(String channelNum, String day)
+	{
+		StringBuffer sql = new StringBuffer("select adver_name, adver_count, download_count "
+				+ " from t_channel_adver_info WHERE channel_num =");
+		sql.append(channelNum);
+		sql.append(" and adver_createtime >'");
+		if(day.equals("0")) 
+		{
+			sql.append(ChannelClassification.GetYestdayDate());
+		}
+		else
+		{
+			sql.append(ChannelClassification.GetdayDate()); 
+		}
+		sql.append("' ORDER BY adver_createtime desc");
+		return sqlDao.getAll(sql.toString());
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	public List exportMonthAdver(String channelNum, String month)
+	{
+		StringBuffer sql = new StringBuffer("select adid, adver_name, adver_count, download_count,adver_createtime "
+				+ " from t_channel_adver_info WHERE channel_num =");
+		sql.append(channelNum);
+		sql.append(" and adver_createtime >='");
+		//0是上个月
+		if(month.equals("0")) 
+		{
+			sql.append(ChannelClassification.GetYestMonthDate());
+			sql.append("' and adver_createtime <'");
+			sql.append(ChannelClassification.GetMonthDate());
+		}
+		else
+		{
+			sql.append(ChannelClassification.GetMonthDate()); 
+		}
+		sql.append("' ORDER BY adver_createtime desc");
+		return sqlDao.getAll(sql.toString());
+	}
+
 }

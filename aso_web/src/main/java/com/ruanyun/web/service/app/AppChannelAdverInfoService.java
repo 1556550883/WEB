@@ -101,19 +101,18 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 				TChannelAdverInfo adver = iterator.next();
 				adver.setUserStatus(0);
 				
-//				if(StringUtils.hasText(tUserApp.getExcludeAdverId()) && tUserApp.getExcludeAdverId().indexOf(String.valueOf(adver.getAdverId())) >= 0)
-//				{
-//					iterator.remove();
-//				}
 				if((tUserApp.getUserApppType() <= 1 && adver.getAdverStatus() == 2) || (adver.getAdverStatus() == 0))
 				{
 					iterator.remove();
 					continue;
 				}
 				
-				if(adver.getAdid().equals("1450378765") && osversion.compareTo("12") >= 0) {
-					iterator.remove();
-					continue;
+				if(adver.getChannelNum().equals("25")) {
+					if(adver.getRemark() != null ) {
+						adver.setRemark("手-" + adver.getRemark());
+					}else {
+						adver.setRemark("手");
+					}
 				}
 				
 				if(tUserApp.getUserApppType() <= 1)
@@ -222,5 +221,33 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 			e.printStackTrace();
 		}
 		//CSVUtils.exportCsv(fileName, headers, columns, list);
+	}
+	
+	public void exprotAdver(HttpServletResponse response, String channelNum, String day)
+	{
+		List list = channelAdverInfoDao.exportAdverInfoExcel(channelNum, day);
+		String fileName = "task";
+		String[] columns = {"adver_name","adver_count","download_count"};
+		String[] headers = {"关键词","任务数量","完成数量"};
+		try {
+			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+			SysCode.DATE_FORMAT_STR_L);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void exportMonthAdver(HttpServletResponse response, String channelNum, String month)
+	{
+		List list = channelAdverInfoDao.exportMonthAdver(channelNum, month);
+		String fileName = "adverDetail";
+		String[] columns = {"adid","adver_name","adver_count","download_count","adver_createtime"};
+		String[] headers = {"adid","关键词","任务数量","完成数量","任务创建时间"};
+		try {
+			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+			SysCode.DATE_FORMAT_STR_L);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

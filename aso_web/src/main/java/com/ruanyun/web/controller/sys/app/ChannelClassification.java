@@ -1,6 +1,12 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import com.ruanyun.web.model.AppCommonModel;
@@ -32,7 +38,7 @@ public class ChannelClassification
 			break;
 		case 2:
 			//云聚
-			model = ZhangShangHuDong.zhangshanghudong(adverInfo, adid, idfa, ip, userAppId, adverId, userNum);
+			model = ZhangShangHuDong.zhangshanghudong(adverInfo, adid, idfa, ip, userAppId, adverId, userNum,phoneVersion, phoneModel,udid, adverName);
 			break;
 		case 3:
 			//自由渠道
@@ -76,7 +82,7 @@ public class ChannelClassification
 			model =  FrogsTTChannel.isFrogsTTChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion, udid);
 			break;
 		case 16:
-			model =  GourdChannel.isGourdChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
+			model =  GourdChannel.isGourdChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion,udid);
 			break;
 		case 17:
 			model =  limazuanChannel.isLimazuanChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
@@ -127,8 +133,8 @@ public class ChannelClassification
 				break;
 			case 2:
 				//掌上互动
-				//调用第三方激活上报接口
-				model = ZhangShangHuDong.activate(adverInfo.getFlag4(), adverInfo.getAdid(), idfa, ip);
+				//调用第三方激活上报接口(String domain, String adid, String idfa, String ip,String KeyWords, String  phoneVersion, String  phoneModel,String udid )
+				model = ZhangShangHuDong.activate(adverInfo.getFlag4(), adverInfo.getAdid(), idfa, ip,adverInfo.getAdverName(),phoneos[1], phoneModel[1],udid);
 				break;
 			case 4:
 				//云聚
@@ -166,7 +172,7 @@ public class ChannelClassification
 				model = FrogsTTChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), idfa, ip, adverInfo.getAdverName(),phoneModel[1], phoneos[1], udid);
 				break;
 			case 16:
-				model = GourdChannel.activate(adverInfo, idfa, ip,phoneModel[1], phoneos[1]);
+				model = GourdChannel.activate(adverInfo, idfa, ip,phoneModel[1], phoneos[1],udid);
 				break;
 			case 17:
 				model = limazuanChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1]);
@@ -205,7 +211,6 @@ public class ChannelClassification
 		
 		return model;
 	}
-	
 	
 	public static String getPhoneModel(String id) 
 	{	
@@ -324,8 +329,6 @@ public class ChannelClassification
 		return phoneVersion;
 	}
 	
-	
-	
 	public static String  get11PhoneVersion()
 	{
 		String phoneVersion = "11.1.1";
@@ -361,53 +364,35 @@ public class ChannelClassification
 		return phoneVersion;
 	}
 	
+	
+	 
 	//模拟手机udid
 	public static String getPhoneUdid(String phoneModel) {
 		String udid = "";
-		
-		switch (phoneModel)
-		{
-		  case "iPhone5,1":    
-		  case "iPhone5,2":   
-		   case "iPhone5,3":
-		   case"iPhone5,4":                
-		   case "iPhone6,1":
-		   case "iPhone6,2":                  
-		   case "iPhone7,2":                           
-		   case "iPhone7,1":                             
-		   case "iPhone8,1":         
-		   case "iPhone8,2":                            
-		   case "iPhone8,4":                             
-			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  case "iPhone9,6": case "iPhone9,5": 
-			case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    
-			case "iPhone10,3":case  "iPhone10,6":  
-				 String Str1=UUID.randomUUID().toString().replace("-", "");
-				 //String Str1=UUID.randomUUID().toString();
-				 udid = Str1 + get8UUID();
-				 break;
-			case "iPhone11,2": case "iPhone11,4": case "iPhone11,6":    
-			case "iPhone11,8":   
-				int result = random.nextInt(2);
-				//00008020-000A09183CDA002E
-				String Str = "00008020-000";
-				switch (result)
-				{
-					case 0:
-						Str = "00008020-000";
-						break;
-					case 1:
-						Str ="00008020-001";
-						break;
-					default:
-						Str = "00008020-000";
-						break;
-				}
-				
-				udid = Str + get13UUID();
-				udid = udid.toUpperCase();
-			default:
-				break;
+		if(phoneModel.contains("iPhone11,") || phoneModel.contains("iPhone12,")){
+			int result = random.nextInt(2);
+			//00008020-000A09183CDA002E
+			String Str = "00008020-000";
+			switch (result)
+			{
+				case 0:
+					Str = "00008020-000";
+					break;
+				case 1:
+					Str ="00008020-001";
+					break;
+				default:
+					Str = "00008020-000";
+					break;
 			}
+			
+			udid = Str + get13UUID();
+			udid = udid.toUpperCase();
+		}else {
+			 String Str1=UUID.randomUUID().toString().replace("-", "");
+			 //String Str1=UUID.randomUUID().toString();
+			 udid = Str1 + get8UUID();
+		}
 		
 		return udid;
 	}
@@ -418,8 +403,7 @@ public class ChannelClassification
         return idd[0];
     }
 	  
-	 
-  public static String get13UUID(){
+    public static String get13UUID(){
 	  	//bd76efef-c208-470b-a584-907cbebcd472
 	  // 00008020-000A09183CDA002E
         UUID id=UUID.randomUUID();
@@ -430,13 +414,6 @@ public class ChannelClassification
         
         return idd[4] + str;
     }
-  
-  
-  public static void main(String[] args) {
-	
-		 System.err.println(  getPhoneUdid("iPhone7,1"));
-	}
-  
   
 	public static String phoneModelChange(String phoneModel) 
 	{
@@ -475,5 +452,74 @@ public class ChannelClassification
 			return phoneModel;
 		}
 	
+	public static long getTimestamp() 
+	{
+		 String _timeZone = "GMT+8:00";
+	     TimeZone timeZone = null;  
+	     timeZone = TimeZone.getTimeZone(_timeZone);  
+	     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	     sdf.setTimeZone(timeZone);  
+	     
+		String stridddg = sdf.format(new Date());
+		Date d = null;
+		try 
+		{
+			d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stridddg);
+		} 
+		catch (ParseException e)
+		{
+			e.printStackTrace();
+		}
+		long t1 = d.getTime();
+		return t1 = t1/1000;
+	}
 	
+	
+	//上月
+	@SuppressWarnings("static-access")
+	public static String GetYestMonthDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		calendar.add(calendar.MONTH,-1);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	//获取昨天的日期
+	@SuppressWarnings("static-access")
+	public static String GetYestdayDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		calendar.add(calendar.DATE,-1);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	
+	//获取当月
+	public static String GetMonthDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	
+	//获取今日的日期
+	public static String GetdayDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+
+	public static void main(String[] args) {
+		
+		 System.err.println(  GetMonthDate());
+	}
 }

@@ -20,6 +20,7 @@ import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.UserScoreDao;
 import com.ruanyun.web.model.TChannelAdverInfo;
+import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserApprentice;
 import com.ruanyun.web.model.TUserLevel;
@@ -30,6 +31,7 @@ import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.producer.AdverQueueConsumer;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
+import com.ruanyun.web.service.app.AppChannelInfoService;
 import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.CommonMethod;
@@ -61,6 +63,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 	private UserappidAdveridService userappidAdveridService;
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
+	@Autowired
+	private AppChannelInfoService appChannelInfoService;
 //	@Autowired
 //	private UserScoreService userScoreService;
 	@Override
@@ -250,6 +254,19 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		if(userScore != null) 
 		{
 			int type = userScoreq.getType();
+			//需要自动提交的任务，修改其任务状态,此时的任务不是真正的被提交状态，需要自动被真正的提交
+			if(type == 9) {
+				TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
+				tUserappidAdverid.setIdfa(userScoreq.getUserNick());
+				tUserappidAdverid.setAdverId(userScoreq.getUserScoreId());
+				//特殊的任务状态，此状态下任务并不会超时
+				tUserappidAdverid.setStatus("2.1");
+				tUserappidAdverid.setCompleteTime(new Date());
+				userappidAdveridService.updateSpecialComplete(tUserappidAdverid);
+				
+				return 1;
+			}
+			
 			//驳回操作
 			if(type == 5) {
 				userScore.setScore(ArithUtil.addf(userScore.getScore(), userScoreq.getScore()));
@@ -271,14 +288,15 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 				String idfa = userScoreq.getUserNick();
 				TUserappidAdverid userappidAdver = getTask(adverid + "", idfa); 
 				//如果任务不是在1.5状态下就不再次积分
-				if(!userappidAdver.getStatus().equals("1.5") && type == 0) {
+				if(!userappidAdver.getStatus().equals("1.5") && type == 0 && !userappidAdver.getStatus().equals("2.2"))
+				{
 					return 1;
 				}
 				
+				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", adverid);
 				//回调任务 如果任务还有，但是超时了，如果回调来了继续计算 否则放弃
 				if(type == -1) {
 					if(userappidAdver.getStatus().compareTo("1.6") == 0) {
-						TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", adverid);
 						if(adverInfo.getAdverCountRemain()  >   0) {
 							String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
 							boolean success = AdverQueueConsumer.getMessage(endPointName);
@@ -293,6 +311,10 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 					}
 				}
 				
+				TChannelInfo chaninfo = appChannelInfoService.get(TChannelInfo.class,"channelNum", adverInfo.getChannelNum());
+				chaninfo.setDayTotal(chaninfo.getDayTotal() +  userScoreq.getScore());
+				chaninfo.setCumulativeTotal(chaninfo.getCumulativeTotal() + userScoreq.getScore());
+				appChannelInfoService.update(chaninfo);
 				//设定任务完结
 				userappidAdver.setStatus("2");
 				userappidAdver.setCompleteTime(new Date());

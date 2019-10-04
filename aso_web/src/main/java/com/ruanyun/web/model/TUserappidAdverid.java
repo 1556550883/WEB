@@ -41,6 +41,7 @@ public class TUserappidAdverid implements Serializable
 	private String phoneModel;
 	private String phoneVersion;
 	private String userUdid;
+	private String ipLocaltion;
 
     @Column(name="user_app_id")
     public Integer getUserAppId()
@@ -291,5 +292,14 @@ public class TUserappidAdverid implements Serializable
 
 	public void setUserUdid(String userUdid) {
 		this.userUdid = userUdid;
+	}
+
+	@Column(name="ip_localtion")
+	public String getIpLocaltion() {
+		return ipLocaltion;
+	}
+
+	public void setIpLocaltion(String ipLocaltion) {
+		this.ipLocaltion = ipLocaltion;
 	}
 }

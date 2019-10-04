@@ -8,8 +8,10 @@ package com.ruanyun.web.service.background;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.dao.sys.background.ChannelInfoDao;
 import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TUserappidAdverid;
@@ -27,7 +30,7 @@ import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.model.sys.UploadVo;
 import com.ruanyun.web.service.sys.UserService;
 import com.ruanyun.web.util.Constants;
-import com.ruanyun.web.util.NumUtils;
+import com.ruanyun.web.util.ExcelUtils;
 import com.ruanyun.web.util.UploadCommon;
 
 @Service
@@ -47,9 +50,9 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 		return channelInfoDao.queryPage(page, t);
 	}
 	
-	public void calculate(TChannelInfo t) 
+	public int calculate(TChannelInfo t, String da) 
 	{
-		channelInfoDao.calculate(t);
+		return channelInfoDao.calculate(t, da);
 	}
 	
 	/**
@@ -108,20 +111,24 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 				info.setCreateDate(new Date());
 				info.setIsEnable(0);//默认不启用
 				channelInfoDao.save(info);
-				info.setChannelNum(NumUtils.getCommondNum(NumUtils.CHANNEL_INFO, info.getChannelId()));
+				info.setChannelNum(info.getChannelId() + "");
 			}
 		}
 		
 		return 1;
 	}
+	
+	
+	public void updateDayTotal(){
+		channelInfoDao.updateDayTotal();
+	}
+	
 	/**
 	 * 
 	 * 功能描述:更改启动状态
 	 * @param id
 	 * @param isEnable 0/1 未启用/启用
 	 * @return
-	 *@author feiyang
-	 *@date 2016-1-22
 	 */
 	public int updateIsEnable(Integer id,Integer isEnable)
 	{
@@ -168,5 +175,24 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 		TChannelInfo channelInfo = channelInfoDao.getChannelInfoBySystemType(channelType, systemType,userNum);
 		
 		return channelInfo;
+	}
+	
+	public void clearData()
+	{
+		channelInfoDao.clearData();
+	}
+	
+	public void exportChannelData(HttpServletResponse response)
+	{
+		List list = channelInfoDao.exportChannelData();
+		String fileName = "channelDetail";
+		String[] columns = {"channel_num","channel_name","cumulative_total"};
+		String[] headers = {"渠道号","渠道名","总金额"};
+		try {
+			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+			SysCode.DATE_FORMAT_STR_L);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

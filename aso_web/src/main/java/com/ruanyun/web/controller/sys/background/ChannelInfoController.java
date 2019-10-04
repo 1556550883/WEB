@@ -20,6 +20,7 @@ import com.ruanyun.common.cache.impl.PublicCache;
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TUserApp;
@@ -56,10 +57,34 @@ public class ChannelInfoController extends BaseController
 	@RequestMapping("list")
 	public String getChannelInfoList(Page<TChannelInfo> page, TChannelInfo info, Model model)
 	{
-		addModel(model, "pageList", channelInfoService.queryPage(page, info));
+		page = channelInfoService.queryPage(page, info);
+		List<TChannelInfo> channels = page.getResult();
+		for(TChannelInfo t : channels) {
+			Date date = new Date();		
+			String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM");
+			String dateStrday = TimeUtil.doFormatDate(date,"yyyy-MM-dd");
+			t.setMonNum(channelInfoService.calculate(t, dateStr));
+			t.setTodayNum(channelInfoService.calculate(t, dateStrday));
+		}
+		
+		addModel(model, "pageList", page);
 		addModel(model, "bean", info);
 		
 		return "pc/channelInfo/list";
+	}
+	
+	
+	@RequestMapping("exportChannelData")
+	public void exportChannelData(HttpServletResponse response)
+	{
+		channelInfoService.exportChannelData(response);
+	}
+	
+	@RequestMapping("clearData")
+	public void clearData(HttpServletResponse response)
+	{
+		channelInfoService.exportChannelData(response);
+		channelInfoService.clearData();
 	}
 	
 	/**
@@ -229,4 +254,10 @@ public class ChannelInfoController extends BaseController
 		List<TDictionary> list=publicCache.getItemList("CHANNEL_TYPE");
 		 super.writeJsonData(response, list);
    }
+	
+	
+	public static void main(String[] args) {
+		float s = 100000.0f;
+		System.out.print(s +0.1);
+	}
 }

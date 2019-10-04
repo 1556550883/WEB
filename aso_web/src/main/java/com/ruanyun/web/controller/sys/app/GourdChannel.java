@@ -17,21 +17,21 @@ public class GourdChannel extends BaseChannel
 
 	//TT 葫芦渠道 - 16
 	public static AppCommonModel isGourdChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion) throws NumberFormatException, UnsupportedEncodingException 
+			String adverId, String userNum, String adverName, String phoneModel, String phoneVersion,String udid) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		//调用第三方排重接口 
-		AppCommonModel model = paiChong(adverInfo.getFlag2(), adverInfo.getAdverAdid(), adid, idfa,adverName, phoneModel,phoneVersion,ip);
+		AppCommonModel model = paiChong(adverInfo.getFlag2(), adverInfo.getAdverAdid(), adid, idfa,adverName, phoneModel,phoneVersion,ip, udid);
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
 			model = dianJi(adverInfo.getFlag3(),adverInfo, idfa, phoneModel,phoneVersion, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId),
-					userNum);
+					userNum, udid);
 		}
 		
 		return model;
 	}
 	
-	public static AppCommonModel paiChong(String domain, String appid, String adid, String idfa,String adverName,String phoneModel,String phoneVersion, String ip)
+	public static AppCommonModel paiChong(String domain, String appid, String adid, String idfa,String adverName,String phoneModel,String phoneVersion, String ip, String udid)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		//调用第三方排重接口
@@ -43,6 +43,7 @@ public class GourdChannel extends BaseChannel
 				.append("&keyword=").append(adverName)
 				.append("&model=").append(phoneModel)
 				.append("&version=").append(phoneVersion)
+				.append("&udid=").append(udid)
 				.append("&ip=").append(ip);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
@@ -86,7 +87,7 @@ public class GourdChannel extends BaseChannel
 	 * 点击
 	 */
 	public static AppCommonModel dianJi(String domain, TChannelAdverInfo adverInfo, String idfa ,String phoneModel,String phoneVersion,
-			String ip, Integer userAppId, Integer adverId, String userNum) throws UnsupportedEncodingException {
+			String ip, Integer userAppId, Integer adverId, String userNum,String udid) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
 		StringBuilder url = new StringBuilder(domain)
@@ -96,6 +97,7 @@ public class GourdChannel extends BaseChannel
 				.append("&model=").append(phoneModel)
 				.append("&version=").append(phoneVersion)
 				.append("&ip=").append(ip)
+				.append("&udid=").append(udid)
 				.append("&keyword=").append(adverInfo.getAdverName())
 				.append("&channel=").append(channel)
 				.append("&callback=").append(getCallbackUrl(adverInfo.getAdid(), idfa, userAppId, adverId, userNum));
@@ -121,7 +123,7 @@ public class GourdChannel extends BaseChannel
 	}
 	
 	public static AppCommonModel activate(TChannelAdverInfo adverInfo, String idfa, String ip, 
-			String deviceType, String osVersion)
+			String deviceType, String osVersion,String udid)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		StringBuilder url = new StringBuilder(adverInfo.getFlag4())
@@ -130,6 +132,7 @@ public class GourdChannel extends BaseChannel
 				.append("&idfa=").append(idfa)
 				.append("&model=").append(deviceType)
 				.append("&version=").append(osVersion)
+				.append("&udid=").append(udid)
 				.append("&ip=").append(ip)
 				.append("&keyword=").append(adverInfo.getAdverName())
 				.append("&channel=").append(channel);

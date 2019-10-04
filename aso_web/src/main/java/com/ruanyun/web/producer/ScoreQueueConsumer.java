@@ -65,7 +65,6 @@ public class ScoreQueueConsumer extends EndPoint implements Runnable
 				
 				//sss 是数据库里面的数据  score是message传来的数据
 				userScoreService.updateScore(sss, score);
-				
 			}
 			catch (Exception e) 
 			{

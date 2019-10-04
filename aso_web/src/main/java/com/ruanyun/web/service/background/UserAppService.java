@@ -238,6 +238,7 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 			}
 			
 			userApp.setCreateDate(new Date());
+			userApp.setUserAppId(getLastUserApp().getUserAppId() + 1);
 			//userApp.setLoginPwd(MD5Util.encoderByMd5(Constants.USER_DEFULT_PASSWORD));
 			super.save(userApp);
 			userApp.setUserNum(NumUtils.getCommondNum(NumUtils.USER_APP_NUM, userApp.getUserAppId()));

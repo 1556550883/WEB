@@ -20,7 +20,7 @@ public class TExternalChannelTask
 	private String keywords;
 	private String callback;
 	private String adverId;
-	//private String udid;
+	private String udid;
 	private String status;
 	private String channelKey;
 	private String model;
@@ -169,12 +169,12 @@ public class TExternalChannelTask
 		this.sysver = sysver;
 	}
 
-//	@Column(name="udid")
-//	public String getUdid() {
-//		return udid;
-//	}
-//
-//	public void setUdid(String udid) {
-//		this.udid = udid;
-//	}
+	@Column(name="udid")
+	public String getUdid() {
+		return udid;
+	}
+
+	public void setUdid(String udid) {
+		this.udid = udid;
+	}
 }

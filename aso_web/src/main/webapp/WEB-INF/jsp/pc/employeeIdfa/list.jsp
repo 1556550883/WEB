@@ -71,10 +71,10 @@
 				<th align="center" width="80px;">广告价格</th>
 				<th align="center" width="300px;">idfa</th>
 				<th align="center" width="100px;">ip</th>
-				<th align="center" width="100px;">地区</th>
-				<th align="center" width="250px;">苹果账号</th>
-				<th align="center" width="250px;">手机型号</th>
-				<th align="center" width="250px;">手机系统版本</th>
+				<th align="center" width="250px;">地区</th>
+				<th align="center" width="50px;">苹果账号</th>
+				<th align="center" width="200px;">手机型号</th>
+				<th align="center" width="100px;">手机系统版本</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -89,7 +89,7 @@
 	                <td style="text-align:left;">${item.adverPrice}</td>
 	                <td style="text-align:left;">${item.idfa}</td>
 	                <td style="text-align:left;">${item.ip}</td>
-	                <td style="text-align:left;">${item.localtion}</td>
+	                <td style="text-align:left;">${item.ipLocaltion}</td>
 	                <td style="text-align:left;">${item.appleId}</td>
 	                <td style="text-align:left;">${item.phoneModel}</td>
 	                <td style="text-align:left;">${item.phoneVersion}</td>

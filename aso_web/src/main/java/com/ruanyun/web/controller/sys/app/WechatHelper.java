@@ -15,7 +15,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 import net.sf.json.JSONObject;
 

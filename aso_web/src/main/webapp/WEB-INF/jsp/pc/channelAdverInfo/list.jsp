@@ -30,7 +30,11 @@
 			<li><a class="edit" title="确定要启用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
 			<li><a class="edit" title="确定要停用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=2"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
 			<li><a class="edit" title="确定要刷新选择的信息吗？" href="channelAdverInfo/freshAdverNum"  target="selectedTodo" postType="string" rel="ids"><span>刷新</span></a></li>
-			<li><span style="" onclick= "show()">导出</span></li>
+			<li><span style="" onclick= "show()">导出idfa</span></li>
+			<li><span style="" onclick= "exportadver(0)">昨日任务明细</span></li>
+			<li><span style="" onclick= "exportadver(1)">今日任务明细</span></li>
+			<li><span style="" onclick= "exportMonthAadver(0)">上月任务明细</span></li>
+			<li><span style="" onclick= "exportMonthAadver(1)">当月任务明细</span></li>
 			<li class="line">line</li>
 		</ul>
 	</div>
@@ -66,7 +70,11 @@
 				<tr >
 				  <td align="center">
         			<input type="checkbox"  id="orderCheckBox" name="ids" value="${item.adverId}"></td>
-					<td>${item.adverName}</td>	  
+					<td> 
+						<c:if test="${item.adverStatus==2}">${item.adverName}</c:if>
+						<c:if test="${item.adverStatus==0}"><div style="color: #0080FF">${item.adverName}</div></c:if>
+						<c:if test="${item.adverStatus==1}"><div style="color: red">${item.adverName}</div></c:if>
+					</td>	  
 					<td>${item.adverAdid}</td>
 					<td>${item.adid}</td>	
 					<c:if test="${item.taskType==0}">
@@ -87,7 +95,7 @@
 	                <td>${item.level}</td>
 	                <td>${item.adverDayStart}--${item.adverDayEnd}</td>
 	               <!-- <td>${item.adverTimeStart}--${item.adverTimeEnd}</td> -->
-	                <td><c:if test="${item.adverStatus==0}">未审核</c:if><c:if test="${item.adverStatus==1}">启用</c:if><c:if test="${item.adverStatus==2}">停用</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>
+	                <td><c:if test="${item.adverStatus==0}"><div style="color: #0080FF">未审核</div></c:if><c:if test="${item.adverStatus==1}"><div style="color: red">启用</div></c:if><c:if test="${item.adverStatus==2}">停用</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>
 	              	<td><c:if test="${item.isOpen==0}">默认</c:if><c:if test="${item.isOpen==1}">工作室</c:if><c:if test="${item.isOpen==2}">散户</c:if><c:if test="${item.adverStatus==3}">已支付</c:if></td>
 	                <td><ry:formatDate date="${item.adverCreatetime}" toFmt="yyyy-MM-dd"></ry:formatDate> </td> 
 					<c:if test="${item.isToday==1}">
@@ -97,7 +105,7 @@
 						<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="alert('任务已完结！')"><span>修改</span></a></td>
 					</c:if>
 					<td>
-						<a style="cursor: pointer;" onclick="openNav('adverEffectiveInfo/completeList?adverId=${item.adverId}','广告下载记录','main_index2')"><div style="color: blue">广告下载记录</div></a>
+						<a style="cursor: pointer;" onclick="openNav('adverEffectiveInfo/completeList?adverId=${item.adverId}','广告下载记录','main_index3')"><div style="color: blue">广告下载记录</div></a>
 						<c:if test="${item.effectiveSource==1}">
 							<a style="cursor: pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=1&inferfaceRequestType=2&adverNum=${item.adverNum}','参数配置','main_index2')"><span style="color: blue">上传数据配置</span> </a>
 							<a style="cursor: pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=1&inferfaceRequestType=1&adverNum=${item.adverNum}','参数配置','main_index2')"><span style="color: green">客户回调我们</span> </a>
@@ -133,6 +141,16 @@ function show(){
     }else{
     	alert("请先选择一个任务！")
     }
+}
+
+function exportadver(day){
+	window.location.href = "http://moneyzhuan.com/channelAdverInfo/exportAdver?channelNum=" + ${bean.channelNum} + "&day=" + day;
+	//window.location.href = "http://localhost:8080/sjjz/channelAdverInfo/exportAdver?channelNum=" + ${bean.channelNum} + "&day=" + day;
+}
+
+function exportMonthAadver(month){
+	window.location.href = "http://moneyzhuan.com/channelAdverInfo/exportMonthAadver?channelNum=" + ${bean.channelNum} + "&month=" + month;
+	//window.location.href = "http://localhost:8080/sjjz/channelAdverInfo/exportMonthAadver?channelNum=" + ${bean.channelNum} + "&month=" + month;
 }
 </script>
 </div>

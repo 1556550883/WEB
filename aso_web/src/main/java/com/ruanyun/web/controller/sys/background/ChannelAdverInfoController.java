@@ -60,7 +60,8 @@ public class ChannelAdverInfoController extends BaseController
 	{
 		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info);
 		for(TChannelAdverInfo adverInfo : queryAdver.getResult()) {
-			if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay()) {
+			//第二天一点之后算完结任务
+			if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay() && new Date().getHours() > 1) {
 				//不是今天的，属于过期任务
 				adverInfo.setIsToday(0);
 			}else {
@@ -74,6 +75,7 @@ public class ChannelAdverInfoController extends BaseController
 		
 		return "pc/channelAdverInfo/list";
 	}
+	
 	
 	/**
 	 * 
@@ -207,6 +209,16 @@ public class ChannelAdverInfoController extends BaseController
 			channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc,
 					stepRates, stepTime, stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
 			
+//			Map<String,TChannelAdverInfo > xsAdverList = ArrayBlockQueueProducer.specialXSAdverList;
+//			//修改启动的任务
+//			if(info.getReceInterTime() > 0 || info.getSubmitInterTime() > 0) {
+//				if(xsAdverList.containsKey(info.getAdverId() + ""))
+//				{
+//					xsAdverList.get(info.getAdverId() + "").setReceInterTime(info.getReceInterTime());
+//					xsAdverList.get(info.getAdverId() + "").setSubmitInterTime(info.getSubmitInterTime());;
+//				}
+//			}
+			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		} 
 		catch (Exception e)
@@ -249,14 +261,26 @@ public class ChannelAdverInfoController extends BaseController
 					break;
 				}
 				
+				if(adverInfo.getAdverStatus() == status) {
+					continue;
+				}
+				
 				channelAdverInfoService.updateAdverStatus(status, adverId);
 				if(status == 1)
 				{
 					ArrayBlockQueueProducer.addAdverList.add(adverId);
+					if(adverInfo.getReceInterTime() > 0 || adverInfo.getSubmitInterTime() > 0) {
+						//如果需要任务间隔，就加入间隔队列
+						adverInfo.setSubmiTimeZone(0);
+						adverInfo.setReceTimeZone(0);
+						ArrayBlockQueueProducer.specialXSAdverList.put(adverId,adverInfo);
+					}
 				}
 				else
 				{
 					ArrayBlockQueueProducer.removeAdverList.add(adverId);
+					//任务停止移除间隔任务队列
+					ArrayBlockQueueProducer.specialXSAdverList.remove(adverId);
 				}
 			}
 			
@@ -351,21 +375,19 @@ public class ChannelAdverInfoController extends BaseController
 	@RequestMapping("export")
 	public void exportIDFA(String adverIds, HttpServletResponse response)
 	{
-		//List<String> adveradid =   new ArrayList<>();
 		appChannelAdverInfoService.exprotIDFA(response, adverIds);
-//		String[] ids = adverIds.split(",");
-//	
-//		for(String adverId : ids) 
-//		{
-//			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-//			if(!adveradid.contains(adverInfo.getAdid())) {
-//				appChannelAdverInfoService.exprotIDFA(adverInfo.getAdid(), response, adverInfo.getAdverCreatetime());
-//				adveradid.add(adverInfo.getAdid());
-//			}
-//			
-//		}
-		
-		//super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
+	}
+	
+	@RequestMapping("exportAdver")
+	public void exportAdver(HttpServletResponse response, String channelNum, String day)
+	{
+		appChannelAdverInfoService.exprotAdver(response, channelNum, day);
+	}
+	
+	@RequestMapping("exportMonthAadver")
+	public void exportMonthAadver(HttpServletResponse response, String channelNum, String month)
+	{
+		appChannelAdverInfoService.exportMonthAdver(response, channelNum, month);
 	}
 	
 	@InitBinder
@@ -378,8 +400,4 @@ public class ChannelAdverInfoController extends BaseController
 	{
 
 	}
-	
-	
-	
-	
 }

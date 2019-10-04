@@ -7,6 +7,7 @@ package com.ruanyun.web.service.background;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -138,6 +139,11 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		return adverInfo;
 	}
 	
+	
+	public List<TChannelAdverInfo>  getInfoByIds(String ids)
+	{
+		return channelAdverInfoDao.queryAdversByIds(ids);
+	}
 	/**
 	 * 功能描述: 更加广告编号 获取对象
 	 *

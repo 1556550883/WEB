@@ -41,4 +41,8 @@ public static String getAddressByIP(String strIP) {
 			return "读取失败";
 		}
 	}
+
+	public static void main(String[] args) {
+		System.out.println(getAddressByIP("49.82.5.225"));
+	}
 }  

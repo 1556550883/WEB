@@ -42,7 +42,11 @@ public class ExternalAppController extends BaseController
 		
 		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
 		tExternalChannelTask.setIdfa(idfa);
-		//tExternalChannelTask.setUdid(udid);
+		if(udid != null) {
+			tExternalChannelTask.setUdid(udid);
+		}else {
+			tExternalChannelTask.setUdid("0");
+		}
 		tExternalChannelTask.setSysver(sysver);
 		tExternalChannelTask.setModel(model);
 		tExternalChannelTask.setIp(ip);
@@ -126,8 +130,63 @@ public class ExternalAppController extends BaseController
 				}
 				//保存
 				super.writeJsonDataApp(response, obj);
-				return;
-			}
+							return;
+				}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("zhangshanghudong")) {
+					if(!model.contains(",")) {
+						obj.element("code", -1);
+						obj.element("msg", "Invalid Model value");
+						super.writeJsonDataApp(response, obj);
+						return;
+					}
+					
+					udid = ChannelClassification.getPhoneUdid(model);
+					tExternalChannelTask.setUdid(udid);
+					AppCommonModel models = ZhangShangHuDong.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa,ip,sysver, model,udid,keyword);
+					if(models.getResult() == 1) {
+						//设置0代表为重复
+						obj.element(idfa, 0);
+						try {
+							//如果抛出异常重复添加了
+							externalAppService.save(tExternalChannelTask, adid, key);
+						} catch (Exception e) {
+							obj.element(idfa, 1);
+						}
+					}else {
+						obj.element(idfa, 1);
+					}
+					//保存
+					super.writeJsonDataApp(response, obj);
+					return;
+				}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("mifeng")) {
+					if(!model.contains(",")) {
+						obj.element("code", -1);
+						obj.element("msg", "Invalid Model value");
+						super.writeJsonDataApp(response, obj);
+						return;
+					}
+					
+					udid = ChannelClassification.getPhoneUdid(model);
+					tExternalChannelTask.setUdid(udid);
+					//exterPaiChong(String domain,String adid,String keyword,  String idfa, String ip, 
+					//		String deviceType, String osVersion, String udid) 
+					
+					AppCommonModel models = BeeChannel.exterPaiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(),keyword, idfa,ip,model,sysver,udid);
+					if(models.getResult() == 1) {
+						//设置0代表为重复
+						obj.element(idfa, 0);
+						try {
+							//如果抛出异常重复添加了
+							externalAppService.save(tExternalChannelTask, adid, key);
+						} catch (Exception e) {
+							obj.element(idfa, 1);
+						}
+					}else {
+						obj.element(idfa, 1);
+					}
+					//保存
+					super.writeJsonDataApp(response, obj);
+					return;
+				}
 
 		try 
 		{
@@ -242,7 +301,36 @@ public class ExternalAppController extends BaseController
 			externalAppService.update(tExternalChannelTask, adid, key);
 			super.writeJsonDataApp(response, obj);
 			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("zhangshanghudong")) {
+			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			AppCommonModel appmodel = ZhangShangHuDong.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key, taskInfo.getUdid());
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("msg", "ok");
+				externalAppService.update(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("msg", "click failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("mifeng")) {
+			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			AppCommonModel appmodel = BeeChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key, taskInfo.getUdid());
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("msg", "ok");
+				externalAppService.update(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("msg", "click failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
 		}
+
 
 		try 
 		{
@@ -308,6 +396,13 @@ public class ExternalAppController extends BaseController
 			return;
 		}
 		
+		if(info.getExternalTaskType().equals("1")) {
+			obj.element("code", -1);
+			obj.element("result", "callback task");
+
+			return;
+		}
+		
 		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
 		tExternalChannelTask.setIdfa(idfa);
 		tExternalChannelTask.setStatus("3");
@@ -327,8 +422,6 @@ public class ExternalAppController extends BaseController
 			super.writeJsonDataApp(response, obj);
 			return;
 		}
-		
-		
 		
 		//对接云聚
 		if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("happyzhuan")) {
@@ -368,7 +461,7 @@ public class ExternalAppController extends BaseController
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("result", "ok");
-				int result = externalAppService.updateStatus(tExternalChannelTask, adid, key);
+				externalAppService.updateStatus(tExternalChannelTask, adid, key);
 			}else {
 				obj.element("code", -1);
 				obj.element("result", "active failed");
@@ -389,6 +482,38 @@ public class ExternalAppController extends BaseController
 			
 			super.writeJsonDataApp(response, obj);
 			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("zhangshanghudong")) {
+			//不存在激活接口
+			AppCommonModel appmodel = ZhangShangHuDong.activate(info.getCpchannelActive(), info.getChannelAdverAdid(), idfa, ip, keyword, sysver, model, taskInfo.getUdid());
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("result", "ok");
+				externalAppService.updateStatus(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("result", appmodel.getMsg());
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("mifeng")) {
+			//exterActivate(String domain, String adid,String idfa, String ip, 
+					//String deviceType, String osVersion,String keyword, String udid) 
+			//TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			
+			AppCommonModel appmodel = BeeChannel.exterActivate(info.getCpchannelActive(),info.getChannelAdverAdid(), idfa,ip, model,sysver,keyword,taskInfo.getUdid());
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("result", "ok");
+				externalAppService.updateStatus(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("result", "active failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+
 		}
 		
 		try 

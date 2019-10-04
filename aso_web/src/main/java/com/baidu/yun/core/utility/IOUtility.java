@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.omg.CORBA_2_3.portable.OutputStream;
+//import org.omg.CORBA_2_3.portable.OutputStream;
 
 public class IOUtility {
 
@@ -48,15 +48,15 @@ public class IOUtility {
 		}
 	}
 	
-	public static void closeOuputStream(OutputStream os) {
-		try {
-			if ( os != null ) {
-				os.flush();
-				os.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void closeOuputStream(OutputStream os) {
+//		try {
+//			if ( os != null ) {
+//				os.flush();
+//				os.close();
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 }

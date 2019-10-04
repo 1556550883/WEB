@@ -61,7 +61,7 @@ public class XiaoshouChannel  extends BaseChannel
 		{
 			log.error("request url：" + url + "。response：null");
 			model.setResult(-1);
-			model.setMsg("领取任务失败。原因：系统出错！");
+			model.setMsg("response：null！");
 		}
 		else
 		{
