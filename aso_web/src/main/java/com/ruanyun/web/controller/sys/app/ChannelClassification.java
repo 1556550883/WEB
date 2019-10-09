@@ -3,34 +3,29 @@ package com.ruanyun.web.controller.sys.app;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
-import com.ruanyun.web.model.TChannelInfo;
 
 public class ChannelClassification
 {
 	private static java.util.Random random = new java.util.Random();
+	private static List<String> userIDForIphone7 = new ArrayList<String>();
 	
 	//检测任务信息
-	public static AppCommonModel checkChannelInfo(TChannelInfo channelInfo, TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
+	public static AppCommonModel checkChannelInfo( TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
 			String userAppId, String adverId, String userNum, String adverName, String phoneModel, String phoneVersion, String udid) throws NumberFormatException, UnsupportedEncodingException 
 	{
 		AppCommonModel model = new AppCommonModel(1, "任务领取成功！");
 		
 		//分渠道调用排重接口、点击接口
-		if(channelInfo == null)
-		{
-			model.setResult(-1);
-			model.setMsg("领取任务失败。原因：渠道不存在！");
-		}
-		
-		int num = Integer.parseInt(channelInfo.getChannelNum());
+		int num = Integer.parseInt(adverInfo.getChannelNum());
 		switch (num) {
 		case 1:
 			//云聚
@@ -479,7 +474,7 @@ public class ChannelClassification
 	@SuppressWarnings("static-access")
 	public static String GetYestMonthDate() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
-		Calendar calendar = new GregorianCalendar();
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		calendar.add(calendar.MONTH,-1);
 		String date = simpleDateFormat.format(calendar.getTime());
@@ -490,7 +485,7 @@ public class ChannelClassification
 	@SuppressWarnings("static-access")
 	public static String GetYestdayDate() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar calendar = new GregorianCalendar();
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		calendar.add(calendar.DATE,-1);
 		String date = simpleDateFormat.format(calendar.getTime());
@@ -501,7 +496,7 @@ public class ChannelClassification
 	//获取当月
 	public static String GetMonthDate() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
-		Calendar calendar = new GregorianCalendar();
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		String date = simpleDateFormat.format(calendar.getTime());
 		
@@ -511,15 +506,40 @@ public class ChannelClassification
 	//获取今日的日期
 	public static String GetdayDate() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar calendar = new GregorianCalendar();
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		String date = simpleDateFormat.format(calendar.getTime());
 		
 		return date;
 	}
 
+	public static String beforeHourToNowDate(int i) 
+	{
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - i);
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return df.format(calendar.getTime());
+	}
+	
+	//获取需要传递真实信息的用户id
+	public static List<String> getUserIDListForIphone7(){
+		userIDForIphone7.add("197");
+		userIDForIphone7.add("798");
+		userIDForIphone7.add("184");
+		userIDForIphone7.add("821");
+		userIDForIphone7.add("183");
+		userIDForIphone7.add("800");
+		userIDForIphone7.add("79");
+		userIDForIphone7.add("802");
+		return userIDForIphone7;
+	}
+	
 	public static void main(String[] args) {
 		
-		 System.err.println(  GetMonthDate());
+		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+				.append(" where receive_time> '")
+				.append(ChannelClassification.beforeHourToNowDate(23))
+				.append("' and  (idfa='").append("ddddd").append("' or ip='").append("111").append("')");
+		System.out.print(sql);
 	}
 }

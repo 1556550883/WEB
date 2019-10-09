@@ -288,6 +288,10 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 				String idfa = userScoreq.getUserNick();
 				TUserappidAdverid userappidAdver = getTask(adverid + "", idfa); 
 				//如果任务不是在1.5状态下就不再次积分
+				if(userappidAdver == null) {
+					return 1;
+				}
+				
 				if(!userappidAdver.getStatus().equals("1.5") && type == 0 && !userappidAdver.getStatus().equals("2.2"))
 				{
 					return 1;

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.web.controller.sys.app.ChannelClassification;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserScoreDetail;
 import com.ruanyun.web.model.TUserappidAdverid;
@@ -28,8 +29,13 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
+	//未被使用，如果需要使用需要加上时间索引来减少压力
 	public Integer queryMissionCount(TUserappidAdverid info) {
 		StringBuilder sql = new StringBuilder("SELECT count(1) from t_userappid_adverid WHERE 1=1 ");
+		//加上时间索引查询，挺高效率
+//		sql.append(" and receive_time > '");
+//		sql.append("11111")
+//		sql.append("'");
 		if(EmptyUtils.isNotEmpty(info)){
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
 				sql.append(" and adver_id="+info.getAdverId());
@@ -41,8 +47,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 				sql.append(" and status='"+info.getStatus()+"'");
 			if (EmptyUtils.isNotEmpty(info.getStatusStart()))
 				sql.append(" and status>='"+info.getStatusStart()+"'");
-			if (EmptyUtils.isNotEmpty(info.getStatusEnd()))
+			if (EmptyUtils.isNotEmpty(info.getStatusEnd())) {
 				sql.append(" and status<='"+info.getStatusEnd()+"'");
+			}
 		}
 		
 		return sqlDao.getCount(sql.toString());
@@ -59,6 +66,10 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	
 	public Page<TUserappidAdverid> PageSql(Page<TUserappidAdverid> page,TUserappidAdverid info) {
 		StringBuilder sql = new StringBuilder("SELECT * from t_userappid_adverid WHERE 1=1 ");
+		//加上时间索引直接后去一天前的信息
+		sql.append(" and receive_time > '");
+		sql.append(ChannelClassification.GetYestdayDate());
+		sql.append("'");
 		if(EmptyUtils.isNotEmpty(info)){
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
 				sql.append(" and adver_id="+info.getAdverId());
@@ -187,11 +198,13 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.update(params, sql.toString());
 	}
 	/**
-	 * 更新超时未完成任务的状态，并返回更新行数
+	 * 更新超时未完成任务的状态，并返回更新行数 更新前一天
 	 */
 	public int updateStatus2Invalid(TChannelAdverInfo adverInfo)
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE ((TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status<='1.5') or status = '1.7') ");
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE receive_time >'")
+				.append(ChannelClassification.beforeHourToNowDate(24))
+				.append("' and ((TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status<='1.5') or status = '1.7') ");
 		
 		if(EmptyUtils.isNotEmpty(adverInfo))
 		{
@@ -202,6 +215,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.update(sql.toString());
 	}
 	
+	//未使用
 	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip)
 	{
 		Calendar calendar = Calendar.getInstance();
@@ -219,10 +233,13 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
+	//工作室排重使用
 	public Page<TUserappidAdverid> getTasksByIdfaOrIP(String idfa, String ip)
 	{
 		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
-				.append(" where idfa='").append(idfa).append("' or ip='").append(ip).append("'");
+				.append(" where receive_time> '")
+				.append(ChannelClassification.beforeHourToNowDate(2))
+				.append("' and  (idfa='").append(idfa).append("' or ip='").append(ip).append("')");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		page.setNumPerPage(Integer.MAX_VALUE);
@@ -230,7 +247,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
-	
+	//散户使用方法
 	public Page<TUserappidAdverid> getTasksByIdfa(String idfa)
 	{
 		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
@@ -242,24 +259,16 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
-	
-	//SELECT * FROM `t_userappid_adverid` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
-	//UNION 
-	//SELECT * FROM `t_userappid_adverid_2019_5_27` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
-	
 	public Page<TUserappidAdverid> getTasks()
 	{
-		//UNION SELECT * FROM `t_userappid_adverid_2019_5_27` WHERE adid = '0ebd032e98aed1f40cce13abad1af4a7'  AND STATUS = 2
 		StringBuilder sql = new StringBuilder("select * from `t_userappid_adverid_2019_5_27` where adid = '0ebd032e98aed1f40cce13abad1af4a7'  and status = 2");
-		//StringBuilder sql = new StringBuilder("select * from `t_userappid_adverid` where adid = '0ebd032e98aed1f40cce13abad1af4a7'  and status = 2 and receive_time < '2019-05-29 10:11:29'");
-		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
 		page.setNumPerPage(Integer.MAX_VALUE);
 		
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
-	
+	//散户获取方法
 	public Page<TUserappidAdverid> getTasking(String idfa)
 	{
 		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
@@ -271,9 +280,11 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
+	//有效时间2小时
 	public Page<TUserappidAdverid> getLastSpecialTask(Page<TUserappidAdverid> page , String adverId) {
 		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
-				.append(" where adver_id='").append(adverId).append("' and status=2.1 order by complete_time");
+				.append(" where receive_time> '").append(ChannelClassification.beforeHourToNowDate(4))
+				.append("'  and adver_id='").append(adverId).append("' and status=2.1 order by complete_time");
 		
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
@@ -281,8 +292,10 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 	
 	public static void main(String[] args) {
 		
-		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
-				.append(" where adver_id='").append(111).append("' and status=2.1 order by complete_time LIMIT 1");
+		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE receive_time >'")
+				.append(ChannelClassification.beforeHourToNowDate(24))
+				.append("' and ((TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " +1*60 + " and status<='1.5') or status = '1.7') ");
+		
 		System.out.print(sql);
 	}
 	/**

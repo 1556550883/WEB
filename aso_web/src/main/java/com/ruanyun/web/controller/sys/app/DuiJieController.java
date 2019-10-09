@@ -125,10 +125,10 @@ public class DuiJieController extends BaseController
 		String phoneVersion_real = "";
 		String phoneModel = "";
 		String phoneVersion = "";
-		TUserApp userApp;
+		int userAppType = 2;
 		if(udid != null && !udid.isEmpty()) 
 		{
-			userApp = userAppService.getUserAppByUserName(udid);
+			TUserApp userApp = userAppService.getUserAppByUserName(udid);
 			if(!userApp.getLoginControl().equals("1")) {
 				model.setResult(-1);
 				model.setMsg("领取任务失败。原因：账号已被禁止登录！");
@@ -169,7 +169,7 @@ public class DuiJieController extends BaseController
 				phoneVersion = ChannelClassification.getPhoneVersion();
 			}
 			
-			userApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
+			userAppType = 1;
 		}
 		
 		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
@@ -204,9 +204,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//渠道16传递真实数据
-		if(adverInfo.getChannelNum().equals("16") || userApp.getUserAppId() == 197 || userApp.getUserAppId() == 798
-				|| userApp.getUserAppId()== 184 || userApp.getUserAppId()== 821 || userApp.getUserAppId()== 800 || userApp.getUserAppId()== 802 
-				|| userApp.getUserAppId() == 183 || userApp.getUserAppId() == 79) {
+		if(adverInfo.getChannelNum().equals("16") || ChannelClassification.getUserIDListForIphone7().contains(userAppId)) {
 			 phoneModel = request.getParameter("phoneModel");
 			 if(!phoneModel.contains(",")) {
 				 phoneModel = ChannelClassification.phoneModelChange(phoneModel);
@@ -237,16 +235,37 @@ public class DuiJieController extends BaseController
 			return;
 		}
 
+		//参数＞0说明任务需要领取的间隔时间 否则不需要卡时间  在重复任务之前做判断，可以减少数据库的io操作
+		if(adverInfo.getReceInterTime() > 0) {
+			//时间间隔
+			if(!ArrayBlockQueueProducer.specialXSAdverList.containsKey(adverInfo.getAdverId() + "")) {
+				model.setResult(-1);
+				model.setMsg("联系管理，重启任务！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
+			long inter = ChannelClassification.getTimestamp() - ArrayBlockQueueProducer.specialXSAdverList.get(adverInfo.getAdverId() + "").getReceTimeZone();
+			//间隔小于要求值得时候，返回任务繁忙
+			if(inter < adverInfo.getReceInterTime() ) {
+				model.setResult(-1);
+				String msg = String.format("请等待%s秒后,重新请求", adverInfo.getReceInterTime() - inter);
+				model.setMsg(msg);
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+		}
+				
 		//判断当天领取到的任务
-		//Page<TUserappidAdverid> taskList = userappidAdveridService.getTasks(adid, idfa, ip);
 		String adid = adverInfo.getAdid();
-		if(userApp.getUserApppType() == 1) {
+		if(userAppType == 1) {
+			//加上时间索引 提高效率 减轻rds压力
 			Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfaOrIP(idfa, ip);
 			
 			if (taskList != null && !taskList.getResult().isEmpty())
 			{
-				//判断idfa是否重复 判断是否有任务在进行
-				AppCommonModel checkIdfaModel = checkIDFADuplicated(userApp, adid, taskList, idfa, adverId);
+				//判断idfa是否重复 判断是否有任务在进行 
+				AppCommonModel checkIdfaModel = checkIDFADuplicated(userAppType, adid, taskList, idfa, adverId);
 				if(checkIdfaModel.getResult() != 2) 
 				{
 					super.writeJsonDataApp(response, checkIdfaModel);
@@ -296,35 +315,6 @@ public class DuiJieController extends BaseController
 			}
 		}
 		
-		//参数＞0说明任务需要领取的间隔时间 否则不需要卡时间
-		if(adverInfo.getReceInterTime() > 0) {
-			//时间间隔
-			if(!ArrayBlockQueueProducer.specialXSAdverList.containsKey(adverInfo.getAdverId() + "")) {
-				model.setResult(-1);
-				model.setMsg("联系管理，重启任务！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
-			
-			long inter = ChannelClassification.getTimestamp() - ArrayBlockQueueProducer.specialXSAdverList.get(adverInfo.getAdverId() + "").getReceTimeZone();
-			//间隔小于要求值得时候，返回任务繁忙
-			if(inter < adverInfo.getReceInterTime() ) {
-				model.setResult(-1);
-				String msg = String.format("请等待%s秒后,重新请求", adverInfo.getReceInterTime() - inter);
-				model.setMsg(msg);
-				super.writeJsonDataApp(response, model);
-				return;
-			}
-		}
-		
-		//检测apple是否可以使用
-		AppCommonModel checkAppleIDModel = checkAppleIDDuplicated(userApp, appleId, adid);
-		if(checkAppleIDModel.getResult() != 2)
-		{
-			super.writeJsonDataApp(response, checkAppleIDModel);
-			return;
-		}
-		
 		if(adverInfo.getAdverCountRemain() <= 0) 
 		{
 			model.setResult(-1);
@@ -332,7 +322,6 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-		
 		String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
 		if(AdverQueueConsumer.consumerMap.get(endPointName) == null) 
 		{
@@ -359,27 +348,19 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-//		else if(adverInfo.getChannelNum().equals("25"))
-//		{
-//			//抢到小手任务之后需要间隔 编号 25
-//		}
 		
 		//排重
-		TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
-		AppCommonModel checkChannelInfoModel = ChannelClassification.checkChannelInfo(channelInfo, adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion, udid);
+		//TChannelInfo channelInfo = channelInfoService.getInfoByNum(adverInfo.getChannelNum());
+		AppCommonModel checkChannelInfoModel = ChannelClassification.checkChannelInfo(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverInfo.getAdverName(), phoneModel, phoneVersion, udid);
 		
+		//排重不过就返回任务数量
 		if(checkChannelInfoModel.getResult() == -1)
 		{
 			super.writeJsonDataApp(response, checkChannelInfoModel);
 			return;
 		}
-		else
-		{
-			appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
-		}
 		
 		double ran = Math.random();
-		
 		//保存任务
 		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 		tUserappidAdverid.setUserAppId(Integer.valueOf(userAppId));
@@ -396,10 +377,32 @@ public class DuiJieController extends BaseController
 		//80% 概率
 		if(ran <= adverInfo.getRandom()) {
 			tUserappidAdverid.setStatus("1");
-			tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
+			try 
+			{
+				//如果保存出现异常一律按照重复任务处理
+				tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
+			}
+			catch(Exception e) 
+			{
+				model.setResult(-1);
+				model.setMsg("抱歉，重复任务！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
 		}else {
 			tUserappidAdverid.setStatus("1.7");
-			tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
+			try 
+			{
+				tUserappidAdverid = userappidAdveridService.save(tUserappidAdverid);
+			}
+			catch(Exception e) 
+			{
+				model.setResult(-1);
+				model.setMsg("抱歉，重复任务！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+			
 			model.setResult(-1);
 			model.setMsg("抱歉，重复任务！");
 			super.writeJsonDataApp(response, model);
@@ -419,43 +422,14 @@ public class DuiJieController extends BaseController
 			ArrayBlockQueueProducer.specialXSAdverList.get(adverInfo.getAdverId() + "").setReceTimeZone(ChannelClassification.getTimestamp());
 		}
 		
-		//model.setObj(tUserappidAdverid);
+		//此处表明任务已被成功领取
+		appChannelAdverInfoService.updateAdverCountRemainMinus1(adverInfo);
+		
 		model.setResult(1);
 		model.setMsg("领取任务成功，请在规定时间内完成任务，否则不计分！");
 		super.writeJsonDataApp(response, model);
 		return;
 	}
-	
-	private AppCommonModel checkAppleIDDuplicated(TUserApp tUserApp, String appleId, String adid) 
-	{
-		AppCommonModel model = new AppCommonModel(2, "通过！");
-		//TUserApp tUserApp = userAppService.getUserAppById(Integer.valueOf(userAppId));
-		//appleId排重开关开启且为普通用户时，判断appleId是否重复(此排重要放在idfa排重和ip排重之后)
-		if(1 == tUserApp.getUserApppType() && "1".equals(dictionaryService.getAppleIdCheck()))
-		{
-			if(!StringUtils.hasText(appleId))
-			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：苹果账号不能为空！");
-			}
-			else if(userappidAdveridService.checkAppleIdIsUsed(adid, appleId))
-			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：该苹果账号完成这一类广告！");
-			}
-		}
-		
-		return model;
-	}
-	
-	
-//	public void iosversion11(TChannelAdverInfo adverInfo) {
-//		if(adverInfo.getAdid().contains("-11")) {
-//			String[]  strs=adverInfo.getAdid().split("-");
-//			adverInfo.setAdid(strs[0]);
-//			phoneVersion = ChannelClassification.get11PhoneVersion();
-//		}
-//	}
 	
 	public static void main(String[] args) {
 		String iplocaltion = AddressUtils.getAddressByIP("117.92.15.139");
@@ -465,8 +439,7 @@ public class DuiJieController extends BaseController
 		}
 	}
 	
-	private AppCommonModel checkIDFADuplicated(TUserApp userApp, 
-			String adid, Page<TUserappidAdverid> taskList, String idfa, String adverId) 
+	private AppCommonModel checkIDFADuplicated(int userType,String adid, Page<TUserappidAdverid> taskList, String idfa, String adverId) 
 	{
 		AppCommonModel model = new AppCommonModel(2, "没有符合条件！");
 		
@@ -475,7 +448,7 @@ public class DuiJieController extends BaseController
 			//model.setObj(item);
 			if(item.getIdfa().equals(idfa))
 			{
-				if(userApp.getUserApppType() == 2)
+				if(userType == 2)
 				{
 					//真实用户
 					if (item.getStatus().compareTo("2") >= 0 && adid.equals(item.getAdid())) 
@@ -525,7 +498,7 @@ public class DuiJieController extends BaseController
 					else if (item.getStatus().compareTo("1.6") < 0  && adid.equals(item.getAdid()))  
 					{
 						model.setResult(1);
-						//model.setObj(item);
+						//model.setObj(item); 此处的msg不能改，由于app用这个判断 需要修改
 						model.setMsg("你已成功领取任务，不需重复领取！");
 						break;
 					}
@@ -740,6 +713,21 @@ public class DuiJieController extends BaseController
 		String userNum = tUserApp.getUserNum();
 		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		//查询广告信息
+		if(adverInfo == null)
+		{
+			model.setResult(-1);
+			model.setMsg("广告不存在！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		if(adverInfo.getAdverStatus() == 2) {
+			model.setResult(-1);
+			model.setMsg("任务已被停止！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
 		
 		String ip = task.getIp();
 		if(!remoteIp.equals(ip) 
@@ -776,15 +764,7 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		//查询广告信息
-		if(adverInfo == null)
-		{
-			model.setResult(-1);
-			model.setMsg("广告不存在！");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
+	
 		//查询任务完成情况
 		if("0".equals(adverInfo.getTaskType()))
 		{	//快速任务

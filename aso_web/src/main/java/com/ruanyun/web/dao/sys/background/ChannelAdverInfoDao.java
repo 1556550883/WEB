@@ -143,6 +143,12 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 	
+	//获取所有正在启动的任务
+	public List<TChannelAdverInfo> queryAllStartAdvers() {
+		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_status = 1 and adver_createtime >'")
+				.append(ChannelClassification.GetYestdayDate()).append("'");
+		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
+	}
 	
 	/**
 	 * 功能描述：删除

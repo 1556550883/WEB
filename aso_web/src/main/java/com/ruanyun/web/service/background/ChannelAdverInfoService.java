@@ -144,6 +144,13 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	{
 		return channelAdverInfoDao.queryAdversByIds(ids);
 	}
+	
+	
+	public List<TChannelAdverInfo>  queryAllStartAdvers()
+	{
+		return channelAdverInfoDao.queryAllStartAdvers();
+	}
+	
 	/**
 	 * 功能描述: 更加广告编号 获取对象
 	 *

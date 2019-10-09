@@ -12,7 +12,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -114,12 +113,17 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 				
 			//根据adverid获取最新的任务
 			if(adverList.size() > 0) {
-				String ids = StringUtils.join(adverList, ",");
-				List<TChannelAdverInfo> advers = mChannelAdverInfoService.getInfoByIds(ids);
+				List<TChannelAdverInfo> advers = mChannelAdverInfoService.queryAllStartAdvers();
+				//String ids = StringUtils.join(adverList, ",");
+				//List<TChannelAdverInfo> advers = mChannelAdverInfoService.getInfoByIds(ids);
 				//此处rds cpu使用率存在隐患
 				for(TChannelAdverInfo info : advers) 
 				{
 					String mAdverId = info.getAdverId() + "";
+					if(!adverList.contains(mAdverId)) {
+						System.out.print("1");
+						adverList.add(mAdverId);
+					}
 					//此处每次都去获取最新的任务 rds  改成5s去请求一次，减轻压力
 					//TChannelAdverInfo info = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
 					String endPointName = info.getAdverName() + "_" + info.getAdverId();
