@@ -82,6 +82,8 @@
 				   否 ：<input type="radio" name="isRegister"  value="0" checked/>
 				</dd>
 		    </dl>
+		    
+		    
 	       <dl class="nowrap" style="width: 100%">
 			<dt>是否为模拟 任务：</dt>
 			<dd>
@@ -98,6 +100,23 @@
 					    默认 ：<input type="radio" name="isOpen"  value="0"/>
 				</dd>
 		    </dl>
+		    
+		    
+		     <dl class="nowrap" style="width: 100%">
+				<dt>是否需要真实udid：</dt>
+				<dd>
+				   	<c:if test="${channelNum != 25}">
+						   是：<input type="radio" name="isTrue"  value="1"/>
+				   		否 ：<input type="radio" name="isTrue"  value="0" checked/>
+					</c:if> 
+				   	<c:if test="${channelNum == 25}">
+						   是：<input type="radio" name="isTrue"  value="1" checked/>
+				   		否 ：<input type="radio" name="isTrue"  value="0"/>
+					</c:if> 
+				   
+				</dd>
+		    </dl>
+		    
 		    
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告appleStore-ID：</dt>

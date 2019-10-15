@@ -139,7 +139,7 @@ public class ExternalAppController extends BaseController
 						return;
 					}
 					
-					udid = ChannelClassification.getPhoneUdid(model);
+					udid = ChannelClassification.getPhoneUdid( model, 0);
 					tExternalChannelTask.setUdid(udid);
 					AppCommonModel models = ZhangShangHuDong.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa,ip,sysver, model,udid,keyword);
 					if(models.getResult() == 1) {
@@ -165,7 +165,7 @@ public class ExternalAppController extends BaseController
 						return;
 					}
 					
-					udid = ChannelClassification.getPhoneUdid(model);
+					udid = ChannelClassification.getPhoneUdid( model, 0);
 					tExternalChannelTask.setUdid(udid);
 					//exterPaiChong(String domain,String adid,String keyword,  String idfa, String ip, 
 					//		String deviceType, String osVersion, String udid) 

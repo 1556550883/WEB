@@ -32,5 +32,26 @@ public class AdverListener implements ApplicationContextAware
         mScoreQueueConsumer.addObserver(simpleObserver);
         //启动被观察者，观察者线程也会同时被启动
         ScoreQueueConsumer.pool.execute(mScoreQueueConsumer);
+        
+//        //生产udid队列
+//        try {
+//			new UdidQueueConsumer("iPhone8,1",false);
+//			new UdidQueueConsumer("iPhone8,2",false);
+//			new UdidQueueConsumer("iPhone8,4",false);
+//			new UdidQueueConsumer("iPhone9,1",false);
+//			new UdidQueueConsumer("iPhone9,2",false);
+//			new UdidQueueConsumer("iPhone9,3",false);
+//			new UdidQueueConsumer("iPhone9,4",false);
+//			new UdidQueueConsumer("iPhone10,2",false);
+//			new UdidQueueConsumer("iPhone10,5",false);
+//			new UdidQueueConsumer("iPhone10,3",false);
+//			new UdidQueueConsumer("iPhone10,6",false);
+//			new UdidQueueConsumer("iPhone11,2",false);
+//			System.out.println("------------------------success------------------------");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (TimeoutException e) {
+//			e.printStackTrace();
+//		}
 	}
 } 

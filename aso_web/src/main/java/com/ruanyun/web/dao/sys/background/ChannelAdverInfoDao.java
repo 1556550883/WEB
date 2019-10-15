@@ -377,5 +377,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append("' ORDER BY adver_createtime desc");
 		return sqlDao.getAll(sql.toString());
 	}
-
+	
+	@SuppressWarnings("rawtypes")
+	public List activated(String type) {
+		StringBuffer sql = new StringBuffer("select udid from ");
+		sql.append(type);
+		sql.append(" where used = 0");
+		return sqlDao.getAll(sql.toString());
+	}
+	
+	public int updateUdidStatus(String udid,String tableName)
+	{
+		StringBuilder sql = new StringBuilder("update ").append(tableName).append(" set used=1 WHERE udid= '").append(udid).append("'");
+		return sqlDao.update(sql.toString());
+	}
 }

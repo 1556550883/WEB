@@ -190,6 +190,7 @@ public class ChannelInfoController extends BaseController
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "","", ""));
 		}
 	}
+
 	
 /**
  * 
@@ -198,8 +199,6 @@ public class ChannelInfoController extends BaseController
  * @param model
  * @param session
  * @return
- *@author feiyang
- *@date 2016-1-6
  */
 	@RequestMapping("toEdit")
 	public String toEdit(TChannelInfo info, Model model,HttpSession session,Integer type) {

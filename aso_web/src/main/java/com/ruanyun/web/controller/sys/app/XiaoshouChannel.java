@@ -44,7 +44,7 @@ public class XiaoshouChannel  extends BaseChannel
 			String adverName, String ip,String udid) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		
+		phonemodel = "iPhone" + phonemodel.substring(6);
 		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(domain)
 				.append("?appkey=").append(adid)
@@ -92,6 +92,12 @@ public class XiaoshouChannel  extends BaseChannel
 		return model;
 	}
 	
+	
+	public static void main(String[] args) {
+		String phonemodel = "iphone9,3";
+		phonemodel = "iPhone" + phonemodel.substring(6);
+		System.out.print(phonemodel);
+	}
 	/**
 	 * 点击
 	 */
@@ -99,6 +105,7 @@ public class XiaoshouChannel  extends BaseChannel
 			Integer userAppId, Integer adverId, String userNum, String sysver, String phonemodel,String adverName, String udid) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
+		phonemodel = "iPhone" + phonemodel.substring(6);
 		StringBuilder url = new StringBuilder(domain)
 				.append("?appkey=").append(adid)
 				.append("&chid=").append(chid)
@@ -147,6 +154,7 @@ public class XiaoshouChannel  extends BaseChannel
 			String sysver, String phonemodel, String udid) {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
+		phonemodel = "iPhone" + phonemodel.substring(6);
 		StringBuilder url;
 		try {
 			url = new StringBuilder(domain)

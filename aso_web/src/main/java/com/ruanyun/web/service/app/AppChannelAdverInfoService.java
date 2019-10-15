@@ -5,11 +5,13 @@
  */
 package com.ruanyun.web.service.app;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +30,7 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserappidAdverid;
+import com.ruanyun.web.producer.UdidQueueConsumer;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.ExcelUtils;
@@ -247,6 +250,26 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
 			SysCode.DATE_FORMAT_STR_L);
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//队列生产udid
+	@SuppressWarnings("rawtypes")
+	public void activated(HttpServletResponse response, String type) {
+		try {
+			//udid生产者
+			String endname = type.replace("_", ",");
+			UdidQueueConsumer s = new UdidQueueConsumer(endname,false);
+			List list = channelAdverInfoDao.activated(type);
+			for(Object o : list) {
+				String udid = o.toString();
+				udid = udid.substring(6,udid.length() - 1);
+				s.sendMessage(udid, endname.toLowerCase());
+				System.out.println("---" + udid + "---");
+				channelAdverInfoDao.updateUdidStatus(udid,type);
+			}
+		} catch (IOException | TimeoutException e) {
 			e.printStackTrace();
 		}
 	}

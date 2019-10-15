@@ -100,6 +100,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private long submiTimeZone;
      private long receTimeZone;
      private Integer isTime;//0表示有作用  1忽略
+     private Integer isTrue;
      
      @Column(name="package_name")
      public String getPackageName() {
@@ -712,5 +713,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setIsTime(Integer isTime) {
 		this.isTime = isTime;
+	}
+	
+	@Column(name="is_true")
+	public Integer getIsTrue() {
+		return isTrue;
+	}
+	public void setIsTrue(Integer isTrue) {
+		this.isTrue = isTrue;
 	}
 }

@@ -1,22 +1,28 @@
 package com.ruanyun.web.controller.sys.app;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
+import com.ruanyun.web.producer.UdidQueueConsumer;
 
 public class ChannelClassification
 {
 	private static java.util.Random random = new java.util.Random();
 	private static List<String> userIDForIphone7 = new ArrayList<String>();
+	private static Map<String, UdidQueueConsumer> udidQueue = new HashMap<String, UdidQueueConsumer>();
 	
 	//检测任务信息
 	public static AppCommonModel checkChannelInfo( TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
@@ -207,17 +213,39 @@ public class ChannelClassification
 		return model;
 	}
 	
+	
+	public static String getPhoneWithUdid() {
+		String phonemodel_sim = "iPhone9,2";
+		int result = random.nextInt(3);
+		switch (result)
+		{
+		case 0:
+			phonemodel_sim = "iPhone9,2"; //1
+			break;
+		case 1:
+			phonemodel_sim = "iPhone10,2";//2
+			break;
+		case 2:
+			phonemodel_sim = "iPhone10,3";//3
+			break;
+//		case 3:
+//			phonemodel_sim = "iPhone11,2";//4
+//			break;
+//		case 4:
+//			phonemodel_sim = "iPhone11,4";//4
+//			break;
+		default:
+			phonemodel_sim = "iPhone9,2";
+			break;
+		}
+		return phonemodel_sim;
+	}
+	
 	public static String getPhoneModel(String id) 
 	{	
 		String phonemodel_sim = "iPhone7,1";
-		int result = random.nextInt(18);
+		int result = random.nextInt(14);
 		//账号77设定为4以上  iphone7
-//		if((id.equals("77") || id.equals("183") || id.equals("184")  || id.equals("185") 
-//				|| id.equals("197")|| id.equals("798")|| id.equals("818")|| id.equals("414")
-//				|| id.equals("812")|| id.equals("83")|| id.equals("542235")|| id.equals("821")|| id.equals("802")|| id.equals("801")|| id.equals("800"))&& result <= 4){
-//			result = 4;
-//		} 
-		
 		if(id.equals("77") && result <= 4){
 			result = 4;
 		} 
@@ -225,7 +253,7 @@ public class ChannelClassification
 		switch (result)
 		{
 		case 0:
-			phonemodel_sim = "iPhone10,6";
+			phonemodel_sim = "iPhone9,1";
 			break;
 		case 1:
 			phonemodel_sim = "iPhone8,1";
@@ -240,7 +268,7 @@ public class ChannelClassification
 			phonemodel_sim = "iPhone9,1";
 			break;
 		case 5:
-			phonemodel_sim = "iPhone9,2";
+			phonemodel_sim = "iPhone9,2"; //1
 			break;
 		case 6:
 			phonemodel_sim = "iPhone9,3";
@@ -249,37 +277,25 @@ public class ChannelClassification
 			phonemodel_sim = "iPhone9,4";
 			break;
 		case 8:
-			phonemodel_sim = "iPhone9,5";
+			phonemodel_sim = "iPhone10,2";//2
 			break;
 		case 9:
-			phonemodel_sim = "iPhone9,6";
-			break;
-		case 10:
-			phonemodel_sim = "iPhone10,1";
-			break;
-		case 11:
-			phonemodel_sim = "iPhone10,4";
-			break;	
-		case 12:
-			phonemodel_sim = "iPhone10,2";
-			break;
-		case 13:
 			phonemodel_sim = "iPhone10,5";
 			break;
-		case 14:
-			phonemodel_sim = "iPhone11,2";
+		case 10:
+			phonemodel_sim = "iPhone10,3";//3
 			break;
-		case 15:
-			phonemodel_sim = "iPhone11,4";
+		case 11:
+			phonemodel_sim = "iPhone10,6";
 			break;
-		case 16:
-			phonemodel_sim = "iPhone11,6";
+		case 12:
+			phonemodel_sim = "iPhone11,2";//4
 			break;
-		case 17:
-			phonemodel_sim = "iPhone11,8";
+		case 13:
+			phonemodel_sim = "iPhone11,4";//4
 			break;
 		default:
-			phonemodel_sim = "iPhone8,1";
+			phonemodel_sim = "iPhone9,1";
 			break;
 		}
 		
@@ -289,7 +305,7 @@ public class ChannelClassification
 	public static String  getPhoneVersion()
 	{
 		String phoneVersion = "12.1.2";
-		int result = random.nextInt(8);
+		int result = random.nextInt(10);
 		switch (result)
 		{
 			case 0:
@@ -315,6 +331,12 @@ public class ChannelClassification
 				break;
 			case 7:
 				phoneVersion = "12.3.1";
+				break;
+			case 8:
+				phoneVersion = "12.4";
+				break;
+			case 9:
+				phoneVersion = "12.4.1";
 				break;
 			default:
 				phoneVersion = "12.1.2";
@@ -359,34 +381,63 @@ public class ChannelClassification
 		return phoneVersion;
 	}
 	
-	
-	 
 	//模拟手机udid
-	public static String getPhoneUdid(String phoneModel) {
+	public static String getPhoneUdid(String phoneModel, int isTrue) {
+		//根据机型获取配套的udid
 		String udid = "";
-		if(phoneModel.contains("iPhone11,") || phoneModel.contains("iPhone12,")){
-			int result = random.nextInt(2);
-			//00008020-000A09183CDA002E
-			String Str = "00008020-000";
-			switch (result)
-			{
-				case 0:
-					Str = "00008020-000";
-					break;
-				case 1:
-					Str ="00008020-001";
-					break;
-				default:
-					Str = "00008020-000";
-					break;
+		
+		//1是需要真实udid
+		if(isTrue == 1) {
+			//先去查看数据库中是否存在此idfa对应的udid，如果存在就提出，否则去获取新的udid
+			if(!udidQueue.containsKey(phoneModel)) {
+				try {
+					udidQueue.put(phoneModel, new UdidQueueConsumer(phoneModel,false));
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (TimeoutException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			udid = Str + get13UUID();
-			udid = udid.toUpperCase();
-		}else {
-			 String Str1=UUID.randomUUID().toString().replace("-", "");
-			 //String Str1=UUID.randomUUID().toString();
-			 udid = Str1 + get8UUID();
+			try {
+				UdidQueueConsumer udidQ = udidQueue.get(phoneModel);
+				udid = udidQ.getMessage(phoneModel);
+			} 
+			catch (Exception e)
+			{
+				udidQueue.remove(phoneModel);
+			}
+			
+			if(udid == null) {
+				//消耗没了就进行提示
+				return "0";
+			}
+		}
+		else 
+		{
+			if(phoneModel.contains("iPhone11,") || phoneModel.contains("iPhone12,")){
+				int result = random.nextInt(2);
+				String Str = "00008020-000";
+				switch (result)
+				{
+					case 0:
+						Str = "00008020-000";
+						break;
+					case 1:
+						Str ="00008020-001";
+						break;
+					default:
+						Str = "00008020-000";
+						break;
+				}
+				
+				udid = Str + get13UUID();
+				udid = udid.toUpperCase();
+			}else {
+				 String Str1=UUID.randomUUID().toString().replace("-", "");
+				 //String Str1=UUID.randomUUID().toString();
+				 udid = Str1 + get8UUID();
+			}
 		}
 		
 		return udid;
@@ -535,11 +586,6 @@ public class ChannelClassification
 	}
 	
 	public static void main(String[] args) {
-		
-		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
-				.append(" where receive_time> '")
-				.append(ChannelClassification.beforeHourToNowDate(23))
-				.append("' and  (idfa='").append("ddddd").append("' or ip='").append("111").append("')");
-		System.out.print(sql);
+		//double ran = Math.random();
 	}
 }

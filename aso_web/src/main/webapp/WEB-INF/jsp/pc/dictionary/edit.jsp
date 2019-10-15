@@ -49,7 +49,15 @@
 				<option value="0" <c:if test="${idfaCheck.itemCode == 0}">selected="selected"</c:if>>关闭</option>
 			</select>
 		</p>
-		<input type="hidden" value="${bean.parentCode }" name="parentCode">
+		
+		<dl>
+			<p>
+				<label>机型掺量0-10：</label>
+				<input type="text" name="phoneModelPercent" value="${phoneModelPercent}" size="10" class="required" alt="机型配比" />
+			</p>
+		</dl>
+		
+		<input type="hidden" value="${bean.parentCode}" name="parentCode">
 </div>
 
 <div class="formBar">

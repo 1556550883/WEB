@@ -97,7 +97,13 @@
 			   默认：<input type="radio" id="isOpen_0" name="isOpen"  value="0"/>
 			</dd>  
 			</dl>
-			
+			  <dl class="nowrap" style="width: 100%">
+				<dt>是否需要真实udid：</dt>
+				<dd>
+				    是：<input type="radio" name="isTrue" id="isTrue_1"  value="1"/>
+				   否 ：<input type="radio" name="isTrue" id="isTrue_0"  value="0"/>
+				</dd>
+		    </dl>
 			
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告storeID：</dt>
@@ -313,6 +319,16 @@
 			}else
 			{
 				$("#isOpen_2").attr("checked", true);
+			}
+			
+			var val3 = '${bean.isTrue}';
+			if(val3 == 0)
+			{
+				$("#isTrue_0").attr("checked", true);
+			}
+			else if(val3 == 1)
+			{
+				$("#isTrue_1").attr("checked", true);
 			}
 		})
 		

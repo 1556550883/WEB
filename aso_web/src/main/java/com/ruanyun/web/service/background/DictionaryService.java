@@ -33,6 +33,8 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	private static String appVersion = "v1.0";
 	
 	private static String idfaCheck = "-1";
+	
+	private static Integer  phoneModelPercent = -1;
 	/**
 	 * 功能描述:查询字典表 父级
 	 * @author wsp  2016-10-20 下午05:48:44
@@ -47,7 +49,7 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	 * 修改系统参数
 	 */
 	public void updateSystemParameter(String appleIdCheck2, Integer leastTaskTime2, Integer leastForward2, String notice2, 
-			String downloadUrl2, Integer vestorLevel2,  String idfaCheck2)
+			String downloadUrl2, Integer vestorLevel2,  String idfaCheck2, Integer phoneModelPercent2)
 	{
 		if(StringUtils.hasText(appleIdCheck2))
 		{
@@ -55,6 +57,14 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 			oldInfo.setItemCode(appleIdCheck2);
 			super.update(oldInfo);
 			appleIdCheck = appleIdCheck2;
+		}
+		
+		if(phoneModelPercent2 != null && phoneModelPercent2 > 0)
+		{
+			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "PHONEMODEL_PERCENT");
+			oldInfo.setItemCode(String.valueOf(phoneModelPercent2));
+			super.update(oldInfo);
+			phoneModelPercent = phoneModelPercent2;
 		}
 		
 		if(leastTaskTime2 != null && leastTaskTime2 > 0)
@@ -172,6 +182,25 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 		
 		return leastTaskTime;
 	}
+	
+	public Integer getPhoneModelPercent()
+	{
+		if(phoneModelPercent == -1)
+		{
+			TDictionary dictionary = super.get(TDictionary.class, "parentCode", "PHONEMODEL_PERCENT");
+			if (dictionary == null)
+			{
+				phoneModelPercent = 0;//默认不掺量
+			}
+			else
+			{
+				phoneModelPercent = Integer.valueOf(dictionary.getItemCode());
+			}
+		}
+		
+		return phoneModelPercent;
+	}
+
 
 	public Integer getLeastForward()
 	{

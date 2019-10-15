@@ -24,6 +24,7 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
+import com.ruanyun.web.model.TPhoneUdidWithIdfa;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserappidAdverid;
@@ -34,6 +35,7 @@ import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.DictionaryService;
+import com.ruanyun.web.service.background.UdidService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.AddressUtils;
@@ -55,6 +57,8 @@ public class DuiJieController extends BaseController
 	private DictionaryService dictionaryService;
 	@Autowired
 	private ChannelAdverInfoService channelAdverInfoService;
+	@Autowired
+	private UdidService udidService;
 	/**
 	 * 查询系统参数
 	 */
@@ -73,6 +77,7 @@ public class DuiJieController extends BaseController
 			map.put("downloadUrl", dictionaryService.getDownloadUrl());
 			map.put("appVersion", dictionaryService.getAppVersion());
 			map.put("idfaCheck", dictionaryService.getIdfaCheck());
+			map.put("phoneModelPercent", dictionaryService.getPhoneModelPercent());
 			model.setObj(map);
 			model.setResult(1);
 			model.setMsg("成功！");
@@ -126,6 +131,28 @@ public class DuiJieController extends BaseController
 		String phoneModel = "";
 		String phoneVersion = "";
 		int userAppType = 2;
+		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		double ran = Math.random();
+		//判断广告是否存在
+		if(adverInfo == null)
+		{
+			model.setResult(-1);
+			model.setMsg("领取任务失败。原因：广告不存在！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		//限制连云港港的ip
+		if(adverInfo.getChannelNum().equals("25")) {
+			String iplocaltion = AddressUtils.getAddressByIP(ip);
+			if(iplocaltion.contains("连云港市")) {
+				model.setResult(-1);
+				model.setMsg("此ip在限制范围内，请更换ip！");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+		}
+		
 		if(udid != null && !udid.isEmpty()) 
 		{
 			TUserApp userApp = userAppService.getUserAppByUserName(udid);
@@ -160,58 +187,76 @@ public class DuiJieController extends BaseController
 			 userNum = request.getParameter("userNum");
 			 phoneModel_real = request.getParameter("phoneModel") + "-";
 			 phoneVersion_real = request.getParameter("phoneVersion") + "-";
-			 phoneModel = ChannelClassification.getPhoneModel(userAppId);
+			 //随机出机型
+			 //phoneModel = ChannelClassification.getPhoneModel(userAppId);
+			 phoneModel = request.getParameter("phoneModel");
 			 phoneVersion = request.getParameter("phoneVersion");
-			 //模拟用户的udid
-			 udid = ChannelClassification.getPhoneUdid(phoneModel);
-			if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
-			{
-				phoneVersion = ChannelClassification.getPhoneVersion();
-			}
-			
+		
+			 if(!phoneModel.contains(",")) {
+					model.setResult(-1);
+					model.setMsg("请使用最新的安装包！");
+					super.writeJsonDataApp(response, model);
+					return;
+			 }
+			 
+			//1是需要真实udid
+			 if(adverInfo.getIsTrue() == 1){
+				//先去查看数据库中是否存在此idfa对应的udid，如果存在就提出，否则去获取新的udid
+				List<TPhoneUdidWithIdfa> result = udidService.getUdidByIdfa(idfa);
+				if(result != null && result.size() > 0) 
+				{
+					udid = result.get(0).getUdid();
+					phoneModel = result.get(0).getPhoneModel();
+					phoneVersion =  result.get(0).getPhoneVersion();
+				}
+				else 
+				{
+					//掺量的概率
+					if((ran* 10) < dictionaryService.getPhoneModelPercent()) {
+						 phoneModel = ChannelClassification.getPhoneWithUdid();
+						 phoneVersion = ChannelClassification.getPhoneVersion();
+					 }
+					
+					//如果是空就说明需要获取新的udid
+					if(phoneModel.toLowerCase().equals("iphone9,3"))
+					{
+						udid = ChannelClassification.getPhoneUdid("iphone9,1",adverInfo.getIsTrue());
+					}else 
+					{
+						udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),adverInfo.getIsTrue());
+					}
+					
+					//获取新的udid之后需要保存idfa和udid
+					if(!udid.equals("0")) 
+					{
+						TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,new Date());
+						udidService.saveOrUpdate(p);
+					}else {
+						model.setResult(-1);
+						model.setMsg(phoneModel + " udid被消耗完");
+						super.writeJsonDataApp(response, model);
+						return;
+					}
+					
+				}
+			 }else {
+				 //渠道16使用真实数据
+				 if(!adverInfo.getChannelNum().equals("16"))
+				 {
+					 phoneModel = ChannelClassification.getPhoneModel(userAppId);
+					 if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
+					{
+						phoneVersion = ChannelClassification.getPhoneVersion();
+					}
+				 }
+				 
+				
+				 udid = ChannelClassification.getPhoneUdid(phoneModel,adverInfo.getIsTrue());
+			 }
+			 
 			userAppType = 1;
 		}
 		
-		if(!StringUtils.hasText(idfa) || !StringUtils.hasText(ip)
-				|| !StringUtils.hasText(userAppId) || !StringUtils.hasText(adverId))
-		{
-			model.setResult(-1);
-			model.setMsg("adid、idfa、ip、userAppId、adverId不能为空！");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
-		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-		
-		//判断广告是否存在
-		if(adverInfo == null)
-		{
-			model.setResult(-1);
-			model.setMsg("领取任务失败。原因：广告不存在！");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
-		//限制连云港港的ip
-		if(adverInfo.getChannelNum().equals("25")) {
-			String iplocaltion = AddressUtils.getAddressByIP(ip);
-			if(iplocaltion.contains("连云港市")) {
-				model.setResult(-1);
-				model.setMsg("此ip在限制范围内，请更换ip！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
-		}
-		
-		//渠道16传递真实数据
-		if(adverInfo.getChannelNum().equals("16") || ChannelClassification.getUserIDListForIphone7().contains(userAppId)) {
-			 phoneModel = request.getParameter("phoneModel");
-			 if(!phoneModel.contains(",")) {
-				 phoneModel = ChannelClassification.phoneModelChange(phoneModel);
-			 }
-			 phoneVersion = request.getParameter("phoneVersion");
-			 udid = ChannelClassification.getPhoneUdid(phoneModel);
-		}
 		
 		//phoneVersion = ChannelClassification.get11PhoneVersion();
 		if(adverInfo.getAdverAdid().contains("-11")) {
@@ -360,7 +405,6 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
-		double ran = Math.random();
 		//保存任务
 		TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
 		tUserappidAdverid.setUserAppId(Integer.valueOf(userAppId));
