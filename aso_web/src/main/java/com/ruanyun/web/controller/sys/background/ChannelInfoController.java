@@ -2,6 +2,7 @@ package com.ruanyun.web.controller.sys.background;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,17 +24,26 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
+import com.ruanyun.web.model.TPhoneUdidModel;
+import com.ruanyun.web.model.TPhoneUdidWithIdfa;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.model.sys.TDictionary;
 import com.ruanyun.web.model.sys.TUser;
+import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
+import com.ruanyun.web.service.background.UdidService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.util.AddressUtils;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.EncrypDES;
+import com.ruanyun.web.util.FileUtils;
+import com.ruanyun.web.util.HttpRequestUtil;
 import com.ruanyun.web.util.HttpSessionUtils;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping("channelInfo")
@@ -46,6 +56,10 @@ public class ChannelInfoController extends BaseController
 	private PublicCache publicCache;
 	@Autowired
 	private UserAppService userAppService;
+	@Autowired
+	private AppChannelAdverInfoService appChannelAdverInfoService;
+	@Autowired
+	private UdidService udidService;
 	/**
 	 * 
 	 * 功能描述:渠道列表
@@ -73,6 +87,16 @@ public class ChannelInfoController extends BaseController
 		return "pc/channelInfo/list";
 	}
 	
+	@RequestMapping("applist")
+	public String getChannelInfoAppList(Page<TChannelInfo> page, TChannelInfo info, Model model)
+	{
+		page = channelInfoService.queryPage(page, info);
+		//List<TChannelInfo> channels = page.getResult();
+		addModel(model, "pageList", page);
+		addModel(model, "bean", info);
+		
+		return "pc/channelInfo/applist";
+	}
 	
 	@RequestMapping("exportChannelData")
 	public void exportChannelData(HttpServletResponse response)
@@ -250,13 +274,74 @@ public class ChannelInfoController extends BaseController
 	
 	@RequestMapping("getChannelType")
 	 public void getChannelType(HttpServletResponse response){
+		@SuppressWarnings("static-access")
 		List<TDictionary> list=publicCache.getItemList("CHANNEL_TYPE");
 		 super.writeJsonData(response, list);
    }
 	
+	@RequestMapping("activated")
+	public void activated(HttpServletResponse response) {
+		List<String> rest = udidService.importCsv();
+		try {
+			//0 tablename
+			if(rest.get(0) != null) {
+				appChannelAdverInfoService.activated(response,rest.get(0));
+			}
+		} catch (Exception e) {
+		}
+		
+		JSONArray result = JSONArray.fromObject(rest);
+		super.writeJsonData(response, result);
+	}
+	
+	@RequestMapping("upload")
+	public String upload(HttpServletResponse response){
+		return "pc/channelInfo/upload";
+	}
+	
+	@RequestMapping("saveFile")
+	public void saveFile(HttpServletRequest request,HttpServletResponse response,MultipartFile udid, Integer isTest, String cookie) throws Exception{
+		  String savePath = "C://Program Files//Apache Software Foundation//import//";
+			// String filePath = savePath+udid.getName();
+			 FileUtils upload = new FileUtils();
+			 int upload_result=upload.uploadFile(udid,savePath,udid.getName() + ".csv","csv",request);
+				//判断返回的结果  --显示给用户
+			if (upload_result == 1 && isTest == 1) {
+				//对udid进行分析是否有效
+				List<TPhoneUdidModel> tPhoneUdidModels = udidService.getUdidFromFile();
+				if(tPhoneUdidModels  != null && tPhoneUdidModels.size() > 1000) {
+					tPhoneUdidModels = tPhoneUdidModels.subList(0, 999);
+				}
+				
+				List<String> reustl = HttpRequestUtil.posts(tPhoneUdidModels, cookie);
+				List<TPhoneUdidWithIdfa> ls = new ArrayList<TPhoneUdidWithIdfa>();
+				for(String str : reustl) {
+					JSONObject jsonObject = JSONObject.fromObject(str);
+					JSONArray arr = (JSONArray) jsonObject.get("devices");
+					if(arr.size()>0)
+					{
+						for(int i=0;i<arr.size();i++)
+						{
+							JSONObject job = arr.getJSONObject(i); 
+							TPhoneUdidWithIdfa info = new TPhoneUdidWithIdfa();
+							info.setUdid(job.get("deviceNumber").toString());
+							if(job.get("model") == null) {
+								info.setPhoneModel("未知");
+							}else {
+								info.setPhoneModel(job.get("model").toString());
+							}
+							
+							ls.add(info);
+						}
+					}
+				}
+				
+				channelInfoService.exprotPhoneUdid(response,ls);
+			} else {
+				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE,Constants.MESSAGE_SUCCESS, "main_","channelInfo/list", "closeCurrent"));
+			}
+	}
 	
 	public static void main(String[] args) {
-		float s = 100000.0f;
-		System.out.print(s +0.1);
 	}
 }

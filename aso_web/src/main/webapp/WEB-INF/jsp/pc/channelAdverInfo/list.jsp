@@ -35,6 +35,7 @@
 			<li><span style="" onclick= "exportadver(1)">今日任务明细</span></li>
 			<li><span style="" onclick= "exportMonthAadver(0)">上月任务明细</span></li>
 			<li><span style="" onclick= "exportMonthAadver(1)">当月任务明细</span></li>
+			<li><span style="" onclick= "releaseIp()">释放渠道ip</span></li>
 			<li class="line">line</li>
 		</ul>
 	</div>
@@ -137,20 +138,38 @@ function show(){
     }
    	console.log(check_val);
     if(check_val != ""){
-	    window.location.href = "http://moneyzhuan.com/channelAdverInfo/export?adverIds="+  check_val;
+	    window.location.href = "channelAdverInfo/export?adverIds="+  check_val;
     }else{
     	alert("请先选择一个任务！")
     }
 }
 
 function exportadver(day){
-	window.location.href = "http://moneyzhuan.com/channelAdverInfo/exportAdver?channelNum=" + ${bean.channelNum} + "&day=" + day;
+	window.location.href = "channelAdverInfo/exportAdver?channelNum=" + ${bean.channelNum} + "&day=" + day;
 	//window.location.href = "http://localhost:8080/sjjz/channelAdverInfo/exportAdver?channelNum=" + ${bean.channelNum} + "&day=" + day;
 }
 
 function exportMonthAadver(month){
-	window.location.href = "http://moneyzhuan.com/channelAdverInfo/exportMonthAadver?channelNum=" + ${bean.channelNum} + "&month=" + month;
+	window.location.href = "channelAdverInfo/exportMonthAadver?channelNum=" + ${bean.channelNum} + "&month=" + month;
 	//window.location.href = "http://localhost:8080/sjjz/channelAdverInfo/exportMonthAadver?channelNum=" + ${bean.channelNum} + "&month=" + month;
+}
+
+
+
+function releaseIp(){
+	var msg = confirm("确认释放吗？");
+	var channelNum = ${bean.channelNum};
+	if(msg){
+		$.ajax({
+	             type: "GET",
+	             url: "channelAdverInfo/releaseIp",
+	             data: {channelNum:channelNum},
+	             dataType: "json",
+	           	 success:function(data){
+	           		 alert("释放成功！");
+	            }
+           });
+	}
 }
 </script>
 </div>

@@ -199,6 +199,10 @@ public class DuiJieController extends BaseController
 					return;
 			 }
 			 
+			 if(userAppId.equals("77")) {
+				 phoneModel = "iPhone9,1";
+			 }
+			 
 			//1是需要真实udid
 			 if(adverInfo.getIsTrue() == 1){
 				//先去查看数据库中是否存在此idfa对应的udid，如果存在就提出，否则去获取新的udid
@@ -211,33 +215,48 @@ public class DuiJieController extends BaseController
 				}
 				else 
 				{
-					//掺量的概率
-					if((ran* 10) < dictionaryService.getPhoneModelPercent()) {
-						 phoneModel = ChannelClassification.getPhoneWithUdid();
-						 phoneVersion = ChannelClassification.getPhoneVersion();
-					 }
-					
-					//如果是空就说明需要获取新的udid
-					if(phoneModel.toLowerCase().equals("iphone9,3"))
+					//获取10次，10次没结果就放弃
+					int i = 1;
+					while(i < 10) 
 					{
-						udid = ChannelClassification.getPhoneUdid("iphone9,1",adverInfo.getIsTrue());
-					}else 
-					{
-						udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),adverInfo.getIsTrue());
+						if((ran* 10) < dictionaryService.getPhoneModelPercent()) {
+							 phoneModel = ChannelClassification.getPhoneWithUdid();
+							 phoneVersion = ChannelClassification.getPhoneVersion();
+						 }
+						//如果是空就说明需要获取新的udid
+						if(phoneModel.toLowerCase().equals("iphone9,3"))
+						{
+							udid = ChannelClassification.getPhoneUdid("iphone9,1",adverInfo.getIsTrue());
+						}
+						else 
+						{
+							udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),adverInfo.getIsTrue());
+						}
+						
+						//获取新的udid之后需要保存idfa和udid
+						if(!udid.equals("0")) 
+						{
+							TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,new Date());
+							udidService.saveOrUpdate(p);
+							break;
+						}
+						else
+						{
+							//如果没有获取到udid就直接随机获取手机型号
+							phoneModel = ChannelClassification.getPhoneWithUdid();
+							phoneVersion = ChannelClassification.getPhoneVersion();
+						}
+						
+						i++;
 					}
 					
-					//获取新的udid之后需要保存idfa和udid
-					if(!udid.equals("0")) 
-					{
-						TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,new Date());
-						udidService.saveOrUpdate(p);
-					}else {
+					if(udid.equals("0")) {
 						model.setResult(-1);
 						model.setMsg(phoneModel + " udid被消耗完");
 						super.writeJsonDataApp(response, model);
 						return;
 					}
-					
+					//掺量的概率
 				}
 			 }else {
 				 //渠道16使用真实数据

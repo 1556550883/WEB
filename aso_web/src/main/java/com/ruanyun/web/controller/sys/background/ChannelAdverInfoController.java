@@ -33,7 +33,6 @@ import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
-import com.ruanyun.web.service.background.UdidService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
@@ -53,10 +52,9 @@ public class ChannelAdverInfoController extends BaseController
 	private AppChannelAdverInfoService appChannelAdverInfoService;
 	@Autowired
 	private UserappidAdveridService userappidAdveridService;
-	@Autowired
-	private UdidService udidService;
 	/**
 	 * 查询广告列表（后台显示）
+	 * 
 	 */
 	@RequestMapping("list")
 	public String getChannelAdverInfoList(Page<TChannelAdverInfo> page,TChannelAdverInfo info,Model model)
@@ -391,27 +389,12 @@ public class ChannelAdverInfoController extends BaseController
 		appChannelAdverInfoService.exportMonthAdver(response, channelNum, month);
 	}
 	
-	@RequestMapping("activated")
-	public String activated(HttpServletResponse response,String type) {
-		
-		try {
-			udidService.importCsv();
-			appChannelAdverInfoService.activated(response,type);
-
-		} catch (Exception e) {
-			return "pc/externalChannelAdverInfo/importError";
-		}
-		
-		return "pc/externalChannelAdverInfo/importResult";
+	@RequestMapping("releaseIp")
+	public void releaseIp(HttpServletResponse response, String channelNum)
+	{
+		appChannelAdverInfoService.releaseIp(channelNum);
 	}
 	
-//	@RequestMapping("import")
-//	public String importCSV()
-//	{
-//		udidService.importCsv();
-//		return "pc/externalChannelAdverInfo/importResult";
-//	}
-//	
 	@InitBinder
 	public void initBinders(WebDataBinder binder) 
 	{

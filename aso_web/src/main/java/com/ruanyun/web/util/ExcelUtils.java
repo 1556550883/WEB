@@ -76,7 +76,6 @@ public class ExcelUtils {
 			e1.printStackTrace();
 		}// 设定输出文件头
 		
-		//OutputStream output = new FileOutputStream("C:/export/" + fileName + "-" + ddate + ".xlsx");
 		try {
 			OutputStream output = response.getOutputStream();
 			workbook.write(output);

@@ -25,6 +25,7 @@ import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.dao.sys.background.ChannelInfoDao;
 import com.ruanyun.web.model.TChannelInfo;
+import com.ruanyun.web.model.TPhoneUdidWithIdfa;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.model.sys.UploadVo;
@@ -190,6 +191,19 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 		String[] headers = {"渠道号","渠道名","总金额"};
 		try {
 			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+			SysCode.DATE_FORMAT_STR_L);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void exprotPhoneUdid(HttpServletResponse response, List<TPhoneUdidWithIdfa> udids)
+	{
+		String fileName = "test_udid";
+		String[] columns = {"udid","phoneModel"};
+		String[] headers = {"udid","机型"};
+		try {
+			ExcelUtils.exportExcel(response, fileName, udids, columns, headers,
 			SysCode.DATE_FORMAT_STR_L);
 		} catch (Exception e) {
 			e.printStackTrace();

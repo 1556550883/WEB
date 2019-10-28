@@ -7,6 +7,7 @@ encoding//src/main/webapp/WEB-INF/jsp/app/invite/errorPage.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/app/invite/homePage.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/app/invite/inviteGuest.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/app/invite/isSafariOpen.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/pc/externalChannelAdverInfo/importError.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/pc/externalChannelAdverInfo/importResult.jsp=UTF-8
 encoding//src/main/webapp/sql/basesql.sql=UTF-8
 encoding//src/test/java=utf-8

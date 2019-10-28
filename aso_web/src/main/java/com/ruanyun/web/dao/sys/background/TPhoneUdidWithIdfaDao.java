@@ -16,6 +16,11 @@ public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 		return sqlDao.getAll(TPhoneUdidWithIdfa.class,sql.toString());
 	}
 	
+	public List<TPhoneUdidModel> getTPhoneUdidModel(String tableName) {
+		StringBuffer sql = new StringBuffer("Select * from "+tableName + "");
+		return sqlDao.getAll(TPhoneUdidModel.class,sql.toString());
+	}
+	
 	public void saveList(List<TPhoneUdidModel> dataList, String tableName) {
 		StringBuilder sql = new StringBuilder("INSERT INTO  ");
 		sql.append(tableName);

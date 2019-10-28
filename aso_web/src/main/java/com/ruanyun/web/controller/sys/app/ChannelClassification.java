@@ -18,6 +18,9 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.producer.UdidQueueConsumer;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 public class ChannelClassification
 {
 	private static java.util.Random random = new java.util.Random();
@@ -384,7 +387,7 @@ public class ChannelClassification
 	//模拟手机udid
 	public static String getPhoneUdid(String phoneModel, int isTrue) {
 		//根据机型获取配套的udid
-		String udid = "";
+		String udid = "0";
 		
 		//1是需要真实udid
 		if(isTrue == 1) {
@@ -587,5 +590,30 @@ public class ChannelClassification
 	
 	public static void main(String[] args) {
 		//double ran = Math.random();
+		String result = "{\"creationTimestamp\":\"2019-10-16T07:11:51Z\",\"resultCode\":0,\"userLocale\":\"en_US\",\"protocolVersion\":\"QH65B2\",\r\n" + 
+				"\"requestUrl\":\"https://developer.apple.com:443/services-account/QH65B2/account/device/validateDevices.action\",\r\n" + 
+				"\"responseId\":\"b29b6f62-d92f-48ba-baed-4e1339dd53fe\",\"isAdmin\":true,\"isMember\":false,\"isAgent\":true,\r\n" + 
+				"\"devices\":[{\"name\":\"device0\",\"deviceNumber\":\"312cdae4d6345fb9c413c79cdc9913ec72a2f807\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGPCJCLM\"},\r\n" + 
+				"{\"name\":\"device2\",\"deviceNumber\":\"b089a8a92ad0a279355ac0ed358dbfcd62f79562\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGFWJCLM\"},\r\n" + 
+				"{\"name\":\"device3\",\"deviceNumber\":\"d4c3c80bb78e08eb691999721508bf1bca30a089\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGJJJCLM\"},\r\n" + 
+				"{\"name\":\"device4\",\"deviceNumber\":\"51470d2cbab17f8d57e22fbcb929f0bcdca2bf52\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDG8MJCLM\"},\r\n" + 
+				"{\"name\":\"device5\",\"deviceNumber\":\"8ff75a26802fdd89017a005e84882fbf09154613\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDG1YJCLM\"},\r\n" + 
+				"{\"name\":\"device6\",\"deviceNumber\":\"f16306f4f3a915d00016b3848b12155a289b1352\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDDBGJCLM\"},\r\n" + 
+				"{\"name\":\"device7\",\"deviceNumber\":\"f21dc5d61557c85fdc62fdae78807bc5964c0ceb\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDF2FJCLM\"},\r\n" + 
+				"{\"name\":\"device8\",\"deviceNumber\":\"e59f27fbda8d9279921bccd63a229062690fd32f\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDFAUJCLM\"},\r\n" + 
+				"{\"name\":\"device9\",\"deviceNumber\":\"02608309e75543c5eefb96874411d22b96586baa\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDF1JJCLM\"}],\r\n" + 
+				"\"failedDevices\":[],\"validationMessages\":[]}";
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		JSONArray arr = (JSONArray) jsonObject.get("devices");
+		
+		if(arr.size()>0)
+		{
+			for(int i=0;i<arr.size();i++)
+			{
+				JSONObject job = arr.getJSONObject(i); 
+				System.out.println(job.get("deviceNumber")+"=") ; 
+				System.out.println(job.get("model")+"=") ;
+			}
+		}
 	}
 }

@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Repository;
 
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
@@ -384,6 +386,13 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append(type);
 		sql.append(" where used = 0");
 		return sqlDao.getAll(sql.toString());
+	}
+	
+	public int releaseIp(String channelNum) {
+		StringBuilder sql = new StringBuilder("UPDATE  `t_userappid_adverid` AS A JOIN `t_channel_adver_info` AS B ON A.`adver_id` = B.`adver_id` SET ip = CONCAT(ip,\"ip\") WHERE B.channel_num = ")
+				.append(channelNum).append(" and A.receive_time < '").append(ChannelClassification.GetdayDate()).append("'");
+		
+		return sqlDao.update(sql.toString());
 	}
 	
 	public int updateUdidStatus(String udid,String tableName)

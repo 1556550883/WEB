@@ -80,7 +80,7 @@ public class XiaoshouChannel  extends BaseChannel
 			else if(status == 1)
 			{
 				model.setResult(-1);
-				model.setMsg("抱歉重复任务，请选择其他任务！");
+				model.setMsg(idfa + ":重复任务！");
 			}
 			else
 			{
@@ -91,7 +91,6 @@ public class XiaoshouChannel  extends BaseChannel
 		
 		return model;
 	}
-	
 	
 	public static void main(String[] args) {
 		String phonemodel = "iphone9,3";
@@ -139,7 +138,7 @@ public class XiaoshouChannel  extends BaseChannel
 				model.setMsg("领取任务成功！");
 			}else{
 				model.setResult(-1);
-				model.setMsg("领取任务失败！");
+				model.setMsg((String)jsonObject.get("error"));
 			}
 		}
 		
@@ -189,7 +188,7 @@ public class XiaoshouChannel  extends BaseChannel
 				model.setMsg(code + "：已完成！");
 			}else{
 				model.setResult(-1);
-				model.setMsg("渠道提示，未完成！");
+				model.setMsg((String)jsonObject.get("error"));
 			}
 		}
 		

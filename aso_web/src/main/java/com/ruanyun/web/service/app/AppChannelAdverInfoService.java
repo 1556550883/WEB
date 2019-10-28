@@ -254,6 +254,10 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		}
 	}
 	
+	public void releaseIp(String channelNum) {
+		channelAdverInfoDao.releaseIp(channelNum);
+	}
+	
 	//队列生产udid
 	@SuppressWarnings("rawtypes")
 	public void activated(HttpServletResponse response, String type) {

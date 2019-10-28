@@ -36,13 +36,15 @@
 
 <div class="panelBar">
 	<ul class="toolBar">
+		<li><a class="add" onclick= "openNav('channelInfo/upload','上传udid文件','main_index')"><span>上传udid</span></a></li>
+		<li><a class="add"  onclick= "activated()"><span>激活udid</span></a></li>
 		<li><a class="add" onclick="openNav('channelInfo/toEdit?type=1','添加信息','main_index')"><span>添加</span></a></li>			
 		<li><a mask=true class="edit"  onclick="openNavU('channelInfo/toEdit?type=0&channelId=','修改信息','main_index')"><span>修改</span></a></li>
 		<li><a class="delete" title="确定要启用吗？" href="channelInfo/updateIsEnable?isEnable=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
 		<li><a class="delete" title="确定要停用吗？" href="channelInfo/updateIsEnable?isEnable=0"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
 		<li><a mask=true class="search"  onclick="openNavU('channelInfo/toEdit?channelId=','查看信息','main_index')"><span>查看</span></a></li>
-		<li><span style="" onclick= "exportChannelData()">渠道数据导出</span></li>
-		<li><span style="" onclick= "clearData()">清理数据</span></li>
+		<li><a class="add" onclick= "exportChannelData()"><span>渠道数据导出</span></a></li>
+		<li><a class="add" onclick= "clearData()"><span>清理数据</span></a></li>
 		<li class="line">line</li>
 	</ul>
 </div>
@@ -95,16 +97,29 @@
 
 	<script type="text/javascript">
 function exportChannelData(){
-	window.location.href = "http://moneyzhuan.com/channelInfo/exportChannelData";
+	window.location.href = "channelInfo/exportChannelData";
 	//window.location.href = "http://localhost:8080/sjjz/channelInfo/exportChannelData";
 }
 
 function clearData(){
 	var msg = confirm("确认操作吗？");
 	if(msg){
-		window.location.href = "http://moneyzhuan.com/channelInfo/clearData";
+		window.location.href = "channelInfo/clearData";
 	}
 }
 	
+function activated(){
+	var msg = confirm("确认激活吗？");
+	if(msg){
+		$.ajax({
+	             type: "GET",
+	             url: "channelInfo/activated",
+	             dataType: "json",
+	           	 success:function(data){
+	           		 alert(data);
+	            }
+           });
+	}
+}
 </script>
 
