@@ -46,14 +46,11 @@ public class ScoreTask
 		userScoreService.clearUserScoreDay();
 		//清理渠道每日记录
 		channelInfoService.updateDayTotal();
-    }  
-	
-	@Scheduled(cron="0 00 00 ? * * ")   //每天05点00分执行清除用户当天数据  
-    public void stopTask()
-	{  
+		
 		channelAdverInfoService.updateAdverStatusAll(2);
 		
 		//移除不是当天的任务
+		//for()
 		ArrayBlockQueueProducer.removeAdverList.addAll(ArrayBlockQueueProducer.adverList);
     }  
 	

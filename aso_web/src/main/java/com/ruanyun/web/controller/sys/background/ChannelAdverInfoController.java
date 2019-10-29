@@ -62,7 +62,7 @@ public class ChannelAdverInfoController extends BaseController
 		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info);
 		for(TChannelAdverInfo adverInfo : queryAdver.getResult()) {
 			//第二天一点之后算完结任务
-			if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay() && new Date().getHours() > 1) {
+			if(adverInfo.getAdverDayEnd().getDay() < new Date().getDay() && new Date().getHours() > 1) {
 				//不是今天的，属于过期任务
 				adverInfo.setIsToday(0);
 			}else {

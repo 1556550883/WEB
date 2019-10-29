@@ -76,6 +76,11 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 					for(String adverId : removeAdverList) 
 					{
 						TChannelAdverInfo infoA = mChannelAdverInfoService.getInfoById(Integer.parseInt(adverId));
+						//如果任务开始时间大于今日的就不停止
+						if(infoA.getAdverDayStart().getTime()/1000 > ChannelClassification.getTimestamp()) {
+							continue;
+						}
+						
 						String endPointName = infoA.getAdverName() + "_" + infoA.getAdverId();
 						//移除消费者
 						QueueingConsumer queueingConsumer = AdverQueueConsumer.consumerMap.get(endPointName);
@@ -300,7 +305,6 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 						info.setAdverCountRemain(info.getAddTask());
 						info.setAdverActivationCount(adverActivationCount);
 						mChannelAdverInfoService.autoAddAdverCount(info);
-						//addAdverList.add(info.getAdverId() + "");
 					}
 				}
 				

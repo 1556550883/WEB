@@ -112,9 +112,9 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 				
 				if(adver.getChannelNum().equals("25")) {
 					if(adver.getRemark() != null ) {
-						adver.setRemark("手-" + adver.getRemark());
+						adver.setRemark("*" + adver.getRemark());
 					}else {
-						adver.setRemark("手");
+						adver.setRemark("*");
 					}
 				}
 				

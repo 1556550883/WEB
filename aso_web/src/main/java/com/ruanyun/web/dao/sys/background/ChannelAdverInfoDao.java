@@ -188,7 +188,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	{
 		StringBuilder sql;
 		//当时启动任务的时候，默认任务最高等级
-		sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+" where adver_createtime < '");
+		sql = new StringBuilder("update t_channel_adver_info set adver_status ="+status+" where adver_day_start < '");
 		sql.append(ChannelClassification.GetdayDate());
 		sql.append("'");
 		sqlDao.execute(sql.toString());
@@ -302,7 +302,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		String iYear = year + "_";
 		String iMonth = month + "_";
 		String iDay   = day + "";
-		String adverInfoName = "t_channel_adver_info_" + iYear + iMonth + iDay;
+		//String adverInfoName = "t_channel_adver_info_" + iYear + iMonth + iDay;
 		String adverInfoDetailName = "t_userappid_adverid_" + iYear + iMonth + iDay;
 		
 		String oYear = year + "-";
