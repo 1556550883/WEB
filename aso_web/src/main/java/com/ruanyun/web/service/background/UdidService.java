@@ -109,15 +109,20 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	            		  
 	            		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0);
 	            		  //去掉重复
+	            		  boolean isexist =  false;
 	            		  for(TPhoneUdidModel task2 : dataList) 
 	            		  {
 	            			  if(task2.getUdid().equalsIgnoreCase(udidmodel.getUdid())) 
 	            			  {
-	            				  continue;
+	            				  isexist = true;
+	            				  break;
 	            			  }
 	            		  }
 	            		  
-	            		  dataList.add(udidmodel);
+	            		  if(!isexist)
+	            		  {
+	            			  dataList.add(udidmodel);
+	            		  }
 	            	  }
 	            }
 	            
