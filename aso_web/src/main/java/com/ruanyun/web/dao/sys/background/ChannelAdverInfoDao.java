@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,6 +19,7 @@ import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SQLUtils;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.controller.sys.app.ChannelClassification;
 import com.ruanyun.web.model.TChannelAdverInfo;
 
@@ -287,6 +289,10 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.update(params, sql.toString());
 	}
 	
+	public static void main(String[] args) {
+		System.err.println(TimeUtil.GetYestdayDate());
+		
+	}
 	/*
 	 * CREATE TABLE 新表
 	 *SELECT * FROM 旧表 
@@ -311,16 +317,13 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		String yesterdayString = oYear + oMonth + oDay;//昨天 yyyy-MM-d
 		//去掉任务备份功能
 		//StringBuilder sql1 = new StringBuilder("CREATE TABLE " + adverInfoName + " SELECT * FROM t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
-		StringBuilder sql2 = new StringBuilder("CREATE TABLE " + adverInfoDetailName + " SELECT * FROM t_userappid_adverid");
+		StringBuilder sql2 = new StringBuilder("CREATE TABLE " + adverInfoDetailName + " SELECT * FROM t_userappid_adverid where receive_time < '" + TimeUtil.GetYestdayDate() + "'");
 		//result1 = sqlDao.execute(sql1.toString());
 		result2 = sqlDao.execute(sql2.toString());
 		
 		if(result2 != -1) 
 		{
-			//DELETE `t_userappid_adverid` FROM `t_userappid_adverid`  LEFT JOIN `t_user_app` ON `t_userappid_adverid`.user_app_id= t_user_app.user_app_id WHERE t_user_app.`user_appp_type` = 1
-			//StringBuilder sql3 = new StringBuilder("Delete from t_channel_adver_info where adver_createtime < '" + yesterdayString + "'");
-			StringBuilder sql4 = new StringBuilder("DELETE t_userappid_adverid FROM t_userappid_adverid  LEFT JOIN t_user_app ON t_userappid_adverid.user_app_id = t_user_app.user_app_id WHERE t_user_app.user_appp_type = 1");
-			//sqlDao.execute(sql3.toString());
+			StringBuilder sql4 = new StringBuilder("DELETE t_userappid_adverid FROM t_userappid_adverid  LEFT JOIN t_user_app ON t_userappid_adverid.user_app_id = t_user_app.user_app_id WHERE t_user_app.user_appp_type = 1 and t_userappid_adverid.receive_time < '" + TimeUtil.GetYestdayDate() + "'");
 			sqlDao.execute(sql4.toString());
 		}
 	}

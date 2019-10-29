@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class TimeUtil {
 
@@ -199,6 +200,80 @@ public class TimeUtil {
 		return 0;
 	}
 	
+	
+	public static long getTimestamp() 
+	{
+		 String _timeZone = "GMT+8:00";
+	     TimeZone timeZone = null;  
+	     timeZone = TimeZone.getTimeZone(_timeZone);  
+	     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	     sdf.setTimeZone(timeZone);  
+	     
+		String stridddg = sdf.format(new Date());
+		Date d = null;
+		try 
+		{
+			d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stridddg);
+		} 
+		catch (ParseException e)
+		{
+			e.printStackTrace();
+		}
+		long t1 = d.getTime();
+		return t1 = t1/1000;
+	}
+	
+	
+	//上月
+	@SuppressWarnings("static-access")
+	public static String GetYestMonthDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(calendar.MONTH,-1);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	//获取昨天的日期
+	@SuppressWarnings("static-access")
+	public static String GetYestdayDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(calendar.DATE,-1);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	
+	//获取当月
+	public static String GetMonthDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	
+	//获取今日的日期
+	public static String GetdayDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+
+	public static String beforeHourToNowDate(int i) 
+	{
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - i);
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return df.format(calendar.getTime());
+	}
 	
 	/**
 	 * 功能描述:获取当前时间-1970年的秒数
