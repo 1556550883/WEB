@@ -11,9 +11,21 @@ import com.ruanyun.web.model.TPhoneUdidWithIdfa;
 @Repository("tPhoneUdidWithIdfaDao")
 public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 	
-	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa) {
-		StringBuffer sql = new StringBuffer("Select * from idfa_udid where idfa= '").append(idfa).append("'");
+	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa, String tableName) {
+		StringBuffer sql = new StringBuffer("Select * from "+tableName+" where idfa= '").append(idfa).append("'");
 		return sqlDao.getAll(TPhoneUdidWithIdfa.class,sql.toString());
+	}
+//	
+//	public List<TPhoneUdidWithIdfa> getUdidByIdfaForXiaoshou(String idfa) {
+//		StringBuffer sql = new StringBuffer("Select * from idfa_udid_xiaoshou where idfa= '").append(idfa).append("'");
+//		return sqlDao.getAll(TPhoneUdidWithIdfa.class,sql.toString());
+//	}
+//	
+	public void savePhoneInfo(TPhoneUdidWithIdfa model, String tableName) {
+		StringBuilder sql = new StringBuilder("INSERT INTO "+tableName+" ");
+		sql.append(" (idfa,udid,phone_model,phone_version,create_time) values ");
+		sql.append("('"+model.getIdfa()+"','"+model.getUdid()+ "', '"+model.getPhoneModel()+"', '"+model.getPhoneVersion()+"' , '"+model.getCreateTime()+"')");
+		sqlDao.execute(sql.toString());
 	}
 	
 	public List<TPhoneUdidModel> getTPhoneUdidModel(String tableName) {
@@ -24,10 +36,10 @@ public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 	public void saveList(List<TPhoneUdidModel> dataList, String tableName) {
 		StringBuilder sql = new StringBuilder("INSERT INTO  ");
 		sql.append(tableName);
-		sql.append(" (udid,used) values ");
+		sql.append(" (udid,used,importTime) values ");
 		for(int i = 0; i < dataList.size(); i++) 
 		{
-			sql.append("('"+dataList.get(i).getUdid()+"','"+dataList.get(i).getUsed()+ "'),");
+			sql.append("('"+dataList.get(i).getUdid()+"','"+dataList.get(i).getUsed()+ "','"+ dataList.get(i).getImportTime()+"'),");
 		}
 		
 		String str = sql.toString();

@@ -54,13 +54,16 @@ public class ScoreTask
 		ArrayBlockQueueProducer.removeAdverList.addAll(ArrayBlockQueueProducer.adverList);
     }  
 	
-	//@Scheduled(cron="0 00 06 ? * FRI")   //每个星期五执行操作 6点
-	@Scheduled(cron="0 30 01 ? * MON") //每月1号九点
+	@Scheduled(cron="0 30 01 ? * MON") 
     public void bakAdverInfoTable()
 	{  
 		channelAdverInfoService.adverInfoTableBak();
     }  
 	
+//	@Scheduled(cron="0/5 * *  * * ? ")//每5s执行一次
+//	public void test() {
+//		channelAdverInfoService.adverInfoTableBak();
+//	}
 //	@Scheduled(cron="0/5 * *  * * ? ")//每5s执行一次
 //	public void myTest()
 //	{  

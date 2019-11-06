@@ -254,7 +254,7 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo>
 //		String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM");
 		StringBuilder sql = new StringBuilder("SELECT COALESCE(SUM(download_count),0)  FROM t_channel_adver_info WHERE channel_num = ");
 		sql.append(t.getChannelNum());
-		sql.append(" AND adver_createtime > '");
+		sql.append(" AND adver_day_start > '");
 		sql.append(	dateStr);
 		sql.append("' ");
 		

@@ -255,10 +255,9 @@ public class ChannelAdverInfoController extends BaseController
 			for(String adverId : adverIds) 
 			{
 				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-				if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay()) {
-					super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, "任务已完结，不在支持操作！", "", "", ""));
-					break;
-				}
+//				if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay()) {
+//					continue;
+//				}
 				
 				if(adverInfo.getAdverStatus() == status) {
 					continue;

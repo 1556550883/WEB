@@ -43,6 +43,8 @@
 				<th align="center">idfa</th>
 				<th align="center">udid</th>
 				<th align="center">apple id</th>
+				<th align="center">机型</th>
+				<th align="center">系统</th>
 				<th align="center">领取时间</th>
 				<th align="center">打开时间</th>
 				<th align="center">完成时间</th>
@@ -60,7 +62,9 @@
 	                <td>${item.ipLocaltion}</td> 
 	                <td>${item.idfa}</td> 
 	                <td>${item.userUdid}</td> 
-	                <td>${item.appleId}</td> 
+	                <td>${item.appleId}</td>
+	                <td>${item.phoneModel}</td>  
+	                <td>${item.phoneVersion}</td>   
 	                <td>${item.receiveTime}</td>  
 	                <td>${item.openAppTime}</td>  
 	                <c:if test="${item.status=='1'}">

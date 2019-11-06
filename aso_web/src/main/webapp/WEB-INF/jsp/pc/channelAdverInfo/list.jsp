@@ -146,12 +146,10 @@ function show(){
 
 function exportadver(day){
 	window.location.href = "channelAdverInfo/exportAdver?channelNum=" + ${bean.channelNum} + "&day=" + day;
-	//window.location.href = "http://localhost:8080/sjjz/channelAdverInfo/exportAdver?channelNum=" + ${bean.channelNum} + "&day=" + day;
 }
 
 function exportMonthAadver(month){
 	window.location.href = "channelAdverInfo/exportMonthAadver?channelNum=" + ${bean.channelNum} + "&month=" + month;
-	//window.location.href = "http://localhost:8080/sjjz/channelAdverInfo/exportMonthAadver?channelNum=" + ${bean.channelNum} + "&month=" + month;
 }
 
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.ruanyun.common.service.impl.BaseServiceImpl;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.dao.sys.background.TPhoneUdidWithIdfaDao;
 import com.ruanyun.web.model.TPhoneUdidModel;
 import com.ruanyun.web.model.TPhoneUdidWithIdfa;
@@ -22,17 +23,20 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	@Qualifier("tPhoneUdidWithIdfaDao")
 	private TPhoneUdidWithIdfaDao tPhoneUdidWithIdfaDao;
 
-	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa) {
-		return tPhoneUdidWithIdfaDao.getUdidByIdfa(idfa);
+	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa, String tableName) {
+		return tPhoneUdidWithIdfaDao.getUdidByIdfa(idfa, tableName);
 	}
 	
+	public void savePhoneInfo(TPhoneUdidWithIdfa model,String tableName) {
+		tPhoneUdidWithIdfaDao.savePhoneInfo(model, tableName);
+	}
 	
 	public  List<TPhoneUdidModel> getUdidFromFile()
     {
     	File file = new File("C:\\Program Files\\Apache Software Foundation\\import\\udid.csv");
     	
         List<TPhoneUdidModel> dataList = new ArrayList<TPhoneUdidModel>();
-        
+        String time = TimeUtil.GetdayDate();
         BufferedReader br = null;
         try
         { 
@@ -44,7 +48,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
             		  String[] pills = line.split(",");
             		  if(pills.length == 2) {
             			  continue;}
-            		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0);
+            		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0, time);
             		  //去掉重复
             		  for(TPhoneUdidModel task2 : dataList) 
             		  {
@@ -86,7 +90,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 		    List<String> res = new ArrayList<String>();
 			List<TPhoneUdidModel> result = new ArrayList<TPhoneUdidModel>();
 	    	File file = new File("C:\\Program Files\\Apache Software Foundation\\import\\udid.csv");
-	    	
+	    	String time = TimeUtil.GetdayDate();
 	        List<TPhoneUdidModel> dataList = new ArrayList<TPhoneUdidModel>();
 	        
 	        BufferedReader br = null;
@@ -107,7 +111,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	            			  continue;
 	            		  }
 	            		  
-	            		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0);
+	            		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0, time);
 	            		  //去掉重复
 	            		  boolean isexist =  false;
 	            		  for(TPhoneUdidModel task2 : dataList) 

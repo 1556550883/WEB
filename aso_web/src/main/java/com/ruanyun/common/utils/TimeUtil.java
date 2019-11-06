@@ -60,6 +60,12 @@ public class TimeUtil {
 		}
 	}
 	
+	
+	public static void main(String[] args) {
+		System.err.println(doFormatDate(doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss").toString());
+		
+	}
+	
 	/**
 	 * 功能描述:获取当前时间的小时分钟 格式为：hh:mm
 	 *
@@ -168,11 +174,7 @@ public class TimeUtil {
 	          
 	       return between_days.intValue();         
 	    }  
-	
-	public static void main(String[] args) {
-		System.out.println(getBetweenDay(doFormatDate("2015-12-30 11:30:03", "yyyy-MM-dd HH:mm:ss"), doFormatDate("2016-01-01 10:30:03", "yyyy-MM-dd HH:mm:ss")));
-	}
-	
+
 	//测试方法
 	public static int getTest(Date firstDate,Date secondDate){
 		if (EmptyUtils.isEmpty(firstDate) || EmptyUtils.isEmpty(secondDate)) {

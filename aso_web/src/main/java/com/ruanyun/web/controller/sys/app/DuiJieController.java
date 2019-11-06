@@ -2,6 +2,7 @@ package com.ruanyun.web.controller.sys.app;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.ShutdownSignalException;
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
@@ -112,10 +114,11 @@ public class DuiJieController extends BaseController
 	 * @throws IOException 
 	 * @throws ConsumerCancelledException 
 	 * @throws ShutdownSignalException 
+	 * @throws ParseException 
 	 */
 	@RequestMapping("lingQuRenWu")
 	public void lingQuRenWu(HttpServletResponse response, HttpServletRequest request) 
-			throws NumberFormatException, InterruptedException, ShutdownSignalException, ConsumerCancelledException, IOException, TimeoutException
+			throws NumberFormatException, InterruptedException, ShutdownSignalException, ConsumerCancelledException, IOException, TimeoutException, ParseException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		String udid = request.getParameter("udid");
@@ -199,81 +202,88 @@ public class DuiJieController extends BaseController
 					return;
 			 }
 			 
-			 if(userAppId.equals("77")) {
-				 phoneModel = "iPhone9,1";
+//			 if(userAppId.equals("77")) {
+//				 phoneModel = "iPhone9,1";
+//			 }
+			 
+			 String tablename = "idfa_udid";
+			 if(adverInfo.getChannelNum().equals("25")) {
+				 tablename = "idfa_udid_xiaoshou";
 			 }
 			 
-			//1是需要真实udid
-			 if(adverInfo.getIsTrue() == 1){
-				//先去查看数据库中是否存在此idfa对应的udid，如果存在就提出，否则去获取新的udid
-				List<TPhoneUdidWithIdfa> result = udidService.getUdidByIdfa(idfa);
-				if(result != null && result.size() > 0) 
+			String time = TimeUtil.doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
+			List<TPhoneUdidWithIdfa> result = udidService.getUdidByIdfa(idfa, tablename);
+			if(result != null && result.size() > 0) 
+			{
+				udid = result.get(0).getUdid();
+				phoneModel = result.get(0).getPhoneModel();
+				phoneVersion =  result.get(0).getPhoneVersion();
+			}
+			//需要真实
+			else if (adverInfo.getIsTrue() == 1)
+			{
+				//获取10次，10次没结果就放弃
+				int i = 1;
+				while(i < 10) 
 				{
-					udid = result.get(0).getUdid();
-					phoneModel = result.get(0).getPhoneModel();
-					phoneVersion =  result.get(0).getPhoneVersion();
-				}
-				else 
-				{
-					//获取10次，10次没结果就放弃
-					int i = 1;
-					while(i < 10) 
+					//掺量的概率  16 和 2不需要假量
+					if((ran* 10) < dictionaryService.getPhoneModelPercent() && !adverInfo.getChannelNum().equals("16") && !adverInfo.getChannelNum().equals("2")) {
+						 phoneModel = ChannelClassification.getPhoneWithUdid();
+						 phoneVersion = ChannelClassification.getPhoneVersion();
+					 }
+					
+					//如果是空就说明需要获取新的udid
+					if(phoneModel.toLowerCase().equals("iphone9,3"))
 					{
-						if((ran* 10) < dictionaryService.getPhoneModelPercent()) {
-							 phoneModel = ChannelClassification.getPhoneWithUdid();
-							 phoneVersion = ChannelClassification.getPhoneVersion();
-						 }
-						//如果是空就说明需要获取新的udid
-						if(phoneModel.toLowerCase().equals("iphone9,3"))
-						{
-							udid = ChannelClassification.getPhoneUdid("iphone9,1",adverInfo.getIsTrue());
-						}
-						else 
-						{
-							udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),adverInfo.getIsTrue());
-						}
-						
-						//获取新的udid之后需要保存idfa和udid
-						if(!udid.equals("0")) 
-						{
-							TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,new Date());
-							udidService.saveOrUpdate(p);
-							break;
-						}
-						else
-						{
-							//如果没有获取到udid就直接随机获取手机型号
-							phoneModel = ChannelClassification.getPhoneWithUdid();
-							phoneVersion = ChannelClassification.getPhoneVersion();
-						}
-						
-						i++;
+						udid = ChannelClassification.getPhoneUdid("iphone9,1",adverInfo.getIsTrue());
+					}
+					else 
+					{
+						udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),adverInfo.getIsTrue());
 					}
 					
-					if(udid.equals("0")) {
-						model.setResult(-1);
-						model.setMsg(phoneModel + " udid被消耗完");
-						super.writeJsonDataApp(response, model);
-						return;
+					//获取新的udid之后需要保存idfa和udid
+					if(!udid.equals("0")) 
+					{
+						TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion, time);
+						udidService.savePhoneInfo(p, tablename);
+						break;
 					}
-					//掺量的概率
+					else
+					{
+						//如果没有获取到udid就直接随机获取手机型号
+						phoneModel = ChannelClassification.getPhoneWithUdid();
+						phoneVersion = ChannelClassification.getPhoneVersion();
+					}
+					
+					i++;
 				}
-			 }else {
+				
+				if(udid.equals("0")) {
+					model.setResult(-1);
+					model.setMsg(phoneModel + " udid被消耗完");
+					super.writeJsonDataApp(response, model);
+					return;
+				}
+			}
+			else {
 				 //渠道16使用真实数据
-				 if(!adverInfo.getChannelNum().equals("16"))
+				 if(!adverInfo.getChannelNum().equals("16") && !adverInfo.getChannelNum().equals("2"))
 				 {
-					 phoneModel = ChannelClassification.getPhoneModel(userAppId);
-					 if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
+					phoneModel = ChannelClassification.getPhoneModel(userAppId);
+					if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
 					{
 						phoneVersion = ChannelClassification.getPhoneVersion();
 					}
 				 }
-				 
 				
 				 udid = ChannelClassification.getPhoneUdid(phoneModel,adverInfo.getIsTrue());
-			 }
-			 
-			userAppType = 1;
+				
+				 TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,time);
+				 udidService.savePhoneInfo(p, tablename);
+			}
+
+			 userAppType = 1;
 		}
 		
 		

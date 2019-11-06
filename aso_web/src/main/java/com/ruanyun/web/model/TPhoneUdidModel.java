@@ -4,13 +4,15 @@ public class TPhoneUdidModel {
 	private int id;
 	private String udid;
 	private int used;
+	private String importTime;
 	public TPhoneUdidModel() {
 		
 	}
 	
-	public TPhoneUdidModel(String udid, int used) {
+	public TPhoneUdidModel(String udid, int used, String importTime) {
 		this.udid = udid;
 		this.used = used;
+		this.importTime = importTime;
 	}
 	
 	public int getId() {
@@ -30,5 +32,13 @@ public class TPhoneUdidModel {
 	}
 	public void setUsed(int used) {
 		this.used = used;
+	}
+
+	public String getImportTime() {
+		return importTime;
+	}
+
+	public void setImportTime(String importTime) {
+		this.importTime = importTime;
 	}
 }

@@ -2,15 +2,11 @@ package com.ruanyun.web.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "idfa_udid")
@@ -20,12 +16,12 @@ public class TPhoneUdidWithIdfa {
 	private String udid;
 	private String phoneModel;
 	private String phoneVersion;
-	private Date createTime;
+	private String createTime;
 	public TPhoneUdidWithIdfa() {
 		
 	}
 	
-	public TPhoneUdidWithIdfa(String idfa,  String udid, String phoneModel, String phoneVersion,Date createTime)
+	public TPhoneUdidWithIdfa(String idfa,  String udid, String phoneModel, String phoneVersion,String createTime)
 	{
 		this.idfa = idfa;
 		this.udid = udid;
@@ -60,13 +56,12 @@ public class TPhoneUdidWithIdfa {
 		this.udid = udid;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="create_time")
-	public Date getCreateTime() {
+	public String getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Date createTime) {
+	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
 
