@@ -206,10 +206,10 @@ public class DuiJieController extends BaseController
 //				 phoneModel = "iPhone9,1";
 //			 }
 			 
-			 String tablename = "idfa_udid";
-			 if(adverInfo.getChannelNum().equals("25")) {
-				 tablename = "idfa_udid_xiaoshou";
-			 }
+			 String tablename = "idfa_udid_xiaoshou";
+//			 if(adverInfo.getChannelNum().equals("25")) {
+//				 tablename = "idfa_udid_xiaoshou";
+//			 }
 			 
 			String time = TimeUtil.doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
 			List<TPhoneUdidWithIdfa> result = udidService.getUdidByIdfa(idfa, tablename);
@@ -220,7 +220,8 @@ public class DuiJieController extends BaseController
 				phoneVersion =  result.get(0).getPhoneVersion();
 			}
 			//需要真实
-			else if (adverInfo.getIsTrue() == 1)
+			//else if (adverInfo.getIsTrue() == 1)
+			else
 			{
 				//获取10次，10次没结果就放弃
 				int i = 1;
@@ -235,11 +236,11 @@ public class DuiJieController extends BaseController
 					//如果是空就说明需要获取新的udid
 					if(phoneModel.toLowerCase().equals("iphone9,3"))
 					{
-						udid = ChannelClassification.getPhoneUdid("iphone9,1",adverInfo.getIsTrue());
+						udid = ChannelClassification.getPhoneUdid("iphone9,1",1);
 					}
 					else 
 					{
-						udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),adverInfo.getIsTrue());
+						udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),1);
 					}
 					
 					//获取新的udid之后需要保存idfa和udid
@@ -249,7 +250,7 @@ public class DuiJieController extends BaseController
 						udidService.savePhoneInfo(p, tablename);
 						break;
 					}
-					else
+					else if(adverInfo.getChannelNum().equals("2"))
 					{
 						//如果没有获取到udid就直接随机获取手机型号
 						phoneModel = ChannelClassification.getPhoneWithUdid();
@@ -266,22 +267,22 @@ public class DuiJieController extends BaseController
 					return;
 				}
 			}
-			else {
-				 //渠道16使用真实数据
-				 if(!adverInfo.getChannelNum().equals("16") && !adverInfo.getChannelNum().equals("2"))
-				 {
-					phoneModel = ChannelClassification.getPhoneModel(userAppId);
-					if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
-					{
-						phoneVersion = ChannelClassification.getPhoneVersion();
-					}
-				 }
-				
-				 udid = ChannelClassification.getPhoneUdid(phoneModel,adverInfo.getIsTrue());
-				
-				 TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,time);
-				 udidService.savePhoneInfo(p, tablename);
-			}
+//			else {
+//				 //渠道16使用真实数据
+//				 if(!adverInfo.getChannelNum().equals("16") && !adverInfo.getChannelNum().equals("2"))
+//				 {
+//					phoneModel = ChannelClassification.getPhoneModel(userAppId);
+//					if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
+//					{
+//						phoneVersion = ChannelClassification.getPhoneVersion();
+//					}
+//				 }
+//				
+//				 udid = ChannelClassification.getPhoneUdid(phoneModel,adverInfo.getIsTrue());
+//				
+//				 TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,time);
+//				 udidService.savePhoneInfo(p, tablename);
+//			}
 
 			 userAppType = 1;
 		}
@@ -806,7 +807,6 @@ public class DuiJieController extends BaseController
 		if(!remoteIp.equals(ip) 
 				&& !adverInfo.getChannelNum().equals("3")
 				&& !adverInfo.getChannelNum().equals("12")
-				&& !adverInfo.getChannelNum().equals("16")
 				&& !adverInfo.getChannelNum().equals("15")) {
 			model.setResult(-1);
 			model.setMsg("ip不统一，任务已失效！");

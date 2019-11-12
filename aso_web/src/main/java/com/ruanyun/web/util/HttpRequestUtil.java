@@ -220,7 +220,7 @@ public class HttpRequestUtil {
     			deviceNumbers = deviceNumbers + "," + model.getUdid();
     		}
     		
-    		if(i > 30) {
+    		if(i > 20) {
     			 //循环操作
     	    	  //post 参数设置
     	    	  Map<String, String> obj = new HashMap<String, String>(); 
@@ -273,7 +273,7 @@ public class HttpRequestUtil {
     		}
     	}
 
-    	if(i> 0 && i<=30) {
+    	if(i> 0 && i<=20) {
     		  Map<String, String> obj = new HashMap<String, String>(); 
 	    	  obj.put("deviceNames",deviceNames);
 	          obj.put("deviceNumbers", deviceNumbers);

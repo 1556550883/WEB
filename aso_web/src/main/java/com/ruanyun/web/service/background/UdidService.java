@@ -46,7 +46,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
             { 
             	  if(line.trim() != "") {  
             		  String[] pills = line.split(",");
-            		  if(pills.length == 2) {
+            		  if(pills.length == 2 || pills.length == 0) {
             			  continue;}
             		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0, time);
             		  //去掉重复
