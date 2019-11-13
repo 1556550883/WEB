@@ -309,8 +309,9 @@ public class ChannelInfoController extends BaseController
 			if (upload_result == 1 && isTest == 1) {
 				//对udid进行分析是否有效
 				List<TPhoneUdidModel> tPhoneUdidModels = udidService.getUdidFromFile();
-				if(tPhoneUdidModels  != null && tPhoneUdidModels.size() > 1000) {
-					tPhoneUdidModels = tPhoneUdidModels.subList(0, 999);
+				if(tPhoneUdidModels  != null && tPhoneUdidModels.size() > 2000) {
+					//5000
+					tPhoneUdidModels = tPhoneUdidModels.subList(0, 1999);
 				}
 				
 				List<String> reustl = HttpRequestUtil.posts(tPhoneUdidModels, cookie);

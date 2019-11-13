@@ -95,6 +95,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	        
 	        BufferedReader br = null;
 	        String tableName = null;
+	        String flag = "1";
 	        try
 	        { 
 	            br = new BufferedReader(new FileReader(file));
@@ -105,6 +106,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	            		  String[] pills = line.split(",");
 	            		  if(pills.length == 2) {
 	            			  tableName = pills[0].trim();
+	            			  flag = pills[1].trim();
 	            			  continue;}
 	            		  
 	            		  if(pills == null || pills.length <= 0) {
@@ -112,6 +114,10 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	            		  }
 	            		  
 	            		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0, time);
+	            		  if(flag.equals("2")) {
+	            			  tPhoneUdidWithIdfaDao.deleteModel(udidmodel , tableName);
+	            			  continue; 
+	            		  }
 	            		  //去掉重复
 	            		  boolean isexist =  false;
 	            		  for(TPhoneUdidModel task2 : dataList) 

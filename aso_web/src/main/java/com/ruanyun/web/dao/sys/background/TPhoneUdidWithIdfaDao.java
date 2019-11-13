@@ -46,4 +46,10 @@ public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 		str = str.substring(0,sql.length() - 1) + ";";
 		sqlDao.execute(str);
 	}
+	
+	public void deleteModel(TPhoneUdidModel model, String tableName) {
+		StringBuilder sql = new StringBuilder("Delete from "+tableName+" where udid = ");
+		sql.append("'"+ model.getUdid()+"'");
+		sqlDao.execute(sql.toString());
+	}
 }

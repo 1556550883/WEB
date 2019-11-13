@@ -223,6 +223,7 @@ public class HttpRequestUtil {
     		if(i > 20) {
     			 //循环操作
     	    	  //post 参数设置
+    				System.err.println("running-----------------------------------");
     	    	  Map<String, String> obj = new HashMap<String, String>(); 
     	    	  obj.put("deviceNames",deviceNames);
     	          obj.put("deviceNumbers", deviceNumbers);
@@ -274,6 +275,7 @@ public class HttpRequestUtil {
     	}
 
     	if(i> 0 && i<=20) {
+    		System.err.println("running++++++++++++++++++++++++++++++++++++++++");
     		  Map<String, String> obj = new HashMap<String, String>(); 
 	    	  obj.put("deviceNames",deviceNames);
 	          obj.put("deviceNumbers", deviceNumbers);
