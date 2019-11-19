@@ -5,7 +5,6 @@
 <ry:binding bingdingName="downloadType,taskType,phoneType,adverStepCount,adverType,fileType,effectiveType,effectiveSource,userLevel,iosVersion" parentCode="DOWNLOAD_TYPE,TASK_TYPE,PHONE_TYPE,ADVER_STEP_COUNT,ADVER_TYPE,FILE_TYPE,EFFECTIVE_TYPE,EFFECTIVE_SOURCE,USER_LEVEL,OS_VERSION"></ry:binding>
 <ry:binding parentCode="IS_AUTH" bingdingName="isAuth"></ry:binding>
 <style>
-<style>
 .new_tab {border-collapse:collapse;}
 .new_tab td{height:29px;line-height:29px;border:1px solid #e0e0e0;text-indent:10px}
 .new_tab td input{width: 100px}
@@ -85,7 +84,7 @@
 		    
 		    
 	       <dl class="nowrap" style="width: 100%">
-			<dt>是否为模拟 任务：</dt>
+			<dt>是否为模拟任务：</dt>
 			<dd>
 			    是：<input type="radio" name="isMock"  value="1"/>
 			   否 ：<input type="radio" name="isMock"  value="0" checked/>
@@ -100,23 +99,6 @@
 					    默认 ：<input type="radio" name="isOpen"  value="0"/>
 				</dd>
 		    </dl>
-		    
-		    
-		     <dl class="nowrap" style="width: 100%">
-				<dt>是否需要真实udid：</dt>
-				<dd>
-				   	<c:if test="${channelNum != 25}">
-						   是：<input type="radio" name="isTrue"  value="1"/>
-				   		否 ：<input type="radio" name="isTrue"  value="0" checked/>
-					</c:if> 
-				   	<c:if test="${channelNum == 25}">
-						   是：<input type="radio" name="isTrue"  value="1" checked/>
-				   		否 ：<input type="radio" name="isTrue"  value="0"/>
-					</c:if> 
-				   
-				</dd>
-		    </dl>
-		    
 		    
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告appleStore-ID：</dt>

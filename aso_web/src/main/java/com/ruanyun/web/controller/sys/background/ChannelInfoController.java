@@ -87,17 +87,6 @@ public class ChannelInfoController extends BaseController
 		return "pc/channelInfo/list";
 	}
 	
-	@RequestMapping("applist")
-	public String getChannelInfoAppList(Page<TChannelInfo> page, TChannelInfo info, Model model)
-	{
-		page = channelInfoService.queryPage(page, info);
-		//List<TChannelInfo> channels = page.getResult();
-		addModel(model, "pageList", page);
-		addModel(model, "bean", info);
-		
-		return "pc/channelInfo/applist";
-	}
-	
 	@RequestMapping("exportChannelData")
 	public void exportChannelData(HttpServletResponse response)
 	{

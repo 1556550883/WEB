@@ -4,7 +4,6 @@ package com.ruanyun.web.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

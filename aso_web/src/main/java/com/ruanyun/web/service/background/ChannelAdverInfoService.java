@@ -64,9 +64,7 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	 * @param stepDesc 
 	 * @param stepName 
 	 */
-	public void saveOrUpd(TChannelAdverInfo info,TUser user,MultipartFile file,HttpServletRequest request, 
-			String[] stepName, String[] stepDesc, Integer[] stepRates, String[] stepTime, Float[] stepScore, 
-			Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount,MultipartFile fileAdverImg)
+	public void saveOrUpd(TChannelAdverInfo info,MultipartFile file,HttpServletRequest request, MultipartFile fileAdverImg)
 	{
 		try
 		{

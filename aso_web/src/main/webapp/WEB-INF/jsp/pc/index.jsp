@@ -1,12 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=7" />
 	<%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
 	<title>钻石社区</title>
 	<%@include file="/WEB-INF/jsp/inc/base-dwz.jsp" %>
+	<script type="text/javascript" charset="utf-8" src="js/mobile-detect.js"></script>
 </head>
 
 <body>
@@ -49,6 +51,14 @@
 </body>
 
 <script>
+var device_type = navigator.userAgent;//获取userAgent信息  
+var md = new MobileDetect(device_type);//实例化mobile-detect  
+var  model = md.mobile(); 
+if(model == "iPhone")
+{
+	window.location.href = "applist";
+}
+
 	function startCheckOut(url)
 	{
 		window.open(url,'','width=170px,location=no,status=no,top=0,left=0');

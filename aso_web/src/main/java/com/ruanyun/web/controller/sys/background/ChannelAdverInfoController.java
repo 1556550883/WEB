@@ -29,7 +29,6 @@ import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TChannelAdverInfo;
-import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
@@ -37,7 +36,6 @@ import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpRequestUtil;
-import com.ruanyun.web.util.HttpSessionUtils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -117,9 +115,8 @@ public class ChannelAdverInfoController extends BaseController
 	 * 功能描述：增加
 	 */
 	@RequestMapping("add")
-	public void save(TChannelAdverInfo info, HttpServletResponse response, HttpSession session, MultipartFile file,
-			MultipartFile fileAdverImg, HttpServletRequest request, String[] stepName, String[] stepDesc, Integer[] stepRates, 
-			String[] stepTime, Float[] stepScore, Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount)
+	public void save(TChannelAdverInfo info, HttpServletResponse response, MultipartFile file,
+			MultipartFile fileAdverImg, HttpServletRequest request)
 	{
 		try 
 		{
@@ -139,8 +136,6 @@ public class ChannelAdverInfoController extends BaseController
 				return;
 			}
 			
-			TUser user = HttpSessionUtils.getCurrentUser(session);
-			
 			//批量生成
 			JSONArray array = JSONArray.fromObject(info.getAdversJson());
 			for(int i = 0; i < array.size(); i++)
@@ -152,8 +147,7 @@ public class ChannelAdverInfoController extends BaseController
 				info.setAdverCount(jsonObject.getInt("adverCount"));
 				info.setAdverActivationCount(jsonObject.getInt("adverCount"));
 				info.setAdverDesc(jsonObject.getString("adverDesc"));
-				channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc, stepRates, stepTime,
-						stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
+				channelAdverInfoService.saveOrUpd(info, file, request,fileAdverImg);
 			}
 			
 			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
@@ -184,9 +178,8 @@ public class ChannelAdverInfoController extends BaseController
 	 * 功能描述：修改
 	 */
 	@RequestMapping("edit")
-	public void upd(TChannelAdverInfo info, HttpServletResponse response, HttpSession session, MultipartFile file,
-			MultipartFile fileAdverImg, HttpServletRequest request, String[] stepName, String[] stepDesc, Integer[] stepRates,
-			String[] stepTime, Float[] stepScore, Integer[] stepUseTime, String[] stepType, Integer[] stepMinCount)
+	public void upd(TChannelAdverInfo info, HttpServletResponse response, MultipartFile file,
+			MultipartFile fileAdverImg, HttpServletRequest request)
 	{
 		try 
 		{
@@ -204,9 +197,8 @@ public class ChannelAdverInfoController extends BaseController
 				return;
 			}
 			
-			TUser user = HttpSessionUtils.getCurrentUser(session);
-			channelAdverInfoService.saveOrUpd(info, user, file, request, stepName, stepDesc,
-					stepRates, stepTime, stepScore, stepUseTime, stepType, stepMinCount, fileAdverImg);
+			//TUser user = HttpSessionUtils.getCurrentUser(session);
+			channelAdverInfoService.saveOrUpd(info,file, request, fileAdverImg);
 			
 //			Map<String,TChannelAdverInfo > xsAdverList = ArrayBlockQueueProducer.specialXSAdverList;
 //			//修改启动的任务
