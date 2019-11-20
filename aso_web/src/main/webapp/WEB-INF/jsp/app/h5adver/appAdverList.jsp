@@ -54,10 +54,10 @@
 			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:60px;border-radius:5px;text-align:center;">
 			 					级:${item.level}
 			 				</div>
-			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;color:red">
-			 						<c:if test="${item.adverStatus==0}">未审核</c:if>
-			 						<c:if test="${item.adverStatus == 1}"><span>启动</span></c:if>
-			 						<c:if test="${item.adverStatus == 2}"><span>停止</span></c:if>
+			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:45px;border-radius:5px;text-align:center;">
+			 						<c:if test="${item.adverStatus==0}"><span style="color:green">未审核</span></c:if>
+			 						<c:if test="${item.adverStatus == 1}"><span style="color:red">启动</span></c:if>
+			 						<c:if test="${item.adverStatus == 2}"><span style="color:blue">停止</span></c:if>
 			 				</div>
 			 				<div style="display:inline-block;border:1px solid #CDCDC1;width:60px;border-radius:5px;text-align:center;color:red">
 			 					价:${item.adverPrice}
