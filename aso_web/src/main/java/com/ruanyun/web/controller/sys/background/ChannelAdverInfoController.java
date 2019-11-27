@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,7 +165,7 @@ public class ChannelAdverInfoController extends BaseController
 			
 			
 			//生成对应的数据库表
-			
+			//channelAdverInfoService.createAdverTable(info.getAdid(),info.getChannelNum());
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		}
 		catch (Exception e) 

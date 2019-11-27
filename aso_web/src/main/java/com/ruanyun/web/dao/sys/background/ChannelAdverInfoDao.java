@@ -9,9 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Repository;
 
@@ -181,6 +178,34 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append("adver_activation_count="+info.getAdverActivationCount()+"");
 		sql.append(" where adver_id="+info.getAdverId()+"");
 		sqlDao.execute(sql.toString());
+	}
+	
+	//创建对应的广告表：adid+key
+	public int createAdverTable(String adid, String channelID) 
+	{
+		String tableName = "t_idfa_"+ channelID + "_" + adid;
+		String sql = "CREATE TABLE "+ tableName +" (" + 
+				"  `user_app_id` INT(11) NOT NULL COMMENT '用户ID'," + 
+				"  `ip` VARCHAR(20) NULL COMMENT '用户IP'," + 
+				"  `idfa` VARCHAR(50) NOT NULL COMMENT '手机广告标识符'," + 
+				"  `apple_id` VARCHAR(50) DEFAULT NULL COMMENT 'appleid'," + 
+				"  `adid` VARCHAR(100) NOT NULL COMMENT 'adid'," + 
+				"  `adver_id`  int(11) NOT NULL COMMENT '广告IDidfa'," + 
+				"  `status` VARCHAR(3) NOT NULL COMMENT '状态（1-领取1.5-打开app(快速任务)2-已完成3-已支付）'," +
+				"  `receive_time` DATETIME DEFAULT NULL COMMENT '领取时间'," + 
+				"  `complete_time` DATETIME DEFAULT NULL COMMENT '完成时间'," +
+				"  `pay_time` DATETIME DEFAULT NULL COMMENT '支付时间'," + 
+				"  `open_app_time` DATETIME DEFAULT NULL COMMENT '打开app时间'," +
+				"  `phone_model` VARCHAR(50) NOT NULL COMMENT '手机版本'," + 
+				"  `phone_version` VARCHAR(50) NOT NULL COMMENT '手机版本'," + 
+				"  `user_udid` VARCHAR(100)  DEFAULT NULL COMMENT 'udid'," + 
+				"  `ip_localtion` VARCHAR(100)  DEFAULT NULL COMMENT '地区'," + 
+				//"  PRIMARY KEY (`adver_id`,`idfa`),UNIQUE KEY `ip` (`ip`,`adid`), KEY `ind_t_userappid_adverid_complete_time` (`complete_time`),KEY `ind_t_userappid_adverid_user_app_id` (`user_app_id`),KEY `ind_t_userappid_adverid_receive_time` (`receive_time`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务idfa';";
+				"  PRIMARY KEY (`adver_id`,`idfa`),UNIQUE KEY `ip` (`ip`,`adid`), KEY `ind_t_userappid_adverid_complete_time` (`complete_time`),KEY `ind_t_userappid_adverid_user_app_id` (`user_app_id`),KEY `ind_t_userappid_adverid_receive_time` (`receive_time`))  DEFAULT CHARSET=utf8 COMMENT='任务idfa';";
+		
+		int result = sqlDao.execute(sql);
+		
+		return result;
 	}
 	
 	/**

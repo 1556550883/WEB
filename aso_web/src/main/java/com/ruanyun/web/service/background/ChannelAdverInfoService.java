@@ -24,7 +24,6 @@ import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.model.TChannelAdverInfo;
-import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.model.sys.UploadVo;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.NumUtils;
@@ -51,6 +50,10 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		return channelAdverInfoDao.PageSql3(page, t);
 	}
 	
+	public int createAdverTable(String adid, String channelID) 
+	{
+		return channelAdverInfoDao.createAdverTable(adid, channelID);
+	}
 	
 	public void createAdverTable() 
 	{
