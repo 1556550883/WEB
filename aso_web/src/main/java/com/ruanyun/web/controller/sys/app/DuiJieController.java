@@ -145,9 +145,10 @@ public class DuiJieController extends BaseController
 			return;
 		}
 		
+		String iplocaltion = AddressUtils.getAddressByIP(ip);
+		
 		//限制连云港港的ip
 		if(adverInfo.getChannelNum().equals("25")) {
-			String iplocaltion = AddressUtils.getAddressByIP(ip);
 			if(iplocaltion.contains("连云港市")) {
 				model.setResult(-1);
 				model.setMsg("此ip在限制范围内，请更换ip！");
@@ -201,10 +202,6 @@ public class DuiJieController extends BaseController
 					super.writeJsonDataApp(response, model);
 					return;
 			 }
-			 
-//			 if(userAppId.equals("77")) {
-//				 phoneModel = "iPhone9,1";
-//			 }
 			 
 			 String tablename = "idfa_udid_xiaoshou";
 //			 if(adverInfo.getChannelNum().equals("25")) {
@@ -443,7 +440,7 @@ public class DuiJieController extends BaseController
 		tUserappidAdverid.setIdfa(idfa);
 		tUserappidAdverid.setAppleId(appleId);
 		tUserappidAdverid.setAdid(adid);
-		tUserappidAdverid.setIpLocaltion(AddressUtils.getAddressByIP(ip));
+		tUserappidAdverid.setIpLocaltion(iplocaltion);
 		tUserappidAdverid.setAdverId(Integer.valueOf(adverId));
 		tUserappidAdverid.setReceiveTime(new Date());
 		tUserappidAdverid.setPhoneModel(phoneModel_real + phoneModel);
@@ -506,7 +503,7 @@ public class DuiJieController extends BaseController
 	}
 	
 	public static void main(String[] args) {
-		String iplocaltion = AddressUtils.getAddressByIP("117.92.15.139");
+		String iplocaltion = AddressUtils.getAddressByIP("59.63.210.139");
 		System.out.println(iplocaltion);
 		if(iplocaltion.contains("连云港市")) {
 			System.out.println(iplocaltion);

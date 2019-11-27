@@ -51,6 +51,12 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		return channelAdverInfoDao.PageSql3(page, t);
 	}
 	
+	
+	public void createAdverTable() 
+	{
+		
+	}
+	
 	/**
 	 * 
 	 * 功能描述：增加或者修改

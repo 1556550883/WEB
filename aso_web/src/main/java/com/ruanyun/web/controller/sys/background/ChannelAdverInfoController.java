@@ -165,6 +165,8 @@ public class ChannelAdverInfoController extends BaseController
 			}
 			
 			
+			//生成对应的数据库表
+			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		}
 		catch (Exception e) 

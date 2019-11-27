@@ -18,7 +18,6 @@ public class XiaoshouChannel  extends BaseChannel
 	//我们的渠道号
 	private static final String chid = "2";
 	
-	
 	//排重+点击+云聚
 	public static AppCommonModel isXiaoshouChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip,
 			String userAppId, String adverId, String userNum, String  phoneVersion, String  phoneModel, String udid) 
@@ -70,7 +69,7 @@ public class XiaoshouChannel  extends BaseChannel
 			if(status == null)
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
+				model.setMsg(jsonObject.toString());
 			}
 			else if(status == 0)
 			{
@@ -85,7 +84,7 @@ public class XiaoshouChannel  extends BaseChannel
 			else
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
+				model.setMsg(jsonObject.toString());
 			}
 		}
 		

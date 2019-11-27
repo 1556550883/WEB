@@ -13,7 +13,7 @@ public class AddressUtils {
 	
 public static String getAddressByIP(String strIP) {
 		try {
-			URL url = new URL("http://api.map.baidu.com/location/ip?ak=F454f8a5efe5e577997931cc01de3974&ip="+strIP);
+			URL url = new URL("https://restapi.amap.com/v3/ip?key=3fca8ce814f1c197cb03fdebfba3e253&ip="+strIP);
 			URLConnection conn = url.openConnection();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
 			String line = null;
@@ -25,10 +25,10 @@ public static String getAddressByIP(String strIP) {
 			String ipAddr = result.toString();
 			try {
 				JSONObject obj1= JSONObject.fromObject(ipAddr);
-				if("0".equals(obj1.get("status").toString())){
-				JSONObject obj2= JSONObject.fromObject(obj1.get("content").toString());
-				JSONObject obj3= JSONObject.fromObject(obj2.get("address_detail").toString());
-				return obj3.get("province").toString() + "," + obj3.get("city").toString();
+				if("1".equals(obj1.get("status").toString())){
+				//JSONObject obj2= JSONObject.fromObject(obj1.get("province").toString());
+				//JSONObject obj3= JSONObject.fromObject(obj1.get("city").toString());
+				return obj1.get("province").toString() + "," + obj1.get("city").toString();
 				}else{
 					return "读取失败";
 				}
@@ -43,6 +43,6 @@ public static String getAddressByIP(String strIP) {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getAddressByIP("49.82.5.225"));
+		System.out.println(getAddressByIP("59.63.210.139"));
 	}
 }  
