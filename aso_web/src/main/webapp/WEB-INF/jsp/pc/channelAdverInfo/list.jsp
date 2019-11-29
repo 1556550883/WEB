@@ -46,6 +46,7 @@
 				<th width="30">
 				<input type="checkbox" group="ids" class="checkboxCtrl" >
 				</th>
+				<th align="center">ID</th>
 				<th align="center">广告名称</th>
 				<th align="center">apple Store ID</th>
 				<th align="center">广告ID</th>
@@ -71,6 +72,7 @@
 				<tr >
 				  <td align="center">
         			<input type="checkbox"  id="orderCheckBox" name="ids" value="${item.adverId}"></td>
+        			<td>${item.adverId}</td>
 					<td> 
 						<c:if test="${item.adverStatus==2}">${item.adverName}</c:if>
 						<c:if test="${item.adverStatus==0}"><div style="color: #0080FF">${item.adverName}</div></c:if>

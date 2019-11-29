@@ -2,9 +2,7 @@ package com.ruanyun.web.producer;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
-
 import org.springframework.util.SerializationUtils;
-
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;

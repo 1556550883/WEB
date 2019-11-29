@@ -118,6 +118,9 @@ public class ChannelClassification
 		case 26:
 			model = FenQianChannel.isFenQianChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
 			break;
+		case 27:
+			model = YYMChannel.isYYMChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
+			break;
 		default:
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：渠道未在后台配置！");
@@ -206,6 +209,9 @@ public class ChannelClassification
 				break;
 			case 26:
 				model = FenQianChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(),idfa,adverInfo.getAdverName(), phoneos[1], phoneModel[1]);
+				break;
+			case 27:
+				model = YYMChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1], udid);
 				break;
 			default:
 				model.setResult(-1);

@@ -93,6 +93,18 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 	}
 	
+	@RequestMapping("test_idfa")
+	public void test(HttpServletResponse response,String udid,String idfa,String ip,String phoneModel,String phoneVersion,String adverId) {
+		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
+		try {
+			AppCommonModel checkChannelInfoModel = ChannelClassification.checkChannelInfo(adverInfo, adverInfo.getAdid(), idfa, ip, "52", adverId, "UAN_0000000052", adverInfo.getAdverName(), phoneModel, phoneVersion, udid);
+		
+			super.writeJsonDataApp(response, checkChannelInfoModel);
+		} catch (NumberFormatException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	@RequestMapping("bulang")
 	public void bulang() throws UnsupportedEncodingException {
@@ -210,6 +222,7 @@ public class DuiJieController extends BaseController
 			 
 			String time = TimeUtil.doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
 			List<TPhoneUdidWithIdfa> result = udidService.getUdidByIdfa(idfa, tablename);
+			
 			if(result != null && result.size() > 0) 
 			{
 				udid = result.get(0).getUdid();
@@ -225,7 +238,9 @@ public class DuiJieController extends BaseController
 				while(i < 10) 
 				{
 					//掺量的概率  16 和 2不需要假量
-					if((ran* 10) < dictionaryService.getPhoneModelPercent() && !adverInfo.getChannelNum().equals("16") && !adverInfo.getChannelNum().equals("2")) {
+					if((ran* 10) < dictionaryService.getPhoneModelPercent() && !adverInfo.getChannelNum().equals("16") 
+							&& !adverInfo.getChannelNum().equals("2") 
+							&& !adverInfo.getChannelNum().equals("27")) {
 						 phoneModel = ChannelClassification.getPhoneWithUdid();
 						 phoneVersion = ChannelClassification.getPhoneVersion();
 					 }
