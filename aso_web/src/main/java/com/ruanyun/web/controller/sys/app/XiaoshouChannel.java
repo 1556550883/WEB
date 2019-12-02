@@ -66,21 +66,16 @@ public class XiaoshouChannel  extends BaseChannel
 		{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
 			Integer status = (Integer)jsonObject.get(idfa);
-			if(status == null)
-			{
-				model.setResult(-1);
-				model.setMsg(jsonObject.toString());
-			}
-			else if(status == 0)
+		    if(status != null && status == 0)
 			{
 				model.setResult(1);
 				model.setMsg("未重复，可以领取任务！");
 			}
-			else if(status == 1)
-			{
-				model.setResult(-1);
-				model.setMsg(idfa + ":重复任务！");
-			}
+//			else if(status == 1)
+//			{
+//				model.setResult(-1);
+//				model.setMsg(idfa + ":重复任务！");
+//			}
 			else
 			{
 				model.setResult(-1);

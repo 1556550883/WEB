@@ -2,7 +2,7 @@
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
 <ry:binding parentCode="USER_SCORE_TYPE" bingdingName="channellevel"></ry:binding>
 
-<form id="pagerForm" method="post" action="adverEffectiveInfo/list">
+<form id="pagerForm" method="post" action="adverEffectiveInfo/completeList?adverId=${bean.adverId}">
 	<input type="hidden" name="pageNum" value="${pageList.pageNum }" />
 	<input type="hidden" name="numPerPage" value="${pageList.numPerPage}" />
 	<input type="hidden" name="orderField" value="${param.orderField}">
@@ -10,12 +10,14 @@
 </form>
 
 <div class="pageHeader">
-	<form rel="pagerForm"  onsubmit="return navTabSearch(this);" action="adverEffectiveInfo/list" method="post">
+	<form rel="pagerForm"  onsubmit="return navTabSearch(this);" action="adverEffectiveInfo/completeList" method="post">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
-				<td>广告名称：<input type="hidden" name="adverId" value="${bean.adverId}"/></td>
+				<td>广告ip：<input  name="ip" value="${bean.ip}"/></td>
+				<td>广告idfa：<input  name="idfa" value="${bean.idfa}"/></td>
 			</tr>
+		
 		</table>
 		<div class="subBar">
 			<ul>
@@ -48,7 +50,7 @@
 				<th align="center">领取时间</th>
 				<th align="center">打开时间</th>
 				<th align="center">完成时间</th>
-				<th align="center">支付时间</th>
+			
 			</tr>
 		</thead>
 		<tbody>
@@ -79,8 +81,6 @@
 					<c:if test="${item.status=='2'}">
 	                	<td>${item.completeTime}</td>
 					</c:if>
-					
-	                <td>${item.payTime}</td>
 				</tr>
 			</c:forEach>  
 		</tbody>

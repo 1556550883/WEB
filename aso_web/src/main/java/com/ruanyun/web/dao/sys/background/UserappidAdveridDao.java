@@ -75,6 +75,8 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 				sql.append(" and adver_id="+info.getAdverId());
 			if (EmptyUtils.isNotEmpty(info.getUserAppId()))
 				sql.append(" and user_app_id="+info.getUserAppId());
+			if (EmptyUtils.isNotEmpty(info.getIp()))
+				sql.append(" and ip='"+info.getIp()+"'");
 			if (EmptyUtils.isNotEmpty(info.getIdfa()))
 				sql.append(" and idfa='"+info.getIdfa()+"'");
 			if (EmptyUtils.isNotEmpty(info.getStatus()))
@@ -84,7 +86,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 			if (EmptyUtils.isNotEmpty(info.getStatusEnd()))
 				sql.append(" and status<='"+info.getStatusEnd()+"'");
 		}
-		sql.append(" ORDER BY user_app_id desc,adver_id desc,complete_time desc");
+		sql.append(" ORDER BY receive_time desc,user_app_id desc,adver_id desc");
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 

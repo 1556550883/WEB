@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
+import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.service.background.AdverEffectiveInfoService;
 
@@ -34,8 +35,12 @@ public class AdverEffectiveInfoController extends BaseController
 	@RequestMapping("completeList")
 	public String completeList(Page<TUserappidAdverid> page,TUserappidAdverid info,Model model)
 	{
+		
 		page.setNumPerPage(20);
-		info.setStatusStart("1");
+		if (EmptyUtils.isNotEmpty(info.getIp()) || EmptyUtils.isNotEmpty(info.getIdfa())) {
+			page.setNumPerPage(1000);
+		}
+	
 		addModel(model, "pageList", adverEffectiveInfoService.completeList(page, info));
 		addModel(model, "bean", info);
 		return "pc/adverEffectiveInfo/list";

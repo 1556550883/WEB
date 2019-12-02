@@ -541,6 +541,7 @@ public class ChannelClassification
 		
 		return date;
 	}
+	
 	//获取昨天的日期
 	@SuppressWarnings("static-access")
 	public static String GetYestdayDate() {
