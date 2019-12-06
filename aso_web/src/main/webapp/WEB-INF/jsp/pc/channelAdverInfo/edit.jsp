@@ -227,6 +227,14 @@
 				</dd>
 		    </dl>
 		    
+		    	       <dl class="nowrap" style="width: 100%">
+				<dt>任务掺机型配置0-10(0代表全真实)：</dt>
+				<dd>
+				    <input name="phoneModelPercent" id="phoneModelPercent" class="mustFill" title="任务掺机型配置0-10" type="text" value="<c:out value="${bean.phoneModelPercent}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    
+		    
 		    <dl class="nowrap" style="width: 100%">
 				<dt>广告开始日期：</dt>
 				<dd>

@@ -233,14 +233,9 @@ public class DuiJieController extends BaseController
 			//else if (adverInfo.getIsTrue() == 1)
 			else
 			{
-				//获取10次，10次没结果就放弃
-				int i = 1;
-				while(i < 10) 
-				{
-					//掺量的概率  16 和 2不需要假量
-					if((ran* 10) < dictionaryService.getPhoneModelPercent() && !adverInfo.getChannelNum().equals("16") 
-							&& !adverInfo.getChannelNum().equals("2") 
-							&& !adverInfo.getChannelNum().equals("27")) {
+
+					//执行就是要用模拟数据
+					if((ran* 10) < adverInfo.getPhoneModelPercent()) {
 						 phoneModel = ChannelClassification.getPhoneWithUdid();
 						 phoneVersion = ChannelClassification.getPhoneVersion();
 					 }
@@ -260,41 +255,13 @@ public class DuiJieController extends BaseController
 					{
 						TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion, time);
 						udidService.savePhoneInfo(p, tablename);
-						break;
+					}else {
+						model.setResult(-1);
+						model.setMsg(phoneModel + " udid被消耗完");
+						super.writeJsonDataApp(response, model);
+						return;
 					}
-					else if(adverInfo.getChannelNum().equals("2"))
-					{
-						//如果没有获取到udid就直接随机获取手机型号
-						phoneModel = ChannelClassification.getPhoneWithUdid();
-						phoneVersion = ChannelClassification.getPhoneVersion();
-					}
-					
-					i++;
-				}
-				
-				if(udid.equals("0")) {
-					model.setResult(-1);
-					model.setMsg(phoneModel + " udid被消耗完");
-					super.writeJsonDataApp(response, model);
-					return;
-				}
 			}
-//			else {
-//				 //渠道16使用真实数据
-//				 if(!adverInfo.getChannelNum().equals("16") && !adverInfo.getChannelNum().equals("2"))
-//				 {
-//					phoneModel = ChannelClassification.getPhoneModel(userAppId);
-//					if(phoneModel.compareTo("iPhone10,1") >= 0 && phoneModel.compareTo("iPhone8,1") < 0) 
-//					{
-//						phoneVersion = ChannelClassification.getPhoneVersion();
-//					}
-//				 }
-//				
-//				 udid = ChannelClassification.getPhoneUdid(phoneModel,adverInfo.getIsTrue());
-//				
-//				 TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion,time);
-//				 udidService.savePhoneInfo(p, tablename);
-//			}
 
 			 userAppType = 1;
 		}

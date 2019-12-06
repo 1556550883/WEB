@@ -71,7 +71,7 @@ public class XiaoshouChannel  extends BaseChannel
 				model.setResult(1);
 				model.setMsg("未重复，可以领取任务！");
 			}
-			else if(status == 1)
+			else if(status != null && status == 1)
 			{
 				model.setResult(-1);
 				model.setMsg(jsonObject.toString());

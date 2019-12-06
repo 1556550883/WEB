@@ -100,7 +100,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private long receTimeZone;
      private Integer isTime;//0表示有作用  1忽略
      private Integer isTrue;
-     
+     private Integer phoneModelPercent;
      @Column(name="package_name")
      public String getPackageName() {
 		return packageName;
@@ -720,5 +720,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setIsTrue(Integer isTrue) {
 		this.isTrue = isTrue;
+	}
+	
+	@Column(name="phonemodel_percent")
+	public Integer getPhoneModelPercent() {
+		return phoneModelPercent;
+	}
+	public void setPhoneModelPercent(Integer phoneModelPercent) {
+		this.phoneModelPercent = phoneModelPercent;
 	}
 }

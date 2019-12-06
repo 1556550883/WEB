@@ -193,6 +193,8 @@
 				</dd>
 		    </dl>
 		    
+		   
+		    
 		     <dl class="nowrap" style="width: 100%">
 				<dt>领取任务间隔（单位：秒）：</dt>
 				<dd>
@@ -205,6 +207,14 @@
 				<dt>提交任务间隔（单位：秒）：</dt>
 				<dd>
 				    <input name="submitInterTime" id="submitInterTime" class="mustFill" title="提交任务间隔（单位：秒）" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
+				</dd>
+		    </dl>
+		    
+		    
+		      <dl class="nowrap" style="width: 100%">
+				<dt>任务掺机型配置0-10(0代表全真实)：</dt>
+				<dd>
+				    <input name="phoneModelPercent" id="phoneModelPercent" class="mustFill" title="任务掺机型配置0-1" type="text" value="<c:out value="0"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
 		    
@@ -318,6 +328,7 @@
 	            		$("#adverSort").val(adverinfo["adverSort"]);
 	            		$("#receInterTime").val(adverinfo["receInterTime"]);
 	            		$("#submitInterTime").val(adverinfo["submitInterTime"]);
+	            		$("#phoneModelPercent").val(adverinfo["phoneModelPercent"]);
 	            	}else{
 	            		var bundleid = json["bundleid"];
 	            		$("#bundleId").val(bundleid);
