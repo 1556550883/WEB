@@ -79,6 +79,8 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> {
 				sql.append(" and ip='"+info.getIp()+"'");
 			if (EmptyUtils.isNotEmpty(info.getIdfa()))
 				sql.append(" and idfa='"+info.getIdfa()+"'");
+			if (EmptyUtils.isNotEmpty(info.getAdid()))
+				sql.append(" and adid='"+info.getAdid()+"'");
 			if (EmptyUtils.isNotEmpty(info.getStatus()))
 				sql.append(" and status='"+info.getStatus()+"'");
 			if (EmptyUtils.isNotEmpty(info.getStatusStart()))

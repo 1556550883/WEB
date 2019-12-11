@@ -189,6 +189,12 @@ bundleId：
 </div>
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
+掺机型配置0-10：
+    <input name="phoneModelPercent" id="phoneModelPercent" class="mustFill" title="掺机型配置0-10" type="text" value="<c:out value="${bean.phoneModelPercent}"></c:out>" maxlength="10"/>
+</div>
+
+<HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
+ <div> 
 广告开始日期：
 	<input type="text" name="adverDayStartSetting" title="广告开始日期" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" id="adverDayStartSetting" value="<ry:formatDate date='${bean.adverDayStart}' toFmt='yyyy-MM-dd HH:mm'/>"  readonly="readonly" dateFmt="yyyy-MM-dd HH:mm" >
 	<input name="adverTimeStart" id="adverTimeStart" type="hidden" value="<c:out value="${bean.adverTimeStart}"></c:out>" maxlength="100"/>

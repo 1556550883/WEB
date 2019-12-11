@@ -12,23 +12,23 @@ public class JvZhangChannel extends BaseChannel
 {
 	private static final Log log = LogFactory.getLog(JvZhangChannel.class);
 	private static  String mac = "02:00:00:00:00:00";
-	private static  String sourceid = "11029";
+	private static  String sourceid = "12762";
 	
 	public static AppCommonModel isJZChannel(TChannelAdverInfo adverInfo, String adid, String idfa, String ip, String userAppId,
-			String adverId, String userNum, String adverName) throws NumberFormatException, UnsupportedEncodingException 
+			String adverId, String userNum, String adverName,String phoneModel,String sysver) throws NumberFormatException, UnsupportedEncodingException 
 	{
-		AppCommonModel model = JvZhangChannel.paiChong(adverInfo.getFlag2(), adid, idfa);
+		AppCommonModel model = JvZhangChannel.paiChong(adverInfo.getFlag2(), adid, idfa,ip);
 		
 		if(model.getResult() != -1)
 		{
 			//调用第三方点击接口
-			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName);
+			model = dianJi(adverInfo.getFlag3(),adid, idfa, ip, Integer.valueOf(userAppId), Integer.valueOf(adverId), userNum, adverName,phoneModel,sysver);
 		}
 		
 		return model;
 	}
 	
-	public static AppCommonModel paiChong(String domain, String adid, String idfa) 
+	public static AppCommonModel paiChong(String domain, String adid, String idfa,String ip) 
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -36,6 +36,7 @@ public class JvZhangChannel extends BaseChannel
 				.append("?adid=").append(adid)
 				.append("&sourceid=").append(sourceid)
 				.append("&idfa=").append(idfa)
+				.append("&ip=").append(ip)
 				.append("&mac=").append(mac);
 		
 		JSONObject jsonObject = httpGet(url.toString(), false);
@@ -53,7 +54,7 @@ public class JvZhangChannel extends BaseChannel
 			if(status == null)
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
+				model.setMsg(jsonObject.toString());
 			}
 			else if(status == 0)
 			{
@@ -68,7 +69,7 @@ public class JvZhangChannel extends BaseChannel
 			else
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：系统出错！");
+				model.setMsg(jsonObject.toString());
 			}
 		}
 		
@@ -76,7 +77,7 @@ public class JvZhangChannel extends BaseChannel
 	}
 	
 	public static AppCommonModel dianJi(String domain, String adid, String idfa, String ip,
-			Integer userAppId, Integer adverId, String userNum, String adverName) throws UnsupportedEncodingException
+			Integer userAppId, Integer adverId, String userNum, String adverName,String phonemodel,String sysver) throws UnsupportedEncodingException
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		
@@ -87,7 +88,9 @@ public class JvZhangChannel extends BaseChannel
 				.append("&keywords=").append(adverName)
 				.append("&ip=").append(ip)
 				.append("&mac=").append(mac)
-				.append("&callbackurl=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
+				.append("&devicemodel=").append(phonemodel)
+				.append("&systemversion=").append(sysver)
+				.append("&regcallbackurl=").append(getCallbackUrl(adid, idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		if(jsonObject == null)
 		{
@@ -102,7 +105,7 @@ public class JvZhangChannel extends BaseChannel
 			if(code == null)
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败！");
+				model.setMsg(jsonObject.toString());
 			}
 			else if(code == 100)
 			{
@@ -112,7 +115,7 @@ public class JvZhangChannel extends BaseChannel
 			else
 			{
 				model.setResult(-1);
-				model.setMsg("领取任务失败！");
+				model.setMsg(jsonObject.toString());
 			}
 		}
 		
@@ -144,7 +147,7 @@ public class JvZhangChannel extends BaseChannel
 			if(code == null)
 			{
 				model.setResult(-1);
-				model.setMsg("渠道未返回状态，未完成！");
+				model.setMsg(jsonObject.toString());
 			}
 			else if(code == 100)
 			{
@@ -153,9 +156,8 @@ public class JvZhangChannel extends BaseChannel
 			}
 			else
 			{
-				String msg = (String)jsonObject.get("Remark"); 
 				model.setResult(-1);
-				model.setMsg(msg);
+				model.setMsg(jsonObject.toString());
 			}
 		}
 		

@@ -103,7 +103,7 @@
 			<dl class="nowrap" style="width: 100%;">
 				<dt>广告appleStore-ID：</dt>
 				<dd>
-					<input id="adverAdid" name="adverAdid" value="${bean.adverAdid}" size="30" maxlength="100" class='' title="广告storeID" />
+					<input id="adverAdid" name="adverAdid" value="${bean.adverAdid}"  oninput = "value=value.replace(/[^\d]/g,'')" size="30" maxlength="100" class='' title="广告storeID" />
 				</dd>
 			</dl>
 			

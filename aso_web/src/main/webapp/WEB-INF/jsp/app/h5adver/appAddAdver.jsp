@@ -81,7 +81,7 @@
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
 广告appleStore-ID：
-      <input id="adverAdid" name="adverAdid" value="${bean.adverAdid}" size="30" maxlength="100" class='' title="广告storeID" />
+      <input id="adverAdid" name="adverAdid" value="${bean.adverAdid}" oninput = "value=value.replace(/[^\d]/g,'')"  size="30" maxlength="100" class='' title="广告storeID" />
 </div>
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
@@ -169,6 +169,12 @@ bundleId：
 提交任务间隔（单位：秒）：
     <input name="submitInterTime" id="submitInterTime" class="mustFill" title="提交任务间隔（单位：秒）" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
 </div>
+<HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
+ <div> 
+掺机型配置0-10：
+    <input name="phoneModelPercent" id="phoneModelPercent" class="mustFill" title="掺机型配置0-10" type="text" value="<c:out value="${bean.phoneModelPercent}"></c:out>" maxlength="10"/>
+</div>
+
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
 广告开始日期：
@@ -264,6 +270,7 @@ bundleId：
 	            		$("#adverSort").val(adverinfo["adverSort"]);
 	            		$("#receInterTime").val(adverinfo["receInterTime"]);
 	            		$("#submitInterTime").val(adverinfo["submitInterTime"]);
+	            		$("#phoneModelPercent").val(adverinfo["phoneModelPercent"]);
 	            	}else{
 	            		var bundleid = json["bundleid"];
 	            		$("#bundleId").val(bundleid);

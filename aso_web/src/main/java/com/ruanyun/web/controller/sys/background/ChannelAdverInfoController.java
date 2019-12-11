@@ -148,20 +148,20 @@ public class ChannelAdverInfoController extends BaseController
 				info.setAdverDesc(jsonObject.getString("adverDesc"));
 				channelAdverInfoService.saveOrUpd(info, file, request,fileAdverImg);
 			}
-			
-			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
-			adverInfo.setAdverAdid(info.getAdverAdid());
-			adverInfo.setChannelNum(info.getChannelNum());
-			List<TChannelAdverInfo> adverInfos = appChannelAdverInfoService.getByCondition(adverInfo);
-			if(adverInfos != null && !adverInfos.isEmpty() && adverInfos.size() >= 1) {
-				adverInfo = adverInfos.get(0);
-				BeanUtils.copyProperties(info, adverInfo, new String[]{"adverId","adverName",
-						"adverCount","adverCountRemain","adverCountComplete","adverDayStart","adverDayEnd","adverTimeStart",
-						"adverTimeEnd","adverActivationCount","adverCreatetime","adverStatus","channelNum","adverNum","downloadCount"});
-				//adverInfo.set
-				//已经存在任务的信息
-				channelAdverInfoService.update(adverInfo);
-			}
+//			
+//			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
+//			adverInfo.setAdverAdid(info.getAdverAdid());
+//			adverInfo.setChannelNum(info.getChannelNum());
+//			List<TChannelAdverInfo> adverInfos = appChannelAdverInfoService.getByCondition(adverInfo);
+//			if(adverInfos != null && !adverInfos.isEmpty() && adverInfos.size() >= 1) {
+//				adverInfo = adverInfos.get(0);
+//				BeanUtils.copyProperties(info, adverInfo, new String[]{"adverId","adverName",
+//						"adverCount","adverCountRemain","adverCountComplete","adverDayStart","adverDayEnd","adverTimeStart",
+//						"adverTimeEnd","adverActivationCount","adverCreatetime","adverStatus","channelNum","adverNum","downloadCount"});
+//				//adverInfo.set
+//				//已经存在任务的信息
+//				channelAdverInfoService.update(adverInfo);
+//			}
 			
 			
 			//生成对应的数据库表
@@ -337,7 +337,7 @@ public class ChannelAdverInfoController extends BaseController
 		adverInfo.setChannelNum(channelNum);
 		List<TChannelAdverInfo> adverInfos = appChannelAdverInfoService.getByCondition(adverInfo);
 		if(adverInfos != null && !adverInfos.isEmpty() && adverInfos.size() >= 1) {
-			adverInfo = adverInfos.get(0);
+			adverInfo = adverInfos.get(adverInfos.size() -1);
 			//已经存在任务的信息
 			addModel(model, "isexist", true);
 			addModel(model, "adverInfo", adverInfo);

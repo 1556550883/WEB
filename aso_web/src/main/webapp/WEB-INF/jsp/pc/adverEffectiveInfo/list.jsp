@@ -16,6 +16,8 @@
 			<tr>
 				<td>广告ip：<input  name="ip" value="${bean.ip}"/></td>
 				<td>广告idfa：<input  name="idfa" value="${bean.idfa}"/></td>
+				<td>广告adid：<input  name="adid" value="${bean.adid}"/></td>
+				<td>关键词：<input  name="idfa" value="${bean.adverName}"/></td>
 			</tr>
 		
 		</table>
@@ -36,6 +38,7 @@
 	<table class="table" width="100%" layoutH="125">
 		<thead>
 			<tr>
+			   <th align="center">adid</th>
 				<th align="center">广告名称</th>
 				<th align="center">广告价格</th>
 				<th align="center">用户ID</th>
@@ -44,7 +47,6 @@
 				<th align="center">ip地区</th>
 				<th align="center">idfa</th>
 				<th align="center">udid</th>
-				<th align="center">apple id</th>
 				<th align="center">机型</th>
 				<th align="center">系统</th>
 				<th align="center">领取时间</th>
@@ -56,6 +58,7 @@
 		<tbody>
 		     <c:forEach var="item" items="${pageList.result}">
 				<tr>
+				    <td>${item.adid}</td>
 	                <td>${item.adverName}</td>
 	                <td>${item.adverPrice}</td>
 	                <td>${item.userAppId}</td>
@@ -64,7 +67,7 @@
 	                <td>${item.ipLocaltion}</td> 
 	                <td>${item.idfa}</td> 
 	                <td>${item.userUdid}</td> 
-	                <td>${item.appleId}</td>
+	               
 	                <td>${item.phoneModel}</td>  
 	                <td>${item.phoneVersion}</td>   
 	                <td>${item.receiveTime}</td>  

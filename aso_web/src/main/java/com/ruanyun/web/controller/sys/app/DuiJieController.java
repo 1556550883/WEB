@@ -235,7 +235,7 @@ public class DuiJieController extends BaseController
 			{
 
 					//执行就是要用模拟数据
-					if((ran* 10) < adverInfo.getPhoneModelPercent()) {
+					if(adverInfo.getPhoneModelPercent() != null && (ran* 10) < adverInfo.getPhoneModelPercent()) {
 						 phoneModel = ChannelClassification.getPhoneWithUdid();
 						 phoneVersion = ChannelClassification.getPhoneVersion();
 					 }

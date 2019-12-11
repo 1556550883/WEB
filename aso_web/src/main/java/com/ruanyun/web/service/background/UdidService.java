@@ -85,6 +85,73 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
         return dataList;
 }
 	
+	 public static String shengchengidfaStr()
+	    {
+		    //List<String> res = new ArrayList<String>();
+			List<TPhoneUdidModel> result = new ArrayList<TPhoneUdidModel>();
+	    	File file = new File("C:\\Program Files\\Apache Software Foundation\\import\\idfa.csv");
+	    	String time = TimeUtil.GetdayDate();
+	        List<TPhoneUdidModel> dataList = new ArrayList<TPhoneUdidModel>();
+	        
+	        BufferedReader br = null;
+	        String tableName = null;
+	        String flag = "1";
+	        try
+	        { 
+	            br = new BufferedReader(new FileReader(file));
+	            String line = ""; 
+	            while ((line = br.readLine()) != null)
+	            { 
+	            	  if(line.trim() != "") {  
+	            		  String[] pills = line.split(",");
+	            		  if(pills.length == 2) {
+	            			  tableName = pills[0].trim();
+	            			  flag = pills[1].trim();
+	            			  continue;}
+	            		  
+	            		  if(pills == null || pills.length <= 0) {
+	            			  continue;
+	            		  }
+	            		  
+	            		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0, time);
+	            		
+	            		  dataList.add(udidmodel);
+	            	  }
+	            }
+
+	        }
+	        catch (Exception e) 
+	        {
+	        	 e.printStackTrace();
+	        }
+	        finally
+	        {
+	            if(br!=null)
+	            {
+	                try 
+	                {
+	                    br.close();
+	                    br=null;
+	                }
+	                catch (IOException e) 
+	                {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+	        
+	        String resultss = null;
+
+	        for(TPhoneUdidModel sre : dataList) {
+	        	resultss =  "'"+sre.getUdid() + "'" + "," + resultss;
+	        }
+	        return resultss;
+	}
+	 
+	 public static void main(String[] args) {
+		System.out.print(shengchengidfaStr());
+	}
+	 
 	 public List<String> importCsv()
 	    {
 		    List<String> res = new ArrayList<String>();
@@ -181,5 +248,5 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	        res.add(tableName);
 	        res.add("udid重复数量:" + result.size());
 	        return res;
-	}
+	    }
 }

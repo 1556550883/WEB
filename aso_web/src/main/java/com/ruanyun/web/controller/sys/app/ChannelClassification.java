@@ -62,7 +62,7 @@ public class ChannelClassification
 			model = APYSChannel.isAPYSChannel(adverInfo, adid, idfa);
 			break;
 		case 8:
-			model = JvZhangChannel.isJZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName);
+			model = JvZhangChannel.isJZChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName, phoneModel, phoneVersion);
 			break;
 		case 9:
 			model = AiyinliChannel.isAiYLChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, adverName,  phoneModel, phoneVersion);
