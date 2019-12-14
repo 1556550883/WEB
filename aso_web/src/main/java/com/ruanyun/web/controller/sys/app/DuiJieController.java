@@ -160,7 +160,10 @@ public class DuiJieController extends BaseController
 		String iplocaltion = AddressUtils.getAddressByIP(ip);
 		
 		//限制连云港港的ip
-		if(adverInfo.getChannelNum().equals("25")) {
+		if(adverInfo.getChannelNum().equals("25")
+				||adverInfo.getChannelNum().equals("27")
+				||adverInfo.getChannelNum().equals("16")
+				||adverInfo.getChannelNum().equals("12")) {
 			if(iplocaltion.contains("连云港市")) {
 				model.setResult(-1);
 				model.setMsg("此ip在限制范围内，请更换ip！");
