@@ -273,13 +273,13 @@ public class DuiJieController extends BaseController
 			 
 			String udidtablename = "idfa_udid_xiaoshou";
 			String time = TimeUtil.doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
-			List<TPhoneUdidWithIdfa> result = udidService.getUdidByIdfa(idfa, udidtablename);
+			TPhoneUdidWithIdfa result = udidService.getUdidByIdfa(idfa, udidtablename);
 			
-			if(result != null && result.size() > 0) 
+			if(result != null) 
 			{
-				udid = result.get(0).getUdid();
-				phoneModel = result.get(0).getPhoneModel();
-				phoneVersion =  result.get(0).getPhoneVersion();
+				udid = result.getUdid();
+				phoneModel = result.getPhoneModel();
+				phoneVersion =  result.getPhoneVersion();
 			}
 			//需要真实
 			//else if (adverInfo.getIsTrue() == 1)
@@ -293,14 +293,13 @@ public class DuiJieController extends BaseController
 				}
 				
 				//如果是空就说明需要获取新的udid
+				String pModel = phoneModel;
 				if(phoneModel.toLowerCase().equals("iphone9,3"))
 				{
-					udid = ChannelClassification.getPhoneUdid("iphone9,1",1);
+					pModel = "iphone9,1";
 				}
-				else 
-				{
-					udid = ChannelClassification.getPhoneUdid(phoneModel.toLowerCase(),1);
-				}
+				
+				udid = ChannelClassification.getPhoneUdid(pModel.toLowerCase(),1);
 				
 				//获取新的udid之后需要保存idfa和udid
 				if(!udid.equals("0")) 

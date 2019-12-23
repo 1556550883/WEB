@@ -23,7 +23,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	@Qualifier("tPhoneUdidWithIdfaDao")
 	private TPhoneUdidWithIdfaDao tPhoneUdidWithIdfaDao;
 
-	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa, String tableName) 
+	public TPhoneUdidWithIdfa getUdidByIdfa(String idfa, String tableName) 
 	{
 		return tPhoneUdidWithIdfaDao.getUdidByIdfa(idfa, tableName);
 	}

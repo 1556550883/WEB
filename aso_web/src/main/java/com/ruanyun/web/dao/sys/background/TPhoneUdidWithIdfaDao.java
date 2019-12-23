@@ -11,9 +11,10 @@ import com.ruanyun.web.model.TPhoneUdidWithIdfa;
 @Repository("tPhoneUdidWithIdfaDao")
 public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 	
-	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa, String tableName) {
+	public TPhoneUdidWithIdfa getUdidByIdfa(String idfa, String tableName)
+	{
 		StringBuffer sql = new StringBuffer("Select * from "+tableName+" where idfa= '").append(idfa).append("'");
-		return sqlDao.getAll(TPhoneUdidWithIdfa.class,sql.toString());
+		return sqlDao.get(TPhoneUdidWithIdfa.class,sql.toString());
 	}
 //	
 //	public List<TPhoneUdidWithIdfa> getUdidByIdfaForXiaoshou(String idfa) {
