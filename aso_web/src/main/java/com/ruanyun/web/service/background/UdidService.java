@@ -23,11 +23,18 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	@Qualifier("tPhoneUdidWithIdfaDao")
 	private TPhoneUdidWithIdfaDao tPhoneUdidWithIdfaDao;
 
-	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa, String tableName) {
+	public List<TPhoneUdidWithIdfa> getUdidByIdfa(String idfa, String tableName) 
+	{
 		return tPhoneUdidWithIdfaDao.getUdidByIdfa(idfa, tableName);
 	}
 	
-	public void savePhoneInfo(TPhoneUdidWithIdfa model,String tableName) {
+	public int getUdidSumedNum(String udidType,String tableName,String time)
+	{
+		return tPhoneUdidWithIdfaDao.getUdidSumedNum(udidType, tableName,time);
+	}
+	
+	public void savePhoneInfo(TPhoneUdidWithIdfa model,String tableName)
+	{
 		tPhoneUdidWithIdfaDao.savePhoneInfo(model, tableName);
 	}
 	
@@ -44,10 +51,11 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
             String line = ""; 
             while ((line = br.readLine()) != null)
             { 
-            	  if(line.trim() != "") {  
+            	  if(line.trim() != "")
+            	  {  
             		  String[] pills = line.split(",");
-            		  if(pills.length == 2 || pills.length == 0) {
-            			  continue;}
+            		  if(pills.length == 2 || pills.length == 0) 
+            		  { continue;}
             		  TPhoneUdidModel udidmodel = new TPhoneUdidModel(pills[0].trim(), 0, time);
             		  //去掉重复
             		  for(TPhoneUdidModel task2 : dataList) 

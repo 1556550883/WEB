@@ -40,16 +40,32 @@ public class AdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiveIn
 	@Autowired
 	private AppUserService appUserService;
 	
-	/**
-	 * 广告完成列表
-	 */
-	public Page<TUserappidAdverid> completeList(Page<TUserappidAdverid> page, TUserappidAdverid t) {
-		page = userappidAdveridDao.PageSql(page, t);
-		for(TUserappidAdverid task:page.getResult()){
-			TChannelAdverInfo adverInfo = channelAdverInfoService.getInfoById(task.getAdverId());
-			if(adverInfo == null) {
-				continue;
+	public Page<TUserappidAdverid> getTaskListByCondition(Page<TUserappidAdverid> page, TUserappidAdverid t)
+	{
+		TChannelAdverInfo adverInfo = channelAdverInfoService.getInfoById(t.getAdverId());
+		String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();	
+		page = userappidAdveridDao.PageSql(page, t, tablename);
+		for(TUserappidAdverid task:page.getResult())
+		{
+			task.setAdverName(adverInfo.getAdverName());
+			task.setAdverPrice(adverInfo.getAdverPrice());
+			TUserApp userApp = appUserService.get(TUserApp.class, "userAppId", task.getUserAppId());
+			if(userApp != null) 
+			{
+				task.setLoginName(userApp.getLoginName());
 			}
+		}
+		
+		return page;
+	}
+	
+	public Page<TUserappidAdverid> getTaskList(Page<TUserappidAdverid> page, TUserappidAdverid t)
+	{
+		TChannelAdverInfo adverInfo = channelAdverInfoService.getInfoById(t.getAdverId());
+		String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();	
+		page = userappidAdveridDao.PageSql(page, t, tablename);
+		for(TUserappidAdverid task:page.getResult())
+		{
 			task.setAdverName(adverInfo.getAdverName());
 			task.setAdverPrice(adverInfo.getAdverPrice());
 			TUserApp userApp = appUserService.get(TUserApp.class, "userAppId", task.getUserAppId());

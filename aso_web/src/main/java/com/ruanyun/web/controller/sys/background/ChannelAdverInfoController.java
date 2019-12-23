@@ -11,11 +11,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.BeanUtils;
+import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,14 +25,16 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rabbitmq.client.Channel;
 import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.model.TChannelAdverInfo;
-import com.ruanyun.web.producer.ArrayBlockQueueProducer;
+import com.ruanyun.web.producer.AdverProducer;
+import com.ruanyun.web.producer.AdverQueueConsumer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
-import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpRequestUtil;
@@ -47,8 +50,6 @@ public class ChannelAdverInfoController extends BaseController
 	private ChannelAdverInfoService channelAdverInfoService;
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
-	@Autowired
-	private UserappidAdveridService userappidAdveridService;
 	/**
 	 * 查询广告列表（后台显示）
 	 * 
@@ -56,10 +57,15 @@ public class ChannelAdverInfoController extends BaseController
 	@RequestMapping("list")
 	public String getChannelAdverInfoList(Page<TChannelAdverInfo> page,TChannelAdverInfo info,Model model)
 	{
-		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info);
+		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info, TimeUtil.GetdayDate(-7));
 		for(TChannelAdverInfo adverInfo : queryAdver.getResult()) {
 			//第二天一点之后算完结任务
-			if(adverInfo.getAdverDayEnd().getDay() < new Date().getDay() && new Date().getHours() > 1) {
+
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+			String str=sdf.format(adverInfo.getAdverCreatetime());
+			String yesday = TimeUtil.GetdayDate(-1);
+			if(str.compareTo(yesday) < 0)
+			{
 				//不是今天的，属于过期任务
 				adverInfo.setIsToday(0);
 			}else {
@@ -146,26 +152,16 @@ public class ChannelAdverInfoController extends BaseController
 				info.setAdverCount(jsonObject.getInt("adverCount"));
 				info.setAdverActivationCount(jsonObject.getInt("adverCount"));
 				info.setAdverDesc(jsonObject.getString("adverDesc"));
-				channelAdverInfoService.saveOrUpd(info, file, request,fileAdverImg);
+				channelAdverInfoService.saveOrUpd(info, file, request,fileAdverImg, null);
 			}
-//			
-//			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
-//			adverInfo.setAdverAdid(info.getAdverAdid());
-//			adverInfo.setChannelNum(info.getChannelNum());
-//			List<TChannelAdverInfo> adverInfos = appChannelAdverInfoService.getByCondition(adverInfo);
-//			if(adverInfos != null && !adverInfos.isEmpty() && adverInfos.size() >= 1) {
-//				adverInfo = adverInfos.get(0);
-//				BeanUtils.copyProperties(info, adverInfo, new String[]{"adverId","adverName",
-//						"adverCount","adverCountRemain","adverCountComplete","adverDayStart","adverDayEnd","adverTimeStart",
-//						"adverTimeEnd","adverActivationCount","adverCreatetime","adverStatus","channelNum","adverNum","downloadCount"});
-//				//adverInfo.set
-//				//已经存在任务的信息
-//				channelAdverInfoService.update(adverInfo);
-//			}
-			
 			
 			//生成对应的数据库表
-			//channelAdverInfoService.createAdverTable(info.getAdid(),info.getChannelNum());
+			channelAdverInfoService.createAdverTable(info.getAdid(),info.getChannelNum());
+			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
+		}
+		catch(SQLGrammarException c) 
+		{
+			//表已经存在返回成功
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		}
 		catch (Exception e) 
@@ -176,7 +172,7 @@ public class ChannelAdverInfoController extends BaseController
 	
 	/**
 	 * 
-	 * 功能描述：修改
+	 * 功能描述：修改 修改任务数量的时候需要注意
 	 */
 	@RequestMapping("edit")
 	public void upd(TChannelAdverInfo info, HttpServletResponse response, MultipartFile file,
@@ -184,7 +180,6 @@ public class ChannelAdverInfoController extends BaseController
 	{
 		try 
 		{
-			//向轴 add
 			//广告有效期
 			//TChannelAdverInfo oldAdverInfo = channelAdverInfoService.getInfoById(info.getAdverId());
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -197,19 +192,34 @@ public class ChannelAdverInfoController extends BaseController
 				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, "自由渠道的广告的任务类型只能是自由任务！", "", "", ""));
 				return;
 			}
-			
 			//TUser user = HttpSessionUtils.getCurrentUser(session);
-			channelAdverInfoService.saveOrUpd(info,file, request, fileAdverImg);
+			TChannelAdverInfo oldAdverInfo = channelAdverInfoService.getInfoById(info.getAdverId());
+			//增加任务数量
+			int changenum = info.getAdverCount() - oldAdverInfo.getAdverCount();
+			String endPointName = info.getAdverName() + "_" + info.getAdverId();
+			if(changenum > 0) 
+			{
+				AdverProducer ap = new AdverProducer(endPointName);
+				for(int i = 1; i <= changenum; i++) 
+				{
+					//更新剩余有效产品数量
+					String data = UUID.randomUUID().toString();
+					System.out.println("Put:" + data);
+					ap.sendMessage(data, endPointName);
+				}
+				//关闭此通道
+				ap.close();
+			}
+			else if (changenum < 0) 
+			{
+				for(int i = 0; i > changenum; i--) 
+				{
+					AdverQueueConsumer ss = new AdverQueueConsumer(endPointName);
+					ss.getMessage(endPointName);
+				}
+			}
 			
-//			Map<String,TChannelAdverInfo > xsAdverList = ArrayBlockQueueProducer.specialXSAdverList;
-//			//修改启动的任务
-//			if(info.getReceInterTime() > 0 || info.getSubmitInterTime() > 0) {
-//				if(xsAdverList.containsKey(info.getAdverId() + ""))
-//				{
-//					xsAdverList.get(info.getAdverId() + "").setReceInterTime(info.getReceInterTime());
-//					xsAdverList.get(info.getAdverId() + "").setSubmitInterTime(info.getSubmitInterTime());;
-//				}
-//			}
+			channelAdverInfoService.saveOrUpd(info,file, request, fileAdverImg, oldAdverInfo);
 			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		} 
@@ -248,30 +258,48 @@ public class ChannelAdverInfoController extends BaseController
 			for(String adverId : adverIds) 
 			{
 				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-//				if(adverInfo.getAdverCreatetime().getDay() < new Date().getDay()) {
-//					continue;
-//				}
-				
-				if(adverInfo.getAdverStatus() == status) {
+				String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
+				if(adverInfo.getAdverStatus() == status)
+				{
 					continue;
 				}
 				
 				channelAdverInfoService.updateAdverStatus(status, adverId);
 				if(status == 1)
 				{
-					ArrayBlockQueueProducer.addAdverList.add(adverId);
-					if(adverInfo.getReceInterTime() > 0 || adverInfo.getSubmitInterTime() > 0) {
-						//如果需要任务间隔，就加入间隔队列
-						adverInfo.setSubmiTimeZone(0);
-						adverInfo.setReceTimeZone(0);
-						ArrayBlockQueueProducer.specialXSAdverList.put(adverId,adverInfo);
+					//获取任务剩余的量先生成任务
+					//需要获取任务已存在的完成数量和正在进行中的数量
+					String tableName = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();
+					//正在进行的数量和完成数量
+					int adverNum = channelAdverInfoService.getadverStartAndCompleteCount(adverId, tableName);
+					//剩余的数量
+					int remainadverNum =  adverInfo.getAdverCount() - adverNum;
+					if(remainadverNum > 0)
+					{
+						//创建任务队列
+						//生成队列
+						AdverProducer ap = new AdverProducer(endPointName);
+						for(int i = 1; i <= remainadverNum; i++) 
+						{
+							//更新剩余有效产品数量
+							String data = UUID.randomUUID().toString();
+							System.out.println("Put:" + data);
+							ap.sendMessage(data, endPointName);
+						}
+						//关闭此通道
+						ap.close();
 					}
 				}
 				else
 				{
-					ArrayBlockQueueProducer.removeAdverList.add(adverId);
-					//任务停止移除间隔任务队列
-					ArrayBlockQueueProducer.specialXSAdverList.remove(adverId);
+					//清理队列中所有生成的任务
+					AdverQueueConsumer sume = new AdverQueueConsumer(endPointName);
+					Channel channel = sume.getChannel();
+					//清楚消息
+					//channel.queuePurge(endPointName);
+					//删除队列
+					channel.queueDelete(endPointName);
+					sume.close();
 				}
 			}
 			
@@ -284,28 +312,28 @@ public class ChannelAdverInfoController extends BaseController
 		}
 	}
 	
-	@RequestMapping("freshAdverNum")
-	public void freshAdverNum(String ids, HttpServletResponse response)
-	{
-		try 
-		{
-			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(ids));
-			
-			if(adverInfo != null)
-			{
-				//更新超时未完成的任务
-				userappidAdveridService.updateStatus2Invalid(adverInfo);
-				//更新任务数量
-				appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
-			}
-			
-			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
-		} 
-		catch (Exception e) 
-		{
-			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
-		}
-	}
+//	@RequestMapping("freshAdverNum")
+//	public void freshAdverNum(String ids, HttpServletResponse response)
+//	{
+//		try 
+//		{
+//			TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(ids));
+//			
+//			if(adverInfo != null)
+//			{
+//				//更新超时未完成的任务
+//				userappidAdveridService.updateStatus2Invalid(adverInfo);
+//				//更新任务数量
+//				appChannelAdverInfoService.updateAdverCountRemain(adverInfo);
+//			}
+//			
+//			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "", "", ""));
+//		} 
+//		catch (Exception e) 
+//		{
+//			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
+//		}
+//	}
 	
 	@RequestMapping("getKeywordRank")
 	public void getKeywordRank(String appStoreID, String keyword, HttpServletResponse response, Model model) {

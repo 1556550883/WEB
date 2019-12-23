@@ -19,12 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rabbitmq.client.Channel;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.sys.UploadVo;
+import com.ruanyun.web.producer.AdverQueueConsumer;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.NumUtils;
 import com.ruanyun.web.util.UploadCommon;
@@ -45,9 +47,9 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	/**
 	 * 查询广告列表（后台显示）
 	 */
-	public Page<TChannelAdverInfo> queryAdverList(Page<TChannelAdverInfo> page, TChannelAdverInfo t) 
+	public Page<TChannelAdverInfo> queryAdverList(Page<TChannelAdverInfo> page, TChannelAdverInfo t, String queryAdverTime) 
 	{
-		return channelAdverInfoDao.PageSql3(page, t);
+		return channelAdverInfoDao.PageSql3(page, t, queryAdverTime);
 	}
 	
 	public int createAdverTable(String adid, String channelID) 
@@ -55,9 +57,8 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		return channelAdverInfoDao.createAdverTable(adid, channelID);
 	}
 	
-	public void createAdverTable() 
-	{
-		
+	public int getadverStartAndCompleteCount(String adverId, String tableName) {
+		return channelAdverInfoDao.getadverStartAndCompleteCount(adverId,tableName);
 	}
 	
 	/**
@@ -73,7 +74,7 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	 * @param stepDesc 
 	 * @param stepName 
 	 */
-	public void saveOrUpd(TChannelAdverInfo info,MultipartFile file,HttpServletRequest request, MultipartFile fileAdverImg)
+	public void saveOrUpd(TChannelAdverInfo info,MultipartFile file,HttpServletRequest request, MultipartFile fileAdverImg, TChannelAdverInfo oldAdverInfo)
 	{
 		try
 		{
@@ -100,7 +101,6 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		
 		if(EmptyUtils.isNotEmpty(info.getAdverId()))
 		{
-			TChannelAdverInfo oldAdverInfo = getInfoById(info.getAdverId());
 			info.setAdverActivationCount((info.getAdverCount() - oldAdverInfo.getAdverCount()) + oldAdverInfo.getAdverActivationCount());
 			BeanUtils.copyProperties(info, oldAdverInfo, new String[]{"adverCreatetime","adverStatus","channelNum","adverNum","downloadCount","adverCountRemain"});
 			update(oldAdverInfo);
@@ -158,6 +158,15 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		return channelAdverInfoDao.queryAllStartAdvers();
 	}
 	
+	public List<TChannelAdverInfo>  queryAllNotStartAdvers()
+	{
+		return channelAdverInfoDao.queryAllNotStartAdvers();
+	}
+	
+	public List<TChannelAdverInfo>  queryAllStartAdversGroup()
+	{
+		return channelAdverInfoDao.queryAllStartAdversGroup();
+	}
 	/**
 	 * 功能描述: 更加广告编号 获取对象
 	 *
@@ -180,6 +189,12 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		channelAdverInfoDao.updateAdverStatus(status, ids);
 	}
 	
+	
+	public void updateAdverEndTime(String id)
+	{
+		channelAdverInfoDao.updateAdverEndTime(id);
+	}
+	
 	//自动增加任务更新任务信息
 	public void autoAddAdverCount(TChannelAdverInfo info)
 	{
@@ -191,9 +206,31 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	 * @param status
 	 * @param ids
 	 */
-	public void updateAdverStatusAll (Integer status)
+	public void updateAdverStatusAll (int status)
 	{
-		channelAdverInfoDao.updateAdverStatusAll(status);
+		List<TChannelAdverInfo> advers = queryAllNotStartAdvers();
+		for(TChannelAdverInfo info : advers) 
+		{
+			try
+			{
+				//清理队列中所有生成的任务
+				String endPointName = info.getAdverName() + "_" + info.getAdverId();
+				AdverQueueConsumer sume = new AdverQueueConsumer(endPointName);
+				Channel channel = sume.getChannel();
+				//清楚消息
+				//channel.queuePurge(endPointName);
+				//删除队列
+				channel.queueDelete(endPointName);
+				
+				sume.close();
+				
+				updateAdverStatus(2, info.getAdverId()+"");
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			} 
+		}
 	}
 	/**
 	 * 批量支付
@@ -219,9 +256,9 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	}
 	
 	
-	public int updateAdverActivationCount(TChannelAdverInfo adverInfo) 
+	public int updateAdverDownloadCount(TChannelAdverInfo adverInfo) 
 	{
-		return channelAdverInfoDao.updateAdverActivationCount(adverInfo);
+		return channelAdverInfoDao.updateAdverDownloadCount(adverInfo);
 	}
 	
 	public int getCountComplete(String adverId) 

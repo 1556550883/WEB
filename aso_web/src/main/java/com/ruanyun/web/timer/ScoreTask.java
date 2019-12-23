@@ -1,13 +1,10 @@
 package com.ruanyun.web.timer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.ruanyun.web.producer.ArrayBlockQueueProducer;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.LoginIpService;
@@ -48,17 +45,26 @@ public class ScoreTask
 		channelInfoService.updateDayTotal();
 		
 		channelAdverInfoService.updateAdverStatusAll(2);
-		
-		//移除不是当天的任务
-		//for()
-		ArrayBlockQueueProducer.removeAdverList.addAll(ArrayBlockQueueProducer.adverList);
     }  
 	
-	@Scheduled(cron="0 30 01 ? * MON") 
-    public void bakAdverInfoTable()
+	@Scheduled(cron="0 01 00 ? * * ")   //每天00点01分执行
+    public void updateChannelInfo()
 	{  
-		channelAdverInfoService.adverInfoTableBak();
+		System.out.print("run--updateChannelInfo");
+		String firstdate = TimeUtil.getFirstDayOfMonth();
+		String curdate = TimeUtil.GetdayDate();
+		if(firstdate.equalsIgnoreCase(curdate)) 
+		{
+			//当月的第一天去更新渠道数据
+			channelInfoService.updateChannelInfo();
+		}
     }  
+	
+//	@Scheduled(cron="0 30 01 ? * MON") 
+//    public void bakAdverInfoTable()
+//	{  
+//		channelAdverInfoService.adverInfoTableBak();
+//    }  
 	
 //	@Scheduled(cron="0/5 * *  * * ? ")//每5s执行一次
 //	public void test() {

@@ -79,7 +79,15 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		return model;
 	}
 	
+	public List<TChannelAdverInfo>  queryAllStartAdvers()
+	{
+		return channelAdverInfoDao.queryAllStartAdvers();
+	}
 
+	public List<TChannelAdverInfo>  queryAllStartAdversGroup()
+	{
+		return channelAdverInfoDao.queryAllStartAdversGroup();
+	}
 	/**
 	 * 获取广告列表
 	 */
@@ -189,6 +197,14 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		return channelAdverInfoDao.updateAdverCountRemainMinus1(adverInfo);
 	}
 	
+	/**
+	 * 广告完成数量增加一
+	 */
+	public int updateAdverDownloadCountAdd1(TChannelAdverInfo adverInfo)
+	{
+		return channelAdverInfoDao.updateAdverDownloadCountAdd1(adverInfo);
+	}
+	
 	public int updateAdverActivationRemainMinus1(TChannelAdverInfo adverInfo)
 	{
 		return channelAdverInfoDao.updateAdverActivationRemainMinus1(adverInfo);
@@ -196,9 +212,9 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	/**
 	 * 广告剩余数量更新
 	 */
-	public int updateAdverCountRemain(TChannelAdverInfo adverInfo) 
+	public int updateAdverCountAndRemain(String tablename , TChannelAdverInfo adverInfo) 
 	{
-		return channelAdverInfoDao.updateAdverCountRemain(adverInfo);
+		return channelAdverInfoDao.updateAdverCountAndRemain(tablename,adverInfo);
 	}
 	
 	/**
@@ -209,10 +225,17 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		return channelAdverInfoDao.getByCondition(adverInfo);
 	}
 	
-
 	public void exprotIDFA(HttpServletResponse response, String  adverIds)
 	{
-		List list = channelAdverInfoDao.exportExcel(adverIds);
+		String[] adverids = adverIds.split(",");
+		List list =  new ArrayList<>();
+		for(String i:adverids) 
+		{
+			TChannelAdverInfo adverInfo = get(TChannelAdverInfo.class, "adverId", Integer.valueOf(i));
+			String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();	
+			list.addAll(channelAdverInfoDao.exportExcel(tablename, i));
+		}
+		
 		String fileName = "IDFA";
 		String[] columns = {"idfa","ip","complete_time","adver_name"};
 		String[] headers = {"IDFA","IP","结束时间","关键词"};
@@ -254,26 +277,35 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		}
 	}
 	
-	public void releaseIp(String channelNum) {
+	public void releaseIp(String channelNum) 
+	{
 		channelAdverInfoDao.releaseIp(channelNum);
 	}
 	
 	//队列生产udid
 	@SuppressWarnings("rawtypes")
-	public void activated(HttpServletResponse response, String type) {
-		try {
+	public void activated(HttpServletResponse response, String type)
+	{
+		try
+		{
 			//udid生产者
 			String endname = type.replace("_", ",");
 			UdidQueueConsumer s = new UdidQueueConsumer(endname,false);
 			List list = channelAdverInfoDao.activated(type);
-			for(Object o : list) {
+			for(Object o : list) 
+			{
 				String udid = o.toString();
 				udid = udid.substring(6,udid.length() - 1);
 				s.sendMessage(udid, endname.toLowerCase());
+				//关闭此通道
 				System.out.println("---" + udid + "---");
 				channelAdverInfoDao.updateUdidStatus(udid,type);
 			}
-		} catch (IOException | TimeoutException e) {
+			
+			s.close();
+		} 
+		catch (IOException | TimeoutException e)
+		{
 			e.printStackTrace();
 		}
 	}

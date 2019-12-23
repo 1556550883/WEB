@@ -34,6 +34,7 @@ public class TChannelInfo  implements java.io.Serializable
 	private String flag1;
 	private String flag2;
 	private String flag3;
+	private Float lastMonthTotal;
 	private Float dayTotal;
 	private Float cumulativeTotal;
 	private String loginName;
@@ -41,67 +42,9 @@ public class TChannelInfo  implements java.io.Serializable
 	private String channelTypeName;  //渠道类型名称
 	private String systemType;//系统类型
 	private Integer isEnable;//是否启用
-	private float ydayNum;
 	private float todayNum;
 	private float monNum;
-	private float ydayScore;
-	private float todayScore;
-	private float monScore;
-
-	 @Transient
-    public float getYdayNum() {
-		return ydayNum;
-	}
-
-	public void setYdayNum(float ydayNum) {
-		this.ydayNum = ydayNum;
-	}
-
-	 @Transient
-	public float getTodayNum() {
-		return todayNum;
-	}
-
-	public void setTodayNum(float todayNum) {
-		this.todayNum = todayNum;
-	}
-
-	 @Transient
-	public float getMonNum() {
-		return monNum;
-	}
-
-	public void setMonNum(float monNum) {
-		this.monNum = monNum;
-	}
-
-	 @Transient
-	public float getYdayScore() {
-		return ydayScore;
-	}
-
-	public void setYdayScore(float ydayScore) {
-		this.ydayScore = ydayScore;
-	}
-
-	 @Transient
-	public float getTodayScore() {
-		return todayScore;
-	}
-
-	public void setTodayScore(float todayScore) {
-		this.todayScore = todayScore;
-	}
-
-	 @Transient
-	public float getMonScore() {
-		return monScore;
-	}
-
-	public void setMonScore(float monScore) {
-		this.monScore = monScore;
-	}
-
+	private float yestMonNum;
 	public TChannelInfo() 
     {
     }
@@ -141,6 +84,35 @@ public class TChannelInfo  implements java.io.Serializable
     {
         this.channelId = channelId;
     }
+    
+    @Transient
+   	public float getMonNum() {
+   		return monNum;
+   	}
+
+   	public void setMonNum(float monNum) {
+   		this.monNum = monNum;
+   	}
+
+   	
+    @Transient
+   	public float getYestMonNum() {
+   		return yestMonNum;
+   	}
+
+   	public void setYestMonNum(float yestMonNum) {
+   		this.yestMonNum = yestMonNum;
+   	}
+
+    @Transient
+   	public float getTodayNum() {
+   		return todayNum;
+   	}
+
+   	public void setTodayNum(float todayNum) {
+   		this.todayNum = todayNum;
+   	}
+
     
     @Column(name="channel_name", length=200)
     public String getChannelName() 
@@ -371,6 +343,17 @@ public class TChannelInfo  implements java.io.Serializable
 	public void setIsEnable(Integer isEnable)
 	{
 		this.isEnable = isEnable;
+	}
+
+	@Column(name="last_month_total")
+	public Float getLastMonthTotal() 
+	{
+		return lastMonthTotal;
+	}
+
+	public void setLastMonthTotal(Float lastMonthTotal) 
+	{
+		this.lastMonthTotal = lastMonthTotal;
 	}
 }
 

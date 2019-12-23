@@ -119,6 +119,7 @@
 				   <input name="remark" id="remark" style="width: 467px" class="" title="备注" type="text" value="<c:out value="${bean.remark}"></c:out>" maxlength="1000" size="60"/>   
 				</dd>
 		    </dl>
+		    
 			<dl style="width: 100%">
 				<dt>bundleId：</dt>
 				<dd>
@@ -132,7 +133,12 @@
 					<input id='adverImg' name='adverImg' type='hidden' value='${bean.adverImg}' maxlength='100'/>
 				</dd>
 		    </dl>
-		    
+		    <dl class="nowrap" style="width: 100%">
+				<dt>ip限制(0：否 1:是)：</dt>
+				<dd>
+				    <input name="isIpLimitEnabled" id="isIpLimitEnabled" class="mustFill" title="ip限制" type="text" value="<c:out value="${bean.isIpLimitEnabled}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
 		     <dl class="nowrap" style="width: 100%">
 				<dt>任务回调率0-1：</dt>
 				<dd>
@@ -201,15 +207,13 @@
 				    <input name="receInterTime" id="receInterTime" class="mustFill" title="领取任务间隔（单位：秒）" type="text" value="<c:out value="${bean.receInterTime}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
-		    
-		    
-		       <dl class="nowrap" style="width: 100%">
+
+		    <dl class="nowrap" style="width: 100%">
 				<dt>提交任务间隔（单位：秒）：</dt>
 				<dd>
 				    <input name="submitInterTime" id="submitInterTime" class="mustFill" title="提交任务间隔（单位：秒）" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
-		    
 		    
 		      <dl class="nowrap" style="width: 100%">
 				<dt>任务掺机型配置0-10(0代表全真实)：</dt>
@@ -329,7 +333,10 @@
 	            		$("#receInterTime").val(adverinfo["receInterTime"]);
 	            		$("#submitInterTime").val(adverinfo["submitInterTime"]);
 	            		$("#phoneModelPercent").val(adverinfo["phoneModelPercent"]);
-	            	}else{
+	            		$("#isIpLimitEnabled").val(adverinfo["isIpLimitEnabled"]);
+	            	}
+	            	else
+	            	{
 	            		var bundleid = json["bundleid"];
 	            		$("#bundleId").val(bundleid);
 	            	}

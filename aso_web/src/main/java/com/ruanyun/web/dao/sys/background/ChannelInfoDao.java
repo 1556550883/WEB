@@ -11,11 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Repository;
-
 import com.ruanyun.common.dao.impl.BaseDaoImpl;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
@@ -178,87 +174,36 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo>
 		return page;
 	}
 	
-	/**
-	 * 员工idfa统计
-	 */
-	public Page<TUserappidAdverid> queryEmployeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime) 
-			throws ParseException 
+	public int calculate(String channelNum, String monthdateStr,String yestMonthdate) 
 	{
-		List<TUserappidAdverid> result = new ArrayList<TUserappidAdverid>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
-		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd");
-		int index = 0;
-		int numPerPage = Integer.MAX_VALUE;
-		int totalCount = 0;
-		
-		StringBuilder sql = new StringBuilder("SELECT adver_id,adver_name,adver_price,adid")
-		.append(" FROM t_channel_adver_info")
-		.append(" WHERE adver_price>0.02")
-		.append(" AND exists(select 1 from t_userappid_adverid where adver_id=t_channel_adver_info.adver_id")
-		.append(" AND user_app_id=").append(userAppId)
-		.append(" AND status>='2'")
-		.append(" AND complete_time between '").append(sdf3.format(sdf2.parse(completeTime))).append("' and '").append(sdf3.format(sdf2.parse(completeTime))).append(" 23:59:59')")
-		.append(" ORDER BY adid ASC,adver_id ASC");
-		List<TChannelAdverInfo> adverList = sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
-		if(adverList != null)
-		{
-			for(TChannelAdverInfo adver:adverList)
-			{
-				sql = new StringBuilder("SELECT *")
-					.append(" FROM t_userappid_adverid")
-					.append(" WHERE adver_id=").append(adver.getAdverId())
-					.append(" AND user_app_id=").append(userAppId)
-					.append(" AND status>='2'")
-					.append(" AND complete_time between '").append(sdf3.format(sdf2.parse(completeTime))).append("' and '").append(sdf3.format(sdf2.parse(completeTime))).append(" 23:59:59'")
-					.append(" ORDER BY complete_time ASC");
-				List<TUserappidAdverid> taskList = sqlDao.getAll(TUserappidAdverid.class, sql.toString());
-				
-				if(taskList != null)
-				{
-					totalCount += taskList.size();
-					for(TUserappidAdverid task:taskList)
-					{
-						index++;
-						if(index <= (page.getPageNum()-1)*numPerPage)
-						{
-							continue;
-						}
-						else if(index > (page.getPageNum()-1)*numPerPage
-								&& index <= page.getPageNum()*numPerPage)
-						{
-							task.setStatusDescription("2".equals(task.getStatus()) ? "已完成":("3".equals(task.getStatus()) ? "已支付":""));
-							task.setAdverName(adver.getAdverName());
-							task.setAdverPrice(adver.getAdverPrice());
-							task.setCompleteTimeStr(sdf.format(task.getCompleteTime()));
-							result.add(task);
-						}
-						else
-						{
-							break;
-						}
-					}
-				}
-			}
-		}
-		
-		page.setResult(result);
-		page.setNumPerPage(numPerPage);
-		page.setTotalCount(totalCount);
-		page.setTotalPage(totalCount/numPerPage + totalCount%numPerPage>0?1:0);
-		return page;
-	}
-	
-	public int calculate(TChannelInfo t, String dateStr) {
 //		Date date = new Date();		
 //		String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM");
 		StringBuilder sql = new StringBuilder("SELECT COALESCE(SUM(download_count),0)  FROM t_channel_adver_info WHERE channel_num = ");
-		sql.append(t.getChannelNum());
-		sql.append(" AND adver_day_start > '");
-		sql.append(	dateStr);
-		sql.append("' ");
-		
+		sql.append(channelNum);
+		//获取上个月的信息
+		if(yestMonthdate != null) 
+		{
+			sql.append(" AND adver_day_start > '").append(yestMonthdate).append("'");
+			sql.append(" AND adver_day_start < '").append(monthdateStr).append("'");
+		}
+		else
+		{
+			sql.append(" AND adver_day_start > '").append(monthdateStr).append("'");
+		}
 		return sqlDao.getCount(sql.toString());
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	public List exportChannelData()
+	{
+		String yestMonthDate = TimeUtil.getLastMonth();
+		String dateStr = TimeUtil.GetMonthDate();
+		
+		StringBuffer sql = new StringBuffer("SELECT channel_num,channel_name,last_month_total,COALESCE(yesttotal,0) as total FROM (SELECT channel_num, channel_name,last_month_total,yesttotal FROM t_channel_info AS a Left JOIN ");
+		sql.append("(SELECT COALESCE(SUM(download_count),0) AS yesttotal,channel_num AS channelnum FROM t_channel_adver_info where adver_day_start >'"+yestMonthDate+"' and adver_day_start < '"+dateStr+"' GROUP BY channel_num) AS b");
+		sql.append(" ON a.channel_num = b.channelnum) AS c");
+		return sqlDao.getAll(sql.toString());
 	}
 	
 	public static void main(String[] args) {
@@ -268,17 +213,17 @@ public class ChannelInfoDao extends BaseDaoImpl<TChannelInfo>
 		System.out.println(dateStr);
 	}
 	
-	public void clearData()
+	public void updateChannelInfo()
 	{
-		StringBuffer sql = new StringBuffer("Update t_channel_info set cumulative_total=0");
+		StringBuffer sql = new StringBuffer("Update t_channel_info set last_month_total = cumulative_total, cumulative_total = 0");
 		sqlDao.execute(sql.toString());
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public List exportChannelData()
+	public TChannelInfo getChannelByNum(String channelnum)
 	{
-		StringBuffer sql = new StringBuffer("select channel_num, channel_name, cumulative_total "
-				+ " from t_channel_info");
-		return sqlDao.getAll(sql.toString());
+		StringBuffer sql = new StringBuffer("SELECT * from t_channel_info WHERE channel_num = '").append(channelnum + "'");
+		return sqlDao.get(TChannelInfo.class, sql.toString());	
 	}
+	
+	
 }

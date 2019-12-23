@@ -151,6 +151,13 @@
 				</dd>
 		    </dl>
 		    
+		     <dl class="nowrap" style="width: 100%">
+				<dt>ip限制(0：否 1:是)：</dt>
+				<dd>
+				    <input name="isIpLimitEnabled" id="isIpLimitEnabled" class="mustFill" title="ip限制(0：否 1:是)" type="text" value="<c:out value="${bean.isIpLimitEnabled}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
+		    
 		        <dl class="nowrap" style="width: 100%">
 				<dt>任务回调率0-1：</dt>
 				<dd>

@@ -1,5 +1,7 @@
 package com.ruanyun.web.service.background;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,11 +28,31 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.queryMissionCount(info);
 	}
 	
-	public Page<TUserappidAdverid> queryMission(Page<TUserappidAdverid> page, TUserappidAdverid info) 
+	public Integer getIPLimitCount(String ip, int digit, String tablename) 
 	{
-		return userappidAdveridDao.PageSql(page, info);
+		return userappidAdveridDao.getIPLimitCount(ip,digit,tablename);
 	}
 	
+	public Integer getIPlocalLimitCount(String iplocal, String tablename) 
+	{
+		return userappidAdveridDao.getIPlocalLimitCount(iplocal,tablename);
+	}
+	
+	public int saveTask(String tablename, TUserappidAdverid task)
+	{
+		return userappidAdveridDao.saveTask(tablename,task);
+	}
+	
+	public Page<TUserappidAdverid> queryMission(Page<TUserappidAdverid> page, TUserappidAdverid info, String tablename) 
+	{
+		return userappidAdveridDao.PageSql(page, info,tablename);
+	}
+	
+	public TUserappidAdverid queryByCondition(TUserappidAdverid info, String tablename,String receTime) 
+	{
+		return userappidAdveridDao.queryByCondition(info,tablename,receTime);
+	}
+	//queryByCondition
 	public Page<TUserappidAdverid> queryMissionDistinct(Page<TUserappidAdverid> page, TUserappidAdverid info)
 	{
 		return userappidAdveridDao.PageSqlDistinct(page, info);
@@ -41,9 +63,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.getScoreDetails(page, appid);
 	}
 	
-	public int updateStatus2OpenApp(TUserappidAdverid info)
+	public int updateStatus2OpenApp(String tablename,TUserappidAdverid info)
 	{
-		return userappidAdveridDao.updateStatus2OpenApp(info);
+		return userappidAdveridDao.updateStatus2OpenApp(tablename, info);
 	}
 	
 	public int deleteOverTimeAdver(TUserappidAdverid info)
@@ -57,15 +79,20 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return super.delete(TUserappidAdverid.class, propertyNames, values);
 	}
 	
-	public int updateSpecialComplete(TUserappidAdverid info) 
+	public int updateSpecialComplete(String tablename, String status,String completetime,String adverid, String idfa) 
 	{
-		return userappidAdveridDao.updateSpecialComplete(info);
+		return userappidAdveridDao.updateSpecialComplete(tablename, status,completetime,adverid,idfa);
 	}
 	
-	public int updateStatus2Complete(TUserappidAdverid info) 
+	public int updateSpecialComplete(String tablename, String status,Date completetime,String adverid, String idfa) 
 	{
-		return userappidAdveridDao.updateStatus2Complete(info);
+		return userappidAdveridDao.updateSpecialComplete(tablename, status,completetime,adverid,idfa);
 	}
+	
+//	public int updateStatus2Complete(TUserappidAdverid info) 
+//	{
+//		return userappidAdveridDao.updateStatus2Complete(info);
+//	}
 	
 	public int updateReceiveTime(TUserappidAdverid info) 
 	{
@@ -77,6 +104,10 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.updateAdverStatus(info);
 	}
 	
+	public int updateStatus(TUserappidAdverid info) 
+	{
+		return userappidAdveridDao.updateStatus(info);
+	}
 	
 	public int updateTaskStatus(TUserappidAdverid info) 
 	{
@@ -90,9 +121,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 	/**
 	 * 更新超时未完成任务的状态，并返回更新行数
 	 */
-	public int updateStatus2Invalid(TChannelAdverInfo adverInfo) 
+	public int updateStatus2Invalid(TChannelAdverInfo adverInfo, String tablename) 
 	{
-		return userappidAdveridDao.updateStatus2Invalid(adverInfo);
+		return userappidAdveridDao.updateStatus2Invalid(adverInfo,tablename);
 	}
 	
 	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip) 
@@ -100,14 +131,21 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.getTasks(adid, idfa, ip);
 	}
 	
-	public Page<TUserappidAdverid> getTasksByIdfaOrIP(String idfa, String ip) 
+	public Page<TUserappidAdverid> getTasksByIdfaOrIP(String idfa, String ip,String channelID, String adid)
 	{
-		return userappidAdveridDao.getTasksByIdfaOrIP(idfa, ip);
+		return userappidAdveridDao.getTasksByIdfaOrIP(idfa, ip,channelID,adid);
 	}
 	
+	//散户方法
 	public Page<TUserappidAdverid> getTasksByIdfa(String idfa) 
 	{
 		return userappidAdveridDao.getTasksByIdfa(idfa);
+	}
+	
+	//获取任务明细
+	public TUserappidAdverid getTaskDetailByIdfa(String idfa,String tablename) 
+	{
+		return userappidAdveridDao.getTaskDetailByIdfa(idfa,tablename);
 	}
 	
 	public Page<TUserappidAdverid> getTasks() 
@@ -115,13 +153,19 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.getTasks();
 	}
 	
+	//获取任务
+	public TUserappidAdverid getTask(String tablename,String idfa,String adverId) 
+	{
+		return userappidAdveridDao.getTask(tablename,idfa,adverId);
+	}
+	
 	public Page<TUserappidAdverid> getTasking(String idfa) 
 	{
 		return userappidAdveridDao.getTasking(idfa);
 	}
 	
-	public Page<TUserappidAdverid> getLastSpecialTask(Page<TUserappidAdverid> page , String adverId) {
-		return userappidAdveridDao.getLastSpecialTask(page, adverId);
+	public Page<TUserappidAdverid> getLastSpecialTask(Page<TUserappidAdverid> page ,String tableName, String adverId) {
+		return userappidAdveridDao.getLastSpecialTask(page, tableName, adverId);
 	}
 
 	

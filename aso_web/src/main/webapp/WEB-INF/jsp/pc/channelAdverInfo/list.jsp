@@ -29,13 +29,11 @@
 			<li><a class="add" onclick="openNav('channelAdverInfo/toedit?channelNum=${bean.channelNum}','添加广告信息','main_index3')"><span>添加</span></a></li>
 			<li><a class="edit" title="确定要启用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
 			<li><a class="edit" title="确定要停用选择的信息吗？" href="channelAdverInfo/updateAdverStatus?status=2"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
-			<li><a class="edit" title="确定要刷新选择的信息吗？" href="channelAdverInfo/freshAdverNum"  target="selectedTodo" postType="string" rel="ids"><span>刷新</span></a></li>
 			<li><span style="" onclick= "show()">导出idfa</span></li>
 			<li><span style="" onclick= "exportadver(0)">昨日任务明细</span></li>
 			<li><span style="" onclick= "exportadver(1)">今日任务明细</span></li>
 			<li><span style="" onclick= "exportMonthAadver(0)">上月任务明细</span></li>
 			<li><span style="" onclick= "exportMonthAadver(1)">当月任务明细</span></li>
-			<li><span style="" onclick= "releaseIp()">释放渠道ip</span></li>
 			<li class="line">line</li>
 		</ul>
 	</div>

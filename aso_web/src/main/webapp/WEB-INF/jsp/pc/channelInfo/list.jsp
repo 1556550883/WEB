@@ -44,7 +44,6 @@
 		<li><a class="delete" title="确定要停用吗？" href="channelInfo/updateIsEnable?isEnable=0"  target="selectedTodo" postType="string" rel="ids"><span>停用</span></a></li>
 		<li><a mask=true class="search"  onclick="openNavU('channelInfo/toEdit?channelId=','查看信息','main_index')"><span>查看</span></a></li>
 		<li><a class="add" onclick= "exportChannelData()"><span>渠道数据导出</span></a></li>
-		<li><a class="add" onclick= "clearData()"><span>清理数据</span></a></li>
 		<li class="line">line</li>
 	</ul>
 </div>
@@ -63,6 +62,8 @@
 			<th align="center">月总量</th>
 			<th align="center">今日金额</th>
 			<th align="center">月总额</th>
+			<th align="center">上月总量</th>
+			<th align="center">上月金额</th>
 			<th align="center">管理</th>
 		</tr>
 	</thead>
@@ -82,6 +83,8 @@
                  <td>${item.monNum}</td>
                  <td>${item.dayTotal}</td>
                  <td>${item.cumulativeTotal}</td>
+                 <td>${item.yestMonNum}</td>
+                 <td>${item.lastMonthTotal}</td>
 				<td><c:if test="${item.channelType!=3}"><a style="cursor:pointer;" onclick="openNav('channelAdverInfo/list?channelNum=${item.channelNum}','广告管理','main_index2')"><div style="color: blue">广告管理</div></a></c:if>
 					<c:if test="${item.channelType==3}">
 						<!-- <a style="cursor: pointer;" onclick="openNav('adverInferface/toConfigure?inferfaceType=2&inferfaceRequestType=2&adverNum=${item.channelNum}','参数配置','main_index2')"><span style="color: blue">调用服务端</span> </a> -->

@@ -1,12 +1,7 @@
 package com.ruanyun.web.producer;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +10,7 @@ import java.util.concurrent.Executors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.Channel;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.web.controller.sys.app.ChannelClassification;
 import com.ruanyun.web.model.AppCommonModel;
@@ -38,294 +33,162 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 	@Autowired
 	private UserappidAdveridService mUserappidAdveridService;
 	
-	public static List<String> addAdverList = new ArrayList<String>();
-	public static List<String> removeAdverList = new ArrayList<String>();
-	public static List<String> adverList = new ArrayList<String>();
 	public static ExecutorService pool = Executors.newCachedThreadPool();  
-	public static Map<String, AdverProducer> adverProducer = new HashMap<String, AdverProducer>();
-	public static List<TChannelAdverInfo > autoAddAdverList = new ArrayList<TChannelAdverInfo>();
-	public static List<TChannelAdverInfo > autoRemoveAddAdverList = new ArrayList<TChannelAdverInfo >();
-	public static List<TChannelAdverInfo > autoTimeAdverList = new ArrayList<TChannelAdverInfo >();
-	//需要卡时间的小手任务
-	public static Map<String,TChannelAdverInfo > specialXSAdverList = new HashMap<String,TChannelAdverInfo >();
-	private static java.util.Random random = new java.util.Random();
-	private boolean isAutoAddAdver = false;
-	private List<TUserappidAdverid> taskList = new ArrayList<TUserappidAdverid>();
-	Page<TUserappidAdverid> pageList = new Page<TUserappidAdverid>();
-	private static Map<String, List<TUserappidAdverid>> taskMap = new HashMap<String, List<TUserappidAdverid>>();
 	private AppCommonModel model = new AppCommonModel(-1, "出错！");
-
 	@Override
 	public void run() 
 	{
 		while (true)
 		{
-			if(addAdverList.size() > 0) 
+			try
 			{
-				adverList.addAll(addAdverList);
-				addAdverList.clear();
-				removeDuplicate(addAdverList);
-			}
-			
-			try 
-			{	
-				if(removeAdverList.size() > 0) 
-				{
-					adverList.removeAll(removeAdverList);
-					//removeAdverList 执行不多，内存无隐患
-					for(String adverId : removeAdverList) 
-					{
-						TChannelAdverInfo infoA = mChannelAdverInfoService.getInfoById(Integer.parseInt(adverId));
-						//如果任务开始时间大于今日的就不停止
-						if(infoA.getAdverDayStart().getTime()/1000 > ChannelClassification.getTimestamp()) {
-							continue;
-						}
-						
-						String endPointName = infoA.getAdverName() + "_" + infoA.getAdverId();
-						//移除消费者
-						QueueingConsumer queueingConsumer = AdverQueueConsumer.consumerMap.get(endPointName);
-						if(queueingConsumer != null) 
-						{
-							queueingConsumer.getChannel().close();
-							queueingConsumer.getChannel().getConnection().close();
-						}
-				
-						AdverQueueConsumer.consumerMap.remove(endPointName);
-						//删除 rabbitmq queue
-						AdverProducer adver = adverProducer.get(endPointName);
-						if(adver == null) 
-						{
-							adver = new AdverProducer(endPointName);
-						}
-						
-						adver.channel.queueDelete(endPointName, false, false);
-						adver.close();
-						
-						adverProducer.remove(endPointName);
-						mUserappidAdveridService.updateStatus2Invalid(infoA);
-						//更新任务数量
-						mAppChannelAdverInfoService.updateAdverCountRemain(infoA);
-						
-						TChannelAdverInfo newInfoAdver = mChannelAdverInfoService.getInfoById(Integer.parseInt(adverId));
-						int countComplete = mChannelAdverInfoService.getCountComplete(adverId);
-						newInfoAdver.setDownloadCount(countComplete);//用这个来记录完成数量
-						newInfoAdver.setAdverActivationCount(newInfoAdver.getAdverCountRemain());
-						mChannelAdverInfoService.updateAdverActivationCount(newInfoAdver);
-					}
-					
-					removeAdverList.clear();
-				}
-				
-			//根据adverid获取最新的任务
-			if(adverList.size() > 0) {
 				List<TChannelAdverInfo> advers = mChannelAdverInfoService.queryAllStartAdvers();
-				//String ids = StringUtils.join(adverList, ",");
-				//List<TChannelAdverInfo> advers = mChannelAdverInfoService.getInfoByIds(ids);
-				//此处rds cpu使用率存在隐患
+				
 				for(TChannelAdverInfo info : advers) 
 				{
-					String mAdverId = info.getAdverId() + "";
-					if(!adverList.contains(mAdverId)) {
-						System.out.print("1");
-						adverList.add(mAdverId);
-					}
-					//此处每次都去获取最新的任务 rds  改成5s去请求一次，减轻压力
-					//TChannelAdverInfo info = mChannelAdverInfoService.getInfoById(Integer.parseInt(mAdverId));
+					String adverid = info.getAdverId() + "";
 					String endPointName = info.getAdverName() + "_" + info.getAdverId();
-					isAutoAddAdver = false;
-					for(TChannelAdverInfo inf: autoAddAdverList) {
-						if(inf.getAdverId().equals(info.getAdverId())) {
-							isAutoAddAdver = true;
-							break;
-						}
-					}
-					if(info.getAdverCountRemain() <= 0 && info.getAddTaskLimit() > 0  && !isAutoAddAdver) {
-						int result = random.nextInt(10) + 1;
-						if(result < 5) {
-							result = 5;
-						}
+					//如果任务还没开始就直接跳过
+					if(info.getAdverDayStart().getTime()/1000 > ChannelClassification.getTimestamp())
+					{continue;}
+					
+					//任务已经完结就可以移除任务  衡量下需要用什么来定位任务的数量，如果自增任务也结束了才算真的结束 需要判断是否自增结束
+					//getAddTaskLimit-任务需要自动增加的总数
+					if((info.getAdverCount() == info.getDownloadCount() && info.getAddTaskLimit() <= 0) || info.getAdverCount() < info.getDownloadCount()) 
+					{
+						AdverQueueConsumer sume = new AdverQueueConsumer(endPointName);
+						Channel channel = sume.getChannel();
+						//清楚消息
+						//channel.queuePurge(endPointName);
+						//删除队列
+						channel.queueDelete(endPointName);
+						sume.close();
 						
-						int inter = (info.getTaskInterval() * result)/10  + 1;//最少1s
-						info.setTaskInterval(inter);
-						info.setTaskEndTime(new Date().getTime());
-						autoAddAdverList.add(info);
+						//更新任务状态 任务完结 完结任务应该在自增任务完全之后才执行
+						mChannelAdverInfoService.updateAdverStatus(2, adverid);
+					}
+					else if (info.getAddTaskLimit() > 0 && info.getAdverCount() == info.getDownloadCount()) 
+					{
+						//说明是需要自增的任务，而且任务数量为0 更新任务中间的结束时间
+						mChannelAdverInfoService.updateAdverEndTime(adverid);
 					}
 					
-					//任务完结
-					if(info.getDownloadCount() >= info.getAdverCount() && info.getAddTaskLimit() <= 0) 
+					//自动增加任务 如果任务需要增加的总数大于0 就代表需要增加任务，而且到了增加任务的时间就自增任务
+					int addTask = 0;
+					if(info.getTaskEndTime() != null 
+							&& (new Date().getTime() - info.getTaskEndTime().getTime()/1000) >= info.getTaskInterval() 
+							&& info.getAdverCount() == info.getDownloadCount()
+							&& info.getAddTaskLimit() > 0) 
 					{
-						//任务完成，结束
-						mChannelAdverInfoService.updateAdverStatus(2, mAdverId);
-						removeAdverList.add(info.getAdverId() + "");
-						
-						//任务完成之后去掉特殊任务列表
-						ArrayBlockQueueProducer.specialXSAdverList.remove(mAdverId);
-						
-						continue;
-					}
-					
-					//这里判断任务是否需要自动提交
-					if(specialXSAdverList.containsKey(mAdverId)) 
-					{
-						TChannelAdverInfo interAdverInfo = ArrayBlockQueueProducer.specialXSAdverList.get(mAdverId);
-						long now = ChannelClassification.getTimestamp();
-						long interTime = now  - interAdverInfo.getSubmiTimeZone();
-						//随机的一个数字
-						int rad = random.nextInt(5) + 1;
-						int s = interAdverInfo.getSubmitInterTime() * rad;
-						if(interTime > s) 
+						//需要自增的数量
+						addTask = info.getAddTask();
+						if(info.getAddTaskLimit() < info.getAddTask())
 						{
-							//这里就是每次去激活任务不需要都去数据库里面获取数据
-							//超过了时间间隔就需要自动提交一个任务并且更新timeZone
-							interAdverInfo.setSubmiTimeZone(now);
-							//自动提交任务，渠道任务2.1状态最早的一个进行提交
-							if(taskMap.containsKey(mAdverId)) {
-								taskList = taskMap.get(mAdverId);
-								//说明有值 当激活列表为空的时候再去数据库里面获取 减少rds压力
-								if(taskList.size() <= 0) {
-									//获取最新的任务激活列表
-									taskList = mUserappidAdveridService.getLastSpecialTask(pageList, mAdverId).getResult();
-									taskMap.remove(mAdverId);
-									taskMap.put(mAdverId, taskList);
-								}
-							}else {
-								//第一次添加进入map
-								taskList = mUserappidAdveridService.getLastSpecialTask(pageList, mAdverId).getResult();
-								taskMap.put(mAdverId, taskList);
-							} 
-							Iterator<TUserappidAdverid> it = taskList.iterator();
-							if(it.hasNext()) {
-								TUserappidAdverid specialTask = taskList.get(0);
-								//任务被使用之后就要移除队列
-								taskList.remove(0);
-								String phoneModel = specialTask.getPhoneModel();
-								String phoneOs = specialTask.getPhoneVersion();
-								String [] arr1=phoneModel.split("-");
-								String [] arr2=phoneOs.split("-");
-								model = ChannelClassification.channelActive(model,interAdverInfo,Integer.parseInt(interAdverInfo.getChannelNum())
-										, specialTask.getIdfa(), specialTask.getIp(), arr1, arr2, specialTask.getUserUdid());
-								//任务激活成功，进入正式队列
-								TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-								tUserappidAdverid.setIdfa(specialTask.getIdfa());
-								tUserappidAdverid.setAdverId(specialTask.getAdverId());
-								if(model.getResult() == 1)
+							addTask = info.getAddTaskLimit();
+							//说明马上结束自增
+							info.setAddTaskLimit(0);
+						}
+						else
+						{
+							info.setAddTaskLimit(info.getAddTaskLimit() - info.getAddTask());
+						}
+						
+						int advercount = info.getAdverCount() + addTask;
+						info.setAdverCount(advercount);
+						//如果这里不去更新任务数量和增加任务 就需要在后面进行任务处理
+					}
+					
+					//自动提交任务
+					//所有任务都进行自动提交，只是获取到任务最早需要提交的task 如果提交间隔大于0就说明需要帮提交间隔随机，不然直接上报
+					//需要获取表中状态是2.1的任务，然后进行自动提交任务
+					String tablename = "t_adver_"+ info.getChannelNum() + "_" + info.getAdid();	
+					Page<TUserappidAdverid> pageList = new Page<TUserappidAdverid>();
+					
+					//回调任务是不需要自动提交的
+					if(!"1".equals(info.getTaskType())) 
+					{
+						pageList = mUserappidAdveridService.getLastSpecialTask(pageList,tablename,adverid);
+						if(pageList.getResult().size() > 0)
+						{
+							//获取当前表中存在的2.1数据，然后对这个数据进行上报
+							for(TUserappidAdverid taskinfo : pageList.getResult()) 
+							{
+								//间距多少s了
+								//超过提交时间就直接提交
+								if(new Date().getTime() >= taskinfo.getCompleteTime().getTime())
 								{
-									//把单子发送到队列
-									//1.7代表放弃的状态 2.2表示进入真实结算队列状态
-									tUserappidAdverid.setStatus("2.2");
-									//此处进行io操作
-									mUserappidAdveridService.updateAdverStatus(tUserappidAdverid);
+									//判断是否点击激活成功
+									String phoneModel = taskinfo.getPhoneModel();
+									String phoneOs = taskinfo.getPhoneVersion();
+									String [] arr1=phoneModel.split("-");
+									String [] arr2=phoneOs.split("-");
 									
-									TUserScore score = new TUserScore();
-									score.setUserNick(specialTask.getIdfa());//标记任务的idfa
-									String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, specialTask.getUserAppId());
-									score.setUserNum(userNum);
-									score.setUserScoreId(Integer.valueOf(mAdverId));//标记得分的 任务
-									score.setType(0);
-									//只作用于工作室
-									float sco = ArithUtil.subf(interAdverInfo.getAdverPrice(), interAdverInfo.getPriceDiff());
-									//float sco = (float) (adverInfo.getAdverPrice() - adverInfo.getPriceDiff());
-									score.setScore(sco);
-									
-									try {
+									//任务真实激活时间
+									model = ChannelClassification.channelActive(model,info, taskinfo.getIdfa(), taskinfo.getIp(), arr1, arr2, taskinfo.getUserUdid());
+									//激活成功
+									if(model.getResult() == 1) 
+									{
+										TUserScore score = new TUserScore();
+										score.setUserNick(taskinfo.getIdfa());//标记任务的idfa
+										String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, taskinfo.getUserAppId());
+										score.setUserNum(userNum);
+										score.setLevelName(tablename);
+										score.setUserScoreId(info.getAdverId());//标记得分的 任务
+										score.setType(0);
+										//只有工作室
+										float sco = ArithUtil.subf(info.getAdverPrice(), info.getPriceDiff());
+										score.setScore(sco);
+										//发送任务到积分系统
 										QueueProducer.getQueueProducer().sendMessage(score, "socre");
-									} catch (Exception e) {
-										e.printStackTrace();
 									}
-								}else {
-									//1.7代表放弃的状态
-									tUserappidAdverid.setStatus("1.7");
-									mUserappidAdveridService.updateSpecialTaskStatus(tUserappidAdverid);
-								}	
+									else
+									{
+										//激活失败
+										//1.7代表放弃的状态
+										taskinfo.setStatus("1.7");
+										mUserappidAdveridService.updateSpecialTaskStatus(taskinfo);
+									}
+								}
 							}
 						}
 					}
 					
-					AdverProducer ap;
-					if(!adverProducer.containsKey(endPointName)) 
+				
+					//自动更新任务数量
+					//大于0就说明任务进行了自动增加操作 就需要对任务进行自动 还需要对任务的数量进行更新
+					//任务剩余的数量，对任务状态进行时间查看，如果超过有效时间就设定为1.6
+					//更新任务超时的数量
+					int giveupNum = mUserappidAdveridService.updateStatus2Invalid(info, tablename);
+					int remain = addTask + giveupNum;
+					if(remain > 0)
 					{
-						ap = new AdverProducer(endPointName);
-						adverProducer.put(endPointName, ap);
-					}
-					else
-					{
-						ap = adverProducer.get(endPointName);
-					}
-					
-					//创建消费者
-					if(!AdverQueueConsumer.consumerMap.containsKey(endPointName)) 
-					{
-						new AdverQueueConsumer(endPointName);
-					}
-					
-					if(info.getAdverActivationCount() > 0 && info.getAdverCountRemain() > 0)
-					{
-						for(int i = 1; i <= info.getAdverActivationCount(); i++) 
+						//创建任务队列
+						//生成队列
+						AdverProducer ap = new AdverProducer(endPointName);
+						for(int i = 1; i <= remain; i++) 
 						{
 							//更新剩余有效产品数量
 							String data = UUID.randomUUID().toString();
 							System.out.println("Put:" + data);
 							ap.sendMessage(data, endPointName);
 						}
-						
-						mAppChannelAdverInfoService.updateAdverActivationRemainMinus1(info);
+						//关闭此通道
+						ap.close();
+						//更新任务数量
 					}
-					else 
-					{	
-						 //更新任务数量
-						int count = mUserappidAdveridService.updateStatus2Invalid(info);
-						mAppChannelAdverInfoService.updateAdverCountRemain(info);
-						int countComplete = mChannelAdverInfoService.getCountComplete(mAdverId);
-						info.setDownloadCount(countComplete);//用这个来记录完成数量
-						info.setAdverActivationCount(count);
 					
-						mChannelAdverInfoService.updateAdverActivationCount(info);
-					 }
-				}
-			}
-				//任务自动增加 此处也不多，res内存无隐患
-				for(TChannelAdverInfo info : autoAddAdverList) {
-					
-					if((new Date().getTime() - info.getTaskEndTime())/1000 >= info.getTaskInterval() &&  info.getAddTaskLimit() > 0) 
-					{
-						//增加任务 以及移除自动增加队列
-						autoRemoveAddAdverList.add(info);
-						int addlimit = info.getAddTaskLimit() - info.getAddTask();
-						if(addlimit <= 0) {
-							//不需要在自动增加就从自动增加队列移除
-							addlimit = 0;
-							info.setAddTask(info.getAddTaskLimit());
-						}
-						
-						int advercount = info.getAdverCount() + info.getAddTask();
-						int adverActivationCount = info.getAdverActivationCount() + info.getAddTask();
-						info.setAddTaskLimit(addlimit);
-						info.setAdverCount(advercount);
-						info.setAdverStatus(1);
-						info.setAdverCountRemain(info.getAddTask());
-						info.setAdverActivationCount(adverActivationCount);
-						mChannelAdverInfoService.autoAddAdverCount(info);
-					}
+					//更新任务剩余的数量，每次都执行，否则前端显示不准确
+					mAppChannelAdverInfoService.updateAdverCountAndRemain(tablename, info);
 				}
 				
-				autoAddAdverList.removeAll(autoRemoveAddAdverList);
-				
-				//下面是任务上报进行的限制
-				Thread.sleep(2000);
+				Thread.sleep(1000);
             } 
 			catch (Exception e)
 			{
 				e.printStackTrace();
-				 setChanged();
-		         notifyObservers();
+				setChanged();
+		        notifyObservers();
 			}
 		}
 	}
-	
-	private void removeDuplicate(List<String> list) 
-	{
-        HashSet<String> h = new HashSet<String>(list);
-        list.clear();
-        list.addAll(h);
-    }
 }

@@ -5,7 +5,6 @@
  */
 package com.ruanyun.web.service.background;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +16,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
@@ -28,11 +26,8 @@ import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TPhoneUdidWithIdfa;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.model.sys.TUser;
-import com.ruanyun.web.model.sys.UploadVo;
 import com.ruanyun.web.service.sys.UserService;
-import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.ExcelUtils;
-import com.ruanyun.web.util.UploadCommon;
 
 @Service
 public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
@@ -51,9 +46,9 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 		return channelInfoDao.queryPage(page, t);
 	}
 	
-	public int calculate(TChannelInfo t, String da) 
+	public int calculate(String channelNum, String da,String yestda) 
 	{
-		return channelInfoDao.calculate(t, da);
+		return channelInfoDao.calculate(channelNum, da, yestda);
 	}
 	
 	/**
@@ -68,11 +63,11 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 	/**
 	 * 员工idfa统计
 	 */
-	public Page<TUserappidAdverid> queryEmployeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime) 
-			throws ParseException 
-	{
-		return channelInfoDao.queryEmployeeIdfaStatistics(page, userAppId, completeTime);
-	}
+//	public Page<TUserappidAdverid> queryEmployeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime) 
+//			throws ParseException 
+//	{
+//		return channelInfoDao.queryEmployeeIdfaStatistics(page, userAppId, completeTime);
+//	}
 
 	/**
 	 * 功能描述：增加或者修改类型
@@ -80,25 +75,8 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 	 * @param t
 	 */
 	public Integer saveOrupdate(TChannelInfo info, HttpServletRequest request,
-			TUser user,MultipartFile picFile) 
+			TUser user) 
 	{
-		try 
-		{
-			if (picFile.getSize() != 0) 
-			{
-				UploadVo vo = UploadCommon.uploadPic(picFile, request,
-						Constants.FILE_IMG, "gif,jpg,jpeg,bmp,png");
-				if (vo.getResult() == 1) 
-				{
-					info.setChannelImg(vo.getFilename());
-				}
-			}
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		
 		if (info != null) 
 		{
 			if (EmptyUtils.isNotEmpty(info.getChannelId()) && info.getChannelId() != 0) 
@@ -178,17 +156,22 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 		return channelInfo;
 	}
 	
-	public void clearData()
+	public TChannelInfo getChannelByNum(String channelnum)
 	{
-		channelInfoDao.clearData();
+		return channelInfoDao.getChannelByNum(channelnum);
+	}
+	
+	public void updateChannelInfo()
+	{
+		channelInfoDao.updateChannelInfo();
 	}
 	
 	public void exportChannelData(HttpServletResponse response)
 	{
 		List list = channelInfoDao.exportChannelData();
 		String fileName = "channelDetail";
-		String[] columns = {"channel_num","channel_name","cumulative_total"};
-		String[] headers = {"渠道号","渠道名","总金额"};
+		String[] columns = {"channel_num","channel_name","last_month_total","total"};
+		String[] headers = {"渠道号","渠道名","上月总金额","上月总数量"};
 		try {
 			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
 			SysCode.DATE_FORMAT_STR_L);

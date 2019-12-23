@@ -18,9 +18,9 @@ import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.TimeUtil;
+import com.ruanyun.web.controller.sys.app.ChannelClassification;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
-import com.ruanyun.web.producer.ArrayBlockQueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
@@ -50,8 +50,8 @@ public class ChannelH5Controller extends BaseController
 			Date date = new Date();		
 			String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM");
 			String dateStrday = TimeUtil.doFormatDate(date,"yyyy-MM-dd");
-			t.setMonNum(channelInfoService.calculate(t, dateStr));
-			t.setTodayNum(channelInfoService.calculate(t, dateStrday));
+			t.setMonNum(channelInfoService.calculate(t.getChannelNum(), dateStr,null));
+			t.setTodayNum(channelInfoService.calculate(t.getChannelNum(), dateStrday,null));
 		}
 		
 		addModel(model, "pageList", page);
@@ -63,7 +63,7 @@ public class ChannelH5Controller extends BaseController
 	@RequestMapping("appAdverList")
 	public String getChannelappAdverInfoList(Page<TChannelAdverInfo> page,TChannelAdverInfo info,Model model)
 	{
-		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info);
+		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info,ChannelClassification.GetYestdayDate());
 		for(TChannelAdverInfo adverInfo : queryAdver.getResult()) {
 			//第二天一点之后算完结任务
 			if(adverInfo.getAdverDayEnd().getDay() < new Date().getDay() && new Date().getHours() > 1) {
@@ -83,7 +83,7 @@ public class ChannelH5Controller extends BaseController
 	
 	/**
 	 * 批量审核
-	 */
+	
 	@RequestMapping("changeStatus")
 	public void changeStatus(String ids, HttpServletResponse response)
 	{
@@ -131,6 +131,8 @@ public class ChannelH5Controller extends BaseController
 			super.writeJsonData(response, -1);
 		}
 	}
+	 */
+	
 	
 	/**
 	 * 
@@ -153,7 +155,8 @@ public class ChannelH5Controller extends BaseController
 				return;
 			}
 			
-			channelAdverInfoService.saveOrUpd(info,file, request, fileAdverImg);
+			TChannelAdverInfo oldAdverInfo = channelAdverInfoService.getInfoById(info.getAdverId());
+			channelAdverInfoService.saveOrUpd(info,file, request, fileAdverImg,oldAdverInfo);
 			
 			response.sendRedirect(base_url + "applist");
 		} 
@@ -227,7 +230,7 @@ public class ChannelH5Controller extends BaseController
 				info.setAdverCount(jsonObject.getInt("adverCount"));
 				info.setAdverActivationCount(jsonObject.getInt("adverCount"));
 				info.setAdverDesc(jsonObject.getString("adverDesc"));
-				channelAdverInfoService.saveOrUpd(info, file, request, fileAdverImg);
+				channelAdverInfoService.saveOrUpd(info, file, request, fileAdverImg,null);
 			}
 			
 			TChannelAdverInfo adverInfo = new TChannelAdverInfo();

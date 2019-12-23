@@ -89,31 +89,33 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	/**
 	 * 查询广告列表（后台显示）
 	 */
-	public Page<TChannelAdverInfo> PageSql3(Page<TChannelAdverInfo> page, TChannelAdverInfo t)
+	public Page<TChannelAdverInfo> PageSql3(Page<TChannelAdverInfo> page, TChannelAdverInfo t, String queryAdverTime)
 	{
 		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE 1=1 ");
-		sql.append(" and channel_num='").append(t.getChannelNum());
+		
+		if(t.getChannelNum() != null && !t.getChannelNum().isEmpty()) {
+			sql.append(" and channel_num='").append(t.getChannelNum()).append("'");
+		}
 		if(t.getAdverName() != null && !t.getAdverName().isEmpty()) {
-			sql.append("' and adver_name='").append(t.getAdverName());
+			sql.append(" and adver_name='").append(t.getAdverName()).append("'");
 		}
-		
 		if(t.getAdverAdid() != null && !t.getAdverAdid().isEmpty()) {
-			sql.append("' and adver_adid='").append(t.getAdverAdid());
+			sql.append(" and adver_adid='").append(t.getAdverAdid()).append("'");
 		}
-		
 		if(t.getAdid() != null && !t.getAdid().isEmpty()) {
-			sql.append("' and adid='").append(t.getAdid());
+			sql.append(" and adid='").append(t.getAdid()).append("'");
 		}
 		
-		sql.append("' and adver_createtime>'").append(ChannelClassification.GetYestdayDate());
-		//sql.append(SQLUtils.popuHqlMin2("create_date", new Date()));
-		sql.append("' and adver_status in('0','1','2')");
-		sql.append(" ORDER BY adver_createtime desc");
+		sql.append(" and adver_createtime>'").append(queryAdverTime);
+		sql.append("' ORDER BY adver_createtime desc");
 		Page<TChannelAdverInfo> page2 = sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 		
-		if(page2 != null && page2.getResult() != null){
-			for(TChannelAdverInfo item:page2.getResult()){
-				sql = new StringBuilder("select count(1) from t_userappid_adverid where adver_id=").append(item.getAdverId()).append(" and status='2'");
+		if(page2 != null && page2.getResult().size() > 0)
+		{
+			for(TChannelAdverInfo item : page2.getResult())
+			{
+				String tablename = "t_adver_"+ item.getChannelNum() + "_" + item.getAdid();	
+				sql = new StringBuilder("select count(1) from "+tablename+" where adver_id=").append(item.getAdverId()).append(" and status='2'");
 				item.setAdverCountComplete(sqlDao.getCount(sql.toString()));
 			}
 		}
@@ -121,7 +123,13 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return page2;
 	}
 
-			
+	public int getadverStartAndCompleteCount(String adverId, String tableName) 
+	{
+		StringBuilder sql = new StringBuilder("select count(1) from ").append(tableName)
+				.append(" where adver_id=").append(adverId).append(" and status != 1.6 and status != 1.7");
+		return sqlDao.getCount(sql.toString());
+	}	
+	
 	public int getCountComplete(String adverId) 
 	{
 		StringBuilder sql = new StringBuilder("select count(1) from t_userappid_adverid where adver_id=").append(adverId).append(" and status='2'");;
@@ -144,13 +152,39 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 	
+	//获取今日所有任务
+	public List<TChannelAdverInfo> queryAllTodayAdvers()
+	{
+		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_createtime >'")
+				.append(ChannelClassification.GetdayDate()).append("'");
+		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
+	}
+	
+	
 	//获取所有正在启动的任务
-	public List<TChannelAdverInfo> queryAllStartAdvers() {
+	public List<TChannelAdverInfo> queryAllStartAdvers()
+	{
 		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_status = 1 and adver_createtime >'")
 				.append(ChannelClassification.GetYestdayDate()).append("'");
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 	
+	//获取所有未启动的服务
+	public List<TChannelAdverInfo> queryAllNotStartAdvers()
+	{
+		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_status < 2 and adver_createtime >'")
+				.append(ChannelClassification.GetYestdayDate()).append("'");
+		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
+	}
+	
+	//获取所有正在启动的任务的种类
+	public List<TChannelAdverInfo> queryAllStartAdversGroup() 
+	{
+		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_status = 1 and adver_createtime >'")
+				.append(ChannelClassification.GetYestdayDate()).append("' group by channel_num,adid");
+		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
+	}
+		
 	/**
 	 * 功能描述：删除
 	 */
@@ -170,12 +204,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sqlDao.execute(sql.toString());
 	}
 	
+	public void updateAdverEndTime(String ids) {
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set task_end_time = Now() where adver_id in ("+ids+")");
+		//当时启动任务的时候，默认任务最高等级
+		
+		sqlDao.execute(sql.toString());
+	}
+	
 	public void autoAddAdverCount(TChannelAdverInfo info)
 	{
 		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_status=1,add_task_limit="+info.getAddTaskLimit()+",");
 		sql.append("adver_count="+info.getAdverCount()+",");
-		sql.append("adver_count_remain="+info.getAdverCountRemain()+",");
-		sql.append("adver_activation_count="+info.getAdverActivationCount()+"");
+		sql.append("adver_count_remain="+info.getAdverCountRemain()+"");
 		sql.append(" where adver_id="+info.getAdverId()+"");
 		sqlDao.execute(sql.toString());
 	}
@@ -183,7 +223,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	//创建对应的广告表：adid+key
 	public int createAdverTable(String adid, String channelID) 
 	{
-		String tableName = "t_idfa_"+ channelID + "_" + adid;
+		String tableName = "t_adver_"+ channelID + "_" + adid;
 		String sql = "CREATE TABLE "+ tableName +" (" + 
 				"  `user_app_id` INT(11) NOT NULL COMMENT '用户ID'," + 
 				"  `ip` VARCHAR(20) NULL COMMENT '用户IP'," + 
@@ -200,8 +240,8 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 				"  `phone_version` VARCHAR(50) NOT NULL COMMENT '手机版本'," + 
 				"  `user_udid` VARCHAR(100)  DEFAULT NULL COMMENT 'udid'," + 
 				"  `ip_localtion` VARCHAR(100)  DEFAULT NULL COMMENT '地区'," + 
-				//"  PRIMARY KEY (`adver_id`,`idfa`),UNIQUE KEY `ip` (`ip`,`adid`), KEY `ind_t_userappid_adverid_complete_time` (`complete_time`),KEY `ind_t_userappid_adverid_user_app_id` (`user_app_id`),KEY `ind_t_userappid_adverid_receive_time` (`receive_time`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务idfa';";
-				"  PRIMARY KEY (`adver_id`,`idfa`),UNIQUE KEY `ip` (`ip`,`adid`), KEY `ind_t_userappid_adverid_complete_time` (`complete_time`),KEY `ind_t_userappid_adverid_user_app_id` (`user_app_id`),KEY `ind_t_userappid_adverid_receive_time` (`receive_time`))  DEFAULT CHARSET=utf8 COMMENT='任务idfa';";
+				//"  PRIMARY KEY (`adver_id`,`idfa`), KEY `ind_t_userappid_adverid_complete_time` (`complete_time`),KEY `ind_t_userappid_adverid_user_app_id` (`user_app_id`),KEY `ind_t_userappid_adverid_receive_time` (`receive_time`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务idfa';";
+				"  PRIMARY KEY (`adver_id`,`idfa`), KEY `ind_t_userappid_adverid_complete_time` (`complete_time`),KEY `ind_t_userappid_adverid_user_app_id` (`user_app_id`),KEY `ind_t_userappid_adverid_receive_time` (`receive_time`))  DEFAULT CHARSET=utf8 COMMENT='任务idfa';";
 		
 		int result = sqlDao.execute(sql);
 		
@@ -220,6 +260,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append("'");
 		sqlDao.execute(sql.toString());
 	}
+	
 	/**
 	 * 批量支付
 	 */
@@ -262,6 +303,18 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 	
+	public int updateAdverDownloadCountAdd1(TChannelAdverInfo adverInfo)
+	{
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set download_count=download_count+1 WHERE 1=1 ");
+		if(EmptyUtils.isNotEmpty(adverInfo))
+		{
+			if (EmptyUtils.isNotEmpty(adverInfo.getAdverId()))
+				sql.append(" and adver_id="+adverInfo.getAdverId());
+		}
+		
+		return sqlDao.update(sql.toString());
+	}
+	
 	public int updateAdverCountRemainMinus1(TChannelAdverInfo adverInfo)
 	{
 		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_count_remain=adver_count_remain-1 WHERE 1=1 ");
@@ -287,9 +340,9 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.update(sql.toString());
 	}
 	
-	public int updateAdverCountRemain(TChannelAdverInfo adverInfo)
+	public int updateAdverCountAndRemain(String tablename, TChannelAdverInfo adverInfo)
 	{
-		StringBuilder sql = new StringBuilder("update t_channel_adver_info a set adver_count_remain=adver_count-(select count(1) from t_userappid_adverid b where a.adver_id=b.adver_id and b.status<>'1.6') WHERE 1=1 ");
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info a set add_task_limit= "+adverInfo.getAddTaskLimit()+",adver_count = "+adverInfo.getAdverCount()+",adver_count_remain="+adverInfo.getAdverCount()+"-(select count(1) from "+tablename+" b where a.adver_id=b.adver_id and b.status<>'1.6') WHERE 1=1 ");
 		if(EmptyUtils.isNotEmpty(adverInfo))
 		{
 			if (EmptyUtils.isNotEmpty(adverInfo.getAdverId()))
@@ -298,25 +351,24 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.update(sql.toString());
 	}
 	
-	public int updateAdverActivationCount(TChannelAdverInfo info) 
+	public int updateAdverDownloadCount(TChannelAdverInfo info) 
 	{
-		StringBuilder sql = new StringBuilder("update t_channel_adver_info set adver_activation_count=?, download_count=? WHERE 1=1 ");
+		StringBuilder sql = new StringBuilder("update t_channel_adver_info set download_count=? WHERE ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
 				sql.append(" and adver_id="+info.getAdverId());
 		}
 		
-		Object[] params = new Object[2];
-		params[0] = info.getAdverActivationCount();
-		params[1] = info.getDownloadCount();
+		Object[] params = new Object[1];
+		params[0] = info.getDownloadCount();
 		
 		return sqlDao.update(params, sql.toString());
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		System.err.println(TimeUtil.GetYestdayDate());
-		
 	}
 	/*
 	 * CREATE TABLE 新表
@@ -355,13 +407,13 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	
 	//导出idfa
 	@SuppressWarnings("rawtypes")
-	public List exportExcel(String adverIds)
+	public List exportExcel(String tablename,String adverid)
 	{
 		StringBuffer sql = new StringBuffer("select B.adver_name, ip, idfa, date_format(complete_time, '%Y-%m-%d %H:%i:%s') as complete_time"
-				+ " from t_userappid_adverid as A left  join  `t_channel_adver_info` as B  ON A.adver_id = B.adver_id WHERE A.status = '2'");
-		sql.append(" and B.adver_id IN  (");
-		sql.append(adverIds);
-		sql.append(") ORDER BY B.adver_name DESC, A.complete_time ASC");
+				+ " from "+tablename+" as A left  join  `t_channel_adver_info` as B  ON A.adver_id = B.adver_id WHERE A.status = '2'");
+		sql.append(" and B.adver_id='");
+		sql.append(adverid);
+		sql.append("' ORDER BY B.adver_name DESC, A.complete_time ASC");
 		return sqlDao.getAll(sql.toString());
 	}
 	

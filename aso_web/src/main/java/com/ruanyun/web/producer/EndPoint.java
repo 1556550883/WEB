@@ -55,6 +55,11 @@ public class EndPoint extends Observable
 	 {
 		 return dok.getMessageCount();
 	 }
+	 
+	 public Channel getChannel() 
+	 {
+		 return channel;
+	 }
  /** 
   * 关闭channel和connection。并非必须，因为隐含是自动调用的。 
   * @throws IOException 

@@ -28,7 +28,6 @@ import com.ruanyun.web.model.TUserLevelRate;
 import com.ruanyun.web.model.TUserScore;
 import com.ruanyun.web.model.TUserScoreInfo;
 import com.ruanyun.web.model.TUserappidAdverid;
-import com.ruanyun.web.producer.AdverQueueConsumer;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.app.AppChannelInfoService;
@@ -225,22 +224,6 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		return 1;
 	}
 	
-	//根据adverid和idfa获取领取到的任务
-	private TUserappidAdverid getTask(String adverId, String idfa) 
-	{
-		TUserappidAdverid task = null;
-		
-		String[] propertyNames = new String[2];
-		propertyNames[0] = "adverId";
-		propertyNames[1] = "idfa";
-		Object[] values = new Object[2];
-		values[0] = Integer.valueOf(adverId);
-		values[1] = idfa;
-		task = userappidAdveridService.get(TUserappidAdverid.class, propertyNames, values);
-		
-		return task;
-	}
-	
 	/**
 	 * 功能描述:直接修改分数 不做记录
 	 *
@@ -254,28 +237,17 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 		if(userScore != null) 
 		{
 			int type = userScoreq.getType();
-			//需要自动提交的任务，修改其任务状态,此时的任务不是真正的被提交状态，需要自动被真正的提交
-			if(type == 9) {
-				TUserappidAdverid tUserappidAdverid = new TUserappidAdverid();
-				tUserappidAdverid.setIdfa(userScoreq.getUserNick());
-				tUserappidAdverid.setAdverId(userScoreq.getUserScoreId());
-				//特殊的任务状态，此状态下任务并不会超时
-				tUserappidAdverid.setStatus("2.1");
-				tUserappidAdverid.setCompleteTime(new Date());
-				userappidAdveridService.updateSpecialComplete(tUserappidAdverid);
-				
-				return 1;
-			}
-			
 			//驳回操作
-			if(type == 5) {
+			if(type == 5)
+			{
 				userScore.setScore(ArithUtil.addf(userScore.getScore(), userScoreq.getScore()));
 				
 				update(userScore);
 				return 1;
 			}
 			//管理员减去余额操作
-			if(type == 6) {
+			if(type == 6) 
+			{
 				userScore.setScore(ArithUtil.subf(userScore.getScore(), userScoreq.getScore()));
 				appUserApprenticeService.addMyApprenticeScore(userScoreq.getUserNum(), "", userScoreq.getScore(), userScoreq.getRankingNum(),type);
 				update(userScore);
@@ -283,46 +255,32 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 			}
 			
 			//任务计分
-			if(type <= 0) {
-				int adverid = userScoreq.getUserScoreId();
+			if(type <= 0)
+			{
+				String adverid = userScoreq.getUserScoreId() + "";
 				String idfa = userScoreq.getUserNick();
-				TUserappidAdverid userappidAdver = getTask(adverid + "", idfa); 
-				//如果任务不是在1.5状态下就不再次积分
-				if(userappidAdver == null) {
-					return 1;
-				}
+				String tablename = userScoreq.getLevelName();
+				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", userScoreq.getUserScoreId());
+				//如果任务已经是完成状态，就不需要重复积分
+				TUserappidAdverid task = userappidAdveridService.getTask(tablename,idfa, adverid);
+				if(task.getStatus().compareTo("2") == 0) {return 1;}
 				
-				if(!userappidAdver.getStatus().equals("1.5") && type == 0 && !userappidAdver.getStatus().equals("2.2"))
+				//任务已经完结就继续结算
+				if(adverInfo.getAdverCount() <= adverInfo.getDownloadCount())
 				{
+					task.setStatus("1.6");
+					userappidAdveridService.updateStatus(task);
 					return 1;
 				}
-				
-				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", adverid);
-				//回调任务 如果任务还有，但是超时了，如果回调来了继续计算 否则放弃
-				if(type == -1) {
-					if(userappidAdver.getStatus().compareTo("1.6") == 0) {
-						if(adverInfo.getAdverCountRemain()  >   0) {
-							String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
-							boolean success = AdverQueueConsumer.getMessage(endPointName);
-							if(!success) {
-								return 1;
-							}
-						}else {
-							return 1;
-						}
-					}else if(userappidAdver.getStatus().compareTo("2") == 0) {
-						return 1;
-					}
-				}
-				
+			
 				TChannelInfo chaninfo = appChannelInfoService.get(TChannelInfo.class,"channelNum", adverInfo.getChannelNum());
 				chaninfo.setDayTotal(chaninfo.getDayTotal() +  userScoreq.getScore());
 				chaninfo.setCumulativeTotal(chaninfo.getCumulativeTotal() + userScoreq.getScore());
 				appChannelInfoService.update(chaninfo);
 				//设定任务完结
-				userappidAdver.setStatus("2");
-				userappidAdver.setCompleteTime(new Date());
-				userappidAdveridService.updateStatus2Complete(userappidAdver);
+				userappidAdveridService.updateSpecialComplete(tablename,"2", new Date(),adverid,idfa);
+				//广告完成数量增加一
+				appChannelAdverInfoService.updateAdverDownloadCountAdd1(adverInfo);
 			}
 			
 			//(float)ArithUtil.add(userScore.getScore(), score)
@@ -340,7 +298,8 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 			{
 				//记录徒弟分红
 				TUserApp tUserApp = userAppService.getUserAppByNum(userScoreq.getRankingNum());//获取徒弟
-				if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0 && tUserApp.getIsEffective() != 1) {
+				if(tUserApp.getMasterID() != null && tUserApp.getLimitTime() != null && tUserApp.getLimitTime() > 0 && tUserApp.getIsEffective() != 1)
+				{
 					userScore.setScore(ArithUtil.addf(userScore.getScore(), score));
 					userScore.setScoreDay(ArithUtil.addf(userScore.getScoreDay(), score));
 					userScore.setScoreSum(ArithUtil.addf(userScore.getScoreSum(), score));
@@ -363,9 +322,11 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 					userAppService.updateLimitTime(tUserApp, ltime);
 					
 					//徒弟完成一个任务之后 算成师傅的有效徒弟
-					if(ltime == 19 ||(ltime > 19 && ltime == 29)) {
+					if(ltime == 19 ||(ltime > 19 && ltime == 29))
+					{
 						if(tUserApp.getZhifubao() != null || tUserApp.getOpenID() != null || tUserApp.getPhoneNum() != null
-								|| tUserApp.getIsEffective() != null || tUserApp.getIsEffective() == 0) {
+								|| tUserApp.getIsEffective() != null || tUserApp.getIsEffective() == 0) 
+						{
 							//师傅
 							TUserApp masterUserApp = userAppService.getUserAppByNum(userScore.getUserNum());
 							int count = userAppService.geteffApprenticeNum(masterUserApp.getUserAppId() + "");
@@ -380,10 +341,11 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 							//}
 						}
 					}
-				}else {
-					return 1;
 				}
-			}else if(type == 2) {
+				else {return 1;}
+			}
+			else if(type == 2)
+			{
 				//存入提现 记录
 				userScore.setScore(ArithUtil.subf(userScore.getScore(), score));
 				//设置提现状态

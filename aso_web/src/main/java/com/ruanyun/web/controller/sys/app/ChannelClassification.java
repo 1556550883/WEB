@@ -18,14 +18,10 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.producer.UdidQueueConsumer;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 public class ChannelClassification
 {
 	private static java.util.Random random = new java.util.Random();
 	private static List<String> userIDForIphone7 = new ArrayList<String>();
-	private static Map<String, UdidQueueConsumer> udidQueue = new HashMap<String, UdidQueueConsumer>();
 	
 	//检测任务信息
 	public static AppCommonModel checkChannelInfo( TChannelAdverInfo adverInfo, String adid, String idfa, String ip, 
@@ -129,8 +125,9 @@ public class ChannelClassification
 		return model;
 	}
 		
-	public static AppCommonModel channelActive(AppCommonModel model, TChannelAdverInfo adverInfo,int num, String idfa, String ip, String [] phoneModel, String [] phoneos, String udid) {
-		
+	public static AppCommonModel channelActive(AppCommonModel model, TChannelAdverInfo adverInfo, String idfa, String ip, String [] phoneModel, String [] phoneos, String udid) 
+	{
+		int num =  Integer.valueOf(adverInfo.getChannelNum());
 		switch (num)
 		{
 			case 1:
@@ -391,40 +388,35 @@ public class ChannelClassification
 	}
 	
 	//模拟手机udid
-	public static String getPhoneUdid(String phoneModel, int isTrue) {
+	public static String getPhoneUdid(String phoneModel, int isTrue)
+	{
 		//根据机型获取配套的udid
 		String udid = "0";
 		
 		//1是需要真实udid
-		if(isTrue == 1) {
+		if(isTrue == 1) 
+		{
 			//先去查看数据库中是否存在此idfa对应的udid，如果存在就提出，否则去获取新的udid
-			if(!udidQueue.containsKey(phoneModel)) {
-				try {
-					udidQueue.put(phoneModel, new UdidQueueConsumer(phoneModel,false));
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (TimeoutException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			try {
-				UdidQueueConsumer udidQ = udidQueue.get(phoneModel);
+			try 
+			{
+				UdidQueueConsumer udidQ = new UdidQueueConsumer(phoneModel,false);
 				udid = udidQ.getMessage(phoneModel);
 			} 
 			catch (Exception e)
 			{
-				udidQueue.remove(phoneModel);
+				udid = "0";
 			}
 			
-			if(udid == null) {
+			if(udid == null) 
+			{
 				//消耗没了就进行提示
 				return "0";
 			}
 		}
 		else 
 		{
-			if(phoneModel.contains("iPhone11,") || phoneModel.contains("iPhone12,")){
+			if(phoneModel.contains("iPhone11,") || phoneModel.contains("iPhone12,"))
+			{
 				int result = random.nextInt(2);
 				String Str = "00008020-000";
 				switch (result)
@@ -442,7 +434,9 @@ public class ChannelClassification
 				
 				udid = Str + get13UUID();
 				udid = udid.toUpperCase();
-			}else {
+			}
+			else 
+			{
 				 String Str1=UUID.randomUUID().toString().replace("-", "");
 				 //String Str1=UUID.randomUUID().toString();
 				 udid = Str1 + get8UUID();
@@ -554,6 +548,18 @@ public class ChannelClassification
 		return date;
 	}
 	
+	//获取昨天的日期
+	@SuppressWarnings("static-access")
+	public static String GetYestweekDate() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(calendar.DATE,-7);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	
 	//获取当月
 	public static String GetMonthDate() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
@@ -595,32 +601,48 @@ public class ChannelClassification
 		return userIDForIphone7;
 	}
 	
-	public static void main(String[] args) {
-		//double ran = Math.random();
-		String result = "{\"creationTimestamp\":\"2019-10-16T07:11:51Z\",\"resultCode\":0,\"userLocale\":\"en_US\",\"protocolVersion\":\"QH65B2\",\r\n" + 
-				"\"requestUrl\":\"https://developer.apple.com:443/services-account/QH65B2/account/device/validateDevices.action\",\r\n" + 
-				"\"responseId\":\"b29b6f62-d92f-48ba-baed-4e1339dd53fe\",\"isAdmin\":true,\"isMember\":false,\"isAgent\":true,\r\n" + 
-				"\"devices\":[{\"name\":\"device0\",\"deviceNumber\":\"312cdae4d6345fb9c413c79cdc9913ec72a2f807\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGPCJCLM\"},\r\n" + 
-				"{\"name\":\"device2\",\"deviceNumber\":\"b089a8a92ad0a279355ac0ed358dbfcd62f79562\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGFWJCLM\"},\r\n" + 
-				"{\"name\":\"device3\",\"deviceNumber\":\"d4c3c80bb78e08eb691999721508bf1bca30a089\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGJJJCLM\"},\r\n" + 
-				"{\"name\":\"device4\",\"deviceNumber\":\"51470d2cbab17f8d57e22fbcb929f0bcdca2bf52\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDG8MJCLM\"},\r\n" + 
-				"{\"name\":\"device5\",\"deviceNumber\":\"8ff75a26802fdd89017a005e84882fbf09154613\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDG1YJCLM\"},\r\n" + 
-				"{\"name\":\"device6\",\"deviceNumber\":\"f16306f4f3a915d00016b3848b12155a289b1352\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDDBGJCLM\"},\r\n" + 
-				"{\"name\":\"device7\",\"deviceNumber\":\"f21dc5d61557c85fdc62fdae78807bc5964c0ceb\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDF2FJCLM\"},\r\n" + 
-				"{\"name\":\"device8\",\"deviceNumber\":\"e59f27fbda8d9279921bccd63a229062690fd32f\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDFAUJCLM\"},\r\n" + 
-				"{\"name\":\"device9\",\"deviceNumber\":\"02608309e75543c5eefb96874411d22b96586baa\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDF1JJCLM\"}],\r\n" + 
-				"\"failedDevices\":[],\"validationMessages\":[]}";
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		JSONArray arr = (JSONArray) jsonObject.get("devices");
+	//获取未来几分钟的时间
+	public static String GetRandomFuntrueTime(int randomMin,int randomSec)
+	{
+		// 获取一个小时以后的时间
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		calendar.set(Calendar.MINUTE,
+				calendar.get(Calendar.MINUTE) + randomMin);
+		calendar.set(Calendar.SECOND,
+				calendar.get(Calendar.SECOND) + randomSec);
+ 
+		return df.format(calendar.getTime());
+	}
 		
-		if(arr.size()>0)
-		{
-			for(int i=0;i<arr.size();i++)
-			{
-				JSONObject job = arr.getJSONObject(i); 
-				System.out.println(job.get("deviceNumber")+"=") ; 
-				System.out.println(job.get("model")+"=") ;
-			}
-		}
+	public static void main(String[] args) {
+		
+		System.err.println(100/60);
+//		//double ran = Math.random();
+//		String result = "{\"creationTimestamp\":\"2019-10-16T07:11:51Z\",\"resultCode\":0,\"userLocale\":\"en_US\",\"protocolVersion\":\"QH65B2\",\r\n" + 
+//				"\"requestUrl\":\"https://developer.apple.com:443/services-account/QH65B2/account/device/validateDevices.action\",\r\n" + 
+//				"\"responseId\":\"b29b6f62-d92f-48ba-baed-4e1339dd53fe\",\"isAdmin\":true,\"isMember\":false,\"isAgent\":true,\r\n" + 
+//				"\"devices\":[{\"name\":\"device0\",\"deviceNumber\":\"312cdae4d6345fb9c413c79cdc9913ec72a2f807\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGPCJCLM\"},\r\n" + 
+//				"{\"name\":\"device2\",\"deviceNumber\":\"b089a8a92ad0a279355ac0ed358dbfcd62f79562\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGFWJCLM\"},\r\n" + 
+//				"{\"name\":\"device3\",\"deviceNumber\":\"d4c3c80bb78e08eb691999721508bf1bca30a089\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDGJJJCLM\"},\r\n" + 
+//				"{\"name\":\"device4\",\"deviceNumber\":\"51470d2cbab17f8d57e22fbcb929f0bcdca2bf52\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDG8MJCLM\"},\r\n" + 
+//				"{\"name\":\"device5\",\"deviceNumber\":\"8ff75a26802fdd89017a005e84882fbf09154613\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDG1YJCLM\"},\r\n" + 
+//				"{\"name\":\"device6\",\"deviceNumber\":\"f16306f4f3a915d00016b3848b12155a289b1352\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDDBGJCLM\"},\r\n" + 
+//				"{\"name\":\"device7\",\"deviceNumber\":\"f21dc5d61557c85fdc62fdae78807bc5964c0ceb\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDF2FJCLM\"},\r\n" + 
+//				"{\"name\":\"device8\",\"deviceNumber\":\"e59f27fbda8d9279921bccd63a229062690fd32f\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDFAUJCLM\"},\r\n" + 
+//				"{\"name\":\"device9\",\"deviceNumber\":\"02608309e75543c5eefb96874411d22b96586baa\",\"devicePlatform\":\"ios\",\"deviceClass\":\"iphone\",\"model\":\"iPhone 8 Plus\",\"serialNumber\":\"C39VDF1JJCLM\"}],\r\n" + 
+//				"\"failedDevices\":[],\"validationMessages\":[]}";
+//		JSONObject jsonObject = JSONObject.fromObject(result);
+//		JSONArray arr = (JSONArray) jsonObject.get("devices");
+//		
+//		if(arr.size()>0)
+//		{
+//			for(int i=0;i<arr.size();i++)
+//			{
+//				JSONObject job = arr.getJSONObject(i); 
+//				System.out.println(job.get("deviceNumber")+"=") ; 
+//				System.out.println(job.get("model")+"=") ;
+//			}
+//		}
 	}
 }

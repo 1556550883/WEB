@@ -1,9 +1,7 @@
 package com.ruanyun.web.controller.sys.background;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +11,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,19 +19,15 @@ import com.ruanyun.common.controller.BaseController;
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.TimeUtil;
-import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TChannelInfo;
 import com.ruanyun.web.model.TPhoneUdidModel;
 import com.ruanyun.web.model.TPhoneUdidWithIdfa;
-import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.model.sys.TDictionary;
 import com.ruanyun.web.model.sys.TUser;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.background.ChannelInfoService;
 import com.ruanyun.web.service.background.UdidService;
-import com.ruanyun.web.service.background.UserAppService;
-import com.ruanyun.web.util.AddressUtils;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.EncrypDES;
@@ -55,8 +48,6 @@ public class ChannelInfoController extends BaseController
 	@Autowired
 	private PublicCache publicCache;
 	@Autowired
-	private UserAppService userAppService;
-	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
 	@Autowired
 	private UdidService udidService;
@@ -73,17 +64,18 @@ public class ChannelInfoController extends BaseController
 	{
 		page = channelInfoService.queryPage(page, info);
 		List<TChannelInfo> channels = page.getResult();
-		for(TChannelInfo t : channels) {
-			Date date = new Date();		
-			String dateStr = TimeUtil.doFormatDate(date,"yyyy-MM");
-			String dateStrday = TimeUtil.doFormatDate(date,"yyyy-MM-dd");
-			t.setMonNum(channelInfoService.calculate(t, dateStr));
-			t.setTodayNum(channelInfoService.calculate(t, dateStrday));
+		for(TChannelInfo t : channels)
+		{
+			String yestMonthDate = TimeUtil.getLastMonth();
+			String dateStr = TimeUtil.GetMonthDate();
+			String dateStrday = TimeUtil.GetdayDate();
+			t.setYestMonNum(channelInfoService.calculate(t.getChannelNum(), dateStr,yestMonthDate));
+			t.setMonNum(channelInfoService.calculate(t.getChannelNum(), dateStr,null));
+			t.setTodayNum(channelInfoService.calculate(t.getChannelNum(), dateStrday, null));
 		}
 		
 		addModel(model, "pageList", page);
 		addModel(model, "bean", info);
-		
 		return "pc/channelInfo/list";
 	}
 	
@@ -93,13 +85,13 @@ public class ChannelInfoController extends BaseController
 		channelInfoService.exportChannelData(response);
 	}
 	
-	@RequestMapping("clearData")
-	public void clearData(HttpServletResponse response)
-	{
-		channelInfoService.exportChannelData(response);
-		channelInfoService.clearData();
-	}
-	
+//	@RequestMapping("clearData")
+//	public void clearData(HttpServletResponse response)
+//	{
+//		channelInfoService.exportChannelData(response);
+//		channelInfoService.updateChannelInfo();
+//	}
+//	
 	/**
 	 * idfa统计
 	 */
@@ -107,51 +99,23 @@ public class ChannelInfoController extends BaseController
 	public String idfaStatistics(HttpServletResponse response, Page<TUserappidAdverid> page, 
 			String channelNum, String completeTime, Model model) throws ParseException
 	{
-		channelNum = StringUtils.hasText(channelNum)?channelNum:"1";
-		completeTime = StringUtils.hasText(completeTime)?completeTime.replaceAll("-", ""):new SimpleDateFormat("yyyyMMdd").format(new Date());
-		try 
-		{
-			addModel(model, "pageList", channelInfoService.queryIdfaStatistics(page, channelNum, completeTime));
-			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
-			adverInfo.setChannelNum(channelNum);
-			addModel(model, "adverInfo", adverInfo);
-			addModel(model, "completeTime", new SimpleDateFormat("yyyyMMdd").parse(completeTime));
-		} catch (ParseException e) 
-		{
-			e.printStackTrace();
-		}
-		
+//		channelNum = StringUtils.hasText(channelNum)?channelNum:"1";
+//		completeTime = StringUtils.hasText(completeTime)?completeTime.replaceAll("-", ""):new SimpleDateFormat("yyyyMMdd").format(new Date());
+//		try 
+//		{
+//			addModel(model, "pageList", channelInfoService.queryIdfaStatistics(page, channelNum, completeTime));
+//			TChannelAdverInfo adverInfo = new TChannelAdverInfo();
+//			adverInfo.setChannelNum(channelNum);
+//			addModel(model, "adverInfo", adverInfo);
+//			addModel(model, "completeTime", new SimpleDateFormat("yyyyMMdd").parse(completeTime));
+//		} catch (ParseException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		
 		return "pc/idfa/list";
 	}
-	
-	/**
-	 * 员工idfa统计
-	 */
-	@RequestMapping("employeeIdfaStatistics")
-	public String employeeIdfaStatistics(Page<TUserappidAdverid> page, Integer userAppId, String completeTime, Model model) throws ParseException
-	{
-		completeTime = StringUtils.hasText(completeTime)?completeTime.replaceAll("-", ""):new SimpleDateFormat("yyyyMMdd").format(new Date());
-		page = channelInfoService.queryEmployeeIdfaStatistics(page, userAppId, completeTime);
-		TUserApp userApp = userAppService.getUserAppById(userAppId);
-		if(userApp.getUserApppType() == 2) {
-			for(TUserappidAdverid task : page.getResult()) {
-				task.setLocaltion(AddressUtils.getAddressByIP(task.getIp()));
-			}
-		}
 		
-		addModel(model, "pageList",page);
-		try 
-		{
-			addModel(model, "userAppId", userAppId);
-			addModel(model, "completeTime", new SimpleDateFormat("yyyyMMdd").parse(completeTime));
-		} 
-		catch (ParseException e) 
-		{
-			e.printStackTrace();
-		}
-		return "pc/employeeIdfa/list";
-	}
-	
 ///**
 // * 
 // * 功能描述:删除
@@ -214,9 +178,11 @@ public class ChannelInfoController extends BaseController
  * @return
  */
 	@RequestMapping("toEdit")
-	public String toEdit(TChannelInfo info, Model model,HttpSession session,Integer type) {
+	public String toEdit(TChannelInfo info, Model model,HttpSession session,Integer type) 
+	{
 		addModel(model, "info", info);
-		if (EmptyUtils.isNotEmpty(info.getChannelId())) {
+		if (EmptyUtils.isNotEmpty(info.getChannelId())) 
+		{
 			addModel(model, "info", channelInfoService.getInfoById(info.getChannelId()));
 			
 		}	
@@ -236,11 +202,14 @@ public class ChannelInfoController extends BaseController
 	 *@date 2016-1-6
 	 */
 	@RequestMapping("saveOrUpdate")
-	public void saveOrUpdate(HttpServletRequest request, Model model,TChannelInfo info , HttpSession session,HttpServletResponse response,MultipartFile picFile) {
+	public void saveOrUpdate(HttpServletRequest request, Model model,TChannelInfo info
+			, HttpSession session,HttpServletResponse response) {
 		TUser user = HttpSessionUtils.getCurrentUser(session);		
-		int result = channelInfoService.saveOrupdate(info, request, user,picFile);
-		try {
-			if (result == 1) {
+		int result = channelInfoService.saveOrupdate(info, request, user);
+		try
+		{
+			if (result == 1)
+			{
 				super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE,Constants.MESSAGE_SUCCESS, "main_","channelInfo/list", "closeCurrent"));
 			} 
 		} catch (Exception e) {

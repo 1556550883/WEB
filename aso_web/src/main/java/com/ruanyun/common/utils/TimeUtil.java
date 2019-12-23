@@ -61,9 +61,24 @@ public class TimeUtil {
 	}
 	
 	
-	public static void main(String[] args) {
-		System.err.println(doFormatDate(doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss").toString());
-		
+	 /**
+     * 
+     * 描述:获取当月的第一天.
+     * 
+     * @return
+     */
+    public static String getFirstDayOfMonth() 
+    {
+        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        return dft.format(calendar.getTime());
+    }
+
+	
+	public static void main(String[] args) 
+	{
+		System.err.println(GetdayDate(-7));
 	}
 	
 	/**
@@ -249,6 +264,19 @@ public class TimeUtil {
 		return date;
 	}
 	
+	
+	//获取昨天的日期
+	@SuppressWarnings("static-access")
+	public static String GetdayDate(int i) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(calendar.DATE, i);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+		
 	//获取当月
 	public static String GetMonthDate() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
@@ -269,6 +297,30 @@ public class TimeUtil {
 		return date;
 	}
 
+	 public static String getLastMonth() 
+	 {
+        Calendar cal = Calendar.getInstance();
+        cal.add(cal.MONTH, -1);
+        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM");
+        String lastMonth = dft.format(cal.getTime());
+        return lastMonth;
+	 }
+	 
+	    /**
+	     * 
+		* 描述:获取下一个月.
+	     * 
+	     * @return
+	     */
+	    public static String getPreMonth() {
+	        Calendar cal = Calendar.getInstance();
+	        cal.add(cal.MONTH, 1);
+	        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM");
+	        String preMonth = dft.format(cal.getTime());
+	        return preMonth;
+	    }
+
+	    
 	public static String beforeHourToNowDate(int i) 
 	{
 		Calendar calendar = Calendar.getInstance();

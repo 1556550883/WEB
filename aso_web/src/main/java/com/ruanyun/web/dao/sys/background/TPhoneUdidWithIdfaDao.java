@@ -21,6 +21,14 @@ public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 //		return sqlDao.getAll(TPhoneUdidWithIdfa.class,sql.toString());
 //	}
 //	
+	
+	public int getUdidSumedNum(String udidType,String tableName, String time)
+	{
+		StringBuffer sql = new StringBuffer("Select count(1) from "+tableName+" where phone_model= '").append(udidType).append("'");
+		sql.append(" and create_time >'").append(time).append("'");
+		return sqlDao.getCount(sql.toString());
+	}
+	
 	public void savePhoneInfo(TPhoneUdidWithIdfa model, String tableName) {
 		StringBuilder sql = new StringBuilder("INSERT INTO "+tableName+" ");
 		sql.append(" (idfa,udid,phone_model,phone_version,create_time) values ");

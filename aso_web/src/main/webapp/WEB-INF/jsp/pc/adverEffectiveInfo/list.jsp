@@ -10,14 +10,15 @@
 </form>
 
 <div class="pageHeader">
-	<form rel="pagerForm"  onsubmit="return navTabSearch(this);" action="adverEffectiveInfo/completeList" method="post">
+ <c:if test="${bean.adverId==null}">
+	<form rel="pagerForm"  onsubmit="return navTabSearch(this);" action="adverEffectiveInfo/list" method="post">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
-				<td>广告ip：<input  name="ip" value="${bean.ip}"/></td>
-				<td>广告idfa：<input  name="idfa" value="${bean.idfa}"/></td>
-				<td>广告adid：<input  name="adid" value="${bean.adid}"/></td>
-				<td>关键词：<input  name="idfa" value="${bean.adverName}"/></td>
+               	<td>广告ip：<input  name="ip" value="${ip}"/></td>
+				<td>广告idfa：<input  name="idfa" value="${idfa}"/></td>
+				<td>广告adid：<input  name="adid" value="${adid}"/></td>
+				<td>关键词：<input  name="advername" value="${advername}"/></td>
 			</tr>
 		
 		</table>
@@ -28,6 +29,7 @@
 		</div>
 	</div>
 	</form>
+</c:if>
 </div>
 	<div class="panelBar">
 		<ul class="toolBar">

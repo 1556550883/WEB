@@ -139,12 +139,14 @@ private static final Log log = LogFactory.getLog(YYMChannel.class);
 		 * 激活上报
 		 */
 		public static AppCommonModel activate(String domain, String adid, String adverName, String idfa, String ip,
-				String sysver, String phonemodel, String udid) {
+				String sysver, String phonemodel, String udid)
+		{
 			AppCommonModel model = new AppCommonModel(-1, "出错！");
 			
 			phonemodel = "iPhone" + phonemodel.substring(6);
 			StringBuilder url;
-			try {
+			try 
+			{
 				url = new StringBuilder(domain)
 						.append("?o=").append("active")
 						.append("&adsid=").append(adid)
@@ -161,6 +163,7 @@ private static final Log log = LogFactory.getLog(YYMChannel.class);
 				model.setMsg("未完成。原因：系统出错！");
 				return model;
 			}
+			
 			JSONObject jsonObject = httpGet(url.toString(), false);
 			
 			if(jsonObject == null){

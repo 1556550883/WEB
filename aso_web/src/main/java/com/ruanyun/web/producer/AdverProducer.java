@@ -7,6 +7,6 @@ public class AdverProducer extends EndPoint
 {
 	public AdverProducer(String endpointName) throws IOException, TimeoutException
 	{
-		super(endpointName, true);
+		super(endpointName, false);
 	}
 }

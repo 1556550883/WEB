@@ -82,7 +82,7 @@
 					<td>${item.userScore.scoreSum}</td>  
 	                <td>${item.level }</td>
 					<td>
-						<a style="cursor: pointer;" onclick="openNav('channelInfo/employeeIdfaStatistics?userAppId=${item.userAppId}','任务明细','main_index2')"><span style="color:blue">任务明细</span></a>     	
+						<a style="cursor: pointer;" onclick="openNav('adverEffectiveInfo/employeeIdfaStatistics?userAppId=${item.userAppId}','任务明细','main_index2')"><span style="color:blue">任务明细</span></a>     	
 					</td>
 	                <td>
 						<a title="修改手机用户信息"   onclick="add('userApp/toEdit?userNum=${item.userNum}','修改手机用户信息',1100,550,'main_')"  rel="users_saveedit" class="btnEdit">手机用户</a>	

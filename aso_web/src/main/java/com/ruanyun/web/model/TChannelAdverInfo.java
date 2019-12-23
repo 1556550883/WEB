@@ -47,9 +47,6 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String adverImg;
      private Date adverDayStart;
      private Date adverDayEnd;
-     private Date keywordStartTime;
-     private Date keywordCompleteTime;
-    
 	private String adverTimeStart;
      private String adverTimeEnd;
      private Integer adverStepCount;
@@ -62,8 +59,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private int downloadCount;
      private Integer adverStatus;
      private Integer userStatus;
-
-	private String effectiveSource;
+     private String effectiveSource;
      private String flag1;
      private String flag2;
      private String flag3;
@@ -91,16 +87,14 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private Integer adverInter;
      private Integer isAdverInter;//is_register 
      private Integer isToday;
-     private long taskEndTime;
+     private Date taskEndTime;
      private Float random;
      private Integer adverSort;
      private Integer receInterTime;
      private Integer submitInterTime;
-     private long submiTimeZone;
-     private long receTimeZone;
-     private Integer isTime;//0表示有作用  1忽略
      private Integer isTrue;
      private Integer phoneModelPercent;
+     private Integer isIpLimitEnabled;
      @Column(name="package_name")
      public String getPackageName() {
 		return packageName;
@@ -143,9 +137,8 @@ public class TChannelAdverInfo  implements java.io.Serializable {
        this.level = level;
        this.adverSort = adverSort;
     }
-   
-     @Id @GeneratedValue(strategy=IDENTITY)
     
+    @Id @GeneratedValue(strategy=IDENTITY)
     @Column(name="adver_id", unique=true, nullable=false)
     public Integer getAdverId() {
         return this.adverId;
@@ -601,11 +594,11 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 		this.addTask = addTask;
 	}
 	
-	@Transient
-	public long getTaskEndTime() {
+	@Column(name="task_end_time")
+	public Date getTaskEndTime() {
 		return taskEndTime;
 	}
-	public void setTaskEndTime(long taskEndTime) {
+	public void setTaskEndTime(Date taskEndTime) {
 		this.taskEndTime = taskEndTime;
 	}
 	
@@ -666,52 +659,12 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 		this.receInterTime = receInterTime;
 	}
 	
-	
 	@Column(name="submit_inter_time")
 	public Integer getSubmitInterTime() {
 		return submitInterTime;
 	}
 	public void setSubmitInterTime(Integer submitInterTime) {
 		this.submitInterTime = submitInterTime;
-	}
-	
-	 @Transient
-	public long getSubmiTimeZone() {
-		return submiTimeZone;
-	}
-	public void setSubmiTimeZone(long submiTimeZone) {
-		this.submiTimeZone = submiTimeZone;
-	}
-	
-	 @Transient
-	public long getReceTimeZone() {
-		return receTimeZone;
-	}
-	public void setReceTimeZone(long receTimeZone) {
-		this.receTimeZone = receTimeZone;
-	}
-	
-	 @Transient
-     public Date getKeywordStartTime() {
-		return keywordStartTime;
-	}
-	public void setKeywordStartTime(Date keywordStartTime) {
-		this.keywordStartTime = keywordStartTime;
-	}
-	@Transient
-	public Date getKeywordCompleteTime() {
-		return keywordCompleteTime;
-	}
-	public void setKeywordCompleteTime(Date keywordCompleteTime) {
-		this.keywordCompleteTime = keywordCompleteTime;
-	}
-	
-	 @Transient
-	public Integer getIsTime() {
-		return isTime;
-	}
-	public void setIsTime(Integer isTime) {
-		this.isTime = isTime;
 	}
 	
 	@Column(name="is_true")
@@ -728,5 +681,13 @@ public class TChannelAdverInfo  implements java.io.Serializable {
 	}
 	public void setPhoneModelPercent(Integer phoneModelPercent) {
 		this.phoneModelPercent = phoneModelPercent;
+	}
+	
+	@Column(name="is_ip_limit_enabled")
+	public Integer getIsIpLimitEnabled() {
+		return isIpLimitEnabled;
+	}
+	public void setIsIpLimitEnabled(Integer isIpLimitEnabled) {
+		this.isIpLimitEnabled = isIpLimitEnabled;
 	}
 }
