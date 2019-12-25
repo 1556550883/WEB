@@ -166,10 +166,10 @@ public class DuiJieController extends BaseController
 		}
 			
 		//等于1就说说明需要去检测ip次数限制
-		if(adverInfo.getIsIpLimitEnabled() == 1) 
+		if(adverInfo.getIsIpLimitEnabled() > 0) 
 		{
 			int ipcount = userappidAdveridService.getIPLimitCount(ip,2,tablename);
-			if(ipcount > 5) 
+			if(ipcount > adverInfo.getIsIpLimitEnabled()) 
 			{
 				model.setResult(-1);
 				model.setMsg("此ip段前两位已经超出限制，请更换ip！");
@@ -207,7 +207,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		//检测地区ip限制
-		if(adverInfo.getIsIpLimitEnabled() == 1) 
+		if(adverInfo.getIsIpLimitEnabled() > 0) 
 		{
 			int count  = userappidAdveridService.getIPlocalLimitCount(iplocaltion, tablename);
 			int limit = (adverInfo.getAdverCount() * 4)/100;
@@ -366,7 +366,7 @@ public class DuiJieController extends BaseController
 		else 
 		{
 			//散户验证是否存在任务
-			Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfa(idfa);
+			Page<TUserappidAdverid> taskList = userappidAdveridService.getTasksByIdfa(idfa,tablename);
 			if (taskList != null && !taskList.getResult().isEmpty()) 
 			{
 				for (TUserappidAdverid item : taskList.getResult()) 
@@ -380,7 +380,7 @@ public class DuiJieController extends BaseController
 					if(item.getStatus().compareTo("1.5") < 0) 
 					{
 						item.setReceiveTime(new Date());
-						userappidAdveridService.updateReceiveTime(item);
+						userappidAdveridService.updateReceiveTime(item,tablename);
 						model.setResult(1);
 						model.setObj(item);
 						model.setMsg("请先完成正在进行的任务...");

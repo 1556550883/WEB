@@ -269,7 +269,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 				if(adverInfo.getAdverCount() <= adverInfo.getDownloadCount())
 				{
 					task.setStatus("1.6");
-					userappidAdveridService.updateStatus(task);
+					userappidAdveridService.updateStatus(task,tablename);
 					return 1;
 				}
 			

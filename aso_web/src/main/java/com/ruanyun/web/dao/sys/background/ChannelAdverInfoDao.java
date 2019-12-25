@@ -409,7 +409,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	@SuppressWarnings("rawtypes")
 	public List exportExcel(String tablename,String adverid)
 	{
-		StringBuffer sql = new StringBuffer("select B.adver_name, ip, idfa, date_format(complete_time, '%Y-%m-%d %H:%i:%s') as complete_time"
+		StringBuffer sql = new StringBuffer("select B.adver_name, ip,ip_localtion, idfa, date_format(complete_time, '%Y-%m-%d %H:%i:%s') as complete_time"
 				+ " from "+tablename+" as A left  join  `t_channel_adver_info` as B  ON A.adver_id = B.adver_id WHERE A.status = '2'");
 		sql.append(" and B.adver_id='");
 		sql.append(adverid);

@@ -100,9 +100,10 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		Page<TUserappidAdverid> taskList = null;
 		//保存正在进行的任务
 		List<TChannelAdverInfo> advering =  new ArrayList<>();
-		if(tUserApp.getUserApppType() == 2) {
+		if(tUserApp.getUserApppType() == 2) 
+		{
 			//获取散户正在进行中的任务
-			taskList = userappidAdveridService.getTasking(tUserApp.getIdfa());
+			//taskList = userappidAdveridService.getTasking(tUserApp.getIdfa());
 		}
 		if(page2 != null && page2.getResult() != null)
 		{
@@ -241,8 +242,8 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		}
 		
 		String fileName = "IDFA";
-		String[] columns = {"idfa","ip","complete_time","adver_name"};
-		String[] headers = {"IDFA","IP","结束时间","关键词"};
+		String[] columns = {"idfa","ip","ip_localtion","complete_time","adver_name"};
+		String[] headers = {"IDFA","IP","地区","结束时间","关键词"};
 		try {
 			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
 			SysCode.DATE_FORMAT_STR_L);

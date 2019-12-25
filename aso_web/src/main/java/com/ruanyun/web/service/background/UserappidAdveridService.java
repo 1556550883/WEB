@@ -23,9 +23,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 	@Autowired
 	private UserappidAdveridDao userappidAdveridDao;
 	
-	public Integer queryMissionCount(TUserappidAdverid info) 
+	public Integer queryMissionCount(TUserappidAdverid info,String tablename) 
 	{
-		return userappidAdveridDao.queryMissionCount(info);
+		return userappidAdveridDao.queryMissionCount(info,tablename);
 	}
 	
 	public Integer getIPLimitCount(String ip, int digit, String tablename) 
@@ -58,9 +58,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.PageSqlDistinct(page, info);
 	}
 	
-	public Page<TUserScoreDetail> queryUserScoreDetail(Page<TUserScoreDetail> page, String appid)
+	public Page<TUserScoreDetail> queryUserScoreDetail(Page<TUserScoreDetail> page, String appid,String tablename)
 	{
-		return userappidAdveridDao.getScoreDetails(page, appid);
+		return userappidAdveridDao.getScoreDetails(page, appid,tablename);
 	}
 	
 	public int updateStatus2OpenApp(String tablename,TUserappidAdverid info)
@@ -94,29 +94,29 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 //		return userappidAdveridDao.updateStatus2Complete(info);
 //	}
 	
-	public int updateReceiveTime(TUserappidAdverid info) 
+	public int updateReceiveTime(TUserappidAdverid info,String tablename) 
 	{
-		return userappidAdveridDao.updateReceiveTime(info);
+		return userappidAdveridDao.updateReceiveTime(info,tablename);
 	}
 	
-	public int updateAdverStatus(TUserappidAdverid info) 
+	public int updateAdverStatus(TUserappidAdverid info,String tablename) 
 	{
-		return userappidAdveridDao.updateAdverStatus(info);
+		return userappidAdveridDao.updateAdverStatus(info,tablename);
 	}
 	
-	public int updateStatus(TUserappidAdverid info) 
+	public int updateStatus(TUserappidAdverid info,String tablename) 
 	{
-		return userappidAdveridDao.updateStatus(info);
+		return userappidAdveridDao.updateStatus(info,tablename);
 	}
 	
-	public int updateTaskStatus(TUserappidAdverid info) 
+	public int updateTaskStatus(TUserappidAdverid info,String tablename) 
 	{
-		return userappidAdveridDao.updateTaskStatus(info);
+		return userappidAdveridDao.updateTaskStatus(info,tablename);
 	}
 	
-	public int updateSpecialTaskStatus(TUserappidAdverid info) 
+	public int updateSpecialTaskStatus(TUserappidAdverid info,String tablename) 
 	{
-		return userappidAdveridDao.updateSpecialTaskStatus(info); 
+		return userappidAdveridDao.updateSpecialTaskStatus(info,tablename); 
 	}
 	/**
 	 * 更新超时未完成任务的状态，并返回更新行数
@@ -126,9 +126,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.updateStatus2Invalid(adverInfo,tablename);
 	}
 	
-	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip) 
+	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip,String tablename) 
 	{
-		return userappidAdveridDao.getTasks(adid, idfa, ip);
+		return userappidAdveridDao.getTasks(adid, idfa, ip,tablename);
 	}
 	
 	public Page<TUserappidAdverid> getTasksByIdfaOrIP(String idfa, String ip,String channelID, String adid)
@@ -137,9 +137,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 	}
 	
 	//散户方法
-	public Page<TUserappidAdverid> getTasksByIdfa(String idfa) 
+	public Page<TUserappidAdverid> getTasksByIdfa(String idfa,String tablename) 
 	{
-		return userappidAdveridDao.getTasksByIdfa(idfa);
+		return userappidAdveridDao.getTasksByIdfa(idfa,tablename);
 	}
 	
 	//获取任务明细
@@ -159,9 +159,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.getTask(tablename,idfa,adverId);
 	}
 	
-	public Page<TUserappidAdverid> getTasking(String idfa) 
+	public Page<TUserappidAdverid> getTasking(String idfa,String tablename) 
 	{
-		return userappidAdveridDao.getTasking(idfa);
+		return userappidAdveridDao.getTasking(idfa,tablename);
 	}
 	
 	public Page<TUserappidAdverid> getLastSpecialTask(Page<TUserappidAdverid> page ,String tableName, String adverId) {
@@ -173,13 +173,13 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 	 * 检查appleId是否已经使用
 	 */
 	@SuppressWarnings("null")
-	public boolean checkAppleIdIsUsed(String adid, String appleId)
+	public boolean checkAppleIdIsUsed(String adid, String appleId,String tablename)
 	{
 		boolean isUsed = false;
 		
 		if(StringUtils.hasText(adid) || StringUtils.hasText(appleId))
 		{
-			Page<TUserappidAdverid> taskList = userappidAdveridDao.getAppleIdMap(adid, appleId);
+			Page<TUserappidAdverid> taskList = userappidAdveridDao.getAppleIdMap(adid, appleId,tablename);
 			
 			if (taskList.getResult().size() > 0) 
 			{

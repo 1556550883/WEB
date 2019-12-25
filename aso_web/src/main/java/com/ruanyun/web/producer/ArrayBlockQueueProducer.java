@@ -146,7 +146,7 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 										//激活失败
 										//1.7代表放弃的状态
 										taskinfo.setStatus("1.7");
-										mUserappidAdveridService.updateSpecialTaskStatus(taskinfo);
+										mUserappidAdveridService.updateSpecialTaskStatus(taskinfo,tablename);
 									}
 								}
 							}

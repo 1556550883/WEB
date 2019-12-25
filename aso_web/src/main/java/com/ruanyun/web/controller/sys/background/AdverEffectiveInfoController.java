@@ -123,6 +123,7 @@ public class AdverEffectiveInfoController extends BaseController
 	    for(TChannelAdverInfo info : queryAdver.getResult()) 
 		{
 			String tablename = "t_adver_"+ info.getChannelNum() + "_" + info.getAdid();	
+			tas.setAdverId(info.getAdverId());
 			//每个任务每个idfa只能有一个任务 queryMission
 			page = userappidAdveridService.queryMission(page,tas,tablename);
 			for(TUserappidAdverid ss :page.getResult()) 

@@ -264,44 +264,45 @@ public class AppH5WebController extends BaseController
 	@RequestMapping(value = "/scoredetail")
 	public String scoredetail(HttpServletRequest request, Page<TUserScoreDetail> page, Page<TUserApprentice> pages, Model model)
 	{
-		page.setNumPerPage(Integer.MAX_VALUE);
-		pages.setNumPerPage(Integer.MAX_VALUE);
-		String appid = request.getParameter("id");
-		if(appid != null || appid != "") {
-			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(appid));
-			page = userappidAdveridService.queryUserScoreDetail(page, appid);
-			//任务明细
-			List<TUserScoreDetail>  userScoreDetail = page.getResult();
-			//收徒 提现 的明细
-			pages = appUserApprenticeService.getMyApprentices(pages, userNum);
-			
-			List<TUserApprentice>  tUserApprentices = pages.getResult();
-			//type 0正常做任务得分  1邀请徒弟分红 2代表提现操作
-			for(TUserApprentice userApprentice : tUserApprentices) {
-				TUserScoreDetail userScoreDetail2 = new TUserScoreDetail();
-				userScoreDetail2.setReceiveTime(userApprentice.getApprenticeTime());
-				userScoreDetail2.setAdverPrice(userApprentice.getScore());
-				userScoreDetail2.setTaskType(userApprentice.getUserApprenticeType() + "");
-				if(userApprentice.getUserApprenticeType() == 1 || userApprentice.getUserApprenticeType() == 3) {
-					userScoreDetail2.setAdverName(userApprentice.getApprenticeUserNum());//徒弟的usernum
-				}
-				
-				if(userApprentice.getUserApprenticeType() == 6) {
-					userScoreDetail2.setTypeDesc(userApprentice.getTypeDesc());//徒弟的usernum
-				}
-				
-				userScoreDetail.add(userScoreDetail2);
-			}
-			
-			Collections.sort(userScoreDetail); // 按receivetime 排序
-	
-			//JSONArray listArray = JSONArray.fromObject(userScoreDetail);
-			JsonConfig jsonConfig = new JsonConfig();
-			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
-			JSONArray jsonObject = JSONArray.fromObject(userScoreDetail, jsonConfig); 
-			
-			addModel(model, "appuserscoredetails", jsonObject);
-		}
+//		page.setNumPerPage(Integer.MAX_VALUE);
+//		pages.setNumPerPage(Integer.MAX_VALUE);
+//		String appid = request.getParameter("id");
+//		if(appid != null || appid != "") {
+//			String userNum = NumUtils.getCommondNum(NumUtils.USER_APP_NUM, Integer.parseInt(appid));
+//			String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();	
+//			page = userappidAdveridService.queryUserScoreDetail(page, appid);
+//			//任务明细
+//			List<TUserScoreDetail>  userScoreDetail = page.getResult();
+//			//收徒 提现 的明细
+//			pages = appUserApprenticeService.getMyApprentices(pages, userNum);
+//			
+//			List<TUserApprentice>  tUserApprentices = pages.getResult();
+//			//type 0正常做任务得分  1邀请徒弟分红 2代表提现操作
+//			for(TUserApprentice userApprentice : tUserApprentices) {
+//				TUserScoreDetail userScoreDetail2 = new TUserScoreDetail();
+//				userScoreDetail2.setReceiveTime(userApprentice.getApprenticeTime());
+//				userScoreDetail2.setAdverPrice(userApprentice.getScore());
+//				userScoreDetail2.setTaskType(userApprentice.getUserApprenticeType() + "");
+//				if(userApprentice.getUserApprenticeType() == 1 || userApprentice.getUserApprenticeType() == 3) {
+//					userScoreDetail2.setAdverName(userApprentice.getApprenticeUserNum());//徒弟的usernum
+//				}
+//				
+//				if(userApprentice.getUserApprenticeType() == 6) {
+//					userScoreDetail2.setTypeDesc(userApprentice.getTypeDesc());//徒弟的usernum
+//				}
+//				
+//				userScoreDetail.add(userScoreDetail2);
+//			}
+//			
+//			Collections.sort(userScoreDetail); // 按receivetime 排序
+//	
+//			//JSONArray listArray = JSONArray.fromObject(userScoreDetail);
+//			JsonConfig jsonConfig = new JsonConfig();
+//			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+//			JSONArray jsonObject = JSONArray.fromObject(userScoreDetail, jsonConfig); 
+//			
+//			addModel(model, "appuserscoredetails", jsonObject);
+//		}
 		return "app/h5web/scoredetail";
 	}
 	

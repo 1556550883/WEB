@@ -40,8 +40,8 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	}
 	
 	//未被使用，如果需要使用需要加上时间索引来减少压力
-	public Integer queryMissionCount(TUserappidAdverid info) {
-		StringBuilder sql = new StringBuilder("SELECT count(1) from t_userappid_adverid WHERE 1=1 ");
+	public Integer queryMissionCount(TUserappidAdverid info,String tablename) {
+		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE 1=1 ");
 		//加上时间索引查询，挺高效率
 //		sql.append(" and receive_time > '");
 //		sql.append("11111")
@@ -67,7 +67,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	
 	public Integer getIPLimitCount(String ip, int digit, String tablename) 
 	{
-		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE status=2 ");
+		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE status != 1.6 ");
 		sql.append(" and receive_time>'"+ChannelClassification.GetdayDate());
 		sql.append("'");
 		//检测ip前两段是否超出限制
@@ -89,7 +89,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	//检测ip地区是否超出限制
 	public Integer getIPlocalLimitCount(String iplocal, String tablename)
 	{
-		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE status=2 ");
+		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE status != 1.6 ");
 		sql.append(" and receive_time>'"+ChannelClassification.GetdayDate());
 		sql.append("'");
 		sql.append(" and ip_localtion ='").append(iplocal).append("'");
@@ -97,10 +97,10 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		return sqlDao.getCount(sql.toString());
 	}
 	
-	public Page<TUserScoreDetail> getScoreDetails(Page<TUserScoreDetail> page, String appid ){
+	public Page<TUserScoreDetail> getScoreDetails(Page<TUserScoreDetail> page, String appid,String tablename ){
 		
 		StringBuilder sql = new StringBuilder("SELECT A.adver_name,A.adver_price,A.price_diff,A.task_type,B.status,B.receive_time,B.complete_time from t_channel_adver_info AS A ");
-		sql.append(" LEFT JOIN t_userappid_adverid AS B ON A.adver_id = B.adver_id");
+		sql.append(" LEFT JOIN "+tablename+" AS B ON A.adver_id = B.adver_id");
 		sql.append(" WHERE B.user_app_id='" + appid +"'");
 		sql.append(" ORDER BY B.receive_time desc");
 		return sqlDao.queryPage(page, TUserScoreDetail.class, sql.toString());
@@ -169,8 +169,8 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	}
 
 	
-	public int updateAdverStatus(TUserappidAdverid info) {
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE status= '2.1' ");
+	public int updateAdverStatus(TUserappidAdverid info, String tablename) {
+		StringBuilder sql = new StringBuilder("update "+tablename+" set status=? WHERE status= '2.1' ");
 		if(EmptyUtils.isNotEmpty(info)){
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
 				sql.append(" and adver_id="+info.getAdverId());
@@ -237,9 +237,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 //		return sqlDao.update(params, sql.toString());
 //	}
 	
-	public int updateReceiveTime(TUserappidAdverid info) 
+	public int updateReceiveTime(TUserappidAdverid info,String tablename) 
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set receive_time=?  WHERE ");
+		StringBuilder sql = new StringBuilder("update "+tablename+" set receive_time=?  WHERE ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
@@ -253,9 +253,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		return sqlDao.update(params, sql.toString());
 	}
 	
-	public int updateStatus(TUserappidAdverid info) 
+	public int updateStatus(TUserappidAdverid info,String tablename) 
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE ");
+		StringBuilder sql = new StringBuilder("update "+tablename+" set status=? WHERE ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
@@ -270,9 +270,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	}
 	
 	
-	public int updateTaskStatus(TUserappidAdverid info) 
+	public int updateTaskStatus(TUserappidAdverid info,String tablename) 
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE status<='1.5' ");
+		StringBuilder sql = new StringBuilder("update "+tablename+" set status=? WHERE status<='1.5' ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
@@ -286,9 +286,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		return sqlDao.update(params, sql.toString());
 	}
 	
-	public int updateSpecialTaskStatus(TUserappidAdverid info) 
+	public int updateSpecialTaskStatus(TUserappidAdverid info,String tablename) 
 	{
-		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status=? WHERE status='2.1' ");
+		StringBuilder sql = new StringBuilder("update "+tablename+" set status=? WHERE status='2.1' ");
 		if(EmptyUtils.isNotEmpty(info))
 		{
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
@@ -320,13 +320,13 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	}
 	
 	//未使用
-	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip)
+	public Page<TUserappidAdverid> getTasks(String adid, String idfa, String ip,String tablename)
 	{
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		calendar.set(Calendar.DATE, calendar.get(Calendar.DATE)-2);
 		
-		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+		StringBuilder sql = new StringBuilder("select * from "+tablename+" ")
 			.append(" where adid='").append(adid).append("'")
 			.append(" and receive_time>'").append(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime())).append("'")
 			.append(" and (idfa='").append(idfa).append("' or ip='").append(ip).append("')");
@@ -354,9 +354,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	}
 	
 	//散户使用方法
-	public Page<TUserappidAdverid> getTasksByIdfa(String idfa)
+	public Page<TUserappidAdverid> getTasksByIdfa(String idfa,String tablename)
 	{
-		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+		StringBuilder sql = new StringBuilder("select * from "+tablename+" ")
 				.append(" where idfa='").append(idfa).append("' and status<=1.6");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
@@ -392,9 +392,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	}
 	
 	//散户获取方法
-	public Page<TUserappidAdverid> getTasking(String idfa)
+	public Page<TUserappidAdverid> getTasking(String idfa,String tablename)
 	{
-		StringBuilder sql = new StringBuilder("select * from t_userappid_adverid ")
+		StringBuilder sql = new StringBuilder("select * from "+tablename+" ")
 				.append(" where idfa='").append(idfa).append("' and status<1.6");
 		
 		Page<TUserappidAdverid> page = new Page<TUserappidAdverid>();
@@ -424,9 +424,9 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	/**
 	 * 查询已经使用的appleId
 	 */
-	public Page<TUserappidAdverid> getAppleIdMap(String adid, String appleId) 
+	public Page<TUserappidAdverid> getAppleIdMap(String adid, String appleId,String tablename) 
 	{
-		StringBuilder sql = new StringBuilder("select adid,apple_id from t_userappid_adverid where status='2'")
+		StringBuilder sql = new StringBuilder("select adid,apple_id from "+tablename+" where status='2'")
 				.append(" and adid='").append(adid).append("'")
 				.append(" and apple_id='").append(appleId).append("'");
 		
