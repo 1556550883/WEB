@@ -210,7 +210,9 @@ public class DuiJieController extends BaseController
 		if(adverInfo.getIsIpLimitEnabled() == 1) 
 		{
 			int count  = userappidAdveridService.getIPlocalLimitCount(iplocaltion, tablename);
-			if( adverInfo.getAdverCount() * 0.4 < count) 
+			int limit = (adverInfo.getAdverCount() * 4)/100;
+			if(limit == 0) {limit = 1;}
+			if(limit < count) 
 			{
 				model.setResult(-1);
 				model.setMsg("此地区ip使用超出限制，请更换ip！");
