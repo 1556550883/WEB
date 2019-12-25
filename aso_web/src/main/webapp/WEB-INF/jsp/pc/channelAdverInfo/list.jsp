@@ -53,7 +53,6 @@
 				<th align="center">任务时效（单位：分钟）</th>
 				<th align="center">广告数量</th>
 				<th align="center">广告剩余数量</th>
-				<th align="center">广告完成数量</th>
 				<th align="center">广告有效完成数量</th>
 				<th align="center">广告等级</th>
 				<th align="center">广告开始时间——广告结束时间</th>
@@ -91,7 +90,6 @@
 	                <td>${item.timeLimit}</td>
 	                <td>${item.adverCount}</td>
 	                <td>${item.adverCountRemain}</td>
-	                <td>${item.adverCountComplete}</td>
 	                <td>${item.downloadCount}</td>
 	                <td>${item.level}</td>
 	                <td>${item.adverDayStart}--${item.adverDayEnd}</td>

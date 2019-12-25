@@ -5,6 +5,7 @@
  */
 package com.ruanyun.web.controller.sys.background;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -173,11 +175,20 @@ public class ChannelAdverInfoController extends BaseController
 	/**
 	 * 
 	 * 功能描述：修改 修改任务数量的时候需要注意
+	 * @throws TimeoutException 
+	 * @throws IOException 
 	 */
 	@RequestMapping("edit")
 	public void upd(TChannelAdverInfo info, HttpServletResponse response, MultipartFile file,
-			MultipartFile fileAdverImg, HttpServletRequest request)
+			MultipartFile fileAdverImg, HttpServletRequest request) throws IOException, TimeoutException
 	{
+		TChannelAdverInfo oldAdverInfo = channelAdverInfoService.getInfoById(info.getAdverId());
+		boolean isNameChange = false;
+		if(!info.getAdverName().equals(oldAdverInfo.getAdverName())) 
+		{
+			isNameChange = true;
+		}
+		
 		try 
 		{
 			//广告有效期
@@ -193,39 +204,108 @@ public class ChannelAdverInfoController extends BaseController
 				return;
 			}
 			//TUser user = HttpSessionUtils.getCurrentUser(session);
-			TChannelAdverInfo oldAdverInfo = channelAdverInfoService.getInfoById(info.getAdverId());
+			
 			//增加任务数量
 			int changenum = info.getAdverCount() - oldAdverInfo.getAdverCount();
-			String endPointName = info.getAdverName() + "_" + info.getAdverId();
-			if(changenum > 0) 
+			String oldPointName = oldAdverInfo.getAdverId() + "_" + oldAdverInfo.getAdverName() ;
+			String newPointName = info.getAdverId() + "_" + info.getAdverName() ;
+			//判断是否更改了关键词
+			if(!isNameChange) 
 			{
-				AdverProducer ap = new AdverProducer(endPointName);
-				for(int i = 1; i <= changenum; i++) 
+				if(oldAdverInfo.getAdverStatus() == 1) 
 				{
-					//更新剩余有效产品数量
-					String data = UUID.randomUUID().toString();
-					System.out.println("Put:" + data);
-					ap.sendMessage(data, endPointName);
+					if(changenum > 0) 
+					{
+						AdverProducer ap = new AdverProducer(newPointName);
+						for(int i = 1; i <= changenum; i++) 
+						{
+							//更新剩余有效产品数量
+							String data = UUID.randomUUID().toString();
+							System.out.println("Put:" + data);
+							ap.sendMessage(data, newPointName);
+						}
+						//关闭此通道
+						ap.close();
+					}
+					else if (changenum < 0) 
+					{
+						for(int i = 0; i > changenum; i--) 
+						{
+							AdverQueueConsumer ss = new AdverQueueConsumer(newPointName);
+							ss.getMessage(newPointName);
+						}
+					}
 				}
-				//关闭此通道
-				ap.close();
 			}
-			else if (changenum < 0) 
+			else
 			{
-				for(int i = 0; i > changenum; i--) 
-				{
-					AdverQueueConsumer ss = new AdverQueueConsumer(endPointName);
-					ss.getMessage(endPointName);
-				}
+				//清理队列中所有生成的任务 被修改的关键词应该清除
+				AdverQueueConsumer sume = new AdverQueueConsumer(oldPointName);
+				Channel channel = sume.getChannel();
+				//清楚消息
+				//channel.queuePurge(endPointName);
+				//删除队列
+				channel.queueDelete(oldPointName);
+				sume.close();
+			}
+			
+			
+			
+			boolean iscreatetable = false;
+			if(!info.getAdid().equals(oldAdverInfo.getAdid()))
+			{
+				iscreatetable = true;
 			}
 			
 			channelAdverInfoService.saveOrUpd(info,file, request, fileAdverImg, oldAdverInfo);
 			
+			if(iscreatetable)
+			{
+				//生成对应的数据库表
+				channelAdverInfoService.createAdverTable(info.getAdid(),oldAdverInfo.getChannelNum());
+			}
+			
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
 		} 
+		catch(SQLGrammarException c) 
+		{
+			//表已经存在返回成功
+			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "channelAdverInfo/list", "closeCurrent"));
+		}
 		catch (Exception e)
 		{
 			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
+		}
+		finally
+		{
+			if(isNameChange && oldAdverInfo.getAdverStatus() == 1) 
+			{
+				String newPointName = oldAdverInfo.getAdverId() + "_" + info.getAdverName() ;
+				
+				//获取任务剩余的量先生成任务
+				//需要获取任务已存在的完成数量和正在进行中的数量
+				String tableName = "t_adver_"+ oldAdverInfo.getChannelNum() + "_" + oldAdverInfo.getAdid();
+				//正在进行的数量和完成数量
+				int adverNum = channelAdverInfoService.getadverStartAndCompleteCount(oldAdverInfo.getAdverId()+"", tableName);
+				//剩余的数量
+				int remainadverNum =  info.getAdverCount() - adverNum;
+				if(remainadverNum > 0)
+				{
+					//创建任务队列
+					//生成队列
+					AdverProducer ap = new AdverProducer(newPointName);
+					for(int i = 1; i <= remainadverNum; i++) 
+					{
+						//更新剩余有效产品数量
+						String data = UUID.randomUUID().toString();
+						System.out.println("Put:" + data);
+						ap.sendMessage(data, newPointName);
+					}
+					//关闭此通道
+					ap.close();
+				}
+			}
+			
 		}
 	}
 	
@@ -258,7 +338,7 @@ public class ChannelAdverInfoController extends BaseController
 			for(String adverId : adverIds) 
 			{
 				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
-				String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
+				String endPointName = adverInfo.getAdverId() + "_" + adverInfo.getAdverName() ;
 				if(adverInfo.getAdverStatus() == status)
 				{
 					continue;

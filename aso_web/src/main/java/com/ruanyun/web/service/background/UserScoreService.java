@@ -265,7 +265,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 				TUserappidAdverid task = userappidAdveridService.getTask(tablename,idfa, adverid);
 				if(task.getStatus().compareTo("2") == 0) {return 1;}
 				
-				//任务已经完结就继续结算
+				//任务已经完结就不继续结算
 				if(adverInfo.getAdverCount() <= adverInfo.getDownloadCount())
 				{
 					task.setStatus("1.6");

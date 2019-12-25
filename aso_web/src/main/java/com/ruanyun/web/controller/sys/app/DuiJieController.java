@@ -46,6 +46,7 @@ import com.ruanyun.web.util.NumUtils;
 @RequestMapping("app/duijie")
 public class DuiJieController extends BaseController
 {
+	
 	@Autowired
 	private UserAppService userAppService;
 	@Autowired
@@ -413,7 +414,8 @@ public class DuiJieController extends BaseController
 		}
 
 		//正式通过排重 检测是否还有剩余任务
-		String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
+		String endPointName =  adverInfo.getAdverId() + "_" + adverInfo.getAdverName();
+		//String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
 		//
 //		if(!AdverQueueConsumer.consumerMap.containsKey(endPointName)) 
 //		{
@@ -772,19 +774,14 @@ public class DuiJieController extends BaseController
 			//分渠道调用激活上报接口
 			//任务需要提交的时间间隔，任务就需要后台自动去判断进行提交，这里就不需要真正的提交,更改任务状态为2.1
 			//(int)(1+Math.random()*(10-1+1)) 此处定义任务真实的完成过时间，随机完成
-			int maxTime = (int)(new Date().getTime() - task.getReceiveTime().getTime()) / 60;//maxTime是任务最大的随机数范围，超过此值任务将会被超时
-			int ranMin = (int)(1+Math.random()*(5-1+1));
-			int ranSec = (int)(1+Math.random()*(55-1+1));
-			//如果任务还有不到一分钟的时间就直接提交任务
-			if(maxTime <= 1) 
+			int ranMin = (int)(1+Math.random()*adverInfo.getSubmitInterTime());
+			int ranSec = (int)(1+Math.random()*55);
+			
+			//如果任务不需要自提交就直接去提交任务
+			if(adverInfo.getSubmitInterTime() == 0) 
 			{
 				ranMin = 0;
 				ranSec= 0;
-			}
-			//如果任务还有不到五分钟的时间就少于任务时效1分钟去提交
-			else if(maxTime <= 5)
-			{
-				ranMin = maxTime - 1;
 			}
 			
 			String commpleteTime = ChannelClassification.GetRandomFuntrueTime(ranMin, ranSec);
@@ -810,7 +807,7 @@ public class DuiJieController extends BaseController
 //			}
 			
 	}
-
+	
 	//计算师傅获取到的利润 这个应该放在计算之后有时间更改
 //	private void masterWork(TUserApp tUserApp)
 //	{

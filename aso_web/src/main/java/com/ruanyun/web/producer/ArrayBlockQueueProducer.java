@@ -33,7 +33,7 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 	@Autowired
 	private UserappidAdveridService mUserappidAdveridService;
 	
-	public static ExecutorService pool = Executors.newCachedThreadPool();  
+	public static ExecutorService pool = Executors.newFixedThreadPool(1);
 	private AppCommonModel model = new AppCommonModel(-1, "出错！");
 	@Override
 	public void run() 
@@ -47,7 +47,7 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 				for(TChannelAdverInfo info : advers) 
 				{
 					String adverid = info.getAdverId() + "";
-					String endPointName = info.getAdverName() + "_" + info.getAdverId();
+					String endPointName = info.getAdverId() + "_" + info.getAdverName() ;
 					//如果任务还没开始就直接跳过
 					if(info.getAdverDayStart().getTime()/1000 > ChannelClassification.getTimestamp())
 					{continue;}
@@ -76,7 +76,7 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 					//自动增加任务 如果任务需要增加的总数大于0 就代表需要增加任务，而且到了增加任务的时间就自增任务
 					int addTask = 0;
 					if(info.getTaskEndTime() != null 
-							&& (new Date().getTime() - info.getTaskEndTime().getTime()/1000) >= info.getTaskInterval() 
+							&& ((new Date().getTime() - info.getTaskEndTime().getTime()) / 1000) >= info.getTaskInterval() 
 							&& info.getAdverCount() == info.getDownloadCount()
 							&& info.getAddTaskLimit() > 0) 
 					{
@@ -126,7 +126,7 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 									//任务真实激活时间
 									model = ChannelClassification.channelActive(model,info, taskinfo.getIdfa(), taskinfo.getIp(), arr1, arr2, taskinfo.getUserUdid());
 									//激活成功
-									if(model.getResult() == 1) 
+									if(info.getChannelNum().equals("3") || model.getResult() == 1) 
 									{
 										TUserScore score = new TUserScore();
 										score.setUserNick(taskinfo.getIdfa());//标记任务的idfa
@@ -152,7 +152,6 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 							}
 						}
 					}
-					
 				
 					//自动更新任务数量
 					//大于0就说明任务进行了自动增加操作 就需要对任务进行自动 还需要对任务的数量进行更新

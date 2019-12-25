@@ -101,7 +101,7 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		
 		if(EmptyUtils.isNotEmpty(info.getAdverId()))
 		{
-			info.setAdverActivationCount((info.getAdverCount() - oldAdverInfo.getAdverCount()) + oldAdverInfo.getAdverActivationCount());
+			//info.setAdverActivationCount((info.getAdverCount() - oldAdverInfo.getAdverCount()) + oldAdverInfo.getAdverActivationCount());
 			BeanUtils.copyProperties(info, oldAdverInfo, new String[]{"adverCreatetime","adverStatus","channelNum","adverNum","downloadCount","adverCountRemain"});
 			update(oldAdverInfo);
 			//向轴 注释
@@ -213,18 +213,21 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 		{
 			try
 			{
-				//清理队列中所有生成的任务
-				String endPointName = info.getAdverName() + "_" + info.getAdverId();
-				AdverQueueConsumer sume = new AdverQueueConsumer(endPointName);
-				Channel channel = sume.getChannel();
-				//清楚消息
-				//channel.queuePurge(endPointName);
-				//删除队列
-				channel.queueDelete(endPointName);
-				
-				sume.close();
-				
-				updateAdverStatus(2, info.getAdverId()+"");
+				//清理队列中所有生成的任务,如果任务开始时间大于当前时间就不停止
+				if(info.getAdverDayStart().getTime() < new Date().getTime()) 
+				{
+					String endPointName =  info.getAdverId() + "_" + info.getAdverName();
+					AdverQueueConsumer sume = new AdverQueueConsumer(endPointName);
+					Channel channel = sume.getChannel();
+					//清楚消息
+					//channel.queuePurge(endPointName);
+					//删除队列
+					channel.queueDelete(endPointName);
+					
+					sume.close();
+					
+					updateAdverStatus(2, info.getAdverId()+"");
+				}
 			}
 			catch (Exception e) 
 			{

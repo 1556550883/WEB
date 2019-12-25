@@ -1,18 +1,14 @@
 package com.ruanyun.web.controller.sys.app;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
@@ -519,8 +515,8 @@ public class ChannelClassification
 		{
 			e.printStackTrace();
 		}
-		long t1 = d.getTime();
-		return t1 = t1/1000;
+		long t1 = d.getTime()/1000;
+		return t1;
 	}
 	
 	
@@ -615,9 +611,13 @@ public class ChannelClassification
 		return df.format(calendar.getTime());
 	}
 		
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
+		for(int i = 0; i <10; i++) 
+		{
+			System.err.println(new Date().getTime() + "---------" + getTimestamp());
+		}
 		
-		System.err.println(100/60);
 //		//double ran = Math.random();
 //		String result = "{\"creationTimestamp\":\"2019-10-16T07:11:51Z\",\"resultCode\":0,\"userLocale\":\"en_US\",\"protocolVersion\":\"QH65B2\",\r\n" + 
 //				"\"requestUrl\":\"https://developer.apple.com:443/services-account/QH65B2/account/device/validateDevices.action\",\r\n" + 

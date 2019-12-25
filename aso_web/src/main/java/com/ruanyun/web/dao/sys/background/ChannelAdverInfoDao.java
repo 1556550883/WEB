@@ -110,15 +110,15 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		sql.append("' ORDER BY adver_createtime desc");
 		Page<TChannelAdverInfo> page2 = sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 		
-		if(page2 != null && page2.getResult().size() > 0)
-		{
-			for(TChannelAdverInfo item : page2.getResult())
-			{
-				String tablename = "t_adver_"+ item.getChannelNum() + "_" + item.getAdid();	
-				sql = new StringBuilder("select count(1) from "+tablename+" where adver_id=").append(item.getAdverId()).append(" and status='2'");
-				item.setAdverCountComplete(sqlDao.getCount(sql.toString()));
-			}
-		}
+//		if(page2 != null && page2.getResult().size() > 0)
+//		{
+//			for(TChannelAdverInfo item : page2.getResult())
+//			{
+//				String tablename = "t_adver_"+ item.getChannelNum() + "_" + item.getAdid();	
+//				sql = new StringBuilder("select count(1) from "+tablename+" where adver_id=").append(item.getAdverId()).append(" and status='2'");
+//				item.setAdverCountComplete(sqlDao.getCount(sql.toString()));
+//			}
+//		}
 		
 		return page2;
 	}
@@ -180,8 +180,8 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	//获取所有正在启动的任务的种类
 	public List<TChannelAdverInfo> queryAllStartAdversGroup() 
 	{
-		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_status = 1 and adver_createtime >'")
-				.append(ChannelClassification.GetYestdayDate()).append("' group by channel_num,adid");
+		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_createtime >'")
+				.append(ChannelClassification.GetdayDate()).append("' group by channel_num,adid");
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 		

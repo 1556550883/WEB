@@ -20,7 +20,7 @@ public class AdverListener implements ApplicationContextAware
 	@Override
 	public void setApplicationContext(ApplicationContext arg0) throws BeansException 
 	{
-		System.out.println("------------------------web start------------------------");
+		System.out.println("------------------------web start----------------------");
 		
 		 //创建观察者对象
 		AdverBlockQueueObserver  adverBlockQueueObserver = new AdverBlockQueueObserver();

@@ -31,8 +31,9 @@ public class UdidQueueConsumer extends EndPoint
 			{
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 				messageBody = (String)SerializationUtils.deserialize(delivery.getBody());
-				close();
 			}
+			
+			close();
 		}
 		catch (IOException e1) 
 		{

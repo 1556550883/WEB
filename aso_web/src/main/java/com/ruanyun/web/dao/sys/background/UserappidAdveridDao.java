@@ -67,11 +67,11 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	
 	public Integer getIPLimitCount(String ip, int digit, String tablename) 
 	{
-		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE 1=1 ");
+		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE status=2 ");
 		sql.append(" and receive_time>'"+ChannelClassification.GetdayDate());
 		sql.append("'");
 		//检测ip前两段是否超出限制
-		String[] ipstr = ip.split(".");
+		String[] ipstr = ip.split("\\.");
 		if(digit == 2) 
 		{
 			String iplike = ipstr[0] + "." + ipstr[1] + ".%";
@@ -89,7 +89,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	//检测ip地区是否超出限制
 	public Integer getIPlocalLimitCount(String iplocal, String tablename)
 	{
-		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE 1=1 ");
+		StringBuilder sql = new StringBuilder("SELECT count(1) from "+tablename+" WHERE status=2 ");
 		sql.append(" and receive_time>'"+ChannelClassification.GetdayDate());
 		sql.append("'");
 		sql.append(" and ip_localtion ='").append(iplocal).append("'");
@@ -118,7 +118,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 			if (EmptyUtils.isNotEmpty(info.getAdverId()))
 				sql.append(" and adver_id="+info.getAdverId());
 			if (EmptyUtils.isNotEmpty(info.getUserAppId()))
-				sql.append(" and user_app_id="+info.getUserAppId());
+				sql.append(" and user_app_id='"+info.getUserAppId() + "'");
 			if (EmptyUtils.isNotEmpty(info.getIp()))
 				sql.append(" and ip='"+info.getIp()+"'");
 			if (EmptyUtils.isNotEmpty(info.getIdfa()))
@@ -198,7 +198,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	
 	public int updateSpecialComplete(String tablename, String status,String completetime,String adverid, String idfa) 
 	{
-		StringBuilder sql = new StringBuilder("update "+ tablename +" set status=?,complete_time=? WHERE ");
+		StringBuilder sql = new StringBuilder("update "+ tablename +" set status=?,complete_time=?,open_app_time=NOW() WHERE ");
 		sql.append(" adver_id="+adverid);
 		sql.append(" and idfa='"+idfa+"'");
 		
@@ -308,7 +308,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	{
 		StringBuilder sql = new StringBuilder("update "+tablename+" set status='1.6' WHERE receive_time >'")
 				.append(ChannelClassification.GetdayDate())
-				.append("' and TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status != '2' and status != '1.6'");
+				.append("' and TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " + adverInfo.getTimeLimit()*60 + " and status not in('2','1.6','2.1')");
 		
 		if(EmptyUtils.isNotEmpty(adverInfo))
 		{
@@ -413,9 +413,8 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 	
-	
-	public static void main(String[] args) {
-		
+	public static void main(String[] args)
+	{
 		StringBuilder sql = new StringBuilder("update t_userappid_adverid set status='1.6' WHERE receive_time >'")
 				.append(ChannelClassification.beforeHourToNowDate(24))
 				.append("' and ((TO_SECONDS(SYSDATE())-TO_SECONDS(receive_time) > " +1*60 + " and status<='1.5') or status = '1.7') ");

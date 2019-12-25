@@ -6,25 +6,8 @@
 	<input type="hidden" name="orderField" value="${param.orderField}">
 	<input type="hidden" name="orderDirection" value="${param.orderDirection}">
 </form>
-<!--
-<div class="pageHeader">
-	<form rel="pagerForm" id="selForm" onsubmit="return navTabSearch(this);" action="channelInfo/employeeIdfaStatistics?userAppId=${userAppId}" method="post">
-		<div class="searchBar">
-			<table class="searchContent">
-				<tr>
-					<td>完成日期：
-					<input type="text" name="completeTime" title="完成日期" class="date" id="completeTime" value="<ry:formatDate date='${completeTime}' toFmt='yyyy-MM-dd'/>"  readonly="readonly" dateFmt="yyyy-MM-dd" />
-					</td>
-				</tr>
-			</table>
-			<div class="subBar">
-				<ul>
-					<li><div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div></li>
-				</ul>
-			</div>
-		</div>
-	</form>
-</div> -->
+
+
 	<div class="panelBar">
 		<ul class="toolBar">
 			<!-- <li><a id="export" class="icon" href="javascript:;"><span>导出</span></a></li> -->
@@ -63,9 +46,11 @@
 					<td style="text-align:left;">${item.openAppTime}</td>
 					<td style="text-align:left;">${item.completeTime}</td>
 					<td style="text-align:left;">
-					<c:if test="${item.status == 1}">领取任务</c:if>
-					<c:if test="${item.status == 1.5}">打开任务</c:if>
-					<c:if test="${item.status == 2}">完成任务</c:if>
+					<c:if test="${item.status == '1'}">领取任务</c:if>
+					<c:if test="${item.status == '1.5'}">打开任务</c:if>
+					<c:if test="${item.status == '1.6'}">过期任务</c:if>
+					<c:if test="${item.status == '2.1'}">过期任务</c:if>
+					<c:if test="${item.status == '2'}">完成任务</c:if>
 					</td>
 				</tr>
 			</c:forEach>

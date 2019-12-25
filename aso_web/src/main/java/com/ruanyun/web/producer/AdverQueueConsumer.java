@@ -8,16 +8,9 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class AdverQueueConsumer extends EndPoint
 {
-	//public static Map<String, QueueingConsumer> consumerMap = new HashMap<String, QueueingConsumer>();
 	public AdverQueueConsumer(String endpointName) throws IOException, TimeoutException, ShutdownSignalException, ConsumerCancelledException, InterruptedException
 	{
 		super(endpointName, false);
-		
-//		if(!consumerMap.containsKey(endpointName)) 
-//		{
-//			
-//			consumerMap.put(endpointName, consumer);
-//		}
 	}
 	
 	public boolean getMessage(String endpointName)
@@ -38,8 +31,9 @@ public class AdverQueueConsumer extends EndPoint
 				//String messageBody = (String)SerializationUtils.deserialize(delivery.getBody());
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 				exist = true;
-				close();
 			}
+			
+			close();
 		}
 		catch (IOException e1) 
 		{

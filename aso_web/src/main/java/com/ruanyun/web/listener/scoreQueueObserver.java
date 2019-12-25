@@ -15,7 +15,7 @@ public class scoreQueueObserver implements Observer {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-        System.out.println("---------------------------------重启积分线程------------------------------------");
+        System.out.println("-----------------------重启积分线程-------------------------------------------");
         ScoreQueueConsumer simpleObservable = null;
 		try {
 			simpleObservable = new ScoreQueueConsumer();

@@ -82,7 +82,6 @@
 				</dd>
 		    </dl>
 		    
-		    
 	       <dl class="nowrap" style="width: 100%">
 			<dt>是否为模拟任务：</dt>
 			<dd>
@@ -199,8 +198,6 @@
 				</dd>
 		    </dl>
 		    
-		   
-		    
 		     <dl class="nowrap" style="width: 100%">
 				<dt>领取任务间隔（单位：秒）：</dt>
 				<dd>
@@ -209,9 +206,9 @@
 		    </dl>
 
 		    <dl class="nowrap" style="width: 100%">
-				<dt>提交任务间隔（单位：秒）：</dt>
+				<dt>任务提交最大间隔（单位：分钟）：</dt>
 				<dd>
-				    <input name="submitInterTime" id="submitInterTime" class="mustFill" title="提交任务间隔（单位：秒）" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
+				    <input name="submitInterTime" id="submitInterTime" class="mustFill" title="提交任务间隔（单位：分钟）" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
 				</dd>
 		    </dl>
 		    

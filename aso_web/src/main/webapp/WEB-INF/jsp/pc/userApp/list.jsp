@@ -95,10 +95,6 @@
 	<%@include file="/WEB-INF/jsp/inc/page.jsp" %>
 
 <script type="text/javascript">
-	(function(){
-　		$("body").css("background-image","url(s)");
-	})();	
-	
 
 function show(){
 			  window.location.href = "userApp/exportScore";

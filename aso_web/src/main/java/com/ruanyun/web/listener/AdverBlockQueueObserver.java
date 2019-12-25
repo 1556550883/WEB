@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import com.ruanyun.web.producer.ArrayBlockQueueProducer;
-import com.ruanyun.web.producer.ScoreQueueConsumer;
 
 public class AdverBlockQueueObserver implements Observer {
 	
@@ -21,6 +20,6 @@ public class AdverBlockQueueObserver implements Observer {
 		AdverBlockQueueObserver simpleObserver = new AdverBlockQueueObserver();
         //需要将观察者类加入到被观察者的观察者列表中
         simpleObservable.addObserver(simpleObserver);
-        ScoreQueueConsumer.pool.execute(simpleObservable);
+        ArrayBlockQueueProducer.pool.execute(simpleObservable);
    }
  }

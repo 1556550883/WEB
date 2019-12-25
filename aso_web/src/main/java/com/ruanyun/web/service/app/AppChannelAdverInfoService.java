@@ -118,10 +118,14 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 					continue;
 				}
 				
-				if(adver.getChannelNum().equals("25")) {
-					if(adver.getRemark() != null ) {
+				if(adver.getChannelNum().equals("25"))
+				{
+					if(adver.getRemark() != null )
+					{
 						adver.setRemark("*" + adver.getRemark());
-					}else {
+					}
+					else
+					{
 						adver.setRemark("*");
 					}
 				}
