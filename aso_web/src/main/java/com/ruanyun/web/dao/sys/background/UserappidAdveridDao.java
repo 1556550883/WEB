@@ -198,7 +198,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 	
 	public int updateSpecialComplete(String tablename, String status,String completetime,String adverid, String idfa) 
 	{
-		StringBuilder sql = new StringBuilder("update "+ tablename +" set status=?,complete_time=?,open_app_time=NOW() WHERE ");
+		StringBuilder sql = new StringBuilder("update "+ tablename +" set status=?,complete_time=? WHERE ");
 		sql.append(" adver_id="+adverid);
 		sql.append(" and idfa='"+idfa+"'");
 		
