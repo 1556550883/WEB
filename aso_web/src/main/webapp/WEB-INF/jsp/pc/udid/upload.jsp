@@ -12,7 +12,7 @@
 .new_tab thead tr td{background:#f0eff0 url(dwz/themes/default/images/grid/tableth.png) repeat-x}
 </style>
 <div class="pageContent">
-	<form method="post" id="myform"  action="channelInfo/saveFile" onsubmit="return iframeCallback(this,navTabAjaxDone);" enctype="multipart/form-data" >
+	<form method="post" id="myform"  action="udid/saveFile" onsubmit="return iframeCallback(this,navTabAjaxDone);" enctype="multipart/form-data" >
 		<div class="pageFormContent nowrap" layoutH="57">
 			<dl class="nowrap"  style="width: 100%;">
 				<dt>udid文件：</dt>

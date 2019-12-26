@@ -6,16 +6,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.ruanyun.common.service.impl.BaseServiceImpl;
+import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.dao.sys.background.TPhoneUdidWithIdfaDao;
 import com.ruanyun.web.model.TPhoneUdidModel;
 import com.ruanyun.web.model.TPhoneUdidWithIdfa;
+import com.ruanyun.web.producer.UdidQueueConsumer;
+import com.ruanyun.web.util.ExcelUtils;
 
 @Service
 public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
@@ -257,4 +263,51 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	        res.add("udid重复数量:" + result.size());
 	        return res;
 	    }
+	 
+	 
+	 	//队列生产udid
+		@SuppressWarnings("rawtypes")
+		public void activated(HttpServletResponse response, String type)
+		{
+			try
+			{
+				//udid生产者
+				String endname = type.replace("_", ",");
+				UdidQueueConsumer s = new UdidQueueConsumer(endname,false);
+				List list = tPhoneUdidWithIdfaDao.activated(type);
+				for(Object o : list) 
+				{
+					String udid = o.toString();
+					udid = udid.substring(6,udid.length() - 1);
+					s.sendMessage(udid, endname.toLowerCase());
+					System.out.println("---" + udid + "---");
+					tPhoneUdidWithIdfaDao.updateUdidStatus(udid,type,1);
+				}
+				
+				s.close();
+			} 
+			catch (IOException | TimeoutException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		public int updateUdidStatus(String udid,String tableName,int status)
+		{
+			return tPhoneUdidWithIdfaDao.updateUdidStatus(udid,tableName,status);
+		}
+		
+		
+		public void exprotPhoneUdid(HttpServletResponse response, List<TPhoneUdidWithIdfa> udids)
+		{
+			String fileName = "test_udid";
+			String[] columns = {"udid","phoneModel"};
+			String[] headers = {"udid","机型"};
+			try {
+				ExcelUtils.exportExcel(response, fileName, udids, columns, headers,
+				SysCode.DATE_FORMAT_STR_L);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 }

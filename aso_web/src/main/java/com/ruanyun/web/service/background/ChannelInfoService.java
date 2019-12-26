@@ -179,17 +179,4 @@ public class ChannelInfoService extends BaseServiceImpl<TChannelInfo>
 			e.printStackTrace();
 		}
 	}
-	
-	public void exprotPhoneUdid(HttpServletResponse response, List<TPhoneUdidWithIdfa> udids)
-	{
-		String fileName = "test_udid";
-		String[] columns = {"udid","phoneModel"};
-		String[] headers = {"udid","机型"};
-		try {
-			ExcelUtils.exportExcel(response, fileName, udids, columns, headers,
-			SysCode.DATE_FORMAT_STR_L);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }

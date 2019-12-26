@@ -33,7 +33,6 @@ import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.service.background.ChannelAdverStepUserService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserScoreInfoService;
-import com.ruanyun.web.service.background.UserScoreService;
 import com.ruanyun.web.util.CallbackAjaxDone;
 import com.ruanyun.web.util.Constants;
 import com.ruanyun.web.util.HttpSessionUtils;
@@ -57,8 +56,6 @@ public class UserAppController extends BaseController
 	private ChannelAdverStepUserService channelAdverStepUserService;
 	@Autowired	
 	private AppUserApprenticeService appUserApprenticeService;
-	@Autowired
-	private UserScoreService userScoreService;
 	/**
 	 * 
 	 * 

@@ -61,4 +61,20 @@ public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 		sql.append("'"+ model.getUdid()+"'");
 		sqlDao.execute(sql.toString());
 	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	public List activated(String type) {
+		StringBuffer sql = new StringBuffer("select udid from ");
+		sql.append(type);
+		sql.append(" where used = 0");
+		return sqlDao.getAll(sql.toString());
+	}
+	
+	
+	public int updateUdidStatus(String udid,String tableName,int status)
+	{
+		StringBuilder sql = new StringBuilder("update ").append(tableName).append(" set used="+status+" WHERE udid= '").append(udid).append("'");
+		return sqlDao.update(sql.toString());
+	}
 }

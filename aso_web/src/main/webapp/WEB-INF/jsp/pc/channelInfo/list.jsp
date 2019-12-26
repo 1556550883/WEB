@@ -36,8 +36,6 @@
 
 <div class="panelBar">
 	<ul class="toolBar">
-		<li><a class="add" onclick= "openNav('channelInfo/upload','上传udid文件','main_index')"><span>上传udid</span></a></li>
-		<li><a class="add"  onclick= "activated()"><span>激活udid</span></a></li>
 		<li><a class="add" onclick="openNav('channelInfo/toEdit?type=1','添加信息','main_index')"><span>添加</span></a></li>			
 		<li><a mask=true class="edit"  onclick="openNavU('channelInfo/toEdit?type=0&channelId=','修改信息','main_index')"><span>修改</span></a></li>
 		<li><a class="delete" title="确定要启用吗？" href="channelInfo/updateIsEnable?isEnable=1"  target="selectedTodo" postType="string" rel="ids"><span>启用</span></a></li>
@@ -111,18 +109,6 @@ function clearData(){
 	}
 }
 	
-function activated(){
-	var msg = confirm("确认激活吗？");
-	if(msg){
-		$.ajax({
-	             type: "GET",
-	             url: "channelInfo/activated",
-	             dataType: "json",
-	           	 success:function(data){
-	           		 alert(data);
-	            }
-           });
-	}
-}
+
 </script>
 

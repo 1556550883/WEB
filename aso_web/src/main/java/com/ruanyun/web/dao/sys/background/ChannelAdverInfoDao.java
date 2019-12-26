@@ -460,24 +460,10 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.getAll(sql.toString());
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public List activated(String type) {
-		StringBuffer sql = new StringBuffer("select udid from ");
-		sql.append(type);
-		sql.append(" where used = 0");
-		return sqlDao.getAll(sql.toString());
-	}
-	
 	public int releaseIp(String channelNum) {
 		StringBuilder sql = new StringBuilder("UPDATE  `t_userappid_adverid` AS A JOIN `t_channel_adver_info` AS B ON A.`adver_id` = B.`adver_id` SET ip = CONCAT(ip,\"ip\") WHERE B.channel_num = ")
 				.append(channelNum).append(" and A.receive_time < '").append(ChannelClassification.GetdayDate()).append("'");
 		
-		return sqlDao.update(sql.toString());
-	}
-	
-	public int updateUdidStatus(String udid,String tableName)
-	{
-		StringBuilder sql = new StringBuilder("update ").append(tableName).append(" set used=1 WHERE udid= '").append(udid).append("'");
 		return sqlDao.update(sql.toString());
 	}
 }
