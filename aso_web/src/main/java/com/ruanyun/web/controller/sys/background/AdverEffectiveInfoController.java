@@ -145,12 +145,10 @@ public class AdverEffectiveInfoController extends BaseController
 		 });
 		//pageList
 	    page.setResult(adverCompleteList);
-	    page.setNumPerPage(Integer.MAX_VALUE);
-	    page.setTotalPage(1);
-	    page.setTotalCount(adverCompleteList.size());
 	    addModel(model, "completeTime", TimeUtil.GetdayDate());
 	    addModel(model, "userAppId", userAppId);
 	    addModel(model, "pageList", page);
+	    addModel(model, "total", adverCompleteList.size());
 		return "pc/employeeIdfa/list";
 	}
 	

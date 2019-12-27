@@ -138,10 +138,10 @@
 					<input name='adverImg' type='hidden' value='${bean.adverImg}' maxlength='100'/>
 				</dd>
 		    </dl>
-			<dl style="width: 100%;height: 100px;">
+			<dl class="nowrap" style="width: 100%">
 				<dt>得分描述：</dt>
 				<dd>
-				<textarea style="height:100px;"  name="adverDesc" rows="5" cols="60">${bean.adverDesc} </textarea>
+				<input name="adverDesc" id="adverDesc"  title="得分描述" type="text" value="<c:out value="${bean.adverDesc}"></c:out>" maxlength="100"/>
 				</dd>
 			</dl>
 			<dl class="nowrap" style="width: 100%">

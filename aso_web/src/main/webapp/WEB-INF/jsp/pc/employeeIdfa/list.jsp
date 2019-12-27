@@ -7,10 +7,15 @@
 	<input type="hidden" name="orderDirection" value="${param.orderDirection}">
 </form>
 
-
+	<div class="pageHeader">
+		<span style="color:red">总数量：${total}</span>
+	</div>
+	
+	
 	<div class="panelBar">
 		<ul class="toolBar">
 			<!-- <li><a id="export" class="icon" href="javascript:;"><span>导出</span></a></li> -->
+			
 			<li class="line">line</li>
 		</ul>
 	</div>
