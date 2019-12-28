@@ -70,7 +70,18 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 					else if (info.getAddTaskLimit() > 0 && info.getAdverCount() == info.getDownloadCount()) 
 					{
 						//说明是需要自增的任务，而且任务数量为0 更新任务中间的结束时间
-						mChannelAdverInfoService.updateAdverEndTime(adverid);
+						if(info.getTaskEndTime() != null) 
+						{
+							int tim = (int)(new Date().getTime() - info.getTaskEndTime().getTime())/1000;
+							if(tim - info.getTaskInterval() > 5) 
+							{
+								mChannelAdverInfoService.updateAdverEndTime(adverid);
+							}
+						}
+						else 
+						{
+							mChannelAdverInfoService.updateAdverEndTime(adverid);
+						}
 					}
 					
 					//自动增加任务 如果任务需要增加的总数大于0 就代表需要增加任务，而且到了增加任务的时间就自增任务

@@ -263,7 +263,7 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 				TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", userScoreq.getUserScoreId());
 				//如果任务已经是完成状态，就不需要重复积分
 				TUserappidAdverid task = userappidAdveridService.getTask(tablename,idfa, adverid);
-				if(task.getStatus().compareTo("2") == 0) {return 1;}
+				if(task == null || task.getStatus().compareTo("2") == 0) {return 1;}
 				
 				//任务已经完结就不继续结算
 				if(adverInfo.getAdverCount() <= adverInfo.getDownloadCount())

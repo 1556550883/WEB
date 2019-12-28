@@ -45,6 +45,7 @@ public class AdverEffectiveInfoController extends BaseController
 	{
 		//说明针对特定任务进行的查询
 		Page<TChannelAdverInfo> queryAdver = new Page<TChannelAdverInfo>();
+	
 		List<TUserappidAdverid> adverCompleteList = new ArrayList<TUserappidAdverid>();
 		TChannelAdverInfo adverinfo = new TChannelAdverInfo();
 		adverinfo.setAdid(adid);
@@ -116,6 +117,9 @@ public class AdverEffectiveInfoController extends BaseController
 		//符合条件的所有今日任务
 		Page<TChannelAdverInfo> queryAdver = new Page<TChannelAdverInfo>();
 		List<TUserappidAdverid> adverCompleteList = new ArrayList<TUserappidAdverid>();
+		int completeTotal = 0;
+		int total = 0;
+		queryAdver.setNumPerPage(Integer.MAX_VALUE);
 		TChannelAdverInfo adverinfo = new TChannelAdverInfo();
 		TUserappidAdverid tas = new TUserappidAdverid();
 		tas.setUserAppId(userAppId);
@@ -125,9 +129,15 @@ public class AdverEffectiveInfoController extends BaseController
 			String tablename = "t_adver_"+ info.getChannelNum() + "_" + info.getAdid();	
 			tas.setAdverId(info.getAdverId());
 			//每个任务每个idfa只能有一个任务 queryMission
+			page.setNumPerPage(Integer.MAX_VALUE);
 			page = userappidAdveridService.queryMission(page,tas,tablename);
 			for(TUserappidAdverid ss :page.getResult()) 
 			{
+				total++;
+				if(ss.getStatus().equals("2")) 
+				{
+					completeTotal++;
+				}
 				ss.setAdverName(info.getAdverName());
 				ss.setAdverPrice(info.getAdverPrice());
 			}
@@ -148,7 +158,8 @@ public class AdverEffectiveInfoController extends BaseController
 	    addModel(model, "completeTime", TimeUtil.GetdayDate());
 	    addModel(model, "userAppId", userAppId);
 	    addModel(model, "pageList", page);
-	    addModel(model, "total", adverCompleteList.size());
+	    addModel(model, "total", total);
+	    addModel(model, "completeTotal", completeTotal);
 		return "pc/employeeIdfa/list";
 	}
 	

@@ -8,7 +8,8 @@
 </form>
 
 	<div class="pageHeader">
-		<span style="color:red">总数量：${total}</span>
+		<span style="color:red">总点击量：${total}</span>
+		<span style="color:red">总完成数：${completeTotal}</span>
 	</div>
 	
 	

@@ -111,7 +111,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		StringBuilder sql = new StringBuilder("SELECT * from "+tablename+" WHERE 1=1 ");
 		//加上时间索引直接后去一天前的信息
 		sql.append(" and receive_time > '");
-		sql.append(ChannelClassification.GetYestdayDate());
+		sql.append(ChannelClassification.GetdayDate());
 		sql.append("'");
 		if(EmptyUtils.isNotEmpty(info))
 		{
