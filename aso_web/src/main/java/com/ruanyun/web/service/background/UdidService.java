@@ -99,6 +99,10 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
         return dataList;
 }
 	
+	 public static void main(String[] args) {
+			System.out.print(shengchengidfaStr());
+		}
+	 
 	 public static String shengchengidfaStr()
 	    {
 		    //List<String> res = new ArrayList<String>();
@@ -162,9 +166,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	        return resultss;
 	}
 	 
-	 public static void main(String[] args) {
-		System.out.print(shengchengidfaStr());
-	}
+	
 	 
 	 public List<String> importCsv()
 	    {

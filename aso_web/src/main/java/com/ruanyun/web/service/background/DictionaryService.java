@@ -26,6 +26,8 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	
 	private static String notice = "目前没消息！";
 	
+	private static String openApplication = "0";
+	
 	private static String downloadUrl = "none";
 	
 	private static Integer vestorLevel = 6;
@@ -49,7 +51,7 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 	 * 修改系统参数
 	 */
 	public void updateSystemParameter(String appleIdCheck2, Integer leastTaskTime2, Integer leastForward2, String notice2, 
-			String downloadUrl2, Integer vestorLevel2,  String idfaCheck2, Integer phoneModelPercent2)
+			String downloadUrl2, Integer vestorLevel2,  String idfaCheck2, Integer phoneModelPercent2, String openApplication2)
 	{
 		if(StringUtils.hasText(appleIdCheck2))
 		{
@@ -99,7 +101,6 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 			downloadUrl = downloadUrl2;
 		}
 		
-		
 		if(vestorLevel2 != null && vestorLevel2 > 0)
 		{
 			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "VESTOR_LEVEL");
@@ -108,13 +109,20 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 			vestorLevel= leastTaskTime2;
 		}
 		
-		
 		if(StringUtils.hasText(idfaCheck2))
 		{
 			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "IDFA_CHECK");
 			oldInfo.setItemCode(idfaCheck2);
 			super.update(oldInfo);
 			idfaCheck = idfaCheck2;
+		}
+		
+		if(StringUtils.hasText(openApplication2))
+		{
+			TDictionary oldInfo = super.get(TDictionary.class, "parentCode", "OPEN_APPLICATION");
+			oldInfo.setItemCode(openApplication2);
+			super.update(oldInfo);
+			openApplication = openApplication2;
 		}
 	}
 	
@@ -217,6 +225,9 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 		return leastForward;
 	}
 	
+	
+	
+	
 	public String getNotice()
 	{
 		TDictionary dictionary = super.get(TDictionary.class, "parentCode", "NOTICE");
@@ -316,4 +327,14 @@ public class DictionaryService extends BaseServiceImpl<TDictionary>
 		return dictionaryDao.getOrderby(dictionary);
 	}
 	
+	public String getOpenApplication()
+	{
+		TDictionary dictionary = super.get(TDictionary.class, "parentCode", "OPEN_APPLICATION");
+		if (dictionary != null)
+		{
+			openApplication = dictionary.getItemCode();
+		}
+		
+		return openApplication;
+	}
 }

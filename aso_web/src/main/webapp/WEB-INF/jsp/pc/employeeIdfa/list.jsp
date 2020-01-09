@@ -1,6 +1,6 @@
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/jsp/inc/pression.jsp" %>
-<form id="pagerForm" method="post" action="channelInfo/employeeIdfaStatistics?userAppId=${userAppId}">
+<form id="pagerForm" method="post" action="adverEffectiveInfo/employeeIdfaStatistics?userAppId=${userAppId}">
 	<input type="hidden" name="pageNum" value="${pageList.pageNum }" />
 	<input type="hidden" name="numPerPage" value="${pageList.numPerPage}" />
 	<input type="hidden" name="orderField" value="${param.orderField}">
@@ -11,7 +11,22 @@
 		<span style="color:red">总点击量：${total}</span>
 		<span style="color:red">总完成数：${completeTotal}</span>
 	</div>
-	
+	<form rel="pagerForm"  onsubmit="return navTabSearch(this);" action="adverEffectiveInfo/employeeIdfaStatistics" method="post">
+	<div class="searchBar">
+		<table class="searchContent">
+			<tr>
+				<td>选择日期：<input type="text" name="endtime" title="日期" class="mustFill date" id="endtime" value="<ry:formatDate date='${endtime}' toFmt='yyyy-MM-dd HH:mm'/>"  readonly="readonly" dateFmt="yyyy-MM-dd HH:mm" ></td>
+				<input  type="hidden" name="userAppId" value="${userAppId}"/>
+			</tr>
+		
+		</table>
+		<div class="subBar">
+			<ul>
+				<li><div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div></li>
+			</ul>
+		</div>
+	</div>
+	</form>
 	
 	<div class="panelBar">
 		<ul class="toolBar">

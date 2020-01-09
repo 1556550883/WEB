@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.dao.sys.background.AdverEffectiveInfoDao;
 import com.ruanyun.web.dao.sys.background.UserappidAdveridDao;
 import com.ruanyun.web.model.TAdverEffectiveInfo;
@@ -44,7 +45,7 @@ public class AdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiveIn
 	{
 		TChannelAdverInfo adverInfo = channelAdverInfoService.getInfoById(t.getAdverId());
 		String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();	
-		page = userappidAdveridDao.PageSql(page, t, tablename);
+		page = userappidAdveridDao.PageSql(page, t, tablename, TimeUtil.GetdayDate());
 		for(TUserappidAdverid task:page.getResult())
 		{
 			task.setAdverName(adverInfo.getAdverName());
@@ -59,11 +60,11 @@ public class AdverEffectiveInfoService extends BaseServiceImpl<TAdverEffectiveIn
 		return page;
 	}
 	
-	public Page<TUserappidAdverid> getTaskList(Page<TUserappidAdverid> page, TUserappidAdverid t)
+	public Page<TUserappidAdverid> getTaskList(Page<TUserappidAdverid> page, TUserappidAdverid t,String timestr)
 	{
 		TChannelAdverInfo adverInfo = channelAdverInfoService.getInfoById(t.getAdverId());
 		String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();	
-		page = userappidAdveridDao.PageSql(page, t, tablename);
+		page = userappidAdveridDao.PageSql(page, t, tablename, 	timestr);
 		for(TUserappidAdverid task:page.getResult())
 		{
 			task.setAdverName(adverInfo.getAdverName());

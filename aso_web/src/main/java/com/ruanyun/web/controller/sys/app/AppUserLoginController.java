@@ -5,6 +5,9 @@
  */
 package com.ruanyun.web.controller.sys.app;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,6 +22,7 @@ import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserLogin;
 import com.ruanyun.web.service.app.AppUserLoginService;
+import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.util.PhoneFormatCheckUtils;
 
@@ -30,7 +34,8 @@ public class AppUserLoginController extends BaseController
 	private AppUserLoginService appUserLoginService;
 	@Autowired	
 	private UserAppService userAppService;
-
+	@Autowired
+	private DictionaryService dictionaryService;
 	/**
 	 * 
 	 * 手机端接口:登陆和第三方登陆
@@ -59,6 +64,83 @@ public class AppUserLoginController extends BaseController
 		
 		super.writeJsonDataApp(response, acm);
 	}
+	
+	/**
+	 * 查询系统参数
+	 */
+	@RequestMapping("getSystemParameter")
+	public void getSystemParameter(HttpServletResponse response) 
+	{
+		AppCommonModel model = new AppCommonModel();
+		
+		try
+		{
+			Map<String,Object> map = new HashMap<String,Object>(4);
+			map.put("appleIdCheck", dictionaryService.getAppleIdCheck());
+			map.put("leastTaskTime", dictionaryService.getLeastTaskTime());
+			map.put("leastForward", dictionaryService.getLeastForward());
+			map.put("notice", dictionaryService.getNotice());
+			map.put("downloadUrl", dictionaryService.getDownloadUrl());
+			map.put("appVersion", dictionaryService.getAppVersion());
+			map.put("idfaCheck", dictionaryService.getIdfaCheck());
+			map.put("phoneModelPercent", dictionaryService.getPhoneModelPercent());
+			map.put("openApplication", dictionaryService.getOpenApplication());
+			model.setObj(map);
+			model.setResult(1);
+			model.setMsg("成功！");
+		}
+		catch (Exception e) 
+		{
+			model.setResult(-1);
+			model.setMsg("出错！");
+		}
+		
+		super.writeJsonDataApp(response, model);
+	}
+	
+	/**
+	 * 功能描述:发送短信
+	 * 
+	 * @param response
+	 * @param userNum
+	 * @param user
+	 * @param request
+	 */
+//	@RequestMapping("sendmsg")
+//	public void sendMsg(HttpServletResponse response, String phoneNumber, HttpServletRequest request) 
+//	{
+//		AppCommonModel model = null;
+//		try 
+//		{
+//			if(PhoneFormatCheckUtils.isPhoneLegal(phoneNumber)) 
+//			{
+//				model = appUserLoginService.sendMsg(phoneNumber);
+//			}
+//			else
+//			{
+//				model = new AppCommonModel(-1,"错误的手机号码！");
+//			}
+//			
+//			TUserApp tUserApp = userAppService.getUserAppByUserName(udid);
+//			
+//			if(model.getResult() == 1)
+//			{
+//				String smsCode =  model.getObj() + "";
+//				
+//				userAppService.updateSmsCode(request, tUserApp, smsCode);
+//			}
+//		}
+//		catch (Exception e) 
+//		{
+//			logger.error("send_msg:"+e.getMessage());
+//			model = new AppCommonModel(-1,e.getMessage());
+//		}
+//		
+//		model.setObj("{}");
+//		super.writeJsonDataApp(response, model);
+//	}	
+	
+	
 	
 	/**
 	 * 功能描述:发送短信

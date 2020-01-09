@@ -124,7 +124,10 @@ bundleId：
        <input name="adverCount" id="adverCount" class="mustFill" title="广告数量" type="text" value="<c:out value="${bean.adverCount}"></c:out>" maxlength="100"/>
 </div>
  
-
+<HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
+ <div> 
+ip限制次数：<input name="isIpLimitEnabled" id="isIpLimitEnabled" class="mustFill" title="ip限制次数" type="text" value="<c:out value="${bean.isIpLimitEnabled}"</c:out>" maxlength="100"/>
+</div>
 
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 

@@ -82,11 +82,14 @@
 </table>
 
 <div class="footer">
- <div style="float:left;width:50%;height:60px;display:inline-block;text-align:center;margin-top:20px" onclick = "changeStatus()">
+ <div style="float:left;width:35%;height:60px;display:inline-block;text-align:center;margin-top:20px" onclick = "changeStatus()">
 	切换任务状态
  </div>
- <div style="float:left;width:50%;height:60px;display:inline-block;text-align:center;margin-top:20px" onclick = "toappedit()">
+ <div style="float:left;width:35%;height:60px;display:inline-block;text-align:center;margin-top:20px" onclick = "toappedit()">
  	  添加任务
+</div>
+<div style="float:left;width:30%;height:60px;display:inline-block;text-align:center;margin-top:20px" onclick = "queryidfa()">
+ 	 查看idfa
 </div>
 </div>
 
@@ -103,15 +106,17 @@ function changeStatus(){
          }
      });
 	 
-	$.ajax({
-            type: "GET",
-            url: "changeStatus",
-            data: {ids:ids},
-            dataType: "json",
-          	 success:function(data){
-          		 alert("切换成功！");
-           }
-      });
+	 if(ids){
+		 $.ajax({
+	            type: "GET",
+	            url: "changeStatus",
+	            data: {ids:ids},
+	            dataType: "json",
+	          	 success:function(data){
+	          		 alert("切换成功！");
+	           }
+	      });
+	 }
 }
 
 	function toappedit(id){
@@ -120,5 +125,20 @@ function changeStatus(){
 		}else{
 			window.location.href = "toappedit?channelNum=" + ${bean.channelNum};
 		}
+	}
+	
+	function queryidfa(){
+		 var adverId = "";
+		 $("input[type='checkbox']").each(function () {
+	         if ($(this).is(":checked")) {
+	        	 adverId = $(this).val()
+	         }
+	     });
+		 
+		 if(adverId)
+		 {
+			 window.location.href = "queryidfa?adverId=" + adverId;
+		 }
+		
 	}
 </script>

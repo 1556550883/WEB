@@ -78,7 +78,7 @@ public class TimeUtil {
 	
 	public static void main(String[] args) 
 	{
-		System.err.println(GetdayDate(-7));
+		System.err.println(GetdayDate());
 	}
 	
 	/**
@@ -277,6 +277,20 @@ public class TimeUtil {
 		return date;
 	}
 		
+
+	//获取昨天的日期
+	@SuppressWarnings("static-access")
+	public static String GetdayDate(Date time, int i) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(time);
+		calendar.add(calendar.DATE, i);
+		String date = simpleDateFormat.format(calendar.getTime());
+		
+		return date;
+	}
+	
+	
 	//获取当月
 	public static String GetMonthDate() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");

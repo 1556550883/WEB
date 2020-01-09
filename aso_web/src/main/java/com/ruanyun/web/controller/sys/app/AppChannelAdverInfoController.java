@@ -44,6 +44,16 @@ public class AppChannelAdverInfoController extends BaseController
 //			phoneType = "iPhone7";
 //		}
 		
+		if(!phoneType.contains(",")) 
+		{
+			return;
+		}
+		else 
+		{
+			String[] phonetype = phoneType.split(",");
+			phoneType = phonetype[0].substring(6);
+		}
+		
 		if(!StringUtils.hasText(channelType) || !StringUtils.hasText(systemType)
 				||!StringUtils.hasText(phoneType) || userAppId == null || userAppId <= 0)
 		{

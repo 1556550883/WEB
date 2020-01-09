@@ -1,6 +1,7 @@
 package com.ruanyun.web.controller.sys.app;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,11 +11,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ruanyun.common.controller.BaseController;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TExternalChannelAdverInfo;
 import com.ruanyun.web.model.TExternalChannelTask;
+import com.ruanyun.web.model.TPhoneUdidWithIdfa;
 import com.ruanyun.web.service.app.ExternalAppService;
 import com.ruanyun.web.service.background.ExternalChannelAdverInfoService;
+import com.ruanyun.web.service.background.UdidService;
 
 import net.sf.json.JSONObject;
 
@@ -26,6 +30,8 @@ public class ExternalAppController extends BaseController
 	private ExternalAppService externalAppService;
 	@Autowired
 	private ExternalChannelAdverInfoService externalChannelAdverInfoService;
+	@Autowired
+	private UdidService udidService;
 	
 	@RequestMapping("happy_distinct")
 	public void distinctInterface(HttpServletResponse response, HttpServletRequest request, String adid, String key,
@@ -40,13 +46,46 @@ public class ExternalAppController extends BaseController
 			return;
 		}
 		
+		String udidtablename = "idfa_udid_xiaoshou";
+		TPhoneUdidWithIdfa result = udidService.getUdidByIdfa(idfa, udidtablename);
+		String time = TimeUtil.doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
+		if(result != null) 
+		{
+			udid = result.getUdid();
+			model = result.getPhoneModel();
+			sysver =  result.getPhoneVersion();
+		}
+		//需要真实
+		//else if (adverInfo.getIsTrue() == 1)
+		else
+		{
+			//执行就是要用模拟数据
+			//如果是空就说明需要获取新的udid
+			if(model.toLowerCase().equals("iphone9,3"))
+			{
+				model = "iphone9,1";
+			}
+			
+			udid = ChannelClassification.getPhoneUdid(model.toLowerCase(),1);
+			
+			//获取新的udid之后需要保存idfa和udid
+			if(!udid.equals("0")) 
+			{
+				TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,model,sysver, time);
+				udidService.savePhoneInfo(p, udidtablename);
+			}
+			else 
+			{
+				obj.element("code", -1);
+				obj.element("msg", "udid被消耗完");
+				super.writeJsonDataApp(response, obj);
+				return;
+			}
+		}
+		
 		TExternalChannelTask tExternalChannelTask = new TExternalChannelTask();
 		tExternalChannelTask.setIdfa(idfa);
-		if(udid != null) {
-			tExternalChannelTask.setUdid(udid);
-		}else {
-			tExternalChannelTask.setUdid("0");
-		}
+		tExternalChannelTask.setUdid(udid);
 		tExternalChannelTask.setSysver(sysver);
 		tExternalChannelTask.setModel(model);
 		tExternalChannelTask.setIp(ip);
@@ -139,7 +178,7 @@ public class ExternalAppController extends BaseController
 						return;
 					}
 					
-					udid = ChannelClassification.getPhoneUdid( model, 0);
+					//udid = ChannelClassification.getPhoneUdid(model.toLowerCase(), 1);
 					tExternalChannelTask.setUdid(udid);
 					AppCommonModel models = ZhangShangHuDong.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa,ip,sysver, model,udid,keyword);
 					if(models.getResult() == 1) {
@@ -165,7 +204,7 @@ public class ExternalAppController extends BaseController
 						return;
 					}
 					
-					udid = ChannelClassification.getPhoneUdid( model, 0);
+					//udid = ChannelClassification.getPhoneUdid( model, 0);
 					tExternalChannelTask.setUdid(udid);
 					//exterPaiChong(String domain,String adid,String keyword,  String idfa, String ip, 
 					//		String deviceType, String osVersion, String udid) 
@@ -331,7 +370,6 @@ public class ExternalAppController extends BaseController
 			return;
 		}
 
-
 		try 
 		{
 			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
@@ -399,7 +437,6 @@ public class ExternalAppController extends BaseController
 		if(info.getExternalTaskType().equals("1")) {
 			obj.element("code", -1);
 			obj.element("result", "callback task");
-
 			return;
 		}
 		

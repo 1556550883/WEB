@@ -57,6 +57,13 @@
 			</p>
 		</dl>
 		
+		<dl>
+			<p>
+				<label>需要打开的应用（标题-bunldid）：</label>
+				<input type="text" name="openApplication" value="${openApplication}" size="10" class="required" alt="需要打开的应用" />
+			</p>
+		</dl>
+		
 		<input type="hidden" value="${bean.parentCode}" name="parentCode">
 </div>
 

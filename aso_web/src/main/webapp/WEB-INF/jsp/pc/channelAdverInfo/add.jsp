@@ -33,7 +33,7 @@
 				   <select name="phoneType" class="mustFill" title="手机型号">
 				   		<option value="">请选择</option>
 				   		<c:forEach items="${phoneType}" var="item"> 
-				   			<option value="${item.itemCode}" <c:if test="${item.itemCode=='iPhone6s'}">selected</c:if>>${item.itemName}</option>
+				   			<option value="${item.itemCode}" <c:if test="${item.itemCode==8}">selected</c:if>>${item.itemName}</option>
 				   		</c:forEach>
 				   </select>
 				</dd>

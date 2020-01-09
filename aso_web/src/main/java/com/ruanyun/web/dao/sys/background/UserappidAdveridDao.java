@@ -106,12 +106,12 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		return sqlDao.queryPage(page, TUserScoreDetail.class, sql.toString());
 	}
 	
-	public Page<TUserappidAdverid> PageSql(Page<TUserappidAdverid> page,TUserappidAdverid info, String tablename)
+	public Page<TUserappidAdverid> PageSql(Page<TUserappidAdverid> page,TUserappidAdverid info, String tablename, String queryAdverTime)
 	{
 		StringBuilder sql = new StringBuilder("SELECT * from "+tablename+" WHERE 1=1 ");
 		//加上时间索引直接后去一天前的信息
 		sql.append(" and receive_time > '");
-		sql.append(ChannelClassification.GetdayDate());
+		sql.append(queryAdverTime);
 		sql.append("'");
 		if(EmptyUtils.isNotEmpty(info))
 		{

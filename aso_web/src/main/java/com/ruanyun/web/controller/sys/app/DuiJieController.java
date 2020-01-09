@@ -34,7 +34,6 @@ import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.producer.AdverQueueConsumer;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
-import com.ruanyun.web.service.background.DictionaryService;
 import com.ruanyun.web.service.background.UdidService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
@@ -46,7 +45,6 @@ import com.ruanyun.web.util.NumUtils;
 @RequestMapping("app/duijie")
 public class DuiJieController extends BaseController
 {
-	
 	@Autowired
 	private UserAppService userAppService;
 	@Autowired
@@ -54,41 +52,9 @@ public class DuiJieController extends BaseController
 	@Autowired
 	private AppChannelAdverInfoService appChannelAdverInfoService;
 	@Autowired
-	private DictionaryService dictionaryService;
-	@Autowired
 	private UdidService udidService;
 	
-	/**
-	 * 查询系统参数
-	 */
-	@RequestMapping("getSystemParameter")
-	public void getSystemParameter(HttpServletResponse response) 
-	{
-		AppCommonModel model = new AppCommonModel();
-		
-		try
-		{
-			Map<String,Object> map = new HashMap<String,Object>(4);
-			map.put("appleIdCheck", dictionaryService.getAppleIdCheck());
-			map.put("leastTaskTime", dictionaryService.getLeastTaskTime());
-			map.put("leastForward", dictionaryService.getLeastForward());
-			map.put("notice", dictionaryService.getNotice());
-			map.put("downloadUrl", dictionaryService.getDownloadUrl());
-			map.put("appVersion", dictionaryService.getAppVersion());
-			map.put("idfaCheck", dictionaryService.getIdfaCheck());
-			map.put("phoneModelPercent", dictionaryService.getPhoneModelPercent());
-			model.setObj(map);
-			model.setResult(1);
-			model.setMsg("成功！");
-		}
-		catch (Exception e) 
-		{
-			model.setResult(-1);
-			model.setMsg("出错！");
-		}
-		
-		super.writeJsonDataApp(response, model);
-	}
+	
 	
 	@RequestMapping("test_idfa")
 	public void test(HttpServletResponse response,String udid,String idfa,String ip,String phoneModel,String phoneVersion,String adverId) 
@@ -119,6 +85,54 @@ public class DuiJieController extends BaseController
 	}
 	
 	/**
+	 * 打开app
+	 */
+	@RequestMapping("openFrontApp")
+	public void openFrontApp(HttpServletResponse response,HttpServletRequest request,String idfa,String phoneModel,String phoneVersion) 
+	{
+		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		String udid = "0";
+		String udidtablename = "idfa_udid_xiaoshou";
+		String time = TimeUtil.doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
+		TPhoneUdidWithIdfa result = udidService.getUdidByIdfa(idfa, udidtablename);
+		
+		if(result == null) 
+		{
+			//如果是空就说明需要获取新的udid
+			String pModel = phoneModel;
+			if(phoneModel.toLowerCase().equals("iphone9,3"))
+			{
+				pModel = "iphone9,1";
+			}
+			
+			udid = ChannelClassification.getPhoneUdid(pModel.toLowerCase(),1);
+			
+			//获取新的udid之后需要保存idfa和udid
+			if(!udid.equals("0")) 
+			{
+				TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion, time);
+				udidService.savePhoneInfo(p, udidtablename);
+			}
+			else 
+			{
+				model.setResult(-1);
+				model.setMsg(phoneModel + " udid被消耗完");
+				super.writeJsonDataApp(response, model);
+				return;
+			}
+		}
+		else
+		{
+			udid = result.getUdid();
+		}
+		
+		model.setResult(1);
+		model.setMsg(udid);
+		super.writeJsonDataApp(response, model);
+		return;
+	}
+	
+	/**
 	 * 领取任务
 	 * @throws InterruptedException 
 	 * @throws TimeoutException 
@@ -143,13 +157,38 @@ public class DuiJieController extends BaseController
 		String phoneVersion_real = "";
 		String phoneModel = "";
 		String phoneVersion = "";
-		int userAppType = 2;
+		int userAppType = 1;
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		//判断广告是否存在
 		if(adverInfo == null)
 		{
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：广告不存在！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		if(adverInfo.getAdverStatus() != 1) 
+		{
+			model.setResult(-1);
+			model.setMsg("任务已完结或已下线！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		if(adverInfo.getIsMock() != 0) 
+		{
+			model.setResult(-1);
+			
+			model.setMsg("抢任务人数过多，请稍后再试！");
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		if(adverInfo.getAdverCountRemain() <= 0) 
+		{
+			model.setResult(-1);
+			model.setMsg("1000：任务已被抢光！");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -164,7 +203,7 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
-			
+
 		//等于1就说说明需要去检测ip次数限制
 		if(adverInfo.getIsIpLimitEnabled() > 0) 
 		{
@@ -221,128 +260,41 @@ public class DuiJieController extends BaseController
 			}
 		}
 		
-		if(udid != null && !udid.isEmpty()) 
-		{
-			TUserApp userApp = userAppService.getUserAppByUserName(udid);
-			if(!userApp.getLoginControl().equals("1")) 
-			{
-				model.setResult(-1);
-				model.setMsg("领取任务失败。原因：账号已被禁止登录！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
-			
-			if(userApp.getPhoneNum() == null || userApp.getZhifubao() == null || userApp.getOpenID() == null ) 
-			{
-				model.setResult(0);
-				model.setMsg("请先完善个人信息！");
-				super.writeJsonDataApp(response, model);
-				return;
-			}
-			
-			idfa = userApp.getIdfa();
-			userAppId = userApp.getUserAppId() + "";
-			userNum = userApp.getUserNum();
-			phoneModel_real = userApp.getPhoneModel() + "-";
-			phoneVersion_real = userApp.getPhoneVersion() + "-";
-			phoneModel = userApp.getPhoneModel();
-			phoneVersion = userApp.getPhoneVersion();
-		}
-		else 
-		{
-			 //工作室
-			 idfa = request.getParameter("idfa");//手机广告标识符
-			 userAppId = request.getParameter("userAppId");//用户Id
-			 appleId = request.getParameter("appleId");//苹果账号
-			 userNum = request.getParameter("userNum");
-			 phoneModel_real = request.getParameter("phoneModel") + "-";
-			 phoneVersion_real = request.getParameter("phoneVersion") + "-";
-			 //随机出机型
-			 //phoneModel = ChannelClassification.getPhoneModel(userAppId);
-			 phoneModel = request.getParameter("phoneModel");
-			 phoneVersion = request.getParameter("phoneVersion");
+		 //工作室
+		 idfa = request.getParameter("idfa");//手机广告标识符
+		 userAppId = request.getParameter("userAppId");//用户Id
+		// appleId = request.getParameter("appleId");//苹果账号
+		 userNum = request.getParameter("userNum");
+		 phoneModel_real = request.getParameter("phoneModel") + "-";
+		 phoneVersion_real = request.getParameter("phoneVersion") + "-";
+		 //随机出机型
+		 //phoneModel = ChannelClassification.getPhoneModel(userAppId);
+		 phoneModel = request.getParameter("phoneModel");
+		 phoneVersion = request.getParameter("phoneVersion");
 			 
 			 //测试代码
 //			 phoneModel = "iphone9,1";
 //			 phoneVersion = "13.1.1";
+		 
+		 if(!phoneModel.contains(",")) 
+		 {
+			model.setResult(-1);
+			model.setMsg("请使用最新的安装包！");
+			super.writeJsonDataApp(response, model);
+			return;
+		 }
 			 
-			 if(!phoneModel.contains(",")) 
-			 {
-				model.setResult(-1);
-				model.setMsg("请使用最新的安装包！");
-				super.writeJsonDataApp(response, model);
-				return;
-			 }
-			 
-			String udidtablename = "idfa_udid_xiaoshou";
-			String time = TimeUtil.doFormatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
-			TPhoneUdidWithIdfa result = udidService.getUdidByIdfa(idfa, udidtablename);
-			
-			if(result != null) 
-			{
-				udid = result.getUdid();
-				phoneModel = result.getPhoneModel();
-				phoneVersion =  result.getPhoneVersion();
-			}
-			//需要真实
-			//else if (adverInfo.getIsTrue() == 1)
-			else
-			{
-				//执行就是要用模拟数据
-				if(adverInfo.getPhoneModelPercent() != null && (ran* 10) < adverInfo.getPhoneModelPercent()) 
-				{
-					 phoneModel = ChannelClassification.getPhoneWithUdid();
-					 phoneVersion = ChannelClassification.getPhoneVersion();
-				}
-				
-				//如果是空就说明需要获取新的udid
-				String pModel = phoneModel;
-				if(phoneModel.toLowerCase().equals("iphone9,3"))
-				{
-					pModel = "iphone9,1";
-				}
-				
-				udid = ChannelClassification.getPhoneUdid(pModel.toLowerCase(),1);
-				
-				//获取新的udid之后需要保存idfa和udid
-				if(!udid.equals("0")) 
-				{
-					TPhoneUdidWithIdfa p = new TPhoneUdidWithIdfa(idfa,udid,phoneModel,phoneVersion, time);
-					udidService.savePhoneInfo(p, udidtablename);
-				}
-				else 
-				{
-					model.setResult(-1);
-					model.setMsg(phoneModel + " udid被消耗完");
-					super.writeJsonDataApp(response, model);
-					return;
-				}
-			}
-
-			//工作室
-			 userAppType = 1;
-		}
-		
+		 if(udid == null) 
+		 {
+			model.setResult(-1);
+			model.setMsg("udid不能为空！");
+			super.writeJsonDataApp(response, model);
+			return;
+		 }
+		 
 		if(adverInfo.getAdverAdid().contains("-11"))
 		{
 			phoneVersion = ChannelClassification.get11PhoneVersion();
-		}
-		
-		if(adverInfo.getAdverStatus() != 1) 
-		{
-			model.setResult(-1);
-			model.setMsg("任务已完结或已下线！");
-			super.writeJsonDataApp(response, model);
-			return;
-		}
-		
-		if(adverInfo.getIsMock() != 0) 
-		{
-			model.setResult(-1);
-			
-			model.setMsg("抢任务人数过多，请稍后再试！");
-			super.writeJsonDataApp(response, model);
-			return;
 		}
 
 		//判断当天领取到的任务
@@ -415,26 +367,15 @@ public class DuiJieController extends BaseController
 			return;
 		}
 
-		//正式通过排重 检测是否还有剩余任务
+		//正式通过排重 检测是否还有剩余任务//先去判断是否还剩余任务，否则直接跳出
 		String endPointName =  adverInfo.getAdverId() + "_" + adverInfo.getAdverName();
-		//String endPointName = adverInfo.getAdverName() + "_" + adverInfo.getAdverId();
-		//
-//		if(!AdverQueueConsumer.consumerMap.containsKey(endPointName)) 
-//		{
-//			//创建消费者
-//			new AdverQueueConsumer(endPointName);
-//		}
 		AdverQueueConsumer ss = new AdverQueueConsumer(endPointName);
 		boolean success = ss.getMessage(endPointName);
 		//false 代表队列中不存在任务了，需要去判断是否还有剩下任务
 		if(!success) 
 		{
-			//QueueingConsumer sumer = AdverQueueConsumer.consumerMap.get(endPointName);
-			//sumer.getChannel().queuePurge(endPointName);
-			//删除队列
-			//sumer.getChannel().queueDelete(endPointName);
 			model.setResult(-1);
-			model.setMsg("真遗憾，你未抢到任务,请稍后再试!");
+			model.setMsg("10001：任务已经被抢光!");
 			super.writeJsonDataApp(response, model);
 			return;
 		}
@@ -469,8 +410,7 @@ public class DuiJieController extends BaseController
 		
 		for (TUserappidAdverid item : taskList.getResult())
 		{
-			//model.setObj(item);
-			if(item.getIdfa().equals(idfa))
+			if(item.getIdfa().equalsIgnoreCase(idfa))
 			{
 				if (item.getStatus().compareTo("2") >= 0) 
 				{
@@ -498,7 +438,7 @@ public class DuiJieController extends BaseController
 						model.setMsg("ip已经被更改，请重新领取任务！");
 					}
 					
-					model.setResult(1);
+					model.setResult(3);
 					//model.setObj(item); 此处的msg不能改，由于app用这个判断 需要修改
 					model.setMsg("你已成功领取任务，不需重复领取！");
 					break;
@@ -514,6 +454,7 @@ public class DuiJieController extends BaseController
 		
 		return model;
 	}
+	
 	
 	/**
 	 * 打开app
@@ -909,6 +850,7 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+		
 		//查询广告信息
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		if(adverInfo == null)
@@ -918,6 +860,7 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+		
 		//查询任务完成情况
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		TUserappidAdverid info = new TUserappidAdverid();
@@ -925,7 +868,7 @@ public class DuiJieController extends BaseController
 		info.setAdverId(Integer.valueOf(adverId));
 		info.setStatus("2");
 		String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();	
-		Page<TUserappidAdverid> page2 = userappidAdveridService.queryMission(page, info, tablename);
+		Page<TUserappidAdverid> page2 = userappidAdveridService.queryMission(page, info, tablename, TimeUtil.GetdayDate());
 		if(page2 != null && page2.getResult() != null)
 		{
 			for(TUserappidAdverid item:page2.getResult())

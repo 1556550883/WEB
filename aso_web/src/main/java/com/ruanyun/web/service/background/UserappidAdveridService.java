@@ -43,9 +43,9 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.saveTask(tablename,task);
 	}
 	
-	public Page<TUserappidAdverid> queryMission(Page<TUserappidAdverid> page, TUserappidAdverid info, String tablename) 
+	public Page<TUserappidAdverid> queryMission(Page<TUserappidAdverid> page, TUserappidAdverid info, String tablename, String queryAdverTime) 
 	{
-		return userappidAdveridDao.PageSql(page, info,tablename);
+		return userappidAdveridDao.PageSql(page, info,tablename, queryAdverTime);
 	}
 	
 	public TUserappidAdverid queryByCondition(TUserappidAdverid info, String tablename,String receTime) 

@@ -81,7 +81,7 @@
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
 广告appleStore-ID：
-      <input id="adverAdid" name="adverAdid" value="${bean.adverAdid}" oninput = "value=value.replace(/[^\d]/g,'')"  size="30" maxlength="100" class='' title="广告storeID" />
+      <input id="adverAdid" name="adverAdid" value="${bean.adverAdid}"  type="text"  size="30" maxlength="100" class='' title="广告storeID" />
 </div>
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
@@ -106,6 +106,11 @@ bundleId：
 广告图片:
      <input type="file" name="fileAdverImg"/>
 	<input id='adverImg' name='adverImg' type='hidden' value='${bean.adverImg}' maxlength='100'/>
+</div>
+
+<HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
+ <div> 
+ip限制次数：<input name="isIpLimitEnabled" id="isIpLimitEnabled" class="mustFill" title="ip限制次数" type="text" value="0" maxlength="100"/>
 </div>
 
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
@@ -166,8 +171,8 @@ bundleId：
 </div>
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
-提交任务间隔（单位：秒）：
-    <input name="submitInterTime" id="submitInterTime" class="mustFill" title="提交任务间隔（单位：秒）" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
+任务提交最大间隔（单位：分钟）：
+    <input name="submitInterTime" id="submitInterTime" class="mustFill" title="任务提交最大间隔" type="text" value="<c:out value="${bean.submitInterTime}"></c:out>" maxlength="10"/>
 </div>
 <HR style= " FILTER: progid:DXImageTransform.Microsoft.Shadow ( color: #987cb9 ,direction : 145, strength :15 ) " width = "100%" color = #987cb9 SIZE= 1>
  <div> 
@@ -242,7 +247,8 @@ bundleId：
 		var channelNum = ${channelNum};
 		$(function(){
 			 $("#adverAdid").change(function(){
-			 	var storeid = $("#adverAdid").val();
+				var storeid=$("#adverAdid").val().replace(/[^\d]/g,'')
+				$("#adverAdid").val(storeid);
 		   		$.ajax({
 	             type: "GET",
 	             url: "channelAdverInfo/getAppDetail",
@@ -271,6 +277,7 @@ bundleId：
 	            		$("#receInterTime").val(adverinfo["receInterTime"]);
 	            		$("#submitInterTime").val(adverinfo["submitInterTime"]);
 	            		$("#phoneModelPercent").val(adverinfo["phoneModelPercent"]);
+	            		$("#isIpLimitEnabled").val(adverinfo["isIpLimitEnabled"]);
 	            	}else{
 	            		var bundleid = json["bundleid"];
 	            		$("#bundleId").val(bundleid);

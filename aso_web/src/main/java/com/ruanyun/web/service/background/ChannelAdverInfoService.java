@@ -47,9 +47,9 @@ public class ChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInfo>
 	/**
 	 * 查询广告列表（后台显示）
 	 */
-	public Page<TChannelAdverInfo> queryAdverList(Page<TChannelAdverInfo> page, TChannelAdverInfo t, String queryAdverTime) 
+	public Page<TChannelAdverInfo> queryAdverList(Page<TChannelAdverInfo> page, TChannelAdverInfo t, String queryAdverTime,String endtime) 
 	{
-		return channelAdverInfoDao.PageSql3(page, t, queryAdverTime);
+		return channelAdverInfoDao.PageSql3(page, t, queryAdverTime,endtime);
 	}
 	
 	public int createAdverTable(String adid, String channelID) 

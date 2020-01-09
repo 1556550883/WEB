@@ -59,7 +59,7 @@ public class ChannelAdverInfoController extends BaseController
 	@RequestMapping("list")
 	public String getChannelAdverInfoList(Page<TChannelAdverInfo> page,TChannelAdverInfo info,Model model)
 	{
-		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info, TimeUtil.GetdayDate(-7));
+		Page<TChannelAdverInfo> queryAdver  = channelAdverInfoService.queryAdverList(page, info, TimeUtil.GetdayDate(-7),"");
 		for(TChannelAdverInfo adverInfo : queryAdver.getResult()) {
 			//第二天一点之后算完结任务
 

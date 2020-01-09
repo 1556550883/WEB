@@ -131,8 +131,6 @@ public class UserAppService extends BaseServiceImpl<TUserApp>
 		return super.get(TUserApp.class, userId);
 	}
 	
-	
-	
 	public TUserApp getUserAppByUserName(String  loginName)
 	{
 		return super.get(TUserApp.class, "loginName", loginName);

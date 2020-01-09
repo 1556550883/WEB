@@ -33,7 +33,7 @@ public class TChannelAdverInfo  implements java.io.Serializable {
      private String adverDesc;
      
      private String taskType;//任务类型
-     private String phoneType;//手机型号
+     private Integer phoneType;//手机型号
      private String adid;//广告ID
      private String bundleId;//bundleId
      private Integer adverCount;//广告数量
@@ -157,12 +157,12 @@ public class TChannelAdverInfo  implements java.io.Serializable {
         this.taskType = taskType;
     }
     
-    @Column(name="phone_type", length=10)
-	public String getPhoneType() {
+    @Column(name="phone_type")
+	public Integer getPhoneType() {
 		return phoneType;
 	}
 	
-	public void setPhoneType(String phoneType) {
+	public void setPhoneType(Integer phoneType) {
 		this.phoneType = phoneType;
 	}
     

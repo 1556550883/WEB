@@ -81,7 +81,10 @@
 	                	<td>打开任务</td>
 					</c:if>
 					<c:if test="${item.status=='1.6'}">
-	                	<td>任务超时</td>
+	                	<td>任务超时:${item.completeTime}</td>
+					</c:if>
+					<c:if test="${item.status=='2.1'}">
+	                	<td>提交时间:${item.completeTime}</td>
 					</c:if>
 					<c:if test="${item.status=='2'}">
 	                	<td>${item.completeTime}</td>

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.producer.UdidQueueConsumer;
@@ -613,11 +614,10 @@ public class ChannelClassification
 		
 	public static void main(String[] args)
 	{
-		for(int i = 0; i <10; i++) 
-		{
-			System.err.println(new Date().getTime() + "---------" + getTimestamp());
-		}
+		int ranMin = (int)(1+Math.random()*3);
+		int ranSec = (int)(1+Math.random()*55);
 		
+		System.err.print(GetRandomFuntrueTime(ranMin, ranSec));
 //		//double ran = Math.random();
 //		String result = "{\"creationTimestamp\":\"2019-10-16T07:11:51Z\",\"resultCode\":0,\"userLocale\":\"en_US\",\"protocolVersion\":\"QH65B2\",\r\n" + 
 //				"\"requestUrl\":\"https://developer.apple.com:443/services-account/QH65B2/account/device/validateDevices.action\",\r\n" + 

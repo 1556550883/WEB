@@ -46,6 +46,9 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	private ChannelAdverStepDao channelAdverStepDao;
 	@Autowired
 	private UserAppDao userAppDao;
+	
+//	@Autowired
+//	private ChannelInfoService channelInfoService;
 
 	/**
 	 * 
@@ -91,6 +94,9 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		AppCommonModel model = new AppCommonModel(1, "查询成功");
 		TUserApp tUserApp = userAppDao.get(TUserApp.class, "userAppId", userAppId);
 		Page<TChannelAdverInfo> page2 = channelAdverInfoDao.PageSql2(page, channelType, systemType, phoneType, tUserApp.getLevel(), osversion, tUserApp.getUserApppType());
+		//此处应该放入缓存
+		//List<TChannelInfo> channels =  channelInfoService.getAll(TChannelInfo.class);
+		
 		Page<TUserappidAdverid> taskList = null;
 		//保存正在进行的任务
 		List<TChannelAdverInfo> advering =  new ArrayList<>();
@@ -113,17 +119,26 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 					continue;
 				}
 				
-				if(adver.getChannelNum().equals("25"))
-				{
-					if(adver.getRemark() != null )
-					{
-						adver.setRemark("*" + adver.getRemark());
-					}
-					else
-					{
-						adver.setRemark("*");
-					}
-				}
+				adver.setRemark(adver.getChannelNum()+"-" + adver.getRemark());
+				
+//				for(TChannelInfo ss :channels) 
+//				{
+//					if(ss.getChannelNum().equals(adver.getChannelNum())) 
+//					{
+//						adver.setRemark(ss.getChannelName().substring(0,1)+"-" + adver.getRemark());
+//					}
+//				}
+//				if(adver.getChannelNum().equals("25"))
+//				{
+//					if(adver.getRemark() != null )
+//					{
+//						adver.setRemark("*" + adver.getRemark());
+//					}
+//					else
+//					{
+//						adver.setRemark("*");
+//					}
+//				}
 				
 				if(tUserApp.getUserApppType() <= 1)
 				{
@@ -211,9 +226,9 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	/**
 	 * 广告剩余数量更新
 	 */
-	public int updateAdverCountAndRemain(String tablename , TChannelAdverInfo adverInfo) 
+	public int updateAdverCountAndRemain(String tablename , TChannelAdverInfo adverInfo,int addTask) 
 	{
-		return channelAdverInfoDao.updateAdverCountAndRemain(tablename,adverInfo);
+		return channelAdverInfoDao.updateAdverCountAndRemain(tablename,adverInfo,addTask);
 	}
 	
 	/**
@@ -280,6 +295,4 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 	{
 		channelAdverInfoDao.releaseIp(channelNum);
 	}
-	
-	
 }

@@ -175,6 +175,7 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 						//创建任务队列
 						//生成队列
 						AdverProducer ap = new AdverProducer(endPointName);
+						//ap.getMessageCount()
 						for(int i = 1; i <= remain; i++) 
 						{
 							//更新剩余有效产品数量
@@ -188,10 +189,9 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 					}
 					
 					//更新任务剩余的数量，每次都执行，否则前端显示不准确
-					mAppChannelAdverInfoService.updateAdverCountAndRemain(tablename, info);
+					//判断队列这种是否还存在任务,如果不存在就根据任务剩余的量发送任务
+					mAppChannelAdverInfoService.updateAdverCountAndRemain(tablename, info, addTask);
 				}
-				
-				Thread.sleep(1000);
             } 
 			catch (Exception e)
 			{
