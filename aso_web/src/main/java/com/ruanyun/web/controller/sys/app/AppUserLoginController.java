@@ -69,7 +69,7 @@ public class AppUserLoginController extends BaseController
 	 * 查询系统参数
 	 */
 	@RequestMapping("getSystemParameter")
-	public void getSystemParameter(HttpServletResponse response) 
+	public void getSystemParameter(HttpServletResponse response, String phoneType) 
 	{
 		AppCommonModel model = new AppCommonModel();
 		

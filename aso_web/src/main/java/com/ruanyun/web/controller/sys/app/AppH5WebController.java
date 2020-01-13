@@ -2,7 +2,6 @@ package com.ruanyun.web.controller.sys.app;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +29,6 @@ import com.ruanyun.web.service.app.AppChannelAdverInfoService;
 import com.ruanyun.web.service.app.AppUserApprenticeService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserScoreService;
-import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.JsonDateValueProcessor;
 import com.ruanyun.web.util.NumUtils;
 
@@ -48,8 +46,6 @@ public class AppH5WebController extends BaseController
 	private UserScoreService userScoreService;
 	@Autowired	
 	private AppUserApprenticeService appUserApprenticeService;
-	@Autowired
-	private UserappidAdveridService userappidAdveridService;
 
 	@RequestMapping(value = "/main")
 	public String mainPage(HttpServletRequest request)
