@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.producer.AdverQueueConsumer;
 import com.ruanyun.web.producer.QueueProducer;
 import com.ruanyun.web.service.app.AppChannelAdverInfoService;
+import com.ruanyun.web.service.background.ChannelAdverInfoService;
 import com.ruanyun.web.service.background.UdidService;
 import com.ruanyun.web.service.background.UserAppService;
 import com.ruanyun.web.service.background.UserappidAdveridService;
@@ -53,7 +55,8 @@ public class DuiJieController extends BaseController
 	private AppChannelAdverInfoService appChannelAdverInfoService;
 	@Autowired
 	private UdidService udidService;
-	
+	@Autowired
+	private ChannelAdverInfoService channelAdverInfoService;
 	
 	
 	@RequestMapping("test_idfa")
@@ -370,6 +373,26 @@ public class DuiJieController extends BaseController
 		//正式通过排重 检测是否还有剩余任务//先去判断是否还剩余任务，否则直接跳出
 		String endPointName =  adverInfo.getAdverId() + "_" + adverInfo.getAdverName();
 		AdverQueueConsumer ss = new AdverQueueConsumer(endPointName);
+		if(ss.getMessageCount() <= 0) 
+		{
+			//正在进行的数量和完成数量
+			int adverNum = channelAdverInfoService.getadverStartAndCompleteCount(adverId, tablename);
+			//剩余的数量
+			int remainadverNum =  adverInfo.getAdverCount() - adverNum;
+			if(remainadverNum > 0)
+			{
+				//创建任务队列
+				//生成队列
+				for(int i = 1; i <= remainadverNum; i++) 
+				{
+					//更新剩余有效产品数量
+					String data = UUID.randomUUID().toString();
+					System.out.println("Put:" + data);
+					ss.sendMessage(data, endPointName);
+				}
+			}
+		}
+		
 		boolean success = ss.getMessage(endPointName);
 		//false 代表队列中不存在任务了，需要去判断是否还有剩下任务
 		if(!success) 
