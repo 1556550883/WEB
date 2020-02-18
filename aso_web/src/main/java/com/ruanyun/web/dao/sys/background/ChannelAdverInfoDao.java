@@ -112,6 +112,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		
 		sql.append(" and adver_createtime>'").append(queryAdverTime);
 		sql.append("' ORDER BY adver_createtime desc");
+		
 		Page<TChannelAdverInfo> page2 = sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
 				
 		return page2;

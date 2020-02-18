@@ -143,7 +143,9 @@ public class AppUserScoreController extends BaseController
 			score.setUserNum(userNum);
 			score.setScore(forward);
 			model.setResult(1);
-			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			QueueProducer ap  = new QueueProducer();
+			ap.sendMessage(score, "socre");
+			ap.close();
 		}else 
 		{
 			model.setResult(-1);

@@ -101,6 +101,7 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	
 	 public static void main(String[] args) {
 			System.out.print(shengchengidfaStr());
+			System.out.print("----");
 		}
 	 
 	 public static String shengchengidfaStr()

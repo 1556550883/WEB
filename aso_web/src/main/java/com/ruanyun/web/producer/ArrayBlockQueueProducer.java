@@ -150,7 +150,9 @@ public class ArrayBlockQueueProducer extends Observable implements Runnable
 										float sco = ArithUtil.subf(info.getAdverPrice(), info.getPriceDiff());
 										score.setScore(sco);
 										//发送任务到积分系统
-										QueueProducer.getQueueProducer().sendMessage(score, "socre");
+										QueueProducer ap  = new QueueProducer();
+										ap.sendMessage(score, "socre");
+										ap.close();
 									}
 									else
 									{

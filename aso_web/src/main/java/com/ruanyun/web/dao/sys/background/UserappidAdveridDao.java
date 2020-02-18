@@ -134,6 +134,7 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		}
 		
 		sql.append(" ORDER BY receive_time desc,user_app_id desc,adver_id desc");
+		
 		return sqlDao.queryPage(page, TUserappidAdverid.class, sql.toString());
 	}
 

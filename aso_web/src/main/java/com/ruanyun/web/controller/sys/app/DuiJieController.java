@@ -595,8 +595,9 @@ public class DuiJieController extends BaseController
 //			score.setScore(adverInfo.getAdverPrice());
 //		}
 //		
-		QueueProducer.getQueueProducer().sendMessage(score, "socre");
-		
+		QueueProducer ap  = new QueueProducer();
+		ap.sendMessage(score, "socre");
+		ap.close();
 //		if(tUserApp.getUserApppType() == 2)
 //		{
 //			masterWork(tUserApp);

@@ -46,13 +46,13 @@ public class AdverEffectiveInfoController extends BaseController
 	{
 		//说明针对特定任务进行的查询
 		Page<TChannelAdverInfo> queryAdver = new Page<TChannelAdverInfo>();
-	
+		queryAdver.setNumPerPage(Integer.MAX_VALUE);
 		List<TUserappidAdverid> adverCompleteList = new ArrayList<TUserappidAdverid>();
 		TChannelAdverInfo adverinfo = new TChannelAdverInfo();
 		adverinfo.setAdid(adid);
 		adverinfo.setAdverName(advername);
 		//符合条件的所有今日任务
-		if(EmptyUtils.isNotEmpty(idfa) || EmptyUtils.isNotEmpty(ip) || EmptyUtils.isNotEmpty(advername) || EmptyUtils.isNotEmpty(advername)) 
+		if(EmptyUtils.isNotEmpty(idfa) || EmptyUtils.isNotEmpty(ip) || EmptyUtils.isNotEmpty(adid) || EmptyUtils.isNotEmpty(advername)) 
 		{
 			queryAdver = channelAdverInfoService.queryAdverList(queryAdver, adverinfo, TimeUtil.GetdayDate(-7), "");
 			

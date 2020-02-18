@@ -91,7 +91,9 @@ public class UserAppController extends BaseController
 	public void saveChangeUserScore(TUserScore userScore, Model model){
 		userScore.setType(6);
 		try {
-			QueueProducer.getQueueProducer().sendMessage(userScore, "socre");
+			QueueProducer ap  = new QueueProducer();
+			ap.sendMessage(userScore, "socre");
+			ap.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

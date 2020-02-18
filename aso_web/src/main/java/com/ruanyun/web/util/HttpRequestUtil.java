@@ -220,7 +220,7 @@ public class HttpRequestUtil {
     			deviceNumbers = deviceNumbers + "," + model.getUdid();
     		}
     		
-    		if(i > 20) {
+    		if(i > 50) {
     			 //循环操作
     	    	  //post 参数设置
     				System.err.println("running-----------------------------------");
@@ -274,7 +274,7 @@ public class HttpRequestUtil {
     		}
     	}
 
-    	if(i> 0 && i<=20) {
+    	if(i> 0 && i<=50) {
     		System.err.println("running++++++++++++++++++++++++++++++++++++++++");
     		  Map<String, String> obj = new HashMap<String, String>(); 
 	    	  obj.put("deviceNames",deviceNames);

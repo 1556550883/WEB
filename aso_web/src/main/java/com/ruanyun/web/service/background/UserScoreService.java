@@ -379,7 +379,9 @@ public class UserScoreService extends BaseServiceImpl<TUserScore>{
 			score.setUserNum(masterNum);//师傅num
 			score.setRankingNum(tUserApp.getUserNum());//用来表示第十个徒弟num。如果不为空
 			score.setScore((float) 0);
-			QueueProducer.getQueueProducer().sendMessage(score, "socre");
+			QueueProducer ap  = new QueueProducer();
+			ap.sendMessage(score, "socre");
+			ap.close();
 		}
 		catch (Exception e) 
 		{

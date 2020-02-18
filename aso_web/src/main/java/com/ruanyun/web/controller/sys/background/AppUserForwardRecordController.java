@@ -89,7 +89,9 @@ public class AppUserForwardRecordController extends BaseController
 			score.setRankingNum("");//用来表示第十个徒弟num。如果不为空
 			score.setScore(userScoreinfo.getScore());
 			try {
-				QueueProducer.getQueueProducer().sendMessage(score, "socre");
+				QueueProducer ap  = new QueueProducer();
+				ap.sendMessage(score, "socre");
+				ap.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
