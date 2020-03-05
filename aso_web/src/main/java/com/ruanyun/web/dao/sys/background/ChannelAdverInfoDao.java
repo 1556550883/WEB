@@ -110,7 +110,7 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 			sql.append(" and adver_createtime<'").append(endTime).append("'");
 		}
 		
-		sql.append(" and adver_createtime>'").append(queryAdverTime);
+		sql.append(" and adver_day_start>'").append(queryAdverTime);
 		sql.append("' ORDER BY adver_createtime desc");
 		
 		Page<TChannelAdverInfo> page2 = sqlDao.queryPage(page, TChannelAdverInfo.class, sql.toString());
@@ -175,8 +175,8 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 	//获取所有正在启动的任务的种类
 	public List<TChannelAdverInfo> queryAllStartAdversGroup() 
 	{
-		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_createtime >'")
-				.append(ChannelClassification.GetdayDate()).append("' group by channel_num,adid");
+		StringBuilder sql = new StringBuilder("SELECT * from t_channel_adver_info WHERE adver_day_start >'")
+				.append(TimeUtil.GetdayDate()).append("' group by channel_num,adid");
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 		

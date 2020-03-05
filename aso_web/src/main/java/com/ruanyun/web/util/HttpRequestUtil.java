@@ -229,7 +229,7 @@ public class HttpRequestUtil {
     	          obj.put("deviceNumbers", deviceNumbers);
     	          obj.put("devicePlatforms", devicePlatforms);
     	          obj.put("register", "multiple");
-    	          obj.put("teamId", "6X3N2VKGF2");
+    	          obj.put("teamId", "3D38T34P9R");
     	    	  HttpClient client = new DefaultHttpClient();
     	    	  //获取跳过ssl验证的client
     	    	  client = getNewHttpsClient(client);
@@ -281,7 +281,7 @@ public class HttpRequestUtil {
 	          obj.put("deviceNumbers", deviceNumbers);
 	          obj.put("devicePlatforms", devicePlatforms);
 	          obj.put("register", "multiple");
-	          obj.put("teamId", "6X3N2VKGF2");
+	          obj.put("teamId", "3D38T34P9R");
 	    	  HttpClient client = new DefaultHttpClient();
 	    	  //获取跳过ssl验证的client
 	    	  client = getNewHttpsClient(client);
