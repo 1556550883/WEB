@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.web.model.AppCommonModel;
 import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.producer.UdidQueueConsumer;
@@ -114,6 +113,9 @@ public class ChannelClassification
 		case 27:
 			model = YYMChannel.isYYMChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
 			break;
+		case 28:
+			model = JYSWChannel.isJYSWChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
+			break;
 		default:
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：渠道未在后台配置！");
@@ -206,6 +208,9 @@ public class ChannelClassification
 				break;
 			case 27:
 				model = YYMChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), adverInfo.getAdverName(), idfa, ip, phoneos[1], phoneModel[1], udid);
+				break;
+			case 28:
+				model = JYSWChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), idfa, ip, adverInfo.getAdverName(),phoneModel[1], phoneos[1], udid);
 				break;
 			default:
 				model.setResult(-1);
