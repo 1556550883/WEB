@@ -116,6 +116,8 @@ public class ChannelClassification
 		case 28:
 			model = JYSWChannel.isJYSWChannel(adverInfo, adid, idfa, ip, userAppId, adverId, userNum, phoneVersion, phoneModel, udid);
 			break;
+		case 29:
+			model = MkChannel.isMkChannel(adverInfo, idfa, ip, userAppId, userNum, phoneVersion, phoneModel, udid);
 		default:
 			model.setResult(-1);
 			model.setMsg("领取任务失败。原因：渠道未在后台配置！");
@@ -212,6 +214,8 @@ public class ChannelClassification
 			case 28:
 				model = JYSWChannel.activate(adverInfo.getFlag4(), adverInfo.getAdid(), idfa, ip, adverInfo.getAdverName(),phoneModel[1], phoneos[1], udid);
 				break;
+			case 29:
+				model = MkChannel.activate(adverInfo, idfa, ip,phoneModel[1], phoneos[1], udid);
 			default:
 				model.setResult(-1);
 				model.setMsg("未完成。原因：渠道未在后台配置！");
