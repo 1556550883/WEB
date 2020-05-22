@@ -42,7 +42,9 @@ public static String getAddressByIP(String strIP) {
 		}
 	}
 
+
+
 	public static void main(String[] args) {
-		System.out.println(getAddressByIP("59.63.210.139"));
+		//System.out.println(testidfa("DBFFA393-853D-4DEB-B9A8-2EDC56AF44AD"));
 	}
 }  

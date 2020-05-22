@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javassist.expr.NewArray;
+
 public class TimeUtil {
 
 	/**
@@ -78,7 +80,7 @@ public class TimeUtil {
 	
 	public static void main(String[] args) 
 	{
-		System.err.println(GetdayDate());
+		System.err.println(beforeHourToNowDate(-1));
 	}
 	
 	/**
@@ -343,6 +345,23 @@ public class TimeUtil {
 		return df.format(calendar.getTime());
 	}
 	
+	
+	
+	public static Date pHourToNowDate(int i) 
+	{
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) + i);
+		//SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return calendar.getTime();
+	}
+	
+	public static Date bHourToNowDate(int i) 
+	{
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - i);
+		//SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return calendar.getTime();
+	}
 	/**
 	 * 功能描述:获取当前时间-1970年的秒数
 	 *

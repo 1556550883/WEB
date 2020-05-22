@@ -21,6 +21,7 @@ import com.ruanyun.common.model.Page;
 import com.ruanyun.common.service.impl.BaseServiceImpl;
 import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SysCode;
+import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.dao.sys.ChannelAdverStepDao;
 import com.ruanyun.web.dao.sys.background.ChannelAdverInfoDao;
 import com.ruanyun.web.dao.sys.background.UserAppDao;
@@ -30,6 +31,7 @@ import com.ruanyun.web.model.TUserApp;
 import com.ruanyun.web.model.TUserappidAdverid;
 import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.ExcelUtils;
+
 
 /**
  *@author feiyang
@@ -178,6 +180,79 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		String date = df.format(new Date());
 		page2.setFlag(date);
+		//放置一个10000任务来检测idfa是否正常
+		TChannelAdverInfo spadver = new TChannelAdverInfo();
+		spadver.setAddTask(0);
+		spadver.setAddTaskLimit(0);
+		spadver.setAdverId(10000);
+		spadver.setAdid("10000");
+		spadver.setAdverActivationCount(1000);
+		spadver.setAdverAdid("10000");
+		spadver.setAdverCount(1000);
+		spadver.setAdverCountComplete(0);
+		spadver.setAdverCountRemain(1000);
+		spadver.setAdverCreatetime(TimeUtil.bHourToNowDate(1));
+		spadver.setAdverDayStart(TimeUtil.bHourToNowDate(1));
+		spadver.setAdverDayEnd(TimeUtil.pHourToNowDate(1));
+		spadver.setAdverDesc("1");
+		spadver.setAdverInter(0);
+		spadver.setAdverName("特殊任务");
+		spadver.setAdverNum("ADVER_0000001000");
+		spadver.setAdverPrice(0f);
+		
+		spadver.setAdverSort(0);
+		
+		spadver.setAdverStatus(1);
+		
+		spadver.setAdverStatusEnd(0);
+		spadver.setAdverStepCount(0);
+		spadver.setAdverTimeEnd(TimeUtil.beforeHourToNowDate(-1));
+		spadver.setAdverTimeStart(TimeUtil.beforeHourToNowDate(1));
+		
+		spadver.setChannelNum("25");
+		
+		spadver.setDownloadCount(0);
+		spadver.setDownloadType(0);
+		
+		spadver.setIosVersion(12);
+		
+		spadver.setIsAdverInter(0);
+		spadver.setIsAuth(3);
+		
+		spadver.setIsIpLimitEnabled(0);
+		
+		spadver.setIsMock(0);
+		spadver.setIsOpen(1);
+		spadver.setIsRegister(0);
+		spadver.setIsToday(0);
+		spadver.setIsTrue(0);
+		spadver.setLevel(1);
+		
+		spadver.setOpenTime(11);
+		spadver.setPhoneModelPercent(0);
+		spadver.setPhoneType(8);	
+		spadver.setPriceDiff(0f);
+		spadver.setRandom(1f);
+		spadver.setReceInterTime(0);
+		spadver.setRemark("查询");
+		spadver.setSubmitInterTime(0);
+		
+		spadver.setTaskType("0");
+		//spadver.set
+		
+		spadver.setAdverActivationCount(1000);
+		
+		spadver.setAdverCountRemain(1000);
+		
+		spadver.setTaskInterval(0);
+		
+		
+		spadver.setBundleId("10000");
+		spadver.setTimeLimit(0f);
+		spadver.setUserStatus(0);
+		
+		page2.getResult().add(0,spadver);
+		
 		model.setObj(page2);
 		return model;
 	}

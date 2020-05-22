@@ -1,7 +1,11 @@
 package com.ruanyun.web.controller.sys.app;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,6 +139,32 @@ public class DuiJieController extends BaseController
 		return;
 	}
 	
+	private int testIdfaWork(String idfa)
+	{
+		try
+		{
+			URL url = new URL("http://xiaoshouzhuanqian.com/test/checkZdIdfa?idfa="+idfa);
+			URLConnection conn = url.openConnection();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+			String line = null;
+			StringBuffer result = new StringBuffer();
+			while ((line = reader.readLine()) != null) 
+			{
+				result.append(line);
+			}
+			reader.close();
+			String ipAddr = result.toString();
+
+			String str = ipAddr.substring(ipAddr.indexOf("[\"sysver\"]")-6,ipAddr.indexOf("[\"sysver\"]")-5);
+			
+			return Integer.parseInt(str);
+
+		} catch (IOException e) {
+			return 0;
+		}
+	}
+	
+	
 	/**
 	 * 领取任务
 	 * @throws InterruptedException 
@@ -161,6 +191,26 @@ public class DuiJieController extends BaseController
 		String phoneModel = "";
 		String phoneVersion = "";
 		int userAppType = 1;
+		idfa = request.getParameter("idfa");//手机广告标识符
+		
+		if(adverId.equalsIgnoreCase("10000"))
+		{
+			int resu = testIdfaWork(idfa);
+			if(resu != 1) 
+			{
+				model.setMsg("idfa不合格！");
+			}
+			else 
+			{
+				model.setMsg("idfa符合要求！");
+			}
+			
+			model.setResult(-1);
+			super.writeJsonDataApp(response, model);
+			return;
+		}
+		
+		
 		TChannelAdverInfo adverInfo = appChannelAdverInfoService.get(TChannelAdverInfo.class, "adverId", Integer.valueOf(adverId));
 		//判断广告是否存在
 		if(adverInfo == null)
@@ -170,6 +220,7 @@ public class DuiJieController extends BaseController
 			super.writeJsonDataApp(response, model);
 			return;
 		}
+		
 		
 		if(adverInfo.getAdverStatus() != 1) 
 		{
@@ -264,7 +315,7 @@ public class DuiJieController extends BaseController
 		}
 		
 		 //工作室
-		 idfa = request.getParameter("idfa");//手机广告标识符
+		
 		 userAppId = request.getParameter("userAppId");//用户Id
 		// appleId = request.getParameter("appleId");//苹果账号
 		 userNum = request.getParameter("userNum");

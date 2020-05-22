@@ -38,12 +38,6 @@ public class AppChannelAdverInfoController extends BaseController
 		
 		page.setNumPerPage(Integer.MAX_VALUE);
 		
-		//设定为iphone7 
-//		String id = userAppId + "";
-//		if(id.equals("77")) {
-//			phoneType = "iPhone7";
-//		}
-		
 		if(!phoneType.contains(",")) 
 		{
 			return;
