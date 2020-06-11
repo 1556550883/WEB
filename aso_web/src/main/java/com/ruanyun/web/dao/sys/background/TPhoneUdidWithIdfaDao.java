@@ -42,6 +42,11 @@ public class TPhoneUdidWithIdfaDao extends BaseDaoImpl<TPhoneUdidWithIdfa> {
 		return sqlDao.getAll(TPhoneUdidModel.class,sql.toString());
 	}
 	
+	public TPhoneUdidModel getTPhoneUdid(String tableName, String udid) {
+		StringBuffer sql = new StringBuffer("Select * from "+tableName + " where udid='" + udid + "'");
+		return sqlDao.get(TPhoneUdidModel.class,sql.toString());
+	}
+	
 	public void saveList(List<TPhoneUdidModel> dataList, String tableName) {
 		StringBuilder sql = new StringBuilder("INSERT INTO  ");
 		sql.append(tableName);

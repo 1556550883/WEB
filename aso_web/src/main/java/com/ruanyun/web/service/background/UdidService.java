@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.ruanyun.common.service.impl.BaseServiceImpl;
+import com.ruanyun.common.utils.EmptyUtils;
 import com.ruanyun.common.utils.SysCode;
 import com.ruanyun.common.utils.TimeUtil;
 import com.ruanyun.web.dao.sys.background.TPhoneUdidWithIdfaDao;
@@ -222,15 +223,11 @@ public class UdidService extends BaseServiceImpl<TPhoneUdidWithIdfa>{
 	            
 	            if(tableName != null) {
 	            	//先判断是否重复
-	            
-	            	List<TPhoneUdidModel> modelList = tPhoneUdidWithIdfaDao.getTPhoneUdidModel(tableName);
-	            	List<String> udidList = new ArrayList<String>();
-	            	for(TPhoneUdidModel b : modelList) {
-	            		udidList.add(b.getUdid());
-	            	}
-	            	
-	            	for(TPhoneUdidModel model : dataList) {
-	            		if(udidList.contains(model.getUdid())) {
+	            	for(TPhoneUdidModel model : dataList) 
+	            	{
+	            		TPhoneUdidModel udidList = tPhoneUdidWithIdfaDao.getTPhoneUdid(tableName,model.getUdid());
+	            		if(EmptyUtils.isNotEmpty(udidList))
+	            		{
 	            			result.add(model);
 	            		}
 	            	}
