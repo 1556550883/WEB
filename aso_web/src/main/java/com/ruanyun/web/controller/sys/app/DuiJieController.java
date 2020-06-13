@@ -1,11 +1,7 @@
 package com.ruanyun.web.controller.sys.app;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +42,8 @@ import com.ruanyun.web.service.background.UserappidAdveridService;
 import com.ruanyun.web.util.AddressUtils;
 import com.ruanyun.web.util.ArithUtil;
 import com.ruanyun.web.util.NumUtils;
+
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping("app/duijie")
@@ -138,29 +136,32 @@ public class DuiJieController extends BaseController
 		super.writeJsonDataApp(response, model);
 		return;
 	}
+
+//	public static void main(String[] args)
+//	{
+//		System.out.print(testIdfaWork("11"));
+//	}
 	
 	private int testIdfaWork(String idfa)
 	{
-		try
+		String url = "http://xiaoshouzhuanqian.com/API/partner/smg?source=qisu&idfa="+idfa;
+		JSONObject jsonObject = BaseChannel.httpGet(url, false);
+		
+		if(jsonObject == null)
 		{
-			URL url = new URL("http://xiaoshouzhuanqian.com/test/checkZdIdfa?idfa="+idfa);
-			URLConnection conn = url.openConnection();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-			String line = null;
-			StringBuffer result = new StringBuffer();
-			while ((line = reader.readLine()) != null) 
+			return -1;
+		}
+		else
+		{
+			Integer errno = (Integer)jsonObject.get("errno");
+			Integer status = -1;
+			if(errno == 0) 
 			{
-				result.append(line);
+				JSONObject data = (JSONObject)jsonObject.get("data");
+				status = (Integer)data.get("status");
 			}
-			reader.close();
-			String ipAddr = result.toString();
-
-			String str = ipAddr.substring(ipAddr.indexOf("[\"sysver\"]")-6,ipAddr.indexOf("[\"sysver\"]")-5);
 			
-			return Integer.parseInt(str);
-
-		} catch (IOException e) {
-			return 0;
+			return status;
 		}
 	}
 	
@@ -196,13 +197,17 @@ public class DuiJieController extends BaseController
 		if(adverId.equalsIgnoreCase("10000"))
 		{
 			int resu = testIdfaWork(idfa);
-			if(resu != 1) 
+			
+			switch(resu) 
 			{
-				model.setMsg("idfa不合格！");
-			}
-			else 
-			{
-				model.setMsg("idfa符合要求！");
+				case 1:
+					model.setMsg("idfa符合要求！");
+					break;
+				case -1:
+					model.setMsg("接口请求失败，请寻找渠道！");
+					break;
+				default:
+					model.setMsg("idaf无效！");
 			}
 			
 			model.setResult(-1);
