@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.3.1.Final</version>
+			<version>5.3.5.Final</version>
 		</dependency>
 		<!-- 要疯！！！！！！！！
 			hibernate-core 4.1.2自带的javassist3.15.0-GA在运行时会报duplicate method: getHandler in com.fc.jplanwork.model.test.TdStoreOutBack_$$_javassist_0
