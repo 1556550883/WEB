@@ -139,7 +139,7 @@ public class DuiJieController extends BaseController
 
 //	public static void main(String[] args)
 //	{
-//		System.out.print(testIdfaWork("11"));
+//		System.out.print(testIdfaWork("7321906B-E9BC-4141-93AB-1C6B484252A7"));
 //	}
 	
 	private int testIdfaWork(String idfa)

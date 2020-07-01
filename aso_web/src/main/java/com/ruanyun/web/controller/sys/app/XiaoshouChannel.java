@@ -46,7 +46,7 @@ public class XiaoshouChannel  extends BaseChannel
 		phonemodel = "iPhone" + phonemodel.substring(6);
 		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(domain)
-				.append("?appkey=").append(adid)
+				.append("?adid=").append(adid)
 				.append("&chid=").append(chid)
 				.append("&system=").append(sysver)
 				.append("&model=").append(phonemodel)
@@ -124,7 +124,7 @@ public class XiaoshouChannel  extends BaseChannel
 		
 		phonemodel = "iPhone" + phonemodel.substring(6);
 		StringBuilder url = new StringBuilder(domain)
-				.append("?appkey=").append(adid)
+				.append("?adid=").append(adid)
 				.append("&chid=").append(chid)
 				.append("&system=").append(sysver)
 				.append("&model=").append(phonemodel)
@@ -203,7 +203,7 @@ public class XiaoshouChannel  extends BaseChannel
 		StringBuilder url;
 		try {
 			url = new StringBuilder(domain)
-					.append("?appkey=").append(adid)
+					.append("?adid=").append(adid)
 					.append("&chid=").append(chid)
 					.append("&system=").append(sysver)
 					.append("&model=").append(phonemodel)
