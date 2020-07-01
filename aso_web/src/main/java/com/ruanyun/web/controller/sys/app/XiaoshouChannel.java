@@ -78,7 +78,7 @@ public class XiaoshouChannel  extends BaseChannel
 			}
 			else
 			{
-				Integer code = (Integer)jsonObject.get("errno");
+				Integer code = (Integer)jsonObject.get("code");
 				if(code == null) {code = 0;}
 				
 				switch (code) {
@@ -147,7 +147,7 @@ public class XiaoshouChannel  extends BaseChannel
 			model.setMsg("领取任务失败。原因：系统出错！");
 		}else{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer code = (Integer)jsonObject.get("errno");
+			Integer code = (Integer)jsonObject.get("code");
 			if(code == null) {code = -1;}
 			if(code == 0){
 				model.setResult(1);
@@ -225,7 +225,7 @@ public class XiaoshouChannel  extends BaseChannel
 			model.setMsg("未完成。原因：调用第三方平台出错！");
 		}else{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer code = (Integer)jsonObject.get("errno");
+			Integer code = (Integer)jsonObject.get("code");
 			if(code == null){
 				model.setResult(-1);
 				model.setMsg("渠道未返回状态，未完成！");
@@ -234,7 +234,7 @@ public class XiaoshouChannel  extends BaseChannel
 				model.setMsg(code + "：已完成！");
 			}else{
 				model.setResult(-1);
-				model.setMsg((String)jsonObject.get("error"));
+				model.setMsg((String)jsonObject.get("msg"));
 			}
 		}
 		
