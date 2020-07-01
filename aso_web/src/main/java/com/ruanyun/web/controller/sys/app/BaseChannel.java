@@ -39,13 +39,14 @@ public abstract class BaseChannel
 	/**
 	 * httpGet
 	 */
-    public static JSONObject httpGet(String url, boolean noNeedResponse)
+	public static JSONObject httpGet(String url, boolean noNeedResponse)
     {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         JSONObject jsonResult = null;
         HttpGet httpGet = new HttpGet(url);
         try 
         {
+        	//SSLSocketFactory.getSocketFactory().setHostnameVerifier(new AllowAllHostnameVerifier());
             HttpResponse httpResponse = httpClient.execute(httpGet);
             if (httpResponse.getStatusLine().getStatusCode() == 200) 
             {
