@@ -41,11 +41,18 @@ public class BeeChannel extends BaseChannel
 	public static AppCommonModel paiChong(TChannelAdverInfo adverInfo, String idfa, String ip, 
 			String deviceType, String osVersion, String udid) 
 	{
+		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		if(adverInfo.getFlag2() == null || adverInfo.getFlag2().isEmpty()) 
+		{
+			model.setResult(1);
+			model.setMsg("未重复，可以领取任务！");
+			return model;
+		}
+		
 		long timestamp = System.currentTimeMillis()/1000;
 		String sign = ChannelSource+"|"+adverInfo.getAdid() +"|" + idfa +"|"+ChannelKey + "|" + timestamp;
 		sign = MD5.MD5Encode(sign);
 
-		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		//调用第三方排重接口
 		StringBuilder url = new StringBuilder(adverInfo.getFlag2())
 				.append("?adid=").append(adverInfo.getAdid())
