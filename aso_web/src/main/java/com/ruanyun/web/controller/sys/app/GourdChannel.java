@@ -35,6 +35,7 @@ public class GourdChannel extends BaseChannel
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		//调用第三方排重接口
+		adverName = adverName.replaceAll(" ", "%20");
 		StringBuilder url = new StringBuilder(domain)
 				.append("?appid=").append(appid)
 				.append("&idfa=").append(idfa)
@@ -89,7 +90,7 @@ public class GourdChannel extends BaseChannel
 	public static AppCommonModel dianJi(String domain, TChannelAdverInfo adverInfo, String idfa ,String phoneModel,String phoneVersion,
 			String ip, Integer userAppId, Integer adverId, String userNum,String udid) throws UnsupportedEncodingException {
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
-		
+		String adverName = adverInfo.getAdverName().replaceAll(" ", "%20");
 		StringBuilder url = new StringBuilder(domain)
 				.append("?adid=").append(adverInfo.getAdid())
 				.append("&appid=").append(adverInfo.getAdverAdid())
@@ -98,7 +99,7 @@ public class GourdChannel extends BaseChannel
 				.append("&version=").append(phoneVersion)
 				.append("&ip=").append(ip)
 				.append("&udid=").append(udid)
-				.append("&keyword=").append(adverInfo.getAdverName())
+				.append("&keyword=").append(adverName)
 				.append("&channel=").append(channel)
 				.append("&callback=").append(getCallbackUrl(adverInfo.getAdid(), idfa, userAppId, adverId, userNum));
 		JSONObject jsonObject = httpGet(url.toString(), false);
@@ -126,6 +127,7 @@ public class GourdChannel extends BaseChannel
 			String deviceType, String osVersion,String udid)
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		String adverName = adverInfo.getAdverName().replaceAll(" ", "%20");
 		StringBuilder url = new StringBuilder(adverInfo.getFlag4())
 				.append("?adid=").append(adverInfo.getAdid())
 				.append("&appid=").append(adverInfo.getAdverAdid())
@@ -134,7 +136,7 @@ public class GourdChannel extends BaseChannel
 				.append("&version=").append(osVersion)
 				.append("&udid=").append(udid)
 				.append("&ip=").append(ip)
-				.append("&keyword=").append(adverInfo.getAdverName())
+				.append("&keyword=").append(adverName)
 				.append("&channel=").append(channel);
 		JSONObject jsonObject = httpGet(url.toString(), false);
 		
