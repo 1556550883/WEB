@@ -66,7 +66,11 @@ public class ExternalAppController extends BaseController
 				model = "iphone9,1";
 			}
 			
-			udid = ChannelClassification.getPhoneUdid(model.toLowerCase(),1);
+			if(udid == null ||udid.isEmpty()) 
+			{
+				udid = ChannelClassification.getPhoneUdid(model.toLowerCase(),1);
+			}
+			
 			
 			//获取新的udid之后需要保存idfa和udid
 			if(!udid.equals("0")) 
