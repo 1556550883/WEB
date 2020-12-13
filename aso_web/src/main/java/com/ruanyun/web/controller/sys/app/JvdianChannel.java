@@ -39,6 +39,8 @@ public class JvdianChannel extends BaseChannel
 		
 	/**
 	 * 排重
+	 * (info.getCpchannelDistinct(), info.getChannelAdverAdid(),keyword, idfa,ip,model,sysver,udid)
+	 * @throws UnsupportedEncodingException 
 	 */
 	public static AppCommonModel paiChong(String domain, String adid, String idfa, String sysver, String phonemodel,
 			String adverName, String ip,String udid) throws UnsupportedEncodingException
@@ -80,7 +82,6 @@ public class JvdianChannel extends BaseChannel
 		
 		return model;
 	}
-	
 	
 	
 	/**
@@ -130,6 +131,44 @@ public class JvdianChannel extends BaseChannel
 		return model;
 	}
 	
+	
+	public static AppCommonModel externalDianJi(String domain, String adid,String externaladid, String idfa, String ip,
+			 String sysver, String phonemodel,String adverName, String key,String udid) throws UnsupportedEncodingException {
+		AppCommonModel model = new AppCommonModel(-1, "出错！");
+		
+		StringBuilder url = new StringBuilder(domain)
+				.append("?adid=").append(adid)
+				.append("&cuid=").append(cuid)
+				.append("&os=").append(sysver)
+				.append("&devicetype=").append(phonemodel)
+				.append("&ip=").append(ip)
+				.append("&udid=").append(udid)
+				.append("&keyword=").append(URLEncoder.encode(adverName, "utf-8"))
+				.append("&idfa=").append(idfa)
+				.append("&callback=").append(externalCallbackUrl(externaladid, idfa,key));
+		JSONObject jsonObject = httpGet(url.toString(), false);
+		
+		if(jsonObject == null){
+			log.error("request url：" + url + "。response：null");
+			model.setResult(-1);
+			model.setMsg("领取任务失败。原因：系统出错！");
+		}else{
+			log.error("request url：" + url + "。response：" + jsonObject.toString());
+			Integer code = (Integer)jsonObject.get("code");
+			if(code == null){
+				model.setResult(-1);
+				model.setMsg("领取任务失败！");
+			}else if(code == 0){
+				model.setResult(1);
+				model.setMsg("领取任务成功！");
+			}else{
+				model.setResult(-1);
+				model.setMsg("领取任务失败！");
+			}
+		}
+		
+		return model;
+	}
 	
 	/**
 	 * 激活上报

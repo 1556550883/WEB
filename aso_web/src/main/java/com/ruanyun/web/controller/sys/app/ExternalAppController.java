@@ -35,7 +35,7 @@ public class ExternalAppController extends BaseController
 	
 	@RequestMapping("happy_distinct")
 	public void distinctInterface(HttpServletResponse response, HttpServletRequest request, String adid, String key,
-			String idfa,String sysver, String model,String keyword,String ip, String udid)
+			String idfa,String sysver, String model,String keyword,String ip, String udid) throws UnsupportedEncodingException
 	{
 		TExternalChannelAdverInfo info = externalChannelAdverInfoService.getInfoByAdidAndKey(key, adid);
 		JSONObject obj = new JSONObject();
@@ -230,6 +230,33 @@ public class ExternalAppController extends BaseController
 					super.writeJsonDataApp(response, obj);
 					return;
 				}
+				else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("jvdian")) 
+				{
+					if(!model.contains(",")) {
+						obj.element("code", -1);
+						obj.element("msg", "Invalid Model value");
+						super.writeJsonDataApp(response, obj);
+						return;
+					}
+					
+					tExternalChannelTask.setUdid(udid);
+					AppCommonModel models = JvdianChannel.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa,sysver,model,keyword,ip,udid);
+					if(models.getResult() == 1) {
+						//设置0代表为重复
+						obj.element(idfa, 0);
+						try {
+							//如果抛出异常重复添加了
+							externalAppService.save(tExternalChannelTask, adid, key);
+						} catch (Exception e) {
+							obj.element(idfa, 1);
+						}
+					}else {
+						obj.element(idfa, 1);
+					}
+					//保存
+					super.writeJsonDataApp(response, obj);
+					return;
+				}
 
 		try 
 		{
@@ -361,6 +388,21 @@ public class ExternalAppController extends BaseController
 		}else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("mifeng")) {
 			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
 			AppCommonModel appmodel = BeeChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key, taskInfo.getUdid());
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("msg", "ok");
+				externalAppService.update(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("msg", "click failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}
+		else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("jvdian")) {
+			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			AppCommonModel appmodel = JvdianChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key,taskInfo.getUdid());
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("msg", "ok");
@@ -552,6 +594,25 @@ public class ExternalAppController extends BaseController
 				obj.element("result", "active failed");
 			}
 			
+			super.writeJsonDataApp(response, obj);
+			return;
+
+		}
+		else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("jvdian"))
+		{
+			AppCommonModel appmodel = JvdianChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),keyword, idfa,ip, sysver,model,taskInfo.getUdid());
+			if(appmodel.getResult() == 1)
+			{
+				obj.element("code", 0);
+				obj.element("result", "ok");
+				externalAppService.updateStatus(tExternalChannelTask, adid, key);
+			}
+			else 
+			{
+				obj.element("code", -1);
+				obj.element("result", "active failed");
+			}
+	
 			super.writeJsonDataApp(response, obj);
 			return;
 
