@@ -154,16 +154,17 @@ public class JvdianChannel extends BaseChannel
 			model.setMsg("领取任务失败。原因：系统出错！");
 		}else{
 			log.error("request url：" + url + "。response：" + jsonObject.toString());
-			Integer code = (Integer)jsonObject.get("code");
-			if(code == null){
-				model.setResult(-1);
-				model.setMsg("领取任务失败！");
-			}else if(code == 0){
+			Integer status = -1;
+			status = (Integer)jsonObject.get("status");
+			if(status == 1)
+			{
 				model.setResult(1);
 				model.setMsg("领取任务成功！");
-			}else{
+			}
+			else
+			{	
 				model.setResult(-1);
-				model.setMsg("领取任务失败！");
+				model.setMsg(jsonObject.getString("info"));
 			}
 		}
 		
