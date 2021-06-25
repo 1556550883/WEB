@@ -8,6 +8,7 @@ package com.ruanyun.web.service.app;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -328,6 +329,44 @@ public class AppChannelAdverInfoService extends BaseServiceImpl<TChannelAdverInf
 		String fileName = "IDFA";
 		String[] columns = {"idfa","ip","ip_localtion","complete_time","adver_name"};
 		String[] headers = {"IDFA","IP","地区","结束时间","关键词"};
+		try {
+			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
+			SysCode.DATE_FORMAT_STR_L);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//CSVUtils.exportCsv(fileName, headers, columns, list);
+	}
+	
+	  public static List removeDuplicationByHashSet(List<String> list) {
+	      HashSet set = new HashSet(list);
+	      //把List集合所有元素清空
+	      list.clear();
+	      //把HashSet对象添加至List集合
+	      list.addAll(set);
+	      return list;
+	  }
+	  
+	public void exprotIDFA1(HttpServletResponse response,String date1,String date2)
+	{
+		List<TChannelAdverInfo> adverInfos = channelAdverInfoDao.getadverlists();
+		List list =  new ArrayList<>();
+		for(TChannelAdverInfo adverInfo : adverInfos) 
+		{
+			try {
+				String tablename = "t_adver_"+ adverInfo.getChannelNum() + "_" + adverInfo.getAdid();
+				list.addAll(channelAdverInfoDao.exportExcel1(tablename,date1,date2));
+			}catch(Exception e) 
+			{
+				//e.printStackTrace();
+			}
+		}
+		
+		list = removeDuplicationByHashSet(list);
+		String fileName = "IDFA";
+		String[] columns = {"idfa"};
+		String[] headers = {"IDFA"};
 		try {
 			ExcelUtils.exportExcel(response, fileName, list, columns, headers,
 			SysCode.DATE_FORMAT_STR_L);

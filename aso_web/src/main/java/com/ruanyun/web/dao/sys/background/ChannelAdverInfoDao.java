@@ -293,8 +293,17 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 				sql.append(" and adver_adid=").append(adverInfo.getAdverAdid());
 			if (EmptyUtils.isNotEmpty(adverInfo.getChannelNum()))
 				sql.append(" and channel_num=").append(adverInfo.getChannelNum());
+			if (EmptyUtils.isNotEmpty(adverInfo.getAdid()))
+				sql.append(" and adid=").append(adverInfo.getAdid());
 		}
 		
+		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
+	}
+	
+	public List<TChannelAdverInfo> getadverlists()
+	{
+		StringBuilder sql = new StringBuilder("select * from t_channel_adver_info WHERE adver_day_start>'202-01-01' and download_count != 0 group by adver_adid");
+
 		return sqlDao.getAll(TChannelAdverInfo.class, sql.toString());
 	}
 	
@@ -421,6 +430,15 @@ public class ChannelAdverInfoDao extends BaseDaoImpl<TChannelAdverInfo> {
 		return sqlDao.getAll(sql.toString());
 	}
 	
+	
+	//导出idfa
+	@SuppressWarnings("rawtypes")
+	public List exportExcel1(String tablename,String date1,String date2)
+	{
+		StringBuffer sql = new StringBuffer("select idfa from "+tablename+" where receive_time>'"+date1+"' AND receive_time<'"+date2+"'");
+		return sqlDao.getAll(sql.toString());
+	}
+		
 	//导出idfa
 	@SuppressWarnings("rawtypes")
 	public List exportAdverInfoExcel(String channelNum, String day)

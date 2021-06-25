@@ -127,7 +127,7 @@
  			$.ajax({
 		             type: "post",
 		             url: "/app/duijie/lingQuRenWu",
-		             data: {udid:udid,adverId:taskid},
+		             data: {udid:udid,adverId:taskid,usertype:2},
 		             dataType: "json",
 		           	 success:function(data){
 		            	var json = eval(data);

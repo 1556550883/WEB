@@ -181,6 +181,7 @@ public class DuiJieController extends BaseController
 	{
 		AppCommonModel model = new AppCommonModel(-1, "出错！");
 		String udid = request.getParameter("udid");
+		String usertype = request.getParameter("usertype");
 		String adverId = request.getParameter("adverId");
 		String ip = request.getRemoteAddr();//手机ip
 		String idfa = "";//手机广告标识符
@@ -320,16 +321,34 @@ public class DuiJieController extends BaseController
 		}
 		
 		 //工作室
-		
-		 userAppId = request.getParameter("userAppId");//用户Id
-		// appleId = request.getParameter("appleId");//苹果账号
-		 userNum = request.getParameter("userNum");
-		 phoneModel_real = request.getParameter("phoneModel") + "-";
-		 phoneVersion_real = request.getParameter("phoneVersion") + "-";
-		 //随机出机型
-		 //phoneModel = ChannelClassification.getPhoneModel(userAppId);
-		 phoneModel = request.getParameter("phoneModel");
-		 phoneVersion = request.getParameter("phoneVersion");
+		if(usertype != null && !usertype.isEmpty() && usertype.equalsIgnoreCase("2")) 
+		{
+			userAppType = 2;
+			TUserApp user = userAppService.getUserAppByUserName(udid);
+			userAppId = user.getUserAppId() + "";
+			// appleId = request.getParameter("appleId");//苹果账号
+			 userNum = user.getUserNum();
+			 phoneModel_real = user.getPhoneModel() + "-";
+			 phoneVersion_real = user.getPhoneVersion() + "-";
+			 //随机出机型
+			 //phoneModel = ChannelClassification.getPhoneModel(userAppId);
+			 phoneModel = user.getPhoneModel();
+			 phoneVersion = user.getPhoneVersion();
+			 idfa = user.getIdfa();
+		}
+		else
+		{
+			userAppId = request.getParameter("userAppId");//用户Id
+			// appleId = request.getParameter("appleId");//苹果账号
+			 userNum = request.getParameter("userNum");
+			 phoneModel_real = request.getParameter("phoneModel") + "-";
+			 phoneVersion_real = request.getParameter("phoneVersion") + "-";
+			 //随机出机型
+			 //phoneModel = ChannelClassification.getPhoneModel(userAppId);
+			 phoneModel = request.getParameter("phoneModel");
+			 phoneVersion = request.getParameter("phoneVersion");
+		}
+		 
 			 
 			 //测试代码
 //			 phoneModel = "iphone9,1";
@@ -592,6 +611,7 @@ public class DuiJieController extends BaseController
 		model.setMsg("成功！");
 		super.writeJsonDataApp(response, model);
 	}
+	
 	
 	/**
 	 * 回调（由第三方调用）

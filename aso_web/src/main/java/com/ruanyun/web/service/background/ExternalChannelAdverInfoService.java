@@ -55,7 +55,8 @@ public class ExternalChannelAdverInfoService extends BaseServiceImpl<TExternalCh
 			if (EmptyUtils.isNotEmpty(info.getExternalAdverId()) && info.getExternalAdverId() != 0) 
 			{
 				TExternalChannelAdverInfo n = super.get(TExternalChannelAdverInfo.class, info.getExternalAdverId());
-				BeanUtils.copyProperties(info, n, new String[] { "externalChannelAdverName","externalChannelAdverDesc"});
+				BeanUtils.copyProperties(info, n, new String[] { "externalChannelAdverName","externalChannelAdverDesc","externalChannelNum","externalAdverCreatetime"
+						,"externalAdverTimeStart","externalAdverTimeEnd"});
 				externalChannelAdverInfoDao.update(n);
 			}
 			else 

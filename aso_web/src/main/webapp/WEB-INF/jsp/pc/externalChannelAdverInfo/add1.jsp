@@ -76,6 +76,20 @@
 				</dd>
 		    </dl>
 		    
+		    <dl class="nowrap" style="width: 100%">
+				<dt>广告开始日期：</dt>
+				<dd>
+				 	<input type="text" name="externalAdverTimeStart" title="广告开始日期" class="mustFill date" id="externalAdverTimeStart" value="<ry:formatDate date='${bean.externalAdverTimeStart}' toFmt='yyyy-MM-dd HH:mm'/>"  readonly="readonly" dateFmt="yyyy-MM-dd HH:mm" >
+				 	<input name="externalAdverTimeStart" id="externalAdverTimeStart" type="hidden" value="<c:out value="${bean.externalAdverTimeStart}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
+		    <dl class="nowrap" style="width: 100%">
+				<dt>广告结束日期：</dt>
+				<dd>
+					<input type="text" name="externalAdverTimeEnd" title="广告结束日期" class="mustFill date" id="externalAdverTimeEnd" value="<ry:formatDate date='${bean.externalAdverTimeEnd}' toFmt='yyyy-MM-dd HH:mm' />" readonly="readonly" dateFmt="yyyy-MM-dd HH:mm" >
+					<input name="externalAdverTimeEnd" id="externalAdverTimeEnd" type="hidden" value="<c:out value="${bean.externalAdverTimeEnd}"></c:out>" maxlength="100"/>
+				</dd>
+		    </dl>
 		    <dl style="width: 100%">
 				<dt>cp渠道标识：</dt>
 				<dd>

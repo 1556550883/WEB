@@ -477,6 +477,12 @@ public class ChannelAdverInfoController extends BaseController
 		appChannelAdverInfoService.exprotIDFA(response, adverIds);
 	}
 	
+	@RequestMapping("export1")
+	public void exportIDFA1(HttpServletResponse response,String date1,String date2)
+	{
+		appChannelAdverInfoService.exprotIDFA1(response,date1,date2);
+	}
+	
 	@RequestMapping("exportAdver")
 	public void exportAdver(HttpServletResponse response, String channelNum, String day)
 	{

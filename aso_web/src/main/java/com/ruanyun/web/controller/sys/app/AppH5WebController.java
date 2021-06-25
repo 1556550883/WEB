@@ -74,7 +74,7 @@ public class AppH5WebController extends BaseController
 			List<TChannelAdverInfo> startTask = new ArrayList<>();
 			List<TChannelAdverInfo> willTask = new ArrayList<>();
 			String[] isv = tUserApp.getPhoneVersion().split("\\.");
-			String phonemodel = phoneModelChange(tUserApp.getPhoneModel());
+			String phonemodel = phoneModelChange1(tUserApp.getPhoneModel());
 			models = appChannelAdverInfoService.getAdverInfoByChannelNum2(page, "1", "2", phonemodel, tUserApp.getUserAppId(), isv[0]);
 			page = (Page<TChannelAdverInfo>)models.getObj();
 			Iterator<TChannelAdverInfo> iterator = page.getResult().iterator();
@@ -314,71 +314,96 @@ public class AppH5WebController extends BaseController
 		if(tUserApp != null)
 		{
 			String[] isv = tUserApp.getPhoneVersion().split("\\.");
-			String phonemodel = phoneModelChange(tUserApp.getPhoneModel());
+			String phonemodel = phoneModelChange1(tUserApp.getPhoneModel());
 			model = appChannelAdverInfoService.getAdverInfoByChannelNum2(page, "1", "2", phonemodel, tUserApp.getUserAppId(), isv[0]);
 		}
 		
 		super.writeJsonDataApp(response, model);
 	}
 		
-	private String phoneModelChange(String phoneModel) 
+//	private String phoneModelChange(String phoneModel) 
+//	{
+//		switch (phoneModel)
+//		{
+//		  case "iPhone5,1":    
+//		  case "iPhone5,2":   
+//		  phoneModel= "iPhone5";
+//			  break;
+//		   case "iPhone5,3":
+//		   case"iPhone5,4":                
+//		   phoneModel = "iPhone5c";
+//			   break;
+//		   case "iPhone6,1":
+//		   case "iPhone6,2":                  
+//			   phoneModel = "iPhone5s";
+//			   break;
+//		   case "iPhone7,2":                           
+//			   phoneModel =  "iPhone6";
+//			   break;
+//		   case "iPhone7,1":                             
+//			   phoneModel =  "iPhone6" ; 
+//			   break;
+//		   case "iPhone8,1":                               
+//			   phoneModel =  "iPhone6s" ;
+//			   break;
+//		   case "iPhone8,2":                            
+//			   phoneModel =  "iPhone6s" ; 
+//			   break;
+//		   case "iPhone8,4":                             
+//			   phoneModel =  "iPhone6s" ; 
+//			   break;
+//			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  case "iPhone9,6": case "iPhone9,5": 
+//				phoneModel =  "iPhone7";
+//				break;
+//			case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    
+//				phoneModel =  "iPhone8";
+//				break;
+//			case "iPhone10,3":case  "iPhone10,6":   
+//				phoneModel = "iPhoneX"; 
+//				break;
+//			case "iPhone11,2": case "iPhone11,4": case "iPhone11,6":    
+//				phoneModel =  "iPhoneXs"; 
+//				break;
+//			case "iPhone11,8":   
+//				phoneModel =  "iPhoneXr";
+//				break;
+//			default:
+//				if(phoneModel.compareTo("iPhone11,8") > 0) 
+//				{
+//					phoneModel =  "iPhoneXr";
+//				}
+//				else if(phoneModel.compareTo("iPhone5,1") < 0) 
+//				{
+//					phoneModel =  "iPhone4";
+//				}else {
+//					phoneModel =  "iPhone6";
+//				}
+//				
+//				break;
+//			}
+//		
+//			return phoneModel;
+//		}
+//	
+	
+	
+	private String phoneModelChange1(String phoneModel) 
 	{
 		switch (phoneModel)
 		{
 		  case "iPhone5,1":    
 		  case "iPhone5,2":   
-		  phoneModel= "iPhone5";
-			  break;
 		   case "iPhone5,3":
 		   case"iPhone5,4":                
-		   phoneModel = "iPhone5c";
+		   phoneModel = "7";
 			   break;
 		   case "iPhone6,1":
 		   case "iPhone6,2":                  
-			   phoneModel = "iPhone5s";
+			   phoneModel = "8";
 			   break;
-		   case "iPhone7,2":                           
-			   phoneModel =  "iPhone6";
-			   break;
-		   case "iPhone7,1":                             
-			   phoneModel =  "iPhone6" ; 
-			   break;
-		   case "iPhone8,1":                               
-			   phoneModel =  "iPhone6s" ;
-			   break;
-		   case "iPhone8,2":                            
-			   phoneModel =  "iPhone6s" ; 
-			   break;
-		   case "iPhone8,4":                             
-			   phoneModel =  "iPhone6s" ; 
-			   break;
-			case "iPhone9,1":case "iPhone9,2": case "iPhone9,3":  case "iPhone9,4":  case "iPhone9,6": case "iPhone9,5": 
-				phoneModel =  "iPhone7";
-				break;
-			case "iPhone10,1": case "iPhone10,4": case "iPhone10,2": case "iPhone10,5":    
-				phoneModel =  "iPhone8";
-				break;
-			case "iPhone10,3":case  "iPhone10,6":   
-				phoneModel = "iPhoneX"; 
-				break;
-			case "iPhone11,2": case "iPhone11,4": case "iPhone11,6":    
-				phoneModel =  "iPhoneXs"; 
-				break;
-			case "iPhone11,8":   
-				phoneModel =  "iPhoneXr";
-				break;
 			default:
-				if(phoneModel.compareTo("iPhone11,8") > 0) 
-				{
-					phoneModel =  "iPhoneXr";
-				}
-				else if(phoneModel.compareTo("iPhone5,1") < 0) 
-				{
-					phoneModel =  "iPhone4";
-				}else {
-					phoneModel =  "iPhone6";
-				}
 				
+				phoneModel = "9";
 				break;
 			}
 		

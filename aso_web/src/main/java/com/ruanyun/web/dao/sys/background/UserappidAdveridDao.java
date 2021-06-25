@@ -14,6 +14,8 @@ import com.ruanyun.web.model.TChannelAdverInfo;
 import com.ruanyun.web.model.TUserScoreDetail;
 import com.ruanyun.web.model.TUserappidAdverid;
 
+import antlr.collections.List;
+
 @Repository("userappidAdveridDao")
 public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid> 
 {
@@ -208,6 +210,8 @@ public class UserappidAdveridDao extends BaseDaoImpl<TUserappidAdverid>
 		params[1] = completetime;
 		return sqlDao.update(params, sql.toString());
 	}
+	
+	
 	
 	
 	public int updateSpecialComplete(String tablename, String status,Date completetime,String adverid, String idfa) 

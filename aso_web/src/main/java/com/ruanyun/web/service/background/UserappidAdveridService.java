@@ -84,6 +84,8 @@ public class UserappidAdveridService extends BaseServiceImpl<TUserappidAdverid>
 		return userappidAdveridDao.updateSpecialComplete(tablename, status,completetime,adverid,idfa);
 	}
 	
+	
+	
 	public int updateSpecialComplete(String tablename, String status,Date completetime,String adverid, String idfa) 
 	{
 		return userappidAdveridDao.updateSpecialComplete(tablename, status,completetime,adverid,idfa);

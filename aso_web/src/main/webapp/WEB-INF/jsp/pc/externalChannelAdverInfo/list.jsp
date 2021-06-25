@@ -40,6 +40,7 @@
 				</th>
 				<th align="center">广告名称</th>
 				<th align="center">广告ADID</th>
+				<th align="center">appleStoreid</th>
 				<th align="center">广告价格</th>
 				<th align="center">广告数量</th>
 				<th align="center">广告完成的有效数量</th>
@@ -56,14 +57,13 @@
 				  <td align="center">
         			<input type="checkbox"  id="orderCheckBox" name="ids" value="${item.externalAdverId}"></td>
 					<td>${item.externalAdverName}</td>	  
-					<td>${item.adid}</td>	              
+					<td>${item.adid}</td>	  
+					<td>${item.appleStoreId}</td>	            
 	                <td>${item.externalAdverPrice}</td>
 	                <td>${item.externalAdverCount}</td>
 	                <td>${item.externalAdverActivationCount}</td>
 	                <td>${item.externalAdverTimeStart}--${item.externalAdverTimeEnd}</td>
-	            
 	                <td><c:if test="${item.externalAdverStatus==0}">未审核</c:if><c:if test="${item.externalAdverStatus==1}">启用</c:if><c:if test="${item.externalAdverStatus==2}">停用</c:if><c:if test="${item.externalAdverStatus==3}">已支付</c:if></td>
-	       
 	                <td><ry:formatDate date="${item.externalAdverCreatetime}" toFmt="yyyy-MM-dd"></ry:formatDate> </td> 
 					<td><a class="btnEdit" title="编辑" href="javascript:;;" onclick="openNav('externalChannelAdverInfo/toedit?id=${item.externalAdverId}','修改广告信息','main_index3')"><span>修改</span></a></td>
 					<td>

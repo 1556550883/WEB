@@ -36,6 +36,7 @@ public class TExternalChannelAdverInfo  implements java.io.Serializable
     private String cpchannelDistinct;
     private String cpchannelClick;
     private String cpchannelActive;
+    private String appleStoreId;
    
 	@Id @GeneratedValue(strategy=IDENTITY)
     @Column(name="external_adver_id", unique=true, nullable=false)
@@ -228,5 +229,13 @@ public class TExternalChannelAdverInfo  implements java.io.Serializable
 	}
 	public void setChannelAdverAdid(String channelAdverAdid) {
 		this.channelAdverAdid = channelAdverAdid;
+	}
+	
+	@Column(name="apple_store_id")
+	public String getAppleStoreId() {
+		return appleStoreId;
+	}
+	public void setAppleStoreId(String appleStoreId) {
+		this.appleStoreId = appleStoreId;
 	}
 }

@@ -65,7 +65,7 @@ public class ExternalChannelAdverInfoController extends BaseController
 		{
 			addModel(model, "type", type);
 			addModel(model, "externalChannelNum", externalChannelNum);
-			return "pc/externalChannelAdverInfo/edit";
+			return "pc/externalChannelAdverInfo/add1";
 		}
 	}
 
@@ -91,7 +91,7 @@ public class ExternalChannelAdverInfoController extends BaseController
 		}
 		catch (Exception e) 
 		{
-			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_FAILD_CODE, Constants.MESSAGE_FAILED, "", "", ""));
+			super.writeJsonData(response, CallbackAjaxDone.AjaxDone(Constants.STATUS_SUCCESS_CODE, Constants.MESSAGE_SUCCESS, "main_index2", "externalChannelAdverInfo/list", "closeCurrent"));
 		}
 	}
 	
