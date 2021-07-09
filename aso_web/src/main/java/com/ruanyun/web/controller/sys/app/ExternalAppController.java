@@ -307,6 +307,32 @@ public class ExternalAppController extends BaseController
 					super.writeJsonDataApp(response, obj);
 					return;
 				}
+				else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("feiji")) {
+					if(!model.contains(",")) {
+						obj.element("code", -1);
+						obj.element("msg", "Invalid Model value");
+						super.writeJsonDataApp(response, obj);
+						return;
+					}
+					
+					tExternalChannelTask.setUdid(udid);
+					AppCommonModel models = PlaneChannel.paiChong(info.getCpchannelDistinct(), info.getChannelAdverAdid(), idfa,sysver,model,keyword,ip,udid);
+					if(models.getResult() == 1) {
+						//设置0代表为重复
+						obj.element(idfa, 0);
+						try {
+							//如果抛出异常重复添加了
+							externalAppService.save(tExternalChannelTask, adid, key);
+						} catch (Exception e) {
+							obj.element(idfa, 1);
+						}
+					}else {
+						obj.element(idfa, 1);
+					}
+					//保存
+					super.writeJsonDataApp(response, obj);
+					return;
+				}
 				else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("kaopu")) 
 				{
 					if(!model.contains(",")) {
@@ -541,6 +567,21 @@ public class ExternalAppController extends BaseController
 		else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("weiweizhuan")) {
 			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
 			AppCommonModel appmodel = WeiweizhuanChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key,taskInfo.getUdid());
+			if(appmodel.getResult() == 1) {
+				obj.element("code", 0);
+				obj.element("msg", "ok");
+				externalAppService.update(tExternalChannelTask, adid, key);
+			}else {
+				obj.element("code", -1);
+				obj.element("msg", "click failed");
+			}
+			
+			super.writeJsonDataApp(response, obj);
+			return;
+		}
+		else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("feiji")) {
+			TExternalChannelTask taskInfo = externalAppService.geTExternalTaskInfo(tExternalChannelTask, adid, key);
+			AppCommonModel appmodel = PlaneChannel.externalDianJi(info.getCpchannelClick(),info.getChannelAdverAdid(),adid, idfa, ip, sysver, model,keyword,key,taskInfo.getUdid());
 			if(appmodel.getResult() == 1) {
 				obj.element("code", 0);
 				obj.element("msg", "ok");
@@ -794,6 +835,25 @@ public class ExternalAppController extends BaseController
 		else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("weiweizhuan"))
 		{
 			AppCommonModel appmodel = WeiweizhuanChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),keyword, idfa,ip, sysver,model,taskInfo.getUdid());
+			if(appmodel.getResult() == 1)
+			{
+				obj.element("code", 0);
+				obj.element("result", "ok");
+				externalAppService.updateStatus(tExternalChannelTask, adid, key);
+			}
+			else 
+			{
+				obj.element("code", -1);
+				obj.element("result", "active failed");
+			}
+	
+			super.writeJsonDataApp(response, obj);
+			return;
+
+		}
+		else if(info.getCpChannelKey() != null && info.getCpChannelKey().equalsIgnoreCase("feiji"))
+		{
+			AppCommonModel appmodel = PlaneChannel.activate(info.getCpchannelActive(),info.getChannelAdverAdid(),keyword, idfa,ip, sysver,model,taskInfo.getUdid());
 			if(appmodel.getResult() == 1)
 			{
 				obj.element("code", 0);
